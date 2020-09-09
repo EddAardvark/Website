@@ -1,0 +1,520 @@
+<html>
+
+<head>
+<style>
+
+TD {margin:         6px;
+    border:         solid 1px coral;
+    vertical-align: top;
+    padding:        3pt 6pt;}
+    
+TH {color:          darkmagenta;
+    vertical-align: top;
+    padding:        3pt 12pt;
+    text-align:     left;
+    font-size:      200%;
+    font-family:    Arial, Helvetica, sans-serif;
+}
+    
+TABLE { border-collapse: collapse; }
+
+</style>
+</head>
+
+
+<body onload="FrameLoad();">
+
+    <p>
+        Choose a category and then scroll down the list to view the other pages available on this site.
+    <p>
+        <button onClick="ShowSet('frac');"> Fractals </button>
+        <button onClick="ShowSet('auto');"> Automata </button>
+        <button onClick="ShowSet('pats');"> Patterns </button>
+        <button onClick="ShowSet('game');"> Games </button>
+        <button onClick="ShowSet('math');"> Mathematics </button>
+        <button onClick="ShowSet('extr');"> Extras </button>
+    </p>
+
+  
+<!-- F R A C T A L S -->
+
+
+<div style="display:none;" id="div_frac">
+
+ <table>
+
+  <tr><th colspan="2"> Fractals </th></tr>
+    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/affine/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/afine3.jpg"/></a>
+    </td>
+    <td>
+      <h2> Affine Transformations </h2>
+    </td>
+  </tr>
+                    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/mandelbrot/webgl.html" target="_blank"> <img width="160" src="http://www.eddaardvark.co.uk/mandelbrot/4dimages/b13x.gif"/></a>
+    </td>
+    <td>
+      <h2>Mandelbrot Browser</h2>
+      <p>
+        An interactive Mandelbrot viewer zoom in and out and pan around Mandelbrot
+        and Julia fractals as well as some some of the 4D slices. Using the GPU means that the browsing 
+        can be done interactively, you won't have time to make a coffee while you are waiting for
+        the results. Once of the downsides is that the floating point range is a bit limited, restricting how
+        far you can zoom in.       
+      </p>
+      </td>
+  </tr>
+ 
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/mandelbrot/complexity.html" target="_blank"> <img width="160" src="http://www.eddaardvark.co.uk/mandelbrot/images/orbit.png"/></a>
+    </td>
+    <td>
+      <h2>Mandelbrot Complexity</h2>
+      <p>
+            A discussion of how the relatively simple equation generates these seemingly infinitely complex images.
+            Allows you to interactively explore toe orbits of individual points.
+      </p>
+      </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/mandelbrot/jcomplexity.html" target="_blank"> <img width="160" src="http://www.eddaardvark.co.uk/mandelbrot/images/julia_complexity_icon.png"/></a>
+    </td>
+    <td>
+      <h2>Julia Set Complexity</h2>
+      <p>
+            Continues the Mandelbrot Complexity page with some observations specific to the Julia Sets.
+      </p>
+      </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/mandelbrot/geometry.html" target="_blank"> <img width="160" src="http://www.eddaardvark.co.uk/mandelbrot/4dimages/c_planes.png"/></a>
+    </td>
+    <td>
+      <h2>Four Dimensional Representations</h2>
+      <p>
+            This page shows how the Julia and Mandelbrot sets are merely slices of an even more complicated 4-dimensional object. 
+      </p>
+      </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/mandelbrots.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/mandelbrot/images/j11m8_tn.png"/></a>
+    </td>
+    <td>
+      <h2> Mandelbrot </h2>
+      <p> More Mandlebrot pages </p>
+    </td>
+  </tr>  
+
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/newton/webgl.html" target="_blank"> <img width="160" src="v2/newton/menu_icon.png"/></a>
+    </td>
+    <td>
+      <h2>Newton-Raphson Fractal</h2>
+      <p>
+            An interactive viewer for this fractal. Works for up to 10th degree polynomials with real 
+            coefficients. Written in WebGL to take advantage of the GPU.
+      </p>
+    </td>
+  </tr>
+ </table>
+</div>
+
+<!-- M I S C -->
+ 
+<div style="display:none;" id="div_math">
+
+ <table>
+
+  <tr><th colspan="2"> Mathematics </th></tr>
+                
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/shape_packer/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/shapes_icon.gif"/></a>
+    </td>
+    <td>
+      <h2> Shape-packing </h2>
+    </td>
+  </tr>
+                    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/python_patterns/rats.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/triple_icon.png"/></a>
+    </td>
+    <td>
+      <h2> Pythagorean Triples </h2>
+    </td>
+  </tr>
+                
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/t3a1/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/3x1_icon.png"/></a>
+    </td>
+    <td>
+      <h2> 3x + 1 </h2>
+    </td>
+  </tr> 
+  
+ </table>
+</div>
+  
+  <!-- C E L L U L A R   A U T O M A T A -->
+
+
+<div style="display:none;" id="div_auto">
+    
+ <table>
+
+    <tr><th colspan="2"> Cellular Automata </th></tr>
+    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/automata/fivecell.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/v2/automata/images/fivecell.png"/></a>
+    </td>
+    <td>
+      <h2> One Dimensional, Five colours </h2>
+      <p>
+            A five colour one dimensional automata. Here time is represented as the second dimension to create the two
+            dimensional images. The pattern evolves from top to bottom,
+            the next state of a cell depending on its current state and the states of its
+            two immediate neighbours.
+      </p>
+    </td>
+  </tr>   
+    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/automata/sixcell.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/v2/automata/images/fivecell6.png"/></a>
+    </td>
+    <td>
+      <h2> One Dimensional, Six colours </h2>
+      <p>
+            A six colour one dimensional automata, this is essentially the same as the five colour automaton in the previous link,
+            only with more colours.
+      </p>
+    </td>
+  </tr>   
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/automata/fivecell2d.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/v2/automata/images/fivecell2d.png"/></a>
+    </td>
+    <td>
+      <h2> Two Dimensional, Five colours </h2>
+      <p>
+            In the two dimensional version the pattern represents a single instance in time and the evolution is shown by
+            incrementally updating the pattern, creating an animation. Cells evolve based on their contents and those of
+            their 4 nearest neighbours.
+      </p>
+    </td>
+  </tr>   
+    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/automata/forest.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/forest_fire_icon.png"/></a>
+    </td>
+    <td>
+      <h2> Forest Fire </h2>
+         <p>
+             A forest Fire simulator. This is a two dimensional automaton, with the patterns changing over time. It is not
+             fixed though, the cells vary through a cycle of grass to trees to fire and back to grass base on a set of
+             probabilities that you can adjust. Once a cell is on fire it has a chance of spreading to neighbouring cells,
+             and again you can adjust this probability.
+         </p><p>
+             This is really one for sitting and watching and snapshots don't do it justice, so I haven't included any.
+         </p>
+    </td>
+  </tr>      
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/automata/life.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/v2/automata/images/life.png"/></a>
+    </td>
+    <td>
+      <h2> Game of Life </h2>
+         <p>
+            Conway's famous "Game of Life". The image to the left arises if you run the default starting configuration on the
+            "large" square grid.
+         </p>
+    </td>
+  </tr>
+  
+ </table>
+</div>
+
+<!-- PATTERNS -->
+
+<div style="display:none;" id="div_pats">
+
+ <table>
+    
+    <tr><th colspan="2"> Patterns </th></tr>
+            
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/spirograph/spirograph2.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/python_patterns/images/coloured_tn2.png"/></a>
+    </td>
+    <td>
+      <h2> Spirographs </h2>
+    </td>
+  </tr>
+      
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/triangle_pattern/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/v2/triangle_pattern/icon.png"/></a>
+    </td>
+    <td>
+      <h2> Repeated Symmetry Operations </h2>
+      <p>
+      This page generates patters by starting out with a 2x2 collection of rectangles and triangles and then applies a
+      variety of symmetry operations to generate more interesting patterns. The image on the left shows four copies of the
+      starting pattern rotated 270&deg;.
+      </p>
+    </td>
+  </tr>
+      
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/svg/colouringin/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/svg/colouringin/icon.png"/></a>
+    </td>
+    <td>
+      <h2> Colouring-in</h2>
+    </td>
+  </tr>
+    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/svg/fibpatterns/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/svg/fibpatterns/images/lodiag8.gif"/></a>
+    </td>
+    <td>
+      <h2> Fibonacci Patterns</h2>
+      <p> Constructed by colouring squares generated from successive terms in the Fibonacci sequence calculated using modular arithmetic.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/circles/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/python_patterns/images/smooth2_tn.png"/></a>
+    </td>
+    <td>
+      <h2> Circle Patterns </h2>
+    </td>
+  </tr>
+  
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/python_patterns/line_patterns.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/python_patterns/images/graphs.gif"/></a>
+    </td>
+    <td>
+      <h2> Line Patterns </h2>
+      <p>
+      A very old application written in python, it creates patterns by joining dots inscribed around a circle. A rathe minimal version of the spirograph. The image is an animation of the first
+      29 complete graphs, starting at 3.
+    </td>
+  </tr>
+ </table>
+</div>
+  
+  <!-- GAMES -->
+    
+  
+<div style="display:none;" id="div_game">
+
+ <table>
+ 
+    <tr><th colspan="2"> Games </th></tr>
+    
+    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/sudoku/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/sudoku.png"/></a>
+    </td>
+    <td>
+      <h2> Sudoku </h2>
+    </td>
+  </tr>
+  
+
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/maze/maze3d.html" target="_blank"> <img width="160" src="v2/maze/images3d/menu_icon.png"/></a>
+            
+    </td>
+    <td>
+      <h2>Interactive Maze</h2>
+      <p>
+            A 3D visualisation of the 2D interactive maze you can see on the mazes page.
+      </p>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/v2/maze/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/maze_icon.png"/></a>
+    </td>
+    <td>
+      <h2> Mazes </h2>
+      <p>
+            More mazes.
+      </p>
+    </td>
+  </tr>
+   
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/Neilw/cathedral/index.html" target="_blank"><img width="160" src="http://eddaardvark.co.uk/Neilw/cathedral/cathy2.png"/></a>
+    </td>
+    <td>
+      <h2>Cathedral Game</h2>
+    </td>
+  </tr>
+                    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/jigsaws/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/jigsaws/jigsaw_icon.jpg"/></a>
+    </td>
+    <td>
+      <h2> Jigsaws </h2>
+    </td>
+  </tr>
+ </table>
+</div>
+
+
+  
+  <!-- Extras -->
+  
+  
+<div style="display:none;" id="div_extr">
+
+ <table>
+    
+  <tr><th colspan="2"> Extras </th></tr>
+
+
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/Neilw/studiowebgl/index.html" target="_blank"> <img width="160" src="images/neil_menu_icon.png"/></a>
+    </td>
+    <td>
+      <h2>Neil's WebGL playground</h2>
+      </p>
+            Neil's WebGL applications. This include a 3D gallery of some of Neil's drawings, which can be seen in the image that accompanies this link.
+      </p>
+    </td>
+  </tr>
+
+                    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/svg/index.html" target="_blank"> <img width="160" src="http://www.eddaardvark.co.uk/images/svg_icon.png"/></a>
+    </td>
+    <td>
+      <h2>SVG Index</h2>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/Neilw/gallery/butterfly/index.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/butterfly_icon.png"/></a>
+    </td>
+    <td>
+      <h2> Butterflies </h2>
+    </td>
+  </tr>
+                    
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/artwork/doodles/page_01.htm" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/doodle_icon.png"/></a>
+    </td>
+    <td>
+      <h2> Doodles </h2>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/python_patterns/source.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/sc_icon.png"/></a>
+    </td>
+    <td>
+      <h2>Python Source Code</h2>
+      <p>
+        Before html 5 I didn't know of any way to create patterns interactively so I wrote these python routines to create patterns and render them as bitmaps. They are still available to download,
+        though they are written in Python 2.6.
+      </p>
+    </td>
+  </tr>
+                
+  <tr>
+    <td>
+      <a href="http://www.eddaardvark.co.uk/patternindex.html" target="_blank"><img width="160" src="http://www.eddaardvark.co.uk/images/java_icon.png"/></a>
+    </td>
+    <td>
+      <h2> Java Applets </h2>
+      <p>
+        These applets were written years ago, Java has moved on so much since then they no longer work.
+      </p>
+    </td>
+  </tr>
+   
+ </table>
+</div>
+
+
+<script>
+
+    FrameLoad=function ()
+    {
+        ShowSet('frac');
+    }
+
+    var current_div = null;
+    
+    ShowSet = function (n)
+    {
+        var name = "div_" + n;
+        
+        ShowDiv (name);
+    }
+
+    ShowDiv = function (name)
+    {    
+        if (current_div)
+        {
+            current_div.style.display = "none";
+        }
+        
+        current_div = document.getElementById(name);
+
+        if (current_div)
+        {
+            current_div.style.display = "block";
+        }
+    }    
+
+    OnLoad = function()
+    {
+        ShowSet (1);
+    }
+
+</script>
+
+<body>
+<html>
+
+
+
