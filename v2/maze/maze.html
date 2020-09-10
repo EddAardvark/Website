@@ -1,0 +1,344 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Interactive maze javascript">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="maze.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="mazecell.js"> </script>
+<script type="text/javascript" src="player.js"> </script>
+<script type="text/javascript" src="items.js"> </script>
+<script type="text/javascript" src="../js_library/popup.js"> </script>
+<script type="text/javascript" src="special_rooms.js"> </script>
+<script type="text/javascript" src="checkers.js"> </script>
+<script type="text/javascript" src="maze.js"> </script>
+<script type="text/javascript" src="maze_construction.js"> </script>
+<script type="text/javascript" src="spells.js"> </script>
+<script type="text/javascript" src="animations.js"> </script>
+
+<title>Maze Page</title>
+
+<style>
+
+pre {
+        font-family:"Courier New", Courier, monospace;
+        font-height:12px;
+        line-height:10px;
+    }
+
+#popup {
+        visibility:     hidden;
+        position:       fixed;
+        width:          640px;
+        height:         480px;
+        left:           64px;
+        top:            32px;
+        overflow:       scroll;
+        z-index:        1000;
+        background-color: white;
+        border-bottom:  3pt solid black;
+        border-top:     1pt solid black;
+        border-left:    1pt solid black;
+        border-right:   2pt solid black;
+        text-align:     left;
+    }
+
+</style>
+
+<script>
+
+    var maze;
+    var timer;
+    var floor;
+
+    var PAGE_UP = 33;
+    var PAGE_DOWN = 34;
+
+    var ui_keys =
+    [
+        PAGE_UP,
+        PAGE_DOWN,
+    ];
+    //-------------------------------------------------------------
+    function Redraw ()
+    {
+        maze.DisplayFloor (floor);
+
+        SetElementText ("floor_number", floor + 1);
+        SetElementText ("debug", maze.debug);
+        SetElementText ("player", maze.GetPlayerText () + " (" + (maze.connected ? "Connected" : "Not connected") + ")");
+    }
+    //-------------------------------------------------------------
+    function SetElementText (element, text)
+    {
+        var element = document.getElementById(element);
+
+        if (element != null)
+        {
+            element.innerHTML = text;
+        }
+    }
+    //-------------------------------------------------------------
+    // Keyboard handler
+    //-------------------------------------------------------------
+    function OnKey (event)
+    {
+        var key = event.keyCode;
+
+        if (MazePopup.HandleKey (key))
+        {
+            event.preventDefault();
+            return;
+        }
+
+        // Don't allow action keys if a popup is visible
+
+        if (IsMazeKey (key))
+        {
+            if (! MazePopup.has_popup)
+            {
+                if (maze.OnKey (key))
+                {
+                    floor = maze.player.floor;
+                    Redraw ();
+                }
+            }
+            event.preventDefault();
+            return;
+        }
+
+        // UI keys
+
+        if (ui_keys.indexOf (key) != -1)
+        {
+            event.preventDefault();
+
+            switch (key)
+            {
+                case PAGE_UP:
+                    UpFloor ();
+                    break;
+                case PAGE_DOWN:
+                    DownFloor ()
+                    break;
+            }
+        }
+    }
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    function OnStart ()
+    {
+        document.addEventListener('keydown', OnKey);
+        MazePopup.Initialise ("popup");
+        timer = setInterval(DoAnimate, 200);
+        OnRestart ();
+    }
+    //-------------------------------------------------------------
+    // Restart
+    //-------------------------------------------------------------
+    function OnRestart ()
+    {
+        maze = new MultiLevelMaze ();
+        maze.image = document.getElementById("canvasImg");
+        maze.animator.image = document.getElementById("animationImg");
+        floor = 0;
+        Redraw ();
+    }
+    //-------------------------------------------------------------
+    // Start the phase animations
+    //-------------------------------------------------------------
+    function StopAnimation ()
+    {
+        clearInterval(timer);
+    }
+    //-------------------------------------------------------------
+    function DoAnimate ()
+    {
+        maze.animator.Update ();
+    }
+    //-------------------------------------------------------------
+    // Show the current floor (seen & unseen)
+    //-------------------------------------------------------------
+    function ShowFloor ()
+    {
+        maze.ShowFloor (floor);
+        Redraw ();
+    }
+    //-------------------------------------------------------------
+    // Display the tags (affects nothing else)
+    //-------------------------------------------------------------
+    function ShowTags ()
+    {
+        maze.DrawTags (floor);
+        Redraw ();
+    }
+    //-------------------------------------------------------------
+    // remove tags and show the seen area
+    //-------------------------------------------------------------
+    function Revert (tags)
+    {
+        maze.RedrawFloor (floor);
+        Redraw ();
+    }
+    //-------------------------------------------------------------
+    function UpFloor ()
+    {
+        if (floor > 0)
+        {
+            -- floor;
+            Redraw ();
+        }
+    }
+    //-------------------------------------------------------------
+    function DownFloor ()
+    {
+        if (floor < maze.num_floors - 1)
+        {
+            ++ floor;
+            Redraw ();
+        }
+    }
+    //-------------------------------------------------------------
+    function ShowKeys()
+    {
+        var element = document.getElementById("instructions");
+        MazePopup.Show (element.innerHTML);
+    }
+
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart ();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Javascript interactive maze </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+       <h2> Interactive Maze </h2>
+
+        <!-- popup dialog box -->
+
+        <div id="popup"> &nbsp; </div>
+
+        <!-- The maze -->
+
+        <div style="left:0px; top:0px; position:relative; width:960px; height:540;">
+        </div>
+
+        <div style="left:60px; top:340px; position:absolute; width:960px;">
+          <img id="canvasImg" width="891" height="494">
+        </div>
+
+        <div style="left:60px; top:340px; position:absolute; width:960px;">
+          <img id="animationImg" width="891" height="494">
+        </div>
+
+          <p>Floor <span id="floor_number">X</span>:
+                <button OnClick="OnRestart ()"> New maze </button>
+                <button OnClick="ShowFloor ()"> Show all </button>
+                <button OnClick="ShowTags ()"> Show tags </button>
+                <button OnClick="Revert ()"> Revert </button>
+                <button onclick="ShowKeys();"> Keys... </button>
+          </p>
+
+          <p>Player <span id="player">P</span></p>
+            <div id="debug"> &nbsp; </div>
+          </p>
+
+    </div>
+    
+<!-- Generic links -->
+
+    <div class="float_r w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2010 - 2020 <p>
+
+
+<!-- Popups: Instructions -->
+
+<div id="instructions" style="visibility:hidden;">
+
+   <h1> Interactive Maze - Key assignments </h1>
+
+    <table>
+        <tr> <th> Key </th> <th> Action </th> </tr>
+        <tr> <td> Left arrow </td> <td> Move the player West </td> </tr>
+        <tr> <td> Right arrow </td> <td> Move the player East </td> </tr>
+        <tr> <td> Up arrow </td> <td> Move the player North </td> </tr>
+        <tr> <td> Down arrow </td> <td> Move the player South </td> </tr>
+        <tr> <td> 'U' </td> <td> Move up a ladder </td> </tr>
+        <tr> <td> 'D' </td> <td> Move down a ladder </td> </tr>
+        <tr> <td> 'P' </td> <td> Pick up the contents of a square </td> </tr>
+        <tr> <td> 'I' </td> <td> Show the player's current inventory </td> </tr>
+        <tr> <td> 'X' </td> <td> Exchange items between the player's current inventory and the floor </td> </tr>
+        <tr> <td> Page up </td> <td> Display a higher floor (doesn't move the player) </td> </tr>
+        <tr> <td> Page down </td> <td> Display a lower floor (doesn't move the player) </td> </tr>
+        <tr> <td> Escape </td> <td> Close a popup with no action. </td> </tr>
+        <tr> <td> Return </td> <td> Close a popup and apply changes. </td> </tr>
+        <tr> <td> 'C' </td> <td> Cast a spell. </td> </tr>
+        <tr> <td> 'R' </td> <td> The list of known runes. </td> </tr>
+
+    </table>
+</div>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

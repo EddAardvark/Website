@@ -1,0 +1,1023 @@
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (Largest Smallest Loop Values) </TITLE>
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+<script>
+    OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+</script>
+</head>
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+             Largest Smallest Loop Values
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+<div class="in2 box w8 float">
+
+<h2>In this section</h2>
+
+<ul>
+  <li><a href="#Introduction">Introduction</a></li>
+  <li><a href="#Which A Values?">Which 'a' Values?</a></li>
+  <li><a href="#Where to look for loops">Where to look for loops</a></li>
+</ul>
+
+</div>
+
+<!-- Introduction -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="Introduction">Introduction</a></h2>
+
+<p>Earlier when calculating where we needed to start looking for loops, given
+that exhaustive searches had eliminated most numbers up to 10<span class="superscript">15</span> we decided to
+look for systems where the maximum ratio of a seed value to K was greater than
+this value. Unfortunately loops with large values also contain small values, and
+all the values must be greater than our cut-off value. So what we need to do is
+find, for a particular combination of m and n, what the largest loop seed
+(the smallest loop member) is. For small n and m
+values we can just search through the loop members; the results are summarised
+in the following tables (LS is the largest loop seed).
+
+</p><p>
+
+<table cellpadding="4" cellspacing="0">
+  <tr>
+    <td>
+        <div class="margins">
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+          <tr>
+            <td>n </td>
+            <td>m</td>
+            <td>LS</td>
+            <td>K</td>
+            <td>LS/K</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">23</td>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">6</td>
+            <td class="code" align="right">37</td>
+            <td class="code" align="right">37</td>
+            <td class="code" align="right">1</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">7</td>
+            <td class="code" align="right">37</td>
+            <td class="code" align="right">101</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">53</td>
+            <td class="code" align="right">229</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">9</td>
+            <td class="code" align="right">97</td>
+            <td class="code" align="right">485</td>
+            <td class="code" align="right">1/5</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">10</td>
+            <td class="code" align="right">97</td>
+            <td class="code" align="right">997</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">11</td>
+            <td class="code" align="right">161</td>
+            <td class="code" align="right">2021</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">12</td>
+            <td class="code" align="right">313</td>
+            <td class="code" align="right">4069</td>
+            <td class="code" align="right">1/13</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">3</td>
+            <td class="code" align="right">13</td>
+            <td class="code" align="right">313</td>
+            <td class="code" align="right">8165</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+         </table>
+         </div>
+    </td>
+    <td>
+        <div class="margins">
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+          <tr>
+            <td>n </td>
+            <td>m</td>
+            <td>LS</td>
+            <td>K</td>
+            <td>LS/K</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">6</td>
+            <td class="code" align="right">10</td>
+            <td class="code" align="right">1357</td>
+            <td class="code" align="right">295</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">6</td>
+            <td class="code" align="right">11</td>
+            <td class="code" align="right">1805</td>
+            <td class="code" align="right">1319</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">6</td>
+            <td class="code" align="right">12</td>
+            <td class="code" align="right">3367</td>
+            <td class="code" align="right">3367</td>
+            <td class="code" align="right">1</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">6</td>
+            <td class="code" align="right">13</td>
+            <td class="code" align="right">3367</td>
+            <td class="code" align="right">7463</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+        </table>
+        </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+        <div class="margins">
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+          <tr>
+            <td>n </td>
+            <td>m</td>
+            <td>LS</td>
+            <td>K</td>
+            <td>LS/K</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">4</td>
+            <td class="code" align="right">7</td>
+            <td class="code" align="right">101</td>
+            <td class="code" align="right">47</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">4</td>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">175</td>
+            <td class="code" align="right">175</td>
+            <td class="code" align="right">1</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">4</td>
+            <td class="code" align="right">9</td>
+            <td class="code" align="right">175</td>
+            <td class="code" align="right">431</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">4</td>
+            <td class="code" align="right">10</td>
+            <td class="code" align="right">287</td>
+            <td class="code" align="right">943</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">4</td>
+            <td class="code" align="right">11</td>
+            <td class="code" align="right">415</td>
+            <td class="code" align="right">1967</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">4</td>
+            <td class="code" align="right">12</td>
+            <td class="code" align="right">803</td>
+            <td class="code" align="right">4015</td>
+            <td class="code" align="right">1/5</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">4</td>
+            <td class="code" align="right">13</td>
+            <td class="code" align="right">803</td>
+            <td class="code" align="right">8111</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+        </table>
+        </div>
+    </td>
+    <td>
+        <div class="margins">
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+          <tr>
+            <td>n </td>
+            <td>m</td>
+            <td>LS</td>
+            <td>K</td>
+            <td>LS/K</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">7</td>
+            <td class="code" align="right">12</td>
+            <td class="code" align="right">5095</td>
+            <td class="code" align="right">1909</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">7</td>
+            <td class="code" align="right">13</td>
+            <td class="code" align="right">7463</td>
+            <td class="code" align="right">6005</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">7</td>
+            <td class="code" align="right">14</td>
+            <td class="code" align="right">14197</td>
+            <td class="code" align="right">14197</td>
+            <td class="code" align="right">1</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">7</td>
+            <td class="code" align="right">15</td>
+            <td class="code" align="right">14197</td>
+            <td class="code" align="right">30581</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+        </table>
+        </div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+        <div class="margins">
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+          <tr>
+            <td>n </td>
+            <td>m</td>
+            <td>LS</td>
+            <td>K</td>
+            <td>LS/K</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">319</td>
+            <td class="code" align="right">13</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">9</td>
+            <td class="code" align="right">431</td>
+            <td class="code" align="right">269</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">10</td>
+            <td class="code" align="right">781</td>
+            <td class="code" align="right">781</td>
+            <td class="code" align="right">1</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">11</td>
+            <td class="code" align="right">781</td>
+            <td class="code" align="right">1805</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">12</td>
+            <td class="code" align="right">1299</td>
+            <td class="code" align="right">3853</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">13</td>
+            <td class="code" align="right">1885</td>
+            <td class="code" align="right">7949</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">14</td>
+            <td class="code" align="right">3293</td>
+            <td class="code" align="right">16141</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">15</td>
+            <td class="code" align="right">6505</td>
+            <td class="code" align="right">32525</td>
+            <td class="code" align="right">1/5</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">5</td>
+            <td class="code" align="right">16</td>
+            <td class="code" align="right">6505</td>
+            <td class="code" align="right">65293</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+        </table>
+        </div>
+    </td>
+    <td>
+        <div class="margins">
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+          <tr>
+            <td>n </td>
+            <td>m</td>
+            <td>LS</td>
+            <td>K</td>
+            <td>LS/K</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">13</td>
+            <td class="code" align="right">14501</td>
+            <td class="code" align="right">1631</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">14</td>
+            <td class="code" align="right">21109</td>
+            <td class="code" align="right">9823</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">15</td>
+            <td class="code" align="right">30581</td>
+            <td class="code" align="right">26207</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">16</td>
+            <td class="code" align="right">58975</td>
+            <td class="code" align="right">58975</td>
+            <td class="code" align="right">1</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">8</td>
+            <td class="code" align="right">17</td>
+            <td class="code" align="right">58975</td>
+            <td class="code" align="right">124511</td>
+            <td class="code" align="right">&nbsp;</td>
+          </tr>
+        </table>
+        </div>
+    </td>
+  </tr>
+</table>
+
+</p>
+
+<h3>Observations</h3>
+
+<p>
+    There are a few interesting observations in the above table.
+</p>
+
+<div class="in2">
+<ul>
+  <li>When m&nbsp;=&nbsp;2n the largest value is always equal to K.</li>
+  <li>The value for m = 2n+1 is the same as for m = 2n.</li>
+  <li>The value for m&nbsp;=&nbsp;3n is always K/5.</li>
+  <li>The value for m = 3n+1 is the same as for m = 3n.</li>
+  <li>The LS values grow more slowly than the K values with increasing n.</li>
+</ul>
+</div>
+
+<p>
+    The values LS/K = 1 when m=2n is obtained by setting all the 'a' values to 2.
+    The 1/5 is when all the 'a' values are 3. The sequence continues [1, 1/5, 1/13,
+    1/29, 1/61, 1/125.0, 1/253, 1/509, ...], the rule being double it and add 3.
+</p><p>
+    Here we have proved that there are no cycles in 3x+1 that contain twice as
+    many or more even number as odd numbers, so there is no point looking at systems
+    where m is greater than or equal to 2n.
+</p>
+
+</div>
+
+<!-- Which 'a' Values? -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="Which A Values?">Which 'a' Values?</a></h2>
+
+<p>
+    For a given n value the loop values are determined by the equation.
+</p>
+
+<div class="code w5 in2">
+    <p class="code">
+        s = (3<span class="superscript">n-1</span> + 3<span class="superscript">n-2</span>*2<span class="superscript">a1</span> +
+        3<span class="superscript">n-3</span>*2<span class="superscript">a1+a2</span> + ...)
+    </p>
+</div>
+
+
+<p>
+    What combinations of 'a' values lead to the loop seeds encountered above?
+    Here are a few lists found by searching through the sets of all a values that
+    meet the constraint sum(a)=m. The set of lists gets very large so I've stopped
+    at m&nbsp;=&nbsp;10.
+
+</p><p>
+
+    <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+      <tr>
+        <td>n </td>
+        <td>m</td>
+        <td>LS</td>
+        <td>loop</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">3</td>
+        <td class="code" align="right">5</td>
+        <td class="code" align="right">23</td>
+        <td class="code">[1, 2, 2]</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">3</td>
+        <td class="code" align="right">6</td>
+        <td class="code" align="right">37</td>
+        <td class="code">[2, 2, 2]</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">4</td>
+        <td class="code" align="right">7</td>
+        <td class="code" align="right">101</td>
+        <td class="code"> [1, 2, 2, 2]</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">4</td>
+        <td class="code" align="right">8</td>
+        <td class="code" align="right">175</td>
+        <td class="code">[2, 2, 2, 2]</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">5</td>
+        <td class="code" align="right">8</td>
+        <td class="code" align="right">319</td>
+        <td class="code">[1, 2, 1, 2, 2]</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">6</td>
+        <td class="code" align="right">10</td>
+        <td class="code" align="right">1357</td>
+        <td class="code">[1, 2, 2, 1, 2, 2]</td>
+      </tr>
+    </table>
+
+</p><p>
+
+    It seems likely that for a given n and m the highest loop seed will
+    be found by starting with a set of n ones and adding in the remaining m&minus;n values
+    as uniformly as possible across the list. Applying this algorithm is a lot
+    quicker than searching all the lists so we can easily try it for larger numbers.
+    Here are some results (LS<span class="subscript">obs</span> is the value obtained by testing all the loops,
+    LS<span class="subscript">post</span> is calculated from the postulated minimal loop)
+</p><p>
+    <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+      <tr>
+        <td>n </td>
+        <td>m</td>
+        <td>Minimal loop</td>
+        <td>LS<span class="subscript">obs</span></td>
+        <td>LS<span class="subscript">post</span></td>
+      </tr>
+      <tr>
+        <td class="code" align="right">3</td>
+        <td class="code" align="right">5</td>
+        <td class="code">[1, 2, 2]</td>
+        <td class="code" align="right">23</td>
+        <td class="code" align="right">23</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">4</td>
+        <td class="code" align="right">7</td>
+        <td class="code"> [1, 2, 2, 2]</td>
+        <td class="code" align="right">101</td>
+        <td class="code" align="right">101</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">5</td>
+        <td class="code" align="right">8</td>
+        <td class="code">[1, 2, 1, 2, 2]</td>
+        <td class="code" align="right">319</td>
+        <td class="code" align="right">319</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">6</td>
+        <td class="code" align="right">10</td>
+        <td class="code">[1, 2, 2, 1, 2, 2]</td>
+        <td class="code" align="right">1357</td>
+        <td class="code" align="right">1357</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">7</td>
+        <td class="code" align="right">12</td>
+        <td class="code"> [1, 2, 2, 1, 2, 2, 2]</td>
+        <td class="code" align="right">5095</td>
+        <td class="code" align="right">5095</td>
+      </tr>
+      <tr>
+        <td class="code" align="right">8</td>
+        <td class="code" align="right">13</td>
+        <td class="code"> [1, 2, 1, 2, 2, 1, 2, 2]</td>
+        <td class="code" align="right">14501</td>
+        <td class="code" align="right">14501</td>
+      </tr>
+    </table>
+</p><p>
+    So this method correctly predicts the largest loop seed for n values up
+    to 8. Let's see what it predicts for some larger numbers.
+</p><p>
+
+    <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+      <tr>
+        <td>n </td>
+        <td>m</td>
+        <td>Minimal loop</td>
+        <td>LS<span class="subscript">post</span></td>
+      </tr>
+
+        <tr><td class="code" align="right">9</td><td class="code" align="right">15</td><td class="code">[1, 2, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">60,191</td></tr>
+
+        <tr><td class="code" align="right">10</td><td class="code" align="right">16</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">159,181</td></tr>
+
+        <tr><td class="code" align="right">11</td><td class="code" align="right">18</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">579,943</td></tr>
+
+        <tr><td class="code" align="right">12</td><td class="code" align="right">20</td><td class="code">[1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">2,378,821</td></tr>
+
+        <tr><td class="code" align="right">13</td><td class="code" align="right">21</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">5,805,215</td></tr>
+
+        <tr><td class="code" align="right">14</td><td class="code" align="right">23</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">21,687,773</td></tr>
+
+        <tr><td class="code" align="right">15</td><td class="code" align="right">24</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">59,586,967</td></tr>
+
+        <tr><td class="code" align="right">16</td><td class="code" align="right">26</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">213,933,253</td></tr>
+
+        <tr><td class="code" align="right">17</td><td class="code" align="right">27</td><td class="code">[1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">548,440,271</td></tr>
+
+        <tr><td class="code" align="right">18</td><td class="code" align="right">29</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">1,994,724,077</td></tr>
+
+        <tr><td class="code" align="right">19</td><td class="code" align="right">31</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">7,319,701,703</td></tr>
+
+        <tr><td class="code" align="right">20</td><td class="code" align="right">32</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">19,831,564,885</td></tr>
+
+        <tr><td class="code" align="right">21</td><td class="code" align="right">34</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">68,498,816,767</td></tr>
+
+        <tr><td class="code" align="right">22</td><td class="code" align="right">35</td><td class="code">[1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">176,086,441,085</td></tr>
+
+        <tr><td class="code" align="right">23</td><td class="code" align="right">37</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">634,236,499,703</td></tr>
+
+        <tr><td class="code" align="right">24</td><td class="code" align="right">39</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">2,376,761,709,797</td></tr>
+
+        <tr><td class="code" align="right">25</td><td class="code" align="right">40</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">6,189,164,834,479</td></tr>
+
+        <tr><td class="code" align="right">26</td><td class="code" align="right">42</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">21,429,806,042,125</td></tr>
+
+        <tr><td class="code" align="right">27</td><td class="code" align="right">43</td><td class="code">[1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">53,749,761,723,047</td></tr>
+
+        <tr><td class="code" align="right">28</td><td class="code" align="right">45</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2]</td><td class="code" align="right">192,396,217,969,781</td></tr>
+
+        <tr><td class="code" align="right">29</td><td class="code" align="right">46</td><td class="code">[1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">490,121,922,519,007</td></tr>
+
+        <tr><td class="code" align="right">30</td><td class="code" align="right">48</td><td class="code">[1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2]</td><td class="code" align="right">1,854,711,264,038,941</td></tr>
+    </table>
+
+    </p><p>
+        These values haven't been verified using exhaustive searches.
+    </p>
+</div>
+
+<!-- Where to look for loops -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="Where to look for loops"></a>Where to look for loops</h2>
+
+<p>
+    Looking at the loop seeds (the smallest number in a loop) gives us a much
+    tighter constraint. If we take the set of loop seeds for a particular 'n' and find
+    the largest, we can see that these are much smaller than the largest loop
+    members. The following table shows how the two sets of
+    numbers compare (the ratios have been truncated to whole numbers).
+
+</p><p>
+
+    <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+
+        <tr>
+          <td>n</td><td>m</td><td>Largest seed</td><td>Max loop member</td><td>Ratio</td>
+        </tr>
+
+        <tr><td class="code" align="right">1</td><td class="code" align="right">2</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">1</td></tr>
+
+        <tr><td class="code" align="right">2</td><td class="code" align="right">4</td><td class="code" align="right">7</td><td class="code" align="right">11</td><td class="code" align="right">1</td></tr>
+
+        <tr><td class="code" align="right">3</td><td class="code" align="right">5</td><td class="code" align="right">23</td><td class="code" align="right">49</td><td class="code" align="right">2</td></tr>
+
+        <tr><td class="code" align="right">4</td><td class="code" align="right">7</td><td class="code" align="right">101</td><td class="code" align="right">331</td><td class="code" align="right">3</td></tr>
+
+        <tr><td class="code" align="right">5</td><td class="code" align="right">8</td><td class="code" align="right">319</td><td class="code" align="right">1,121</td><td class="code" align="right">3</td></tr>
+
+        <tr><td class="code" align="right">6</td><td class="code" align="right">10</td><td class="code" align="right">1,357</td><td class="code" align="right">6,995</td><td class="code" align="right">5</td></tr>
+
+        <tr><td class="code" align="right">7</td><td class="code" align="right">12</td><td class="code" align="right">5,095</td><td class="code" align="right">43,289</td><td class="code" align="right">8</td></tr>
+
+        <tr><td class="code" align="right">8</td><td class="code" align="right">13</td><td class="code" align="right">14,501</td><td class="code" align="right">133,963</td><td class="code" align="right">9</td></tr>
+
+        <tr><td class="code" align="right">9</td><td class="code" align="right">15</td><td class="code" align="right">60,191</td><td class="code" align="right">813,601</td><td class="code" align="right">13</td></tr>
+
+        <tr><td class="code" align="right">10</td><td class="code" align="right">16</td><td class="code" align="right">159,181</td><td class="code" align="right">2,473,571</td><td class="code" align="right">15</td></tr>
+
+        <tr><td class="code" align="right">11</td><td class="code" align="right">18</td><td class="code" align="right">579,943</td><td class="code" align="right">14,913,449</td><td class="code" align="right">25</td></tr>
+
+        <tr><td class="code" align="right">12</td><td class="code" align="right">20</td><td class="code" align="right">2,378,821</td><td class="code" align="right">89,827,835</td><td class="code" align="right">37</td></tr>
+
+        <tr><td class="code" align="right">13</td><td class="code" align="right">21</td><td class="code" align="right">5,805,215</td><td class="code" align="right">270,532,081</td><td class="code" align="right">46</td></tr>
+
+        <tr><td class="code" align="right">14</td><td class="code" align="right">23</td><td class="code" align="right">21,687,773</td><td class="code" align="right">1,625,792,467</td><td class="code" align="right">74</td></tr>
+
+        <tr><td class="code" align="right">15</td><td class="code" align="right">24</td><td class="code" align="right">59,586,967</td><td class="code" align="right">4,885,766,009</td><td class="code" align="right">81</td></tr>
+
+        <tr><td class="code" align="right">16</td><td class="code" align="right">26</td><td class="code" align="right">213,933,253</td><td class="code" align="right">29,333,801,579</td><td class="code" align="right">137</td></tr>
+
+        <tr><td class="code" align="right">17</td><td class="code" align="right">27</td><td class="code" align="right">548,440,271</td><td class="code" align="right">88,068,513,601</td><td class="code" align="right">160</td></tr>
+
+        <tr><td class="code" align="right">18</td><td class="code" align="right">29</td><td class="code" align="right">1,994,724,077</td><td class="code" align="right">528,550,376,899</td><td class="code" align="right">265</td></tr>
+
+        <tr><td class="code" align="right">19</td><td class="code" align="right">31</td><td class="code" align="right">7,319,701,703</td><td class="code" align="right">3,171,988,582,729</td><td class="code" align="right">433</td></tr>
+
+        <tr><td class="code" align="right">20</td><td class="code" align="right">32</td><td class="code" align="right">19,831,564,885</td><td class="code" align="right">9,518,113,231,835</td><td class="code" align="right">479</td></tr>
+
+        <tr><td class="code" align="right">21</td><td class="code" align="right">34</td><td class="code" align="right">68,498,816,767</td><td class="code" align="right">57,113,782,541,201</td><td class="code" align="right">833</td></tr>
+
+        <tr><td class="code" align="right">22</td><td class="code" align="right">35</td><td class="code" align="right">176,086,441,085</td><td class="code" align="right">171,358,527,492,787</td><td class="code" align="right">973</td></tr>
+
+        <tr><td class="code" align="right">23</td><td class="code" align="right">37</td><td class="code" align="right">634,236,499,703</td><td class="code" align="right">1,028,188,503,373,849</td><td class="code" align="right">1,621</td></tr>
+
+        <tr><td class="code" align="right">24</td><td class="code" align="right">39</td><td class="code" align="right">2,376,761,709,797</td><td class="code" align="right">6,169,311,754,971,211</td><td class="code" align="right">2,596</td></tr>
+
+        <tr><td class="code" align="right">25</td><td class="code" align="right">40</td><td class="code" align="right">6,189,164,834,479</td><td class="code" align="right">18,508,485,020,727,521</td><td class="code" align="right">2,990</td></tr>
+
+        <tr><td class="code" align="right">26</td><td class="code" align="right">42</td><td class="code" align="right">21,429,806,042,125</td><td class="code" align="right">111,052,261,859,011,235</td><td class="code" align="right">5,182</td></tr>
+
+        <tr><td class="code" align="right">27</td><td class="code" align="right">43</td><td class="code" align="right">53,749,761,723,047</td><td class="code" align="right">333,161,183,623,544,809</td><td class="code" align="right">6,198</td></tr>
+
+        <tr><td class="code" align="right">28</td><td class="code" align="right">45</td><td class="code" align="right">192,396,217,969,781</td><td class="code" align="right">1,998,977,068,329,828,283</td><td class="code" align="right">10,390</td></tr>
+
+        <tr><td class="code" align="right">29</td><td class="code" align="right">46</td><td class="code" align="right">490,121,922,519,007</td><td class="code" align="right">5,996,966,389,361,573,681</td><td class="code" align="right">12,236</td></tr>
+
+        <tr><td class="code" align="right">30</td><td class="code" align="right">48</td><td class="code" align="right">1,854,711,264,038,941</td><td class="code" align="right">35,981,870,443,280,432,531</td><td class="code" align="right">19,400</td></tr>
+    </table>
+
+</p><p>
+
+    So by the time we get to 30 we are already 4 orders of magnitude down on the
+    limit calculated using the largest value. The chart shows that this ratio
+    increases by about an order of magnitude for every 7 n values.
+</p><p>
+    <img src="images/minmax.gif" width="408" height="268">
+</p><p>
+    For n&nbsp;=&nbsp;82 we'd expect the ratio to be about 10<span class="superscript">12</span>, so
+    the largest value we'd need to test searching for loops would be around 1000.
+    The next table shows how the ratio LS/K varies with 'n' (using the predicted LS values).
+</p><p>
+    <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+        <tr>
+            <td>n</td><td>m</td><td>LS</td><td>K</td><td>LS/K</td>
+        </tr>
+        <tr><td class="code" align="right">1</td><td class="code" align="right">2</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">1</td></tr>
+
+        <tr><td class="code" align="right">2</td><td class="code" align="right">4</td><td class="code" align="right">7</td><td class="code" align="right">7</td><td class="code" align="right">1</td></tr>
+
+        <tr><td class="code" align="right">3</td><td class="code" align="right">5</td><td class="code" align="right">23</td><td class="code" align="right">5</td><td class="code" align="right">4</td></tr>
+
+        <tr><td class="code" align="right">4</td><td class="code" align="right">7</td><td class="code" align="right">101</td><td class="code" align="right">47</td><td class="code" align="right">2</td></tr>
+
+        <tr><td class="code" align="right">5</td><td class="code" align="right">8</td><td class="code" align="right">319</td><td class="code" align="right">13</td><td class="code" align="right">24</td></tr>
+
+        <tr><td class="code" align="right">6</td><td class="code" align="right">10</td><td class="code" align="right">1,357</td><td class="code" align="right">295</td><td class="code" align="right">4</td></tr>
+
+        <tr><td class="code" align="right">7</td><td class="code" align="right">12</td><td class="code" align="right">5,095</td><td class="code" align="right">1,909</td><td class="code" align="right">2</td></tr>
+
+        <tr><td class="code" align="right">8</td><td class="code" align="right">13</td><td class="code" align="right">14,501</td><td class="code" align="right">1,631</td><td class="code" align="right">8</td></tr>
+
+        <tr><td class="code" align="right">9</td><td class="code" align="right">15</td><td class="code" align="right">60,191</td><td class="code" align="right">13,085</td><td class="code" align="right">4</td></tr>
+
+        <tr><td class="code" align="right">10</td><td class="code" align="right">16</td><td class="code" align="right">159,181</td><td class="code" align="right">6,487</td><td class="code" align="right">24</td></tr>
+
+        <tr><td class="code" align="right">11</td><td class="code" align="right">18</td><td class="code" align="right">579,943</td><td class="code" align="right">84,997</td><td class="code" align="right">6</td></tr>
+
+        <tr><td class="code" align="right">12</td><td class="code" align="right">20</td><td class="code" align="right">2,378,821</td><td class="code" align="right">517,135</td><td class="code" align="right">4</td></tr>
+
+        <tr><td class="code" align="right">13</td><td class="code" align="right">21</td><td class="code" align="right">5,805,215</td><td class="code" align="right">502,829</td><td class="code" align="right">11</td></tr>
+
+        <tr><td class="code" align="right">14</td><td class="code" align="right">23</td><td class="code" align="right">21,687,773</td><td class="code" align="right">3,605,639</td><td class="code" align="right">6</td></tr>
+
+        <tr><td class="code" align="right">15</td><td class="code" align="right">24</td><td class="code" align="right">59,586,967</td><td class="code" align="right">2,428,309</td><td class="code" align="right">24</td></tr>
+
+        <tr><td class="code" align="right">16</td><td class="code" align="right">26</td><td class="code" align="right">213,933,253</td><td class="code" align="right">24,062,143</td><td class="code" align="right">8</td></tr>
+
+        <tr><td class="code" align="right">17</td><td class="code" align="right">27</td><td class="code" align="right">548,440,271</td><td class="code" align="right">5,077,565</td><td class="code" align="right">108</td></tr>
+
+        <tr><td class="code" align="right">18</td><td class="code" align="right">29</td><td class="code" align="right">1,994,724,077</td><td class="code" align="right">149,450,423</td><td class="code" align="right">13</td></tr>
+
+        <tr><td class="code" align="right">19</td><td class="code" align="right">31</td><td class="code" align="right">7,319,701,703</td><td class="code" align="right">985,222,181</td><td class="code" align="right">7</td></tr>
+
+        <tr><td class="code" align="right">20</td><td class="code" align="right">32</td><td class="code" align="right">19,831,564,885</td><td class="code" align="right">808,182,895</td><td class="code" align="right">24</td></tr>
+
+        <tr><td class="code" align="right">21</td><td class="code" align="right">34</td><td class="code" align="right">68,498,816,767</td><td class="code" align="right">6,719,515,981</td><td class="code" align="right">10</td></tr>
+
+        <tr><td class="code" align="right">22</td><td class="code" align="right">35</td><td class="code" align="right">176,086,441,085</td><td class="code" align="right">2,978,678,759</td><td class="code" align="right">59</td></tr>
+
+        <tr><td class="code" align="right">23</td><td class="code" align="right">37</td><td class="code" align="right">634,236,499,703</td><td class="code" align="right">43,295,774,645</td><td class="code" align="right">14</td></tr>
+
+        <tr><td class="code" align="right">24</td><td class="code" align="right">39</td><td class="code" align="right">2,376,761,709,797</td><td class="code" align="right">267,326,277,407</td><td class="code" align="right">8</td></tr>
+
+        <tr><td class="code" align="right">25</td><td class="code" align="right">40</td><td class="code" align="right">6,189,164,834,479</td><td class="code" align="right">252,223,018,333</td><td class="code" align="right">24</td></tr>
+
+        <tr><td class="code" align="right">26</td><td class="code" align="right">42</td><td class="code" align="right">21,429,806,042,125</td><td class="code" align="right">1,856,180,682,775</td><td class="code" align="right">11</td></tr>
+
+        <tr><td class="code" align="right">27</td><td class="code" align="right">43</td><td class="code" align="right">53,749,761,723,047</td><td class="code" align="right">1,170,495,537,221</td><td class="code" align="right">45</td></tr>
+
+        <tr><td class="code" align="right">28</td><td class="code" align="right">45</td><td class="code" align="right">192,396,217,969,781</td><td class="code" align="right">12,307,579,633,871</td><td class="code" align="right">15</td></tr>
+
+        <tr><td class="code" align="right">29</td><td class="code" align="right">46</td><td class="code" align="right">490,121,922,519,007</td><td class="code" align="right">1,738,366,812,781</td><td class="code" align="right">281</td></tr>
+
+        <tr><td class="code" align="right">30</td><td class="code" align="right">48</td><td class="code" align="right">1,854,711,264,038,941</td><td class="code" align="right">75,583,844,616,007</td><td class="code" align="right">24</td></tr>
+    </table>
+
+    </p><p>
+        Searching up to 281 will eliminate all possibility of loops with fewer than
+        79 members. The next table shows
+        some values from the region 80-90 (I've missed out the actual LS and K values as
+        they are rather large). Note the ratios are still pretty small, and that
+        the largest value we'd have to test to eliminate loops with fewer than 234 members would be 867.
+    </p><p>
+
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+
+            <tr>
+            <td>n</td><td>m</td><td>LS/K</td>
+            <td><a name="Predicted">Predicted</a></td>
+            </tr>
+            <tr><td class="code">81</td><td class="code">129</td><td class="code" align="right">45</td><td class="code" align="right">46</td></tr>
+
+            <tr><td class="code">82</td><td class="code">130</td><td class="code" align="right">867</td><td class="code" align="right">877</td></tr>
+
+            <tr><td class="code">83</td><td class="code">132</td><td class="code" align="right">64</td><td class="code" align="right">65</td></tr>
+
+            <tr><td class="code">84</td><td class="code">134</td><td class="code" align="right">33</td><td class="code" align="right">34</td></tr>
+
+            <tr><td class="code">85</td><td class="code">135</td><td class="code" align="right">108</td><td class="code" align="right">108</td></tr>
+
+            <tr><td class="code">86</td><td class="code">137</td><td class="code" align="right">43</td><td class="code" align="right">44</td></tr>
+
+            <tr><td class="code">87</td><td class="code">138</td><td class="code" align="right">281</td><td class="code" align="right">284</td></tr>
+
+            <tr><td class="code">88</td><td class="code">140</td><td class="code" align="right">59</td><td class="code" align="right">59</td></tr>
+
+            <tr><td class="code">89</td><td class="code">142</td><td class="code" align="right">32</td><td class="code" align="right">34</td></tr>
+
+            <tr><td class="code">90</td><td class="code">143</td><td class="code" align="right">88</td><td class="code" align="right">90</td></tr>
+        </table>
+
+    </p><p>
+        The &quot;predicted&quot; values are calculated using the equation
+    </p>
+
+    <div class="code in2 w5">
+        <p class="code">
+            LS/K&nbsp;= n * &#x221A;8 / (m&nbsp;-&nbsp;n&nbsp;*&nbsp;log(3)/log(2))
+        </p>
+    </div>
+
+    <p>
+        which is derived empirically from the next chart. The product of LS/K and
+        (m&minus;n * log(3)/log(2)) is nearly linear:
+    </p><p>
+        <img src="images/lsgraph.gif" width="442" height="322">
+    </p><p>
+        The gradient is about 0.35, which roughly 1/&#x221A;8, the constant I used to predict the LS/K
+        values in the <a href="#Predicted"> earlier table</a>.
+    </p><p>
+        (m - n * log(3)/log(2)) varies irregularly in the range 0 - 1. LS/K values will be at their largest
+        when it is close to 0.
+    </p><p>
+        The next chart shows the values of LS/K (predicted) out to n=1500. Note the bulk of
+        the values are close to the 0.35n line which forms the lower bound. However,
+        some of the outriders are significantly higher, here by up to a factor of 1000.
+    </p><p>
+        <img src="images/lsok_graph.gif" width="655" height="397">
+    </p><p>
+        Notable values are summarised in the next table, which covers n up to 100,000,000.
+    </p><p>
+
+        <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
+
+            <tr>
+              <td>n</td>
+              <td>m</td>
+              <td>m-n*log(3)/log(2)</td>
+              <td>n/&#x221A;8</td>
+              <td>LS/K (pred)</td>
+              <td>LS/K (calc)</td>
+            </tr>
+
+            <tr><td class="code" align="right">3</td><td class="code" align="right">5</td><td class="code" align="right">0.245112</td><td class="code" align="right">1.06</td><td class="code" align="right">4</td><td class="code" align="right">4</td></tr>
+
+            <tr><td class="code" align="right">5</td><td class="code" align="right">8</td><td class="code" align="right">0.075187</td><td class="code" align="right">1.77</td><td class="code" align="right">23</td><td class="code" align="right">24</td></tr>
+
+            <tr><td class="code" align="right">17</td><td class="code" align="right">27</td><td class="code" align="right">0.055637</td><td class="code" align="right">6.01</td><td class="code" align="right">108</td><td class="code" align="right">108</td></tr>
+
+            <tr><td class="code" align="right">29</td><td class="code" align="right">46</td><td class="code" align="right">0.036087</td><td class="code" align="right">10.25</td><td class="code" align="right">284</td><td class="code" align="right">281</td></tr>
+
+            <tr><td class="code" align="right">41</td><td class="code" align="right">65</td><td class="code" align="right">0.016537</td><td class="code" align="right">14.50</td><td class="code" align="right">876</td><td class="code" align="right">867</td></tr>
+
+            <tr><td class="code" align="right">94</td><td class="code" align="right">149</td><td class="code" align="right">0.013525</td><td class="code" align="right">33.23</td><td class="code" align="right">2,457</td><td class="code" align="right">2,419</td></tr>
+
+            <tr><td class="code" align="right">147</td><td class="code" align="right">233</td><td class="code" align="right">0.010512</td><td class="code" align="right">51.97</td><td class="code" align="right">4,943</td><td class="code" align="right">4,862</td></tr>
+
+            <tr><td class="code" align="right">200</td><td class="code" align="right">317</td><td class="code" align="right">0.007500</td><td class="code" align="right">70.71</td><td class="code" align="right">9,428</td><td class="code" align="right">9,266</td></tr>
+
+            <tr><td class="code" align="right">253</td><td class="code" align="right">401</td><td class="code" align="right">0.004487</td><td class="code" align="right">89.45</td><td class="code" align="right">19,933</td><td class="code" align="right">19,584</td></tr>
+
+            <tr><td class="code" align="right">306</td><td class="code" align="right">485</td><td class="code" align="right">0.001475</td><td class="code" align="right">108.19</td><td class="code" align="right">73,358</td><td class="code" align="right">72,058</td></tr>
+
+            <tr><td class="code" align="right">971</td><td class="code" align="right">1,539</td><td class="code" align="right">0.001412</td><td class="code" align="right">343.30</td><td class="code" align="right">243,165</td><td class="code" align="right">238,670</td></tr>
+
+            <tr><td class="code" align="right">1,636</td><td class="code" align="right">2,593</td><td class="code" align="right">0.001349</td><td class="code" align="right">578.41</td><td class="code" align="right">428,829</td><td class="code" align="right">420,841</td></tr>
+
+            <tr><td class="code" align="right">2,301</td><td class="code" align="right">3,647</td><td class="code" align="right">0.001286</td><td class="code" align="right">813.53</td><td class="code" align="right">632,680</td><td class="code" align="right">620,858</td></tr>
+
+            <tr><td class="code" align="right">2,966</td><td class="code" align="right">4,701</td><td class="code" align="right">0.001223</td><td class="code" align="right">1048.64</td><td class="code" align="right">857,529</td><td class="code" align="right">841,477</td></tr>
+
+            <tr><td class="code" align="right">3,631</td><td class="code" align="right">5,755</td><td class="code" align="right">0.001160</td><td class="code" align="right">1283.75</td><td class="code" align="right">1,106,796</td><td class="code" align="right">1,086,054</td></tr>
+
+            <tr><td class="code" align="right">4,296</td><td class="code" align="right">6,809</td><td class="code" align="right">0.001097</td><td class="code" align="right">1518.87</td><td class="code" align="right">1,384,686</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">4,961</td><td class="code" align="right">7,863</td><td class="code" align="right">0.001034</td><td class="code" align="right">1753.98</td><td class="code" align="right">1,696,431</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">5,626</td><td class="code" align="right">8,917</td><td class="code" align="right">0.000971</td><td class="code" align="right">1989.09</td><td class="code" align="right">2,048,618</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">6,291</td><td class="code" align="right">9,971</td><td class="code" align="right">0.000908</td><td class="code" align="right">2224.20</td><td class="code" align="right">2,449,663</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">6,956</td><td class="code" align="right">11,025</td><td class="code" align="right">0.000845</td><td class="code" align="right">2459.32</td><td class="code" align="right">2,910,491</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">7,621</td><td class="code" align="right">12,079</td><td class="code" align="right">0.000782</td><td class="code" align="right">2694.43</td><td class="code" align="right">3,445,545</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">8,286</td><td class="code" align="right">13,133</td><td class="code" align="right">0.000719</td><td class="code" align="right">2929.54</td><td class="code" align="right">4,074,330</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">8,951</td><td class="code" align="right">14,187</td><td class="code" align="right">0.000656</td><td class="code" align="right">3164.66</td><td class="code" align="right">4,823,840</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">9,616</td><td class="code" align="right">15,241</td><td class="code" align="right">0.000593</td><td class="code" align="right">3399.77</td><td class="code" align="right">5,732,537</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">10,281</td><td class="code" align="right">16,295</td><td class="code" align="right">0.000530</td><td class="code" align="right">3634.88</td><td class="code" align="right">6,857,158</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">10,946</td><td class="code" align="right">17,349</td><td class="code" align="right">0.000467</td><td class="code" align="right">3870.00</td><td class="code" align="right">8,285,043</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">11,611</td><td class="code" align="right">18,403</td><td class="code" align="right">0.000404</td><td class="code" align="right">4105.11</td><td class="code" align="right">10,157,974</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">12,276</td><td class="code" align="right">19,457</td><td class="code" align="right">0.000341</td><td class="code" align="right">4340.22</td><td class="code" align="right">12,722,434</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">12,941</td><td class="code" align="right">20,511</td><td class="code" align="right">0.000278</td><td class="code" align="right">4575.33</td><td class="code" align="right">16,448,126</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">13,606</td><td class="code" align="right">21,565</td><td class="code" align="right">0.000215</td><td class="code" align="right">4810.45</td><td class="code" align="right">22,354,632</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">14,271</td><td class="code" align="right">22,619</td><td class="code" align="right">0.000152</td><td class="code" align="right">5045.56</td><td class="code" align="right">33,149,032</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">14,936</td><td class="code" align="right">23,673</td><td align="right" class="code">0.0000892</td><td class="code" align="right">5280.67</td><td class="code" align="right">59,181,261</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">15,601</td><td class="code" align="right">24,727</td><td align="right" class="code">0.0000262</td><td class="code" align="right">5515.79</td><td class="code" align="right">210,131,286</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">47,468</td><td class="code" align="right">75,235</td><td align="right" class="code">0.0000158</td><td class="code" align="right">16782.47</td><td class="code" align="right">1,064,327,305</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">79,335</td><td class="code" align="right">125,743</td><td align="right" class="code">0.00000529</td><td class="code" align="right">28049.16</td><td class="code" align="right">5,305,246,769</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td align="right" class="code">190,537</td><td align="right" class="code">301,994</td><td align="right" class="code">0.0000000930</td><td align="right" class="code">67365.00</td><td align="right" class="code">724,231,494,698</td><td align="right" class="code">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">10,781,274</td><td class="code" align="right">17,087,915</td><td class="code" align="right">0.0000000149</td><td class="code" align="right">3811755.98</td><td class="code" align="right">255,802,613,502,959</td><td class="code" align="right">&nbsp;</td></tr>
+
+            <tr><td class="code" align="right">75,278,381</td><td class="code" align="right">119,313,411</td><td class="code" align="right">0.0000000149</td><td class="code" align="right">26614926.84</td><td class="code" align="right">1,786,097,505,737,402</td><td class="code" align="right">&nbsp;</td></tr>
+        </table>
+
+    </p><p>
+
+        The linear relationship appears to hold for at least n values up to 3600, but
+        using 1/&#x221A;8 as the constant of proportionality appears to overestimate the
+        values by about 2%. 0.36 would be closer. This doesn't really effect the result
+        though. To find loops given that the smallest value must be greater than 10<span class="superscript">15</span>
+        we need to search loops with at least 194 million members.
+
+    </p><p>
+
+        I stopped calculating LS/K at n&nbsp;=&nbsp;3631 as the K value has 1730 digits.
+     </p>
+</div>
+
+
+
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

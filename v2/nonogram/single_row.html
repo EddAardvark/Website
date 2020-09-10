@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Interactive nonogram javascript">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="nonorow.js"> </script>
+<script src="nonodraw.js"> </script>
+
+<title>A Nonogram Row</title>
+
+<style>
+
+</style>
+
+<script>
+
+    //-------------------------------------------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------------------------------------------
+
+    var row;
+    var animator;
+    var max_cell_size = 24;
+    var max_possibilities = 200;
+    var cell_size = 24;
+
+    //-------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+        pieces_text.value = "1,2,3";
+        length_text.value = "9";
+        animator = new Animator (ShuffleRow, 200);
+        draw_mode.value = "draw_dr";
+
+        SelectView ();
+    }
+    //-------------------------------------------------------------------------------------------------
+    TextUpdated = function ()
+    {
+        draw_mode.value = "choose";
+    }
+    //-------------------------------------------------------------------------------------------------
+    SelectView = function ()
+    {
+        mode = draw_mode.value;
+        scratch.innerHTML = "";
+        CreateRow ();
+
+        if (mode == "draw_an")
+        {
+            StartAnimation();
+            return;
+        }
+
+        StopAnimation();
+
+        if (mode == "draw_dr")
+        {
+            Draw (row);
+            return;
+        }
+
+        if (mode == "draw_all")
+        {
+            ShowPosibilities (row);
+            return;
+        }
+
+        if (mode == "draw_prob")
+        {
+            ShowProbabilities (row);
+            return;
+        }
+
+        if (mode == "draw_fixed")
+        {
+            ShowFixed (row);
+            return;
+        }
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    Draw = function(row)
+    {
+        var drawer = new NonoDraw (1, row.length, cell_size);
+        drawer.DrawCells (row.cells, "white", "midnightblue", "darkgray", "black");
+        drawer.canvas.Render (canvasImg);
+    }
+    //-------------------------------------------------------------------------------------------------
+    CreateRow = function ()
+    {
+        try
+        {
+            var pieces = pieces_text.value;
+            var length = length_text.value;
+            row = NonoRow.FromString (pieces, length);
+
+            cell_size = Math.min (Math.floor (800 / row.length), max_cell_size);
+        }
+        catch (err)
+        {
+            alert (err);
+        }
+    }
+    //-------------------------------------------------------------------------------------------------
+    StartAnimation = function () { if (! animator.IsRunning ()) { animator.Start (); } }
+    StopAnimation = function () { if (animator.IsRunning ()) { animator.Stop (); } }
+    //-------------------------------------------------------------------------------------------------
+    ShuffleRow = function ()
+    {
+        if (row != null)
+        {
+            row.Shuffle ();
+            Draw (row);
+        }
+    }
+    //-------------------------------------------------------------------------------------------------
+    ShowPosibilities = function ()
+    {
+        var possibilities = row.GetPossiblePositions ();
+        var num_cols = possibilities[0].length;
+        var num_rows = possibilities.length;
+        var text = "<p>There are " + possibilities.length + " posibilities.";
+
+        if (num_rows > max_possibilities)
+        {
+            possibilities = possibilities.slice (0, max_possibilities);
+            num_rows = max_possibilities;
+            text += " Display limited to the first " + max_possibilities + " entries.";
+        }
+        text += "</p>";
+
+        var drawer = new NonoDraw (num_rows, num_cols, cell_size);
+
+        drawer.DrawRows (possibilities);
+        drawer.canvas.Render (canvasImg);
+
+        scratch.innerHTML = text;
+    }
+    ShowProbabilities = function ()
+    {
+        var possibilities = row.GetPossiblePositions ();
+        var num_cols = possibilities[0].length;
+        var num_rows = possibilities.length;
+        var sums = new Array (num_cols);
+
+        for (var i = 0 ; i < num_cols ; ++i)
+        {
+            sums [i] = 0;
+        }
+
+        text += "<p>";
+        for (var idx in possibilities)
+        {
+            for (var i = 0 ; i < num_cols ; ++i)
+            {
+                sums [i] += possibilities[idx].cells[i];
+            }
+        }
+
+        for (var i = 0 ; i < num_cols ; ++i)
+        {
+            sums [i] /= num_rows;
+        }
+
+        var text = "<p>There are " + possibilities.length + " permutations.</p>";
+        scratch.innerHTML = text;
+
+        var drawer = new NonoDraw (1, sums.length, cell_size);
+
+        drawer.DrawProbabilities (sums);
+        drawer.canvas.Render (canvasImg);
+    }
+    ShowFixed = function (row)
+    {
+        var fixed = row.GetFixedCells ();
+        var drawer = new NonoDraw (1, fixed.length, cell_size);
+        drawer.DrawCells (fixed, "white", "black", "darkgray", "black");
+        drawer.canvas.Render (canvasImg);
+    }
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart ()">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;height:260px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(NONOGRAM_HOMEPAGE)" style="height:260px;">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/nono_icon.png" alt="Banner Picture" title="Nonogram Index">
+        </p><p style="max-width: 420px;" >
+             Row (or column) in a Nonogram
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px; height:260px;" class="banner">
+        <script"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+   </div>
+
+<!-- Main content -->
+
+<div class="in2 box w8 float">
+
+<h2>Nonogram Row</h2>
+<p>
+    Enter a row definition;
+    Pieces: <input type="text" id="pieces_text" size="12" onchange="TextUpdated();">
+    Total Length: <input type="text" id="length_text" size="6" onchange="TextUpdated();">
+
+    Show:  <select id="draw_mode" onchange="SelectView();">
+                <option value="choose" hidden>Choose...</option>
+                <option value="draw_dr">Single Row</option>
+                <option value="draw_an">Animated single row</option>
+                <option value="draw_all">All arrangements</option>
+                <option value="draw_prob">Probability density</option>
+                <option value="draw_fixed">Fixed points</option>
+            </select>
+
+</p><p>
+
+    <img id="canvasImg" class="noborder" width="800" height="600">
+</p><p>
+
+    <div id="scratch"> </div>
+
+</p>
+</div>
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2018 <p> </td>
+
+
+<script>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script>
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

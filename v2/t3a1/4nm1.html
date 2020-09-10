@@ -1,0 +1,522 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (The 4n-1 Modification) </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+
+<script>
+
+    // Controls
+
+    var number1_input;
+    var number2_input;
+    var number3_input;
+    var number4_input;
+    var result1_paragraph;
+    var result2_paragraph;
+    var result3_paragraph;
+    var result4_paragraph;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+
+        number1_input = document.getElementById("number1");
+        number2_input = document.getElementById("number2");
+        number3_input = document.getElementById("number3");
+        number4_input = document.getElementById("number4");
+        result1_paragraph = document.getElementById("result1");
+        result2_paragraph = document.getElementById("result2");
+        result3_paragraph = document.getElementById("result3");
+        result4_paragraph = document.getElementById("result4");
+
+        number1_input.value = 11;
+        number2_input.value = 39;
+        number3_input.value = 27;
+        number4_input.value = 11;
+
+        Get4nPredecessors();
+        Do4nBinary();
+        Do4nTable();
+        DrawOdd4Sequence();
+        Make4nGlideSequence();
+    }
+
+    Get4nPredecessors = function ()
+    {
+        var x = parseInt (number1_input.value);
+
+        if (x != 0)
+        {
+            var seq = T3A1.Get4nPredecessors (x);
+            result1_paragraph.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+    DrawOdd4Sequence = function ()
+    {
+        var x = parseInt (number3_input.value);
+
+        if (x != 0)
+        {
+            var seq = T3A1.MakeOdd4Sequence (x);
+            result3_paragraph.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+    Make4nGlideSequence = function ()
+    {
+        var x = parseInt (number2_input.value);
+
+        if (x != 0)
+        {
+            var seq = T3A1.Make4nGlideSequence (x);
+            result2_paragraph.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+    Do4nBinary = function ()
+    {
+        var x = parseInt (number4_input.value);
+
+        if (x != 0)
+        {
+            var binary = T3A1.ToBinary (x);
+            var seq = T3A1.Binary4n (binary);
+            var text = "Binary: " + T3A1.SequenceToText (binary.reverse());
+
+            text += ", Value = " + seq [0];
+            text += ", Residue = " + seq [1];
+            result4_paragraph.innerHTML = text;
+        }
+    }
+
+    LineIn4nTable = function (binary)
+    {
+        var seq = T3A1.Binary4n (binary);
+        var text = "";
+
+        text += "<tr><td>" + T3A1.FromBinary (binary);
+        text += "</td><td>" + T3A1.SequenceToText (binary.reverse());
+        text += "</td><td>" + seq[0];
+        text += "</td><td>" + seq[1];
+        text += "</td></tr>";
+
+        return text;
+    }
+    Do4nTable = function ()
+    {
+        var x = parseInt (number4_input.value);
+
+        if (x != 0)
+        {
+            var text = "<table><tr><th>Seed</th><th>Binary</th><th>Value</th><th>residue</th></tr>";
+            var start = T3A1.ToBinary (x);
+            var binary = [].concat (start);
+
+            text += LineIn4nTable (binary);
+
+            for (i = 0 ; i < 128 ; ++i)
+            {
+                var offset = T3A1.ToBinary (i);
+                var binary = offset.concat (start);
+
+                text += LineIn4nTable (binary);
+            }
+            text += "</table>";
+            result4_paragraph.innerHTML = text;
+        }
+    }
+
+    </script>
+</head>
+
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+            The 4n&minus;1 Modification
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w7 float">
+
+        <h2> Contents </h2>
+
+        <ol class="in4">
+          <li><a href="#Introduction"> Introduction</a></li>
+          <li><a href="#reverse"> The Reverse Tree</a></li>
+          <li><a href="#forward"> The Forward Tree</a></li>
+          <li><a href="#glides"> Glide Structure </a></li>
+          <li><a href="#records"> Glide Records </a></li>
+          <li><a href="#larger"> Larger View of the Uncondensed Tree</a></li>
+          <li><a href="#compo"> Comparison of the condensed and Uncondensed Trees</a></li>
+
+        </ol>
+
+    </div>
+
+    <div class="in2 box w7 float">
+
+        <h2><a name="Introduction">Introduction</a></h2>
+
+        <p>
+            We have seen <a href="index.html"> earlier</a> how the 3x+1 tree can be compressed into a tree containing only odd
+            numbers. This page describes a further modification that retains all the odd numbers but aranges them into a simpler
+            tree where each node has only one or two precursors.
+        <p>
+            In the 3x+1 transform we notice that all the all
+            the predecessors of a number form a series, where each is four times the
+            previous one, plus one. Redirecting the arrows in the tree so that the
+            decent follows this path rather than going directly to the next odd number
+            transforms the tree on the left to the one on the right.
+        <p>
+            <table border="0" cellpadding="4" cellspacing="0">
+              <tr>
+                <td><img src="images/oddtree.gif"></td>
+                <td><img src="images/oddtree_4n.gif"></td>
+              </tr>
+            </table>
+    </div>
+
+    <div class="in2 box w7 float">
+
+        <h2><a name="reverse"> The Reverse Tree </a></h2>
+
+        <p>
+
+            In this new tree every node has only one or two precursors, so it is possible to calculate a complete tree
+            for any finite number of iterations. This image shows the first 7 rows of the reverse tree anchored at 1.
+        </p><p>
+
+            <img src="images/ftree5.png">
+
+        </p><p>
+            The colour scheme has been expanded to colour values of the form 8n+5 in yellow.
+            To constuct the reverse tree we start at the root and then calculate the predecessors using the algorithm
+            in the "Get4nPredecessors" function in the <a href="t3a1.js" target="_blank">script</a> attached to this page.
+        </p><p>
+
+            Try it: <input type="text" id="number1" size="12">
+                                <button onclick="Get4nPredecessors();"> Show </button>
+        </p><p>
+
+            <div class="code w5 in2">
+                <p class="code" id="result1"> &nbsp; <p>
+            </div>
+
+        </p><p>
+
+            Every value 'x' has a predecessors of the forn 4x+1. In addition, values of the form 6n+1 and 6n+5 have a
+            second predecessor, (4x&minus;1)/3 or (2x&minus;1)/3 respectively. So all values have a
+            yellow predecessors and 2/3rds have a red, green or blue one.
+        </p><p>
+            Although yellow values only form 25% of the set of odd integers they will occupy roughly 60% of
+            each row in this tree.
+        </p><p>
+            Because there are only two routes the tree can take at each step we can map the options onto the binary digits
+            0 and 1. The choice is arbitrary, but I'm choosing to have '0' represent the (2x&minus;1)/3 and (4x&minus;1)/3
+            options and 1 represent the 4n+1 option. You can see how integers map to values in the 4n+1 tree using these controls:
+        </p><p>
+            <input type="text" id="number4" size="12">
+            <button onclick="Do4nBinary();"> Show </button>
+            <button onclick="Do4nTable();"> Create Table </button>
+        </p><p>
+
+            <div class="code w5 in2">
+                <p class="code" id="result4"> &nbsp; <p>
+            </div>
+
+        </p><p>
+            If you use the table option you will see that most values map to 0.
+        </p>
+    </div>
+
+    <div class="in2 box w7 float">
+
+        <h2><a name="forward">Forward Tree</a></h2>
+
+        <p>
+        <table>
+         <tr>
+          <td>
+           <img src="images/fnext.png">
+          </td>
+          <td>
+           <p>
+            The forward calculation is implemented in the "NextOdd4" function of the attached
+            <a href="t3a1.js" target="_blank">script</a>. We can use this to generate the sequence
+            for any starting number.
+        </p><p>
+
+                <input type="text" id="number3" size="12"> <button onclick="DrawOdd4Sequence();"> Show </button>
+        </p><p>
+
+                <div class="code w4 in2">
+                    <p class="code" id="result3"> &nbsp; <p>
+                </div>
+        </p><p>
+
+            If you start with 27 you can generate the longest sequence shown in the image
+            on the left. The branches can be added using the seeds 9, 21 and 25. Combining all these series
+            generates the tree which contains all the odd numbers up to 31. 33, the smallest number missing extends the branch
+            starting at 25, try it in the calculator above.
+        </p><p>
+            This tree is 49 rows deep and contains only 10 yellow cells out of 59.
+        </p><p>
+            So it seems that forward trees are disproportionately short of yellow cells while reverse trees
+            have an excess.
+        </p>
+          </td>
+         </tr>
+        </table>
+
+    </div>
+
+    <div class="in2 box w7 float">
+
+    <h2><a name="glides"> Glide Structure </a></h2>
+
+        <p>
+         The images below compares the glide structures calulated using the standard 3x+1 equation
+         and this 4n&minus;1 alternative.
+
+         <div align="center">
+          <table>
+           <tr>
+            <td><img src="images/struct1_39.png"></td>
+            <td><img src="images/fglide.png"> </td>
+           </tr>
+
+           <tr>
+            <th> 3x+1 Glide Tree </th>
+            <th> 4n&minus;1 Glide Tree </th>
+           </tr>
+          </table>
+         </div>
+        </p><p>
+         The two trees are different because the (x&minus;1)/4 step interrupts some potential glides, for instance,
+         the 15 glide in 3x+1 looks like [15, 46, 23, 70, 35, 106, 53, 160, 80, 40, 20, 10],
+         which translates to 15&#x2192;5 when we ignore the even numbers.
+         In the 4n&minus;1 scheme  53 is followed by 13 (rather than 160), so the glide becomes 15&#x2192;13.
+        </p><p>
+         As we saw above thew new equation anchors an infinite sequence of numbers of the form 8n+5 to every
+         other number, so we can condense these out the same was as we did for the even numbers earlier. Now
+         the glide tree looks like this.
+        </p><p>
+         <div align="center">
+          <table>
+           <tr>
+            <td> <img src="images/cfglide.png"> </td>
+           </tr>
+
+           <tr>
+            <th> Condensed 4n&minus;1 Glide Tree </th>
+           </tr>
+          </table>
+         </div>
+
+        </p><p>
+            All the nodes that previously converged on 13 now converge on 3. You can construct your own glides here:
+        </p><p>
+
+            <input type="text" id="number2" size="12"> <button onclick="Make4nGlideSequence();"> Show </button>
+        </p><p>
+
+            <div class="code w5 in2">
+                <p class="code" id="result2"> &nbsp; <p>
+            </div>
+        </p>
+
+    </div>
+
+    <div class="in2 box w7 float">
+
+        <h2><a name="records"> Glide Records </a></h2>
+
+        <p>
+            This tabls shows glide records, based on the length, each row in the table shows the longest glide
+            found searching all the starting numbers up to the value in the start column. Length is the number
+            of iterations required to get from "Start" to "End". You can check these using the glide calculator on
+            the <a href="observations.html#s4"> observations page</a>.
+        </p><p>
+
+
+        <div class="code w5 in2">
+        <pre class="code">
+ Length      Start         End
+
+      2          1 &#x2192;         1
+      3          3 &#x2192;         1
+      5          7 &#x2192;         3
+     42         27 &#x2192;        15
+     60        703 &#x2192;       209
+     74      10087 &#x2192;      9111
+     97      35655 &#x2192;     19603
+    120     270271 &#x2192;    107221
+    123     362343 &#x2192;    107811
+    131     667375 &#x2192;    282729
+    133    1027431 &#x2192;    413159
+    170    1126015 &#x2192;    523397
+    175    8088063 &#x2192;   4287153
+    213   13421671 &#x2192;  12335167
+    217   26716671 &#x2192;  17480277
+    228   56924955 &#x2192;  26515279
+    266   63728127 &#x2192;  33014059
+        </pre></div>
+
+        </p><p>
+        This second tabls shows the glide records obtained using the condensed algorithm. At least for these first
+        few rows the starting values are the same. The lengths are shorter and some of the end values are smaller
+        because the 8n+5 values have been "condensed" out.
+
+
+        <div class="code w5 in2">
+        <pre class="code">
+ Length      Start         End
+
+      2          1 &#x2192;         1
+      4          7 &#x2192;         3
+     37         27 &#x2192;        15
+     51        703 &#x2192;       209
+     64      10087 &#x2192;      9111
+     85      35655 &#x2192;     19603
+    103     270271 &#x2192;      1675
+    104     362343 &#x2192;    107811
+    105     401151 &#x2192;     44759
+    110     667375 &#x2192;    282729
+    115    1027431 &#x2192;    413159
+    141    1126015 &#x2192;    130849
+    155    8088063 &#x2192;   4287153
+    182   13421671 &#x2192;  12335167
+    188   26716671 &#x2192;    273129
+    194   56924955 &#x2192;  26515279
+    237   63728127 &#x2192;  33014059
+        </pre></div>
+        </p>
+    </div>
+
+    <div class="in2 box w7 float">
+
+        <h2> <a name="larger"> Larger view of the uncondensed tree </a> </h2>
+
+        <div class="margins">
+            <p> Here is the complete tree extended to 11 rows. I include this to demonstrate excess of
+            yellow cells in the tree. One of the strange properties of infinite sets is that you can have
+            apparant paradoxes like this where although only 25% of the nodes are yellow, any finite
+            fragment of the tree (other than the very smallest) will contain about 60%.
+
+        </p><p>
+                <div align="center">
+                   <a href="images/pt9.png">
+                        <img src="images/pt9.png" width="640">
+                    </a>
+                </div>
+            </div>
+        </p>
+
+    </div>
+
+    <div class="in2 box w7 float">
+
+        <h2> <a name="compo"> Comparison of the condensed and Uncondensed Trees </a> </h2>
+
+        <p>
+         These two images compare the uncondensed 4n&minus;1 tree for odd numbers up to 999 with
+         the equivalent condensed version, where the 8n-5 numbers are omitted.
+
+        </p><p>
+          <div class="margins">
+            <div align="center">
+              <table>
+               <tr>
+                <td><img src="images/mini_uctree.png"></td>
+                <td style="vertical-align: middle; font-size: large;"> &#x2192; </td>
+                <td><img src="images/mini_ctree.png"> </td>
+               </tr>
+
+               <tr>
+                <th> Uncondensed </th>
+                <th> &nbsp; </th>
+                <th> Condensed </th>
+               </tr>
+              </table>
+             </div>
+         </div>
+        </p><p>
+
+    </div>
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2016 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

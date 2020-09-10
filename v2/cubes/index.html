@@ -1,0 +1,280 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Cubes">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="../js_library/event_parser.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/ui_value.js"> </script>
+<script src="../js_library/vlint.js"> </script>
+<script src="big_cube.js"> </script>
+<script src="cube_walker.js"> </script>
+<script src="cube_root.js"> </script>
+<script src="fractional_coverage.js"> </script>
+<script src="cubes.js"> </script>
+
+<title> Cube Sums </title>
+
+
+<script>
+
+    var controller;
+    var event_handler;
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        CubeRoot.Initialise ();
+        VLInt.Initialise ();
+        FractionalCoverage.Initialise (inter_depth);
+        
+        links_go_here.innerHTML = MakeButtons ();
+
+        controller = new CubeController ();
+        controller.Initialise();
+        controller.Show();
+    }
+
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+	<div style="margin: auto; widtd: 1024px;">
+		<button style="widtd: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+			<p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+			<p> <strong>Home page</strong>
+		</button>
+
+		<button class="banner">
+			<h1> Cubes</h1>
+		</button>
+
+		 <!-- Ads -->
+
+	</div>
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->
+
+    <div class="in2 box w10">
+    
+    <!-- Shows the vicinity as a 3D projection (sort of) -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> Cubes </h1>
+            <p>
+            Cubes in the vicinity of <span id="current_location"> &nbsp; </span>
+            </p>
+            
+            <p id="location_table">&nbsp;</p>
+            </p>
+        </div>
+	
+    <!-- Shows the vicinity as a list of coordinates and values -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> List </h1>
+            
+            <p id="neighbour_list">&nbsp;</p>
+            </p>
+        </div>
+	
+    <!-- Shows the vicinity as a list of coordinates and values -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> Controls </h1>
+            <p>
+            <table>
+              <tr>
+                  <td><button type="button" onclick="controller.DecrementX ();" title="increment X"> &#x25c1; </button></td>
+                  <td> X </td>
+                  <td><button type="button" onclick="controller.IncrementX ();" title="decrement X"> &#x25b7; </button></td>
+              </tr>
+              <tr>
+                  <td><button type="button" onclick="controller.DecrementY ();" title="increment Y"> &#x25c1; </button></td>
+                  <td> Y </td>
+                  <td><button type="button" onclick="controller.IncrementY ();" title="decrement Y"> &#x25b7; </button></td>
+              </tr>
+              <tr>
+                  <td><button type="button" onclick="controller.DecrementZ ();" title="increment Z"> &#x25c1; </button></td>
+                  <td> Z </td>
+                  <td><button type="button" onclick="controller.IncrementZ ();" title="decrement Z"> &#x25b7; </button></td>
+              </tr>
+            </table>
+            </p>
+        </div>
+        
+	<!-- Cube roots -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> Cube roots </h1>
+            <p>
+            This section finds integer approximations to cube roots.
+            <p>
+            <table>
+              <tr><td> Target: </td><td> <input type="text" maxlengtd="12" id="cr_target" size="12"></td><tr>
+              <tr><td> Guess: </td><td> <input type="text" maxlengtd="12" id="cr_a" size="12"> / <input type="text" maxlengtd="12" id="cr_b" size="12"></td><tr>
+              <tr><td> Iterations: </td><td> <input type="text" maxlengtd="12" id="cr_it" size="12"> </td><tr>
+              <tr><td> <button type="button" class="clickable" onclick="controller.CalculateCubeRoot();" title="Calculate"> Calculate </button></td><td>&nbsp;</td><tr>
+            </table>
+            
+            <div class="scroll">
+                <p id="cube_roots">&nbsp;</p>
+            </div>
+            </p>
+        </div>
+
+	<!-- fractional coverage -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> Fractional Interpolation </h1>
+          
+            <p>
+            If we can find two points (p1 and p2) on opposite sides of the surface
+            w&nbsp;&equals;&nbsp;x<span class="superscript">3</span>&nbsp;&plus;&nbsp;y<span class="superscript">3</span>&nbsp;&minus;&nbsp;z<span class="superscript">3</span>&nbsp;&equals;&nbsp;0
+            we can look for intermediate points in the interval that provide better solutions. If we assume that the function is linear
+            along the vector p1&rarr;p2 then the solution for w = 0 will be at 
+            p1&nbsp;&plus;&nbsp;w1&nbsp;&times;&nbsp;p2&nbsp;/&nbsp;(w2&minus;w1).
+            If w really was linear over this range then this would be an exact solution for 
+            w&nbsp;&equals;&nbsp;0, which, from Fermat's theorum we know is impossible.
+            <p>
+            If a&nbsp;/&nbsp;b is a good approximation for w1&nbsp;/&nbsp;(w2&minus;w1) then (bx,&nbsp;by,&nbsp;bz) could be a good candidate for a low integer value of w.
+            It seems that to a first approximation we need
+            <p class="code">
+            |a / b &minus; w1 &times; p2 / (w2&minus;w1)| &lt; 1 / b<span class="superscript">3</span>.
+            </p><p>
+            For b&nbsp;&equals;&nbsp;2 we get the range 1/2&nbsp;&plusmn;&nbsp;1/16 (0.4375&nbsp;&rarr;&nbsp;0.5625). For b&nbsp;&equals;&nbsp;3 there are two intervals:
+            0.3148&nbsp;&rarr;&nbsp;0.3519 and 0.6481&nbsp;&rarr;&nbsp;0.6852).
+            
+            The sums for each b value are (b&minus;1)/b<span class="superscript">3</span> so the total is
+            <pre>
+            <p class="code">
+total = &Sigma;(b&minus;1)/b<span class="superscript">3</span>
+      = &Sigma;1/b<span class="superscript">2</span> &minus; &Sigma;1/b<span class="superscript">3</span>
+      = &pi;<span class="superscript">2</span>/6 &minus; 1.2021&hellip;
+      &cong; 0.4428
+            </p></pre><p>
+            about 0.4428. So naively, if we have two good 
+            values we have a 44% chance of being able to find a better one.
+            You can use the controls below to generate a table showing all the intervals up to a given depth. Click on "Full table".
+            </p><p>
+            Depth: <input type="text" maxlength="12" id="inter_depth" size="12">
+                          <button type="button" class="clickable" onclick="FractionalCoverage.DrawFullTable (inter_depth, inter_table);" title="Calculate"> Full table </button>
+                          <button type="button" class="clickable" onclick="FractionalCoverage.DrawReducedTable (inter_depth, inter_table);" title="Calculate"> Reduced table </button>
+                          <button type="button" class="clickable" onclick="FractionalCoverage.DrawOverlaps (inter_depth, overlap_map, overlap_map.width, overlap_map.height);" title="Calculate"> Overlaps </button>
+            
+            <div class="scroll">
+            
+                <p id="inter_table">&nbsp;</p>               
+            
+            </div>
+            <p> Unfortunately a lot of these ranges overlap, for instance the range generated by 2/4 is entirely inside the range generated by 1/2. If we run the previous calculation
+            removing fractions a/b that can be reduced we get a much smaller set. Click on the "Reduced table" to see the result. After 64 levels the reduced total is running
+            about 0.07 behind the full value. It is never going to make up this defecit so the final total will probably be around 37%.
+            
+            </p><p>
+            In addition there is the possibility that some of the intervals for different 'b' values will overlap, you can see this in
+            the diagram below. Choose a depth setting and click on the "Overlaps" button to show where the ranges rall
+            fall within the interval 0-1. The orange bars are ranges where a and b in a/b have a factor in common. They will fall entirely
+            within the range of the reduced fraction which will appear in yellow higher up the diagram.
+            </p><p>
+            You will also be able to see that some of the yellow bars also overlap the ranges defined by bars higher up the chart, so the
+            total coverage will be less than the 37% we estimated earlier.
+            
+            </p><p>
+            <img id="overlap_map" width="1000" height="300" />
+        </div>
+
+        
+	<!-- Vector search -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> Follow Vector </h1>
+          
+            <p>
+            <table>
+              <tr><td> Vector: </td><td> <input type="text" maxlength="12" id="vec_x" size="12"> / <input type="text" maxlength="12" id="vec_y" size="12"></td><tr>
+              <tr><td> Depth: </td><td> <input type="text" maxlength="12" id="follow_depth" size="12"></td><tr>
+              <tr><td> <button type="button" class="clickable" onclick="controller.CalculateFollowVector(vector_text);" title="Calculate"> Calculate </button></td><td>&nbsp;</td><tr>
+            </table>
+            
+            <div class="scroll">
+            
+            
+                <p id="location_table_2">&nbsp;</p>
+                <p id="vector_text">&nbsp;</p>
+                
+            
+            </div>
+            </p>
+        </div>
+	
+    
+		<div class="endfloat"> &nbsp; </div>
+	</div>
+	    
+		
+	<!-- 
+    ==============================================================================================================
+    Popup to show help
+    ==============================================================================================================
+    -->		
+			  
+		<div id="show_help" class="float w6 popup">
+		
+			<h2> Instructions </h2>
+			<p>
+                
+            
+            </p>
+            <p style="text-align:right;">
+                <button type="button" class="clickable" onclick="controller.HideHelp();" title="hide tdis section"> close </button>
+            </p>
+		</div>
+		
+        
+
+	<!-- Other pages -->
+
+	<div class="in2 box w10">
+	    <h2> Other pages </h2>
+		    <p><span id="links_go_here">&nbsp;</span></p>
+    </div>
+
+<!-- Copyright -->
+
+    <p class="small"> (c) John Whitehouse 2019 <p>
+
+			  
+
+</body>
+</html>
+
+
+
+

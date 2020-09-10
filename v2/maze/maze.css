@@ -1,0 +1,71 @@
+.rune
+{
+   font-size:     large;
+   border-bottom: 1pt solid #000000;
+   border-top:    1pt solid #000000;
+   border-left:   1pt solid #000000;
+   border-right:  1pt solid #000000;
+   margin:        3pt;
+   padding:       3pt;
+   float:         left;
+   min-width:     16pt;
+   text-align:    center;
+   background-color: #ffff80;
+}
+
+.popupbox
+{
+   border-bottom:  1pt solid #000000;
+   border-top:     1pt solid #000000;
+   border-left:    1pt solid #000000;
+   border-right:   1pt solid #000000;
+   margin:         3pt;
+   padding:        3pt;
+   float:          left;
+   background-color: #C0C0C0;
+}
+
+.badrune
+{
+   font-size:     large;
+   border-bottom: 1pt solid #000000;
+   border-top:    1pt solid #000000;
+   border-left:   1pt solid #000000;
+   border-right:  1pt solid #000000;
+   margin:        3pt;
+   padding:       3pt;
+   float:         left;
+   min-width:     16pt;
+   text-align:    center;
+   background-color: #ff4040;
+}
+
+.goodrune
+{
+   font-size:     large;
+   border-bottom: 1pt solid #000000;
+   border-top:    1pt solid #000000;
+   border-left:   1pt solid #000000;
+   border-right:  1pt solid #000000;
+   margin:        3pt;
+   padding:       3pt;
+   float:         left;
+   min-width:     16pt;
+   text-align:    center;
+   background-color: #40ff40;
+}
+.untriedrune
+{
+   font-size:     large;
+   border-bottom: 1pt solid #000000;
+   border-top:    1pt solid #000000;
+   border-left:   1pt solid #000000;
+   border-right:  1pt solid #000000;
+   margin:        3pt;
+   padding:       3pt;
+   float:         left;
+   min-width:     16pt;
+   text-align:    center;
+   background-color: #c0c0c0;
+}
+

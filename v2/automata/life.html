@@ -1,0 +1,489 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="JW Celular Automatom Patterns Mathematics">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="../js_library/life.js"> </script>
+
+<title> Conway's Life Cellular Automaton</title>
+<style>
+</style>
+<script>
+    var canvas;
+    var the_image;
+    var pattern;
+    var timer;
+    var in_animation = false;
+    var set_cells = {};
+    var counter = 0;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        canvas = document.createElement('canvas');
+        the_image = document.getElementById("the_image");
+        pattern = new ConwayLife ();
+        
+        document.getElementById("periodic").checked = pattern.periodic;
+
+        SetInitialCells ();
+        EnableButtons();
+    }
+    //-------------------------------------------------------------
+    Restart = function ()
+    {
+        counter = 0;
+        StopAnimation();
+        ResetPattern ();
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    // Start the animations
+    //-------------------------------------------------------------
+    function StartAnimation ()
+    {
+        StopAnimation ();
+
+        var value = parseInt(document.getElementById("timer").value);
+
+        if (! value || value < 1)
+        {
+            alert ("Interval \"" + document.getElementById("timer").value + "\" is invalid");
+            return;
+        }
+
+        timer = setInterval(NextPattern, value);
+        in_animation = true;
+        EnableButtons ();
+    }
+    //-------------------------------------------------------------
+    // Stop the animation
+    //-------------------------------------------------------------
+    function StopAnimation ()
+    {
+        if (in_animation)
+        {
+            in_animation = false;
+            clearInterval(timer);
+            EnableButtons ();
+        }
+    }
+    //-------------------------------------------------------------
+    EnableButtons = function ()
+    {
+        document.getElementById("step_button").disabled = in_animation;
+        document.getElementById("start_button").disabled = in_animation;
+        document.getElementById("stop_button").disabled = ! in_animation;
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //-------------------------------------------------------------
+    ShowInNew = function (what)
+    {
+       window.open(what, '_blank');
+    }
+    //-------------------------------------------------------------
+    NextColour = function (idx)
+    {
+        pattern.colour_map[idx] = (pattern.colour_map[idx] + 1) % ConwayLife.NUM_COLOURS;
+        SetIndexedButton(idx);
+        Restart ();
+    }
+    //-------------------------------------------------------------
+    ChangeBoundary = function ()
+    {
+        pattern.periodic = document.getElementById("periodic").checked;
+        Restart ();
+    }
+    //-------------------------------------------------------------
+    SetInitialCells = function ()
+    {
+        set_cells = {};
+
+        SetCell2 (-1,-1);
+        SetCell2 (-1,0);
+        SetCell2 (-1,1);
+        SetCell2 (0,1);
+        SetCell2 (1,0);
+        SetCell2 (6,-8);
+        SetCell2 (6,-7);
+        SetCell2 (6,-6);
+    }
+    //-------------------------------------------------------------
+    SetCell = function ()
+    {
+        var xpos = parseInt(document.getElementById("xpos").value);
+        var ypos = parseInt(document.getElementById("ypos").value);
+
+        SetCell2(xpos, ypos)
+    }
+    //-------------------------------------------------------------
+    SetCell2 = function (x,y)
+    {
+        var pos = [x, y];
+        set_cells ["pt_" + pos] = pos;
+
+        Restart ();
+    }
+    //-------------------------------------------------------------
+    ClearCell = function ()
+    {
+        var xpos = parseInt(document.getElementById("xpos").value);
+        var ypos = parseInt(document.getElementById("ypos").value);
+
+        ClearCell2(xpos, ypos)
+    }
+    //-------------------------------------------------------------
+    ClearCell2 = function (x,y)
+    {
+        var pos = [x, y];
+
+        delete set_cells ["pt_" + pos];
+        Restart ();
+    }
+    //-------------------------------------------------------------
+    GetKeys = function ()
+    {
+        var ret = [];
+        for (var key in set_cells)
+        {
+            if (set_cells.hasOwnProperty(key))
+            {
+                ret.push (key);
+            }
+        }
+        return ret;
+    }
+    //-------------------------------------------------------------
+    ResetSetCells = function ()
+    {
+        StopAnimation();
+        document.getElementById("xpos").value = "0";
+        document.getElementById("ypos").value = "0";
+
+        SetInitialCells ();
+        Restart ();
+    }
+    //-------------------------------------------------------------
+    SetSize = function (n)
+    {
+        pattern.SetLevel (n);
+        Restart ();
+    }
+    //-------------------------------------------------------------
+    SetShape = function (n)
+    {
+        pattern.SetShape (n);
+
+        var image = document.getElementById("the_image");
+
+        switch (n)
+        {
+            case 0:
+                image.width = 640;
+                image.height = 640;
+                break;
+            case 1:
+                image.width = 640;
+                image.height = 480;
+                break;
+            case 2:
+                image.width = 640;
+                image.height = 360;
+                break;
+        }
+        Restart ();
+    }
+    //-------------------------------------------------------------
+    NextPattern = function ()
+    {
+        pattern.Next();
+        DrawPattern ();
+
+        document.getElementById("counter").innerHTML = ++counter;
+    }
+    //-------------------------------------------------------------
+    ResetPattern = function ()
+    {
+        pattern.Reset ();
+        counter = 0;
+
+        for (var key in set_cells)
+        {
+            if (set_cells.hasOwnProperty(key))
+            {
+                pattern.AddPoint (set_cells[key][0], set_cells[key][1]);
+            }
+        }
+    }
+    //-------------------------------------------------------------
+    DrawPattern = function ()
+    {
+        pattern.Draw (canvas);
+        the_image.src = canvas.toDataURL();
+    }
+    //-------------------------------------------------------------
+    CreateImage = function()
+    {
+        var dataURL = canvas.toDataURL('image/png');
+        var w = window.open('about:blank');
+        w.document.write("<img src='" + dataURL + "' alt='from canvas' title='Right-click for menu'/>");
+    }
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Conway's Life Cellular Automaton</h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+    <!-- Main content -->
+
+    <div class="float w9" style="overflow: auto;">
+      <div class="in2 box">
+      
+          <h2> The Pattern </h2>
+
+           <p>
+              <button onclick="CreateImage();" class="invisible" title="Click for full size">
+                <img id="the_image" width="640" height="640">
+              </button>
+          </p>
+
+      </div>
+    </div>
+
+    <!-- Settings -->
+    
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+    
+        <h2> Settings </h2>
+    
+         <table>
+
+    <!-- Outer colour -->
+         
+          <tr>
+           <td> Periodic boundaries: </td>
+           <td>
+            <p>
+              <input type="checkbox" id="periodic" onclick="ChangeBoundary()"> Use Periodic boundaries
+            </p>
+           </td>
+          </tr>   
+
+    <!-- Outer colour -->
+         
+          <tr>
+           <td> Set cells: </td>
+           <td>
+            <p>
+                Set or Clear a cell at a custom location.
+            </p><p>
+            X: <input type="text" size="3" value="0" id="xpos">
+            Y: <input type="text" size="3" value="0" id="ypos">
+            </p><p>
+            
+            <button class="clickable" onclick="SetCell()"> Set </button>
+            <button class="clickable" onclick="ClearCell()"> Clear </button>
+            <button class="clickable" onclick="ResetSetCells()"> Reset </button>
+           </td>
+          </tr>
+          
+    <!-- Print -->
+         
+          <tr>
+           <td> Print: </td>
+           <td>
+            <p>
+                This option creates a full sized view, suitable for printing, in a new window.
+            </p><p>
+              <button onclick="CreateImage();"> full size </button>
+            </p>
+           </td>
+          </tr>   
+          
+    <!-- Animate -->
+         
+          <tr>
+           <td> Animate: </td>
+           <td>
+            <p>
+                To animate enter an interval (in milliseconds) and press "start".
+            </p><p>
+                Interval (ms): <input type="text" size="5" value="200" id="timer"> </input>
+
+                <button id="step_button" onclick="NextPattern();"> Step </button>
+                <button id="start_button" onclick="StartAnimation();"> Start </button>
+                <button id="stop_button" onclick="StopAnimation();"> Stop </button>
+           </td>
+          </tr>   
+ 
+    <!-- Print -->
+         
+          <tr>
+           <td> Size: </td>
+           <td>
+            <p>
+                Larger sizes will run more slowly.
+            </p><p>
+              <button class="clickable" onclick="SetSize(0);"> small </button>
+              <button class="clickable" onclick="SetSize(1);"> medium </button>
+              <button class="clickable" onclick="SetSize(2);"> large </button>
+              <button class="clickable" onclick="SetSize(3);"> XL </button>
+              <button class="clickable" onclick="SetSize(4);"> XXL </button>
+            </p>
+           </td>
+          </tr>   
+ 
+    <!-- Shape -->
+         
+          <tr>
+           <td> Shape: </td>
+           <td>
+            <p>
+              <button class="clickable" onclick="SetShape(0);"> Square </button>
+              <button class="clickable" onclick="SetShape(1);"> 4 &times; 3 </button>
+              <button class="clickable" onclick="SetShape(2);"> 16 &times; 9 </button>
+            </p>
+           </td>
+          </tr>  
+ 
+    <!-- Shape -->
+         
+          <tr>
+           <td> Iterations: </td>
+           <td>
+            <p>
+              <span id="counter"> 0 </span>
+            </p>
+           </td>
+          </tr> 
+          
+          </table>
+      </div>
+    </div>
+
+    <!-- Explanation -->
+    
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+
+           <div class="endfloat"/>
+            <h2> Explanation </h2>
+            <p>
+                See <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's_Game_of_Life</a>.
+            <p>
+                The starting patern includes a glider and a blinker, if you choose a square starting pattern
+                and periodic boundaries the glider will eventually collide with the blinker and intersting things will
+                happen, the exact outcome depending on the size of the grid.
+            <p>
+          </div>
+
+        </div>
+    </div>
+
+<!-- Automata Index page -->
+
+    <div class="float w9" style="overflow: auto;">
+      <div class="in2 box">
+      <h2> Cellular Automata Index Page </h2>
+      
+
+      <button class="link" onclick="Show('index.html')">
+        <div style="width:200;">
+        <p>
+            <strong>Cellular Automata Index</strong>
+        <p>
+            <img class="button" src="images/automata_icon.png" width="160" ALT="index page" title="The Cellular Automata index page">
+        </p><p>
+            The Cellular Automata index page.
+        </p>
+
+        </div>
+      </button>
+      </div>
+    </div>
+    
+
+    <!-- Generic links -->
+
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+
+        <h2> Other pages </h2>
+            
+          <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+          </p>
+          
+      </div>
+    </div>
+
+</div>
+
+<!-- Copyright -->
+
+  <div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2014 - 2020 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
+
+
+

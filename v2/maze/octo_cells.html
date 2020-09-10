@@ -1,0 +1,239 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Maze drawing">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/direction.js"> </script>
+<script src="../js_library/octopoints.js"> </script>
+<script src="../js_library/octopoints_shape.js"> </script>
+<script src="../js_library/octopoints_square.js"> </script>
+<script src="../js_library/octopoints_octagon.js"> </script>
+<script src="octomaze.js"> </script>
+<script src="octomaze_walker.js"> </script>
+<script src="mapped_points.js"> </script>
+
+<title> Octagonal Maze drawing </title>
+
+<style>
+ DIV.w1 { width:120px; }
+ DIV.w2 { width:240px; }
+ DIV.w3 { width:360px; }
+ DIV.w4 { width:480px; }
+ DIV.w5 { width:600px; }
+ DIV.w6 { width:720px; }
+</style>
+
+<script>
+
+
+    Controller = function ()
+    {
+        this.width = 800;
+        this.height = 600;
+        this.maze_floor = 1;
+        this.maze_ceiling = 2;
+        this.maze_nx = 16;
+        this.maze_ny = 9;
+        this.maze = new OctoMaze (this.maze_nx, this.maze_ny);
+        this.walker = new OctoMazeWalker (this.maze);
+
+        OctoPoints.Initialise(true);
+
+        this.ApplyChanges();
+
+        this.chelp = new CanvasHelp (320, 320);
+        this.images = [ Oct90, Sq90, Oct45, Sq45 ];
+    }
+
+    // Range of cells we might be able to see in first person view.
+    Controller.view_xmin = -6;
+    Controller.view_xmax = 6;
+    Controller.view_ymin = -1;
+    Controller.view_ymax = 12;
+
+    Controller.cells =
+    [
+        ["Oct90.O1_0_0", "Oct90.O2_0_0", "Oct90.S1_0_0", "Oct90.S2_0_0"],
+        ["Sq90.O1_0_0", "Sq90.O2_0_0", "Sq90.S1_0_0", "Sq90.S2_0_0"],
+        ["Oct45.O1_0_0", "Oct45.S1_0_0"],
+        ["Sq45.O1_0_0", "Sq45.S1_0_0"]
+    ];
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.ApplyChanges = function ()
+    {
+        OctoPoints.MakeShapes(Controller.view_xmin, Controller.view_ymin, Controller.view_xmax, Controller.view_ymax);
+        OctoPoints.Make2dWalls();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.DrawViews = function ()
+    {
+        for (var i = 0 ; i < 4 ; ++i)
+        {
+            this.DrawCell(i);
+            this.images[i].src = this.chelp.canvas.toDataURL('image/png');
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.DrawCell = function (n)
+    {
+        OctoMazeWalker.prototype.DrawShapeList (this.chelp, Controller.cells[n], 40);
+    }
+
+    var controller;
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        links_go_here.innerHTML = MakeButtons ();
+
+        controller = new Controller ();
+        controller.DrawViews ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    UpdateSettings = function ()
+    {
+        controller.UpdateSettings ();
+        controller.ApplyChanges();
+        Draw ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    CreateImage = function (n)
+    {
+        controller.DrawCell(n);
+        var dataURL = controller.chelp.canvas.toDataURL('image/png');
+
+        var w = window.open('about:blank');
+        w.document.write("<img src='" + dataURL + "' alt='from canvas' title='Right-click for menu'/>");
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Unit cells in the Octagonal Maze</h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box">
+        <h1> Vantage Points </h1>
+        <p> When viewing the maze from a first person perspective there are 4 possible lattices you may see in front
+            of you, depending on the type of cell you are standing in (Square or Octagon), and your orientation.
+            When you are facing North, South, East or West you will be in the 90&deg; lattice and when you are
+            facing one of the other 4 directions (NE, SE, SW or NW) you will be in the 45&deg; lattice. These
+            diagrams were created to test that all the internal associations in the code are consistent, and are
+            presented here so that you can see how the 4 lattices are constructed.
+        </p>
+        <div class="float w3" style="overflow: auto;">
+            <h2> Octagonal 90&deg; </h2>
+
+            <p>
+                <button onclick="CreateImage(0);" class="invisible" title="Click for full size">
+                    <img id="Oct90" width="320" height="320">
+                </button>
+            </p>
+        </div>
+
+        <div class="float w3" style="overflow: auto;">
+            <h2> Square 90&deg; </h2>
+
+            <p>
+                <button onclick="CreateImage(1);" class="invisible" title="Click for full size">
+                    <img id="Sq90" width="320" height="320">
+                </button>
+            </p>
+        </div>
+
+        <div class="float w3" style="overflow: auto;">
+            <h2> Octagonal 45&deg; </h2>
+
+            <p>
+                <button onclick="CreateImage(2);" class="invisible" title="Click for full size">
+                    <img id="Oct45" width="320" height="320">
+                </button>
+            </p>
+        </div>
+
+        <div class="float w3" style="overflow: auto;">
+            <h2> Square 45&deg; </h2>
+
+            <p>
+                <button onclick="CreateImage(3);" class="invisible" title="Click for full size">
+                    <img id="Sq45" width="320" height="320">
+                </button>
+            </p>
+        </div>
+
+
+        <div class="endfloat"/>
+    </div>
+  </div>
+
+<!-- Other pages -->
+
+  <div class="in2 box">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+  </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2010 - 2017 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
+
+
+

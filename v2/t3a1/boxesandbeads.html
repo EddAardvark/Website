@@ -1,0 +1,813 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Collatz 3x+1">
+
+<TITLE> 3x+1 (Boxes and Beads) </TITLE>
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png">
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/big_integers.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="log3over2.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<script>
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+    }
+</script>
+
+<style>
+TABLE { border-collapse:collapse; }
+TD,TH { border: 1px solid darkgray;padding: 6px; }
+TH { text-align: center; }
+TABLE.last_in_div { margin-bottom:12pt; }
+TABLE.no_border {border: 0px;}
+TD.no_border {border: 0px;}
+TH.no_border {border: 0px;}
+TD.highlight {background-color: #d3dee9;border: 2px solid darkblue; padding: 6px;}
+</style>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart()">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;height:250px;">
+     <button style="width: 200px;height:240px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button style="max-width:420px;width:420px;height:240px;" class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages">
+        <br>
+         3x+1: Boxes and Beads
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;height:240px;" class="banner">
+        <script><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+<div class="in2 box w8 float">
+
+<h2>Contents</h2>
+
+    <ul>
+        <li><a href="#section1">The Box Analogy</a></li>
+        <li><a href="#section2">The Table Puzzle</a></li>
+        <li><a href="#section3">Generating The Tables</a></li>
+        <li><a href="#section4">Python Code</a></li>
+        <li><a href="#section5">The structure of the tables</a></li>
+    </ul>
+
+</div>
+
+<!-- The Box Analogy -->
+
+<div class="in2 box w8 float">
+
+<h2 id="section1">The Box Analogy</h2>
+
+<p>
+    When looking for 4-cycles (for instance) we have 4 'a' values such that the
+    sum a1 to a4 is less than or equal to m. For m = 7, the smallest 's' value will be when all the 'a's but
+    the last one are 1, giving (1,1,1,4). For the box analogy we are going to
+    subtract all 1 from all the a values, so the starting point is now (0,0,0,3). We
+    can imagine the point (0,0,0,3) as a row of 4 boxes with all three beads in the 4th.
+    We can generate all the other valid permutations by moving beads, one at a time, from the 4th
+    box to the others. Moving a bead from box 4 to one of the others will increase
+    the value of 's' as defined in the following table:
+
+</p>
+
+    <table class="whitebox in2">
+      <tr>
+        <th>To Box</th>
+        <th>Increment</th>
+      </tr>
+      <tr>
+        <th>1</th>
+        <td class="code">9&times;2<span class="superscript">(1+a1)</span> + 3&times;2<span class="superscript">(2+a1+a2)</span>
+         + 2<span class="superscript">(3+a1+a2+a3)</span></td>
+      </tr>
+      <tr>
+        <th>2</th>
+        <td class="code">3&times;2<span class="superscript">(2+a1+a2)</span> + 2<span class="superscript">(3+a1+a2+a3)</span></td>
+      </tr>
+      <tr>
+        <th>3</th>
+        <td class="code">2<span class="superscript">(3+a1+a2+a3)</span></td>
+      </tr>
+    </table>
+
+<p>
+
+    The order we move the beads doesn't matter as the final value of s
+    depends only on the number of beads in each box, not how they got there. So if we start moving
+    beads first into box1, then box 2, then box 3 the calculations will be simpler
+    (because when we are moving beads into box1, a2 and a3 will be 0). And when we move beads into
+    box2 a3 will still be 0. The simplified table is
+
+</p>
+
+    <table class="whitebox in2">
+      <tr>
+        <th>To Box</th>
+        <th>Increment</th>
+      </tr>
+      <tr>
+        <th>1</th>
+        <td class="code">9&times;2<span class="superscript">(1+a1)</span> + 3&times;2<span class="superscript">(2+a1)</span>
+         + 2<span class="superscript">(3+a1)</span></td>
+      </tr>
+      <tr>
+        <th>2</th>
+        <td class="code">3&times;2<span class="superscript">(2+a1+a2)</span> + 2<span class="superscript">(3+a1+a2)</span></td>
+      </tr>
+      <tr>
+        <th>3</th>
+        <td class="code">2<span class="superscript">(3+a1+a2+a3)</span></td>
+      </tr>
+    </table>
+
+<p>
+    If we factor out the constant parts we get
+</p>
+
+    <table class="whitebox in2 last_in_div">
+      <tr>
+        <th>To Box</th>
+        <th class="code" colspan="3">Increment</th>
+      </tr>
+      <tr>
+        <th>1</th>
+        <td class="code">2<span class="superscript">(a1)</span></td>
+        <td class="code">x</td>
+        <td class="code">(9&times;2 + 3&times;4 + 8)</td>
+      </tr>
+      <tr>
+        <th>2</th>
+        <td class="code">2<span class="superscript">(a1+a2)</span></td>
+        <td class="code">x</td>
+        <td class="code">(3&times;4 + 8)</td>
+      </tr>
+      <tr>
+        <th>3</th>
+        <td class="code">2<span class="superscript">(a1+a2+a3)</span></td>
+        <td class="code">x</td>
+        <td class="code">(8)</td>
+      </tr>
+    </table>
+
+</div>
+
+<!-- The Table Puzzle -->
+
+<div class="in2 box w8 float">
+
+<h2 id="section2">The Table Puzzle</h2>
+
+<p>
+    For n=4, m=7, the starting value with all the beads in box 4 is 65 (3<sup>n</sup>
+    - 2<sup>n</sup>). The increments shown in the above equations are used to
+    populate the tables below. The shaded cells show possible moves. In the first we move 1 bead
+    into box 1 and then 2 beads into box 2. The result is 65+38+40+80 = 223. In the second we
+    just move 2 beads to box 3, giving 65+8+16 = 89.
+
+</p>
+
+    <table class="in2 no_border">
+      <tr>
+        <td class="no_border">
+            <table class="whitebox">
+                <tr>
+                  <th>Move</th>
+                  <th colspan="3">Increment</th>
+                </tr>
+                <tr>
+                  <td class="highlight">65</td>
+                  <th>box 1</th>
+                  <th>box 2</th>
+                  <th>box 3</th>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <td class="highlight">38</td>
+                  <td>20</td>
+                  <td>8</td>
+                </tr>
+                <tr>
+                  <th>2</th>
+                  <td>76</td>
+                  <td class="highlight">40</td>
+                  <td>16</td>
+                </tr>
+                <tr>
+                  <th>3</th>
+                  <td>152</td>
+                  <td class="highlight">80</td>
+                  <td>32</td>
+                </tr>
+              </table>
+        </td>
+
+        <td class="no_border">
+            <table class="whitebox">
+                <tr>
+                  <th>Move</th>
+                  <th colspan="3">Increment</th>
+                </tr>
+                <tr>
+                  <td class="highlight">65</td>
+                  <th>box 1</th>
+                  <th>box 2</th>
+                  <th>box 3</th>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <td>38</td>
+                  <td>20</td>
+                  <td class="highlight">8</td>
+                </tr>
+                <tr>
+                  <th>2</th>
+                  <td>76</td>
+                  <td>40</td>
+                  <td class="highlight">16</td>
+                </tr>
+                <tr>
+                  <th>3</th>
+                  <td>152</td>
+                  <td>80</td>
+                  <td>32</td>
+                </tr>
+              </table>
+        </td>
+      </tr>
+    </table>
+
+<p>
+
+    The first move must be from row 1, the second from row 2, etc. Once you've
+    used a box you can't use any of the boxes to the left of it. You can stop
+    whenever you like, the objective is to form a total, including the starting
+    value, that is a multiple of 2<sup>m</sup>-3<sup>n</sup>. In this example that
+    is 2<sup>7</sup>-3<sup>4</sup>=47.
+    In the above table there are no solutions, if there were we would have found a
+    4-cycle in 3x+1.
+
+</p><p>
+    If we add a few more rows
+    though, we can find some solutions, but the constraint on the number of beads is
+    broken. For example, the tables below illustrate
+</p>
+    <div class="code in2 w6">
+        <p class="code">
+            65+8+16+32+64+128+256+512&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 1081 =
+            23 &times; 47<br>
+            65+38+40+80+160+128+256+512+1024 = 2303 = 49 &times; 47
+        </p>
+    </div>
+
+<p>
+    There is no obvious reason, therefore, why this puzzle should be impossible,
+    but to find a solution for any valid combination of 'm' and 'n' would be to
+    find a loop in 3x+1.
+
+</p>
+
+    <table class="last_in_div no_border">
+      <tr>
+        <td class="no_border">
+        <table class="whitebox">
+            <tr>
+              <th>Move</th>
+              <th colspan="3" class="code">Increment</th>
+            </tr>
+            <tr>
+              <td class="highlight">65</td>
+              <th>box 1</th>
+              <th>box 2</th>
+              <th>box 3</th>
+            </tr>
+            <tr>
+              <th>1</th>
+              <td>38</td>
+              <td>20</td>
+              <td class="highlight" >8</td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td>76</td>
+              <td>40</td>
+              <td class="highlight" >16</td>
+            </tr>
+            <tr>
+              <th>3</th>
+              <td>152</td>
+              <td>80</td>
+              <td class="highlight">32</td>
+            </tr>
+            <tr>
+              <th>4</th>
+              <td>304</td>
+              <td>160</td>
+              <td class="highlight">64</td>
+            </tr>
+            <tr>
+              <th>5</th>
+              <td>608</td>
+              <td>320</td>
+              <td class="highlight">128</td>
+            </tr>
+            <tr>
+              <th>6</th>
+              <td>1216</td>
+              <td>640</td>
+              <td class="highlight">256</td>
+            </tr>
+            <tr>
+              <th>7</th>
+              <td>2432</td>
+              <td>1280</td>
+              <td class="highlight">512</td>
+            </tr>
+            <tr>
+              <th>8</th>
+              <td>4864</td>
+              <td>2560</td>
+              <td>1024</td>
+            </tr>
+          </table>
+      </td>
+      <td class="no_border">
+        <table class="whitebox">
+            <tr>
+              <th>Move</th>
+              <th colspan="3" >Increment</th>
+            </tr>
+            <tr>
+              <td class="highlight">65</td>
+              <th>box 1</th>
+              <th>box 2</th>
+              <th>box 3</th>
+            </tr>
+            <tr>
+              <th>1</th>
+              <td class="highlight">38</td>
+              <td>20</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td>76</td>
+              <td class="highlight">40</td>
+              <td>16</td>
+            </tr>
+            <tr>
+              <th>3</th>
+              <td>152</td>
+              <td class="highlight">80</td>
+              <td>32</td>
+            </tr>
+            <tr>
+              <th>4</th>
+              <td>304</td>
+              <td class="highlight">160</td>
+              <td>64</td>
+            </tr>
+            <tr>
+              <th>5</th>
+              <td>608</td>
+              <td>320</td>
+              <td class="highlight">128</td>
+            </tr>
+            <tr>
+              <th>6</th>
+              <td>1216</td>
+              <td>640</td>
+              <td class="highlight">256</td>
+            </tr>
+            <tr>
+              <th>7</th>
+              <td>2432</td>
+              <td>1280</td>
+              <td class="highlight">512</td>
+            </tr>
+            <tr>
+              <th>8</th>
+              <td>4864</td>
+              <td>2560</td>
+              <td class="highlight">1024</td>
+            </tr>
+          </table>
+      </td>
+    </tr>
+  </table>
+
+</div>
+
+<!-- Generating The Tables -->
+
+<div class="in2 box w8 float">
+
+<h2 id="section3">Generating The Tables</h2>
+
+<p>
+    For 5 cycles, m=8, m-n=3, 2<sup>m</sup>-3<sup>n</sup> is
+    13 and 3<sup>n</sup> - 2<sup>n</sup> is 211. We now have 5 boxes and start with
+    3 beads in the 5th. The increments are:
+
+</p>
+
+    <table class="whitebox in2">
+      <tr>
+        <th>Box</th>
+        <th class="code" colspan="3">Increment</th>
+      </tr>
+      <tr>
+        <th>1</th>
+        <td class="code">2<span class="superscript">(a1)</span></td>
+        <td class="code">x</td>
+        <td class="code">(27&times;2 + 9&times;4 + 3&times;8 + 16)</td>
+      </tr>
+      <tr>
+        <th>2</th>
+        <td class="code">2<span class="superscript">(a1+a2)</span></td>
+        <td class="code">x</td>
+        <td class="code">(9&times;4 + 3&times;8 + 16)</td>
+      </tr>
+      <tr>
+        <th>3</th>
+        <td class="code">2<span class="superscript">(a1+a2+a3)</span></td>
+        <td class="code">x</td>
+        <td class="code">(3&times;8 + 16)</td>
+      </tr>
+      <tr>
+        <th>4</th>
+        <td class="code">2<span class="superscript">(a1+a2+a3+a4)</span></td>
+        <td class="code">x</td>
+        <td class="code">(16)</td>
+      </tr>
+    </table>
+
+<p>
+
+    If we look at the terms in the 4th column we will notice that they follow the pattern&nbsp;
+
+</p>
+
+    <div class="code in2 w6">
+        <p class="code">
+            (81-16)&times;2, (27-8)&times;4, (9-4)&times;8, (3-2)&times;16.
+        </p>
+    </div>
+
+<p>
+
+    essentially because the sum of the terms (2<span class="superscript">i</span> &times; 3<span class="superscript">(n-i)</span>)
+    over i is 3<span class="superscript">(n+1)</span> -
+    2<span class="superscript">(n+1)</span>. This makes it easy to generate an arbitrary table. For a given row and
+    column (r,c), starting at (0,0) the value is
+</p>
+
+    <div class="code in2 w6">
+        <p class="code">
+            [r,c] = (3<span class="superscript">(n-1-c)</span> - 2<span class="superscript">(n-1-c)</span>)
+            &times; 2<span class="superscript">(1+r+c)</span>
+        </p>
+    </div>
+
+<p>
+    For a given pair of n and m values c will range from 0 to n-2 and r from 0 to
+    m-n-1. So for m=8 and n=5 the table is
+</p>
+
+    <table class="whitebox in2 last_in_div">
+      <tr>
+        <th>Move</th>
+        <th colspan="4" class="code">Increment</th>
+      </tr>
+      <tr>
+        <td class="code">211</td>
+        <th>box 1<br>
+          c=0</th>
+        <th>box 2<br>
+          c=1</th>
+        <th>box 3<br>
+          c=2</th>
+        <th>box 4<br>
+          c=3</th>
+      </tr>
+      <tr>
+        <th>r=0</th>
+        <td>130</td>
+        <td>76</td>
+        <td>40</td>
+        <td>16</td>
+      </tr>
+      <tr>
+        <th>r=1</th>
+        <td>260</td>
+        <td>152</td>
+        <td>80</td>
+        <td>32</td>
+      </tr>
+      <tr>
+        <th>r=2</th>
+        <td>520</td>
+        <td>304</td>
+        <td>160</td>
+        <td>64</td>
+      </tr>
+    </table>
+
+</div>
+
+<!-- Python Code -->
+
+<div class="in2 box w8 float">
+
+<h2 id="section4">Python Code</h2>
+
+<p>
+    I've written a python script to generate this and some other related tables.
+    Click <a href="PyramidTable.py">here</a> to download it. To generate a set of
+    tables for n=4, m=10 type in the python window
+
+</p>
+
+    <div class="code in2 w6">
+        <p class="code">
+            import PyramidTable<br>
+            PyramidTable.go(4,10,'c:\ptable')
+        </p>
+    </div>
+
+<p>
+    This will generate a file called 'ptable_4_10.html' in the root of the C: drive.
+    Obviously you can create these files elsewhere by changing the third
+    parameter. The first two parameters are the n and m values and are used to
+    generate the file name as well as the tables. The tables are described in the next section.
+
+</p>
+
+</div>
+
+<!-- The structure of the tables -->
+
+
+<div class="in2 box w8 float">
+
+<h2 id="section5">The structure of the tables</h2>
+
+<p>
+    The python script, PyramidTable.py will generate a web page containing 8 tables.
+
+</p>
+
+<ol class="in4">
+    <li>Pyramid Table</li>
+    <li>Expanded Table</li>
+    <li>Ranges</li>
+    <li>Scaled Ranges</li>
+    <li>Fixed Ranges</li>
+    <li>Loops</li>
+    <li>Loop Seeds</li>
+    <li>Other Loops</li>
+</ol>
+
+<p>
+    There are links to some examples in the previous section. Here we describe
+    the 8 tables generated with reference to (n,m)&nbsp;=&nbsp;(4,10).
+</p>
+
+<h3>Pyramid Table</h3>
+<p>
+    The equation shows the system that the chosen combination of n and m will
+    define loops for. The value immediately below this is the s-value when all the
+    boxes but the last are empty. The first row shows the number you must add to the
+    cumulative s-value when you move the first bead. The second row shows the number
+    you must add when moving the second bead, and so on. Remember you can only move
+    beads to the same box or one to the right of the box you used in the previous
+    move, so if you moved the first bead to box to, increasing s to 85, the second
+    move must be to box 2 or 3. The object is to use these rules to create a
+    multiple of 943, though we know this is impossible for n values this small.
+</p>
+
+<table class="whitebox in2">
+<tr><th>3x + 943</th><th colspan="3">Increment</th></tr>
+<tr><td class="code">65</td><th>box 1</th><th>box 2</th><th>box 3</th></tr>
+<tr><th>Row 0</th><td class="code">38</td><td class="code">20</td><td class="code">8</td></tr>
+<tr><th>Row 1</th><td class="code">76</td><td class="code">40</td><td class="code">16</td></tr>
+<tr><th>Row 2</th><td class="code">152</td><td class="code">80</td><td class="code">32</td></tr>
+<tr><th>Row 3</th><td class="code">304</td><td class="code">160</td><td class="code">64</td></tr>
+<tr><th>Row 4</th><td class="code">608</td><td class="code">320</td><td class="code">128</td></tr>
+<tr><th>Row 5</th><td class="code">1216</td><td class="code">640</td><td class="code">256</td></tr>
+</table>
+
+
+<h3>Expanded Table</h3>
+
+<p>
+    This table show the values that can be obtained by following the
+    rules in the Pyramid Table section and stopping in a
+    particular cell. In row 1, box 2 there are two values as there are two
+    sequences that stop in this square, 65+38+40 and 65+20+40. There are 21
+    sequences that end in row 5, box 3. The number of values in a given box is equal
+    to the number of value above and to the left on the previous row.
+</p>
+
+<table class="whitebox in2">
+<tr><th>3x + 943</th><th colspan="3">Values</th></tr>
+<tr><td class="code">65</td><th>box 1</th><th>box 2</th><th>box 3</th></tr>
+<tr><th>Row 0</th><td class="code">103</td><td class="code">85</td><td class="code">73</td></tr>
+<tr><th>Row 1</th><td class="code">179</td><td class="code">143, 125</td><td class="code">119, 101, 89</td></tr>
+<tr><th>Row 2</th><td class="code">331</td><td class="code">259, 223, 205</td><td class="code">211, 175, 157, 151, 133, 121</td></tr>
+<tr><th>Row 3</th><td class="code">635</td><td class="code">491, 419, 383, 365</td><td class="code">395, 323, 287, 269, 275, 239, 221, 215, 197, 185</td></tr>
+<tr><th>Row 4</th><td class="code">1243</td><td class="code">955, 811, 739, 703, 685</td><td class="code">763, 619, 547, 511, 493, 523, 451, 415, 397, 403, 367, 349, 343, 325, 313</td></tr>
+<tr><th>Row 5</th><td class="code">2459</td><td class="code">1883, 1595, 1451, 1379, 1343, 1325</td><td class="code">1499, 1211, 1067, 995, 959, 941, 1019, 875, 803, 767, 749, 779, 707, 671, 653, 659, 623, 605, 599, 581, 569</td></tr>
+</table>
+
+<h3>Ranges</h3>
+
+<p>
+    This table shows the range of values that can be found in a given cell in the
+    previous table. For instance row 2, box 3 contains 6 values. The range is 121 to
+    211, as shown in the table below.
+</p>
+
+<table class="whitebox in2">
+<tr><th>3x + 943</th><th colspan="3">Ranges</th></tr>
+<tr><td class="code">65</td><th>box 1</th><th>box 2</th><th>box 3</th></tr>
+<tr><th>Row 0</th><td class="code">103</td><td class="code">85</td><td class="code">73</td></tr>
+<tr><th>Row 1</th><td class="code">179</td><td class="code">125 - 143</td><td class="code">89 - 119</td></tr>
+<tr><th>Row 2</th><td class="code">331</td><td class="code">205 - 259</td><td class="code">121 - 211</td></tr>
+<tr><th>Row 3</th><td class="code">635</td><td class="code">365 - 491</td><td class="code">185 - 395</td></tr>
+<tr><th>Row 4</th><td class="code">1243</td><td class="code">685 - 955</td><td class="code">313 - 763</td></tr>
+<tr><th>Row 5</th><td class="code">2459</td><td class="code">1325 - 1883</td><td class="code">569 - 1499</td></tr>
+</table>
+
+<h3>Scaled Ranges</h3>
+
+<p>
+    The values in the ranges table show the range of values the form loops in
+    3x+k. We are looking for loops in 3x+1 so we have to divide the values by k (943
+    in this example). This table shows the resulting ranges.
+
+</p>
+
+<table class="whitebox in2">
+<tr><th>3x + 943</th><th colspan="3">Scaled Range</th></tr>
+<tr><td class="code">65</td><th>box 1</th><th>box 2</th><th>box 3</th></tr>
+<tr><th>Row 0</th><td class="code">0.109</td><td class="code">0.090</td><td class="code">0.077</td></tr>
+<tr><th>Row 1</th><td class="code">0.190</td><td class="code">0.133 - 0.152</td><td class="code">0.094 - 0.126</td></tr>
+<tr><th>Row 2</th><td class="code">0.351</td><td class="code">0.217 - 0.275</td><td class="code">0.128 - 0.224</td></tr>
+<tr><th>Row 3</th><td class="code">0.673</td><td class="code">0.387 - 0.521</td><td class="code">0.196 - 0.419</td></tr>
+<tr><th>Row 4</th><td class="code">1.318</td><td class="code">0.726 - 1.013</td><td class="code">0.332 - 0.809</td></tr>
+<tr><th>Row 5</th><td class="code">2.608</td><td class="code">1.405 - 1.997</td><td class="code">0.603 - 1.590</td></tr>
+</table>
+
+<h3>Fixed Ranges</h3>
+
+<p>
+    In reality all the values must be odd integers of the form
+    6n+1 or 6n-1. The &quot;Fixed Ranges&quot; shows the range of integer
+    values that fall within the real ranges calculated above. It also displays the
+    combined range, which in this case is empty.
+</p>
+
+<table class="whitebox in2">
+<tr><th>3x + 943</th><th colspan="3">Fixed Range</th></tr>
+<tr><td class="code">65</td><th>box 1</th><th>box 2</th><th>box 3</th></tr>
+<tr><th>Row 0</th><td class="code">---</td><td class="code">---</td><td class="code">---</td></tr>
+<tr><th>Row 1</th><td class="code">---</td><td class="code">---</td><td class="code">---</td></tr>
+<tr><th>Row 2</th><td class="code">---</td><td class="code">---</td><td class="code">---</td></tr>
+<tr><th>Row 3</th><td class="code">---</td><td class="code">---</td><td class="code">---</td></tr>
+<tr><th>Row 4</th><td class="code">---</td><td class="code">---</td><td class="code">---</td></tr>
+<tr><th>Row 5</th><td class="code">---</td><td class="code">---</td><td class="code">---</td></tr>
+</table>
+
+<h3>Loops</h3>
+
+<p>
+    This table counts the loops generated and lists the smallest value in each.
+    There are twenty 4-cycles in 3x+943 and two 2-cycles.
+</p>
+
+<table class="whitebox in2">
+<tr><th>Loop Size</th><th>Number of Loops</th><th>Smallest Elements</th></tr>
+      <tr>
+          <td class="code">2</td>
+          <td class="code">2</td>
+          <td class="code">205, 287</td>
+        </tr>      <tr>
+          <td class="code">4</td>
+          <td class="code">20</td>
+          <td class="code">65, 73, 85, 89, 101, 103, 119, 121, 125, 133, 143, 151, 157, 175, 179, 197, 215, 221, 223, 239</td>
+        </tr></table>
+
+<h3>Loop Seeds</h3>
+<p>
+    There are two tables in this section showing where the smallest and largest
+    value in each loop appears in the expanded table. The first number shows the
+    number of loop seeds in a cell as a fraction of the number of values, so 5 loops
+    have their smallest value in row 3, box 3.
+</p>
+
+<table class="whitebox in2">
+  <tr><td class="code">1/1</td><td class="code">1/1</td><td class="code">1/1</td>  <tr><td class="code">1/1</td><td class="code">2/2</td><td class="code">3/3</td>  <tr><td class="code">-</td><td class="code">2/3</td><td class="code">5/6</td>  <tr><td class="code">-</td><td class="code">-</td><td class="code">5/10</td>  <tr><td class="code">-</td><td class="code">-</td><td class="code">-</td>  <tr><td class="code">-</td><td class="code">-</td><td class="code">-</td></table>
+
+<p>
+
+    This second table shows the locations of the maximum values in each loop.
+    Note: there is one more maximum value than minimum values because one of the loops is
+    seeded by the start value, 65.
+</p>
+
+<table class="whitebox in2">
+  <tr><td class="code">-</td><td class="code">-</td><td class="code">-</td>  <tr><td class="code">-</td><td class="code">-</td><td class="code">-</td>  <tr><td class="code">-</td><td class="code">-</td><td class="code">-</td>  <tr><td class="code">-</td><td class="code">-</td><td class="code">-</td>  <tr><td class="code">-</td><td class="code">2/5</td><td class="code">4/15</td>  <tr><td class="code">1/1</td><td class="code">5/6</td><td class="code">10/21</td></table>
+
+<h3>Other Loops</h3>
+<p>
+    When there is a common factor (f) between the members of a loop and the
+    constant k in 3x+k there will be loops in the system 3x+(K/f) as well. This section
+    shows the loops generated when 'f' is the highest common factor of K and the original
+    loop members. Thus K/f will be the smallest number where this particular loops exists.
+    All odd multiples of K/f will have similar loops. For our choice of m
+    and n we predict one additional 2-cycle in 3x+23 (23&nbsp;=&nbsp;943&nbsp;/&nbsp;41).
+
+</p>
+    <table class="whitebox in2 last_in_div">
+        <tr>
+          <th>Loop Size</th>
+          <th>Factor</th>
+          <th>System</th>
+          <th>Number of Loops</th>
+          <th>Smallest Elements</th>
+        </tr>    <tr>
+          <td class="code">2</td>
+          <td class="code">41</td>
+          <td class="code">3x + 23</td>
+          <td class="code">2</td>
+          <td class="code">5, 7</td>
+        </tr>
+    </table>
+
+</div>
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p>
+
+
+
+<script>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script>
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

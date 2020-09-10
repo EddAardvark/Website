@@ -1,0 +1,864 @@
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (Loops in other systems) </TITLE>
+
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+<script>
+    OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+</script>
+</head>
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+             Loops in other systems
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+<div class="in2 box w8 float">
+
+    <h2> Contents </h2>
+
+    <div class="in2">
+    <ul>
+      <li><a href="#Introduction">Introduction</a></li>
+      <li><a href="#Loops in small k values">Loops in small k values</a></li>
+      <li><a href="#MoreLoops">Larger 'k' values</a></li>
+      <li><a href="#Largest Seed">Largest Seed</a></li>
+      <li><a href="#Record Holders">Record Holders</a></li>
+      <li><a href="#Convergence distribution">Convergence distribution</a></li>
+    </ul>
+    </div>
+</div>
+
+<!-- Introduction -->
+
+<div class="in2 box w8 float">
+
+    <h2> <a name="Introduction"> Introduction</a> </h2>
+
+    <p>
+        On other pages we've seen how the 's' values, the potential numerators found while searching for
+        loops in 3x+1, are actually loop seeds in other systems (like 3x+5). Mostly
+        though, these 's' values are seeds in systems with very large 'k' values. Loops in
+        systems with small 'k' values usually derive from systems where 's' and 'K' have
+        a common factor (f), so k = K&#x2215;f and the seed is s&#x2215;f.</p>
+
+    </p><p>
+
+        I've ignored systems where k is a multiple of 3 as they aren't
+        covered by the equations considered on this site (as 2<sup>m</sup>&minus;3<sup>n</sup>
+        can never be a multiple of 3).&nbsp;</p>
+
+    </p><p>
+
+        I ran a search for cycles in systems with k values up to 200 (ignoring
+        multiples of 2 and 3) and seed values up to 100,000,000. The largest seed I
+        actually found was 35,275 in 3x+145 and the largest cycle had 80 members, in
+        3x+143.
+
+    </p><p>
+
+        It looks like most if not all cycles are in the domain where s/k is
+        relatively small. 's' is the smallest member of the loop, other members can be
+        relatively large.
+
+</div>
+
+<!-- Smaller 'k' values -->
+
+<div class="in2 box w8 float">
+
+    <h2><a name="Loops in small k values">Loops in small k values</a></h2>
+
+    <p>
+        This section shows some of the loops discovered in systems with k values up
+        to 19. The largest loop is 18 in 3x+17, the largest seed is 347 in 3x+5, and the
+        largest s&#x2215;k ratio is 69.4 in 3x+5.</p>
+    </p>
+
+<h3>Loops in 3x+1</h3>
+
+<p>
+
+    <table class="whitebox">
+        <tr><th>Seed</th><th>Size</th><th>Seed/K</th><th>Loop</th></tr>
+        <tr><td class="code">1</td><td class="code">1</td><td class="code">1.0</td><td class="code">[1, 1]</td></tr>
+    </table>
+
+    <h3>Loops in 3x+5</h3>
+
+</p><p>
+
+    <table class="whitebox">
+        <tr><th>Seed</th><th>Size</th><th>Seed/K</th><th>Loop</th></tr>
+        <tr><td class="code">1</td><td class="code">1</td><td class="code">0.2</td><td class="code">[1, 1]</td></tr>
+        <tr><td class="code">5</td><td class="code">1</td><td class="code">1.0</td><td class="code">[5, 5]</td></tr>
+        <tr><td class="code">19</td><td class="code">3</td><td class="code">3.8</td><td class="code">[19, 31, 49, 19]</td></tr>
+        <tr><td class="code">23</td><td class="code">3</td><td class="code">4.6</td><td class="code">[23, 37, 29, 23]</td></tr>
+        <tr><td class="code">187</td><td class="code">17</td><td class="code">37.4</td><td class="code">[187, 283, 427, 643, 967, 1453, 1091, 1639, 2461, 1847, 2773, 2081, 781, 587, 883, 1327, 1993, 187]</td></tr>
+        <tr><td class="code">347</td><td class="code">17</td><td class="code">69.4</td><td class="code">[347, 523, 787, 1183, 1777, 667, 1003, 1507, 2263, 3397, 2549, 1913, 359, 541, 407, 613, 461, 347]</td></tr>
+    </table>
+</p>
+
+<h3>Loops in 3x+7</h3>
+    <p>
+        <table class="whitebox">
+            <tr><th>Seed</th><th>Size</th><th>Seed/K</th><th>Loop</th></tr>
+            <tr><td class="code">5</td><td class="code">2</td><td class="code">0.7</td><td class="code">[5, 11, 5]</td></tr>
+            <tr><td class="code">7</td><td class="code">1</td><td class="code">1.0</td><td class="code">[7, 7]</td></tr>
+        </table>
+    </p>
+
+<h3>Loops in 3x+11</h3>
+    <p>
+        <table class="whitebox">
+            <tr><th>Seed</th><th>Size</th><th>Seed/K</th><th>Loop</th></tr>
+            <tr><td class="code">1</td><td class="code">2</td><td class="code">0.1</td><td class="code">[1, 7, 1]</td></tr>
+            <tr><td class="code">11</td><td class="code">1</td><td class="code">1.0</td><td class="code">[11, 11]</td></tr>
+            <tr><td class="code">13</td><td class="code">8</td><td class="code">1.2</td><td class="code">[13, 25, 43, 35, 29, 49, 79, 31, 13]</td></tr>
+        </table>
+    </p>
+
+<h3>Loops in 3x+13</h3>
+    <p>
+        <table class="whitebox">
+            <tr><th>Seed</th><th>Size</th><th>Seed/K</th><th>Loop</th></tr>
+            <tr><td class="code">1</td><td class="code">1</td><td class="code">0.1</td><td class="code">[1, 1]</td></tr>
+            <tr><td class="code">13</td><td class="code">1</td><td class="code">1.0</td><td class="code">[13, 13]</td></tr>
+            <tr><td class="code">131</td><td class="code">15</td><td class="code">10.1</td><td class="code">[131, 203, 311, 473, 179, 275, 419, 635, 959, 1445, 1087, 1637, 1231, 1853, 1393, 131]</td></tr>
+            <tr><td class="code">211</td><td class="code">5</td><td class="code">16.2</td><td class="code">[211, 323, 491, 743, 1121, 211]</td></tr>
+            <tr><td class="code">227</td><td class="code">5</td><td class="code">17.5</td><td class="code">[227, 347, 527, 797, 601, 227]</td></tr>
+            <tr><td class="code">251</td><td class="code">5</td><td class="code">19.3</td><td class="code">[251, 383, 581, 439, 665, 251]</td></tr>
+            <tr><td class="code">259</td><td class="code">5</td><td class="code">19.9</td><td class="code">[259, 395, 599, 905, 341, 259]</td></tr>
+            <tr><td class="code">283</td><td class="code">5</td><td class="code">21.8</td><td class="code">[283, 431, 653, 493, 373, 283]</td></tr>
+            <tr><td class="code">287</td><td class="code">5</td><td class="code">22.1</td><td class="code">[287, 437, 331, 503, 761, 287]</td></tr>
+            <tr><td class="code">319</td><td class="code">5</td><td class="code">24.5</td><td class="code">[319, 485, 367, 557, 421, 319]</td></tr>
+        </table>
+    </p>
+
+<h3>Loops in 3x+17</h3>
+    <p>
+        <table class="whitebox">
+            <tr><th>Seed</th><th>Size</th><th>Seed/K</th><th>Loop</th></tr>
+            <tr><td class="code">1</td><td class="code">2</td><td class="code">0.1</td><td class="code">[1, 5, 1]</td></tr>
+            <tr><td class="code">17</td><td class="code">1</td><td class="code">1.0</td><td class="code">[17, 17]</td></tr>
+            <tr><td class="code">23</td><td class="code">18</td><td class="code">1.4</td><td class="code">[23, 43, 73, 59, 97, 77, 31, 55, 91, 145, 113, 89, 71, 115, 181, 35, 61, 25, 23]</td></tr>
+        </table>
+    </p>
+
+<h3>Loops in 3x+19</h3>
+    <p>
+        <table class="whitebox">
+            <tr><th>Seed</th><th>Size</th><th>Seed/K</th><th>Loop</th></tr>
+            <tr><td class="code">5</td><td class="code">5</td><td class="code">0.3</td><td class="code">[5, 17, 35, 31, 7, 5]</td></tr>
+            <tr><td class="code">19</td><td class="code">1</td><td class="code">1.0</td><td class="code">[19, 19]</td></tr>
+        </table>
+    </p>
+
+</div>
+
+<!-- Larger 'k' values -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="MoreLoops">Larger 'k' values</a></h2>
+
+    <p>
+        This table summarises the results up to k=199.
+
+    </p></p>
+
+        <table cellpadding="12pt">
+            <tr><td>
+                <table class="whitebox" border="1" cellspacing="0">
+                    <tr><th>K</th><th>Seed</th><th>Size</th><th>Seed/K</th></tr>
+                <tr><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">5</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">5</td><td class="code" align="right">5</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">5</td><td class="code" align="right">19</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code" align="right">5</td><td class="code" align="right">23</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code" align="right">5</td><td class="code" align="right">187</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code" align="right">5</td><td class="code" align="right">347</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code" align="right">7</td><td class="code" align="right">5</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code" align="right">7</td><td class="code" align="right">7</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">11</td><td class="code" align="right">1</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">11</td><td class="code" align="right">11</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">11</td><td class="code" align="right">13</td><td class="code" align="right">8</td><td class="code" align="right">1.2</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">13</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">131</td><td class="code" align="right">15</td><td class="code" align="right">10.1</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">211</td><td class="code" align="right">5</td><td class="code" align="right">16.2</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">227</td><td class="code" align="right">5</td><td class="code" align="right">17.5</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">251</td><td class="code" align="right">5</td><td class="code" align="right">19.3</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">259</td><td class="code" align="right">5</td><td class="code" align="right">19.9</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">283</td><td class="code" align="right">5</td><td class="code" align="right">21.8</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">287</td><td class="code" align="right">5</td><td class="code" align="right">22.1</td></tr>
+                <tr><td class="code" align="right">13</td><td class="code" align="right">319</td><td class="code" align="right">5</td><td class="code" align="right">24.5</td></tr>
+                <tr><td class="code" align="right">17</td><td class="code" align="right">1</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">17</td><td class="code" align="right">17</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">17</td><td class="code" align="right">23</td><td class="code" align="right">18</td><td class="code" align="right">1.4</td></tr>
+                <tr><td class="code" align="right">19</td><td class="code" align="right">5</td><td class="code" align="right">5</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">19</td><td class="code" align="right">19</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">23</td><td class="code" align="right">5</td><td class="code" align="right">2</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">23</td><td class="code" align="right">7</td><td class="code" align="right">2</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">23</td><td class="code" align="right">23</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">23</td><td class="code" align="right">41</td><td class="code" align="right">26</td><td class="code" align="right">1.8</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">5</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">7</td><td class="code" align="right">8</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">17</td><td class="code" align="right">4</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">25</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">95</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">115</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">935</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code" align="right">25</td><td class="code" align="right">1735</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code" align="right">29</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">29</td><td class="code" align="right">11</td><td class="code" align="right">9</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code" align="right">29</td><td class="code" align="right">29</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">29</td><td class="code" align="right">3811</td><td class="code" align="right">41</td><td class="code" align="right">131.4</td></tr>
+                <tr><td class="code" align="right">29</td><td class="code" align="right">7055</td><td class="code" align="right">41</td><td class="code" align="right">243.3</td></tr>
+                <tr><td class="code" align="right">31</td><td class="code" align="right">13</td><td class="code" align="right">12</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code" align="right">31</td><td class="code" align="right">31</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">7</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">13</td><td class="code" align="right">4</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">17</td><td class="code" align="right">4</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">25</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">35</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">133</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">161</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">1309</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code" align="right">35</td><td class="code" align="right">2429</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code" align="right">37</td><td class="code" align="right">19</td><td class="code" align="right">3</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code" align="right">37</td><td class="code" align="right">23</td><td class="code" align="right">3</td><td class="code" align="right">0.6</td></tr>
+                <tr><td class="code" align="right">37</td><td class="code" align="right">29</td><td class="code" align="right">3</td><td class="code" align="right">0.8</td></tr>
+                <tr><td class="code" align="right">37</td><td class="code" align="right">37</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">41</td><td class="code" align="right">1</td><td class="code" align="right">8</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">41</td><td class="code" align="right">41</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">43</td><td class="code" align="right">1</td><td class="code" align="right">3</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">43</td><td class="code" align="right">43</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">5</td><td class="code" align="right">7</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">25</td><td class="code" align="right">16</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">47</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">65</td><td class="code" align="right">4</td><td class="code" align="right">1.4</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">73</td><td class="code" align="right">4</td><td class="code" align="right">1.6</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">85</td><td class="code" align="right">4</td><td class="code" align="right">1.8</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">89</td><td class="code" align="right">4</td><td class="code" align="right">1.9</td></tr>
+                <tr><td class="code" align="right">47</td><td class="code" align="right">101</td><td class="code" align="right">4</td><td class="code" align="right">2.1</td></tr>
+                <tr><td class="code" align="right">49</td><td class="code" align="right">25</td><td class="code" align="right">22</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code" align="right">49</td><td class="code" align="right">35</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code" align="right">49</td><td class="code" align="right">49</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">53</td><td class="code" align="right">53</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">53</td><td class="code" align="right">103</td><td class="code" align="right">17</td><td class="code" align="right">1.9</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">1</td><td class="code" align="right">4</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">5</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">7</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">11</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">41</td><td class="code" align="right">16</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">55</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">65</td><td class="code" align="right">8</td><td class="code" align="right">1.2</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">209</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">253</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">2057</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code" align="right">55</td><td class="code" align="right">3817</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">1</td><td class="code" align="right">11</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">59</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">133</td><td class="code" align="right">6</td><td class="code" align="right">2.3</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">149</td><td class="code" align="right">6</td><td class="code" align="right">2.5</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">181</td><td class="code" align="right">6</td><td class="code" align="right">3.1</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">185</td><td class="code" align="right">6</td><td class="code" align="right">3.1</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">217</td><td class="code" align="right">6</td><td class="code" align="right">3.7</td></tr>
+                <tr><td class="code" align="right">59</td><td class="code" align="right">221</td><td class="code" align="right">6</td><td class="code" align="right">3.7</td></tr>
+                <tr><td class="code" align="right">61</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">61</td><td class="code" align="right">61</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">61</td><td class="code" align="right">235</td><td class="code" align="right">41</td><td class="code" align="right">3.9</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">5</td><td class="code" align="right">1</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">13</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">19</td><td class="code" align="right">12</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">65</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">247</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">299</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">655</td><td class="code" align="right">15</td><td class="code" align="right">10.1</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">1055</td><td class="code" align="right">5</td><td class="code" align="right">16.2</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">1135</td><td class="code" align="right">5</td><td class="code" align="right">17.5</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">1255</td><td class="code" align="right">5</td><td class="code" align="right">19.3</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">1295</td><td class="code" align="right">5</td><td class="code" align="right">19.9</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">1415</td><td class="code" align="right">5</td><td class="code" align="right">21.8</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">1435</td><td class="code" align="right">5</td><td class="code" align="right">22.1</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">1595</td><td class="code" align="right">5</td><td class="code" align="right">24.5</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">2431</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code" align="right">65</td><td class="code" align="right">4511</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code" align="right">67</td><td class="code" align="right">17</td><td class="code" align="right">16</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">67</td><td class="code" align="right">67</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">29</td><td class="code" align="right">5</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">31</td><td class="code" align="right">5</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">71</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">2585</td><td class="code" align="right">17</td><td class="code" align="right">36.4</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">2809</td><td class="code" align="right">17</td><td class="code" align="right">39.6</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">3985</td><td class="code" align="right">17</td><td class="code" align="right">56.1</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">4121</td><td class="code" align="right">17</td><td class="code" align="right">58.0</td></tr>
+                <tr><td class="code" align="right">71</td><td class="code" align="right">4409</td><td class="code" align="right">17</td><td class="code" align="right">62.1</td></tr>
+                <tr><td class="code" align="right">73</td><td class="code" align="right">5</td><td class="code" align="right">4</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">73</td><td class="code" align="right">19</td><td class="code" align="right">32</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">73</td><td class="code" align="right">47</td><td class="code" align="right">8</td><td class="code" align="right">0.6</td></tr>
+                <tr><td class="code" align="right">73</td><td class="code" align="right">73</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">77</td><td class="code" align="right">1</td><td class="code" align="right">16</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">77</td><td class="code" align="right">7</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">77</td><td class="code" align="right">55</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code" align="right">77</td><td class="code" align="right">77</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">77</td><td class="code" align="right">91</td><td class="code" align="right">8</td><td class="code" align="right">1.2</td></tr>
+                <tr><td class="code" align="right">79</td><td class="code" align="right">1</td><td class="code" align="right">20</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">79</td><td class="code" align="right">7</td><td class="code" align="right">20</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">79</td><td class="code" align="right">79</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">79</td><td class="code" align="right">233</td><td class="code" align="right">14</td><td class="code" align="right">2.9</td></tr>
+                <tr><td class="code" align="right">79</td><td class="code" align="right">265</td><td class="code" align="right">14</td><td class="code" align="right">3.4</td></tr>
+                <tr><td class="code" align="right">83</td><td class="code" align="right">65</td><td class="code" align="right">14</td><td class="code" align="right">0.8</td></tr>
+                <tr><td class="code" align="right">83</td><td class="code" align="right">83</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">83</td><td class="code" align="right">109</td><td class="code" align="right">7</td><td class="code" align="right">1.3</td></tr>
+                <tr><td class="code" align="right">83</td><td class="code" align="right">157</td><td class="code" align="right">7</td><td class="code" align="right">1.9</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">5</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">7</td><td class="code" align="right">56</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">17</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">85</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">115</td><td class="code" align="right">18</td><td class="code" align="right">1.4</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">323</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">391</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">3179</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code" align="right">85</td><td class="code" align="right">5899</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code" align="right">89</td><td class="code" align="right">17</td><td class="code" align="right">8</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">89</td><td class="code" align="right">89</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">1</td><td class="code" align="right">24</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">7</td><td class="code" align="right">1</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">25</td><td class="code" align="right">6</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">59</td><td class="code" align="right">6</td><td class="code" align="right">0.6</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">65</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">91</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">917</td><td class="code" align="right">15</td><td class="code" align="right">10.1</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">1477</td><td class="code" align="right">5</td><td class="code" align="right">16.2</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">1589</td><td class="code" align="right">5</td><td class="code" align="right">17.5</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">1757</td><td class="code" align="right">5</td><td class="code" align="right">19.3</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">1813</td><td class="code" align="right">5</td><td class="code" align="right">19.9</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">1981</td><td class="code" align="right">5</td><td class="code" align="right">21.8</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">2009</td><td class="code" align="right">5</td><td class="code" align="right">22.1</td></tr>
+                <tr><td class="code" align="right">91</td><td class="code" align="right">2233</td><td class="code" align="right">5</td><td class="code" align="right">24.5</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">1</td><td class="code" align="right">36</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">17</td><td class="code" align="right">5</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">19</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">23</td><td class="code" align="right">5</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">25</td><td class="code" align="right">5</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">95</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">361</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">437</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">3553</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code" align="right">95</td><td class="code" align="right">6593</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code" align="right">97</td><td class="code" align="right">1</td><td class="code" align="right">6</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code" align="right">97</td><td class="code" align="right">13</td><td class="code" align="right">3</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code" align="right">97</td><td class="code" align="right">97</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">7</td><td class="code" align="right">6</td><td class="code" align="right">0.1</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">11</td><td class="code" align="right">6</td><td class="code" align="right">0.1</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">19</td><td class="code" align="right">3</td><td class="code" align="right">0.2</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">23</td><td class="code" align="right">3</td><td class="code" align="right">0.2</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">29</td><td class="code" align="right">3</td><td class="code" align="right">0.3</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">31</td><td class="code" align="right">3</td><td class="code" align="right">0.3</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">37</td><td class="code" align="right">3</td><td class="code" align="right">0.4</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">101</td><td class="code" align="right">101</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">103</td><td class="code" align="right">5</td><td class="code" align="right">8</td><td class="code" align="right">0.0</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">103</td><td class="code" align="right">23</td><td class="code" align="right">22</td><td class="code" align="right">0.2</td>
+                </tr>
+                <tr>
+                  <td class="code" align="right">103</td><td class="code" align="right">103</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td>
+                </tr>
+                </table>
+                </td>
+                <td>
+            <table class="whitebox" border="1" cellspacing="0">
+                <tr><th>K</th><th>Seed</th><th>Size</th><th>Seed/K</th></tr>
+
+                <tr><td class="code">107</td><td class="code" align="right">1</td><td class="code" align="right">53</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">107</td><td class="code" align="right">107</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">109</td><td class="code" align="right">19</td><td class="code" align="right">30</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">109</td><td class="code" align="right">109</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">113</td><td class="code" align="right">1</td><td class="code" align="right">12</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">113</td><td class="code" align="right">113</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">13</td><td class="code" align="right">13</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">17</td><td class="code" align="right">18</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">23</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">25</td><td class="code" align="right">2</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">35</td><td class="code" align="right">2</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">115</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">205</td><td class="code" align="right">26</td><td class="code" align="right">1.8</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">437</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">529</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">4301</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code">115</td><td class="code" align="right">7981</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">1</td><td class="code" align="right">42</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">5</td><td class="code" align="right">2</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">7</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">11</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">23</td><td class="code" align="right">18</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">85</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">119</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">125</td><td class="code" align="right">14</td><td class="code" align="right">1.1</td></tr>
+                <tr><td class="code">119</td><td class="code" align="right">161</td><td class="code" align="right">18</td><td class="code" align="right">1.4</td></tr>
+                <tr><td class="code">121</td><td class="code" align="right">5</td><td class="code" align="right">18</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">121</td><td class="code" align="right">11</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">121</td><td class="code" align="right">19</td><td class="code" align="right">46</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">121</td><td class="code" align="right">121</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">121</td><td class="code" align="right">143</td><td class="code" align="right">8</td><td class="code" align="right">1.2</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">25</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">35</td><td class="code" align="right">8</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">47</td><td class="code" align="right">19</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">85</td><td class="code" align="right">4</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">125</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">143</td><td class="code" align="right">19</td><td class="code" align="right">1.1</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">475</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">575</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">899</td><td class="code" align="right">74</td><td class="code" align="right">7.2</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">4675</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code">125</td><td class="code" align="right">8675</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code">127</td><td class="code" align="right">1</td><td class="code" align="right">18</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">127</td><td class="code" align="right">41</td><td class="code" align="right">18</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">127</td><td class="code" align="right">127</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">131</td><td class="code" align="right">13</td><td class="code" align="right">13</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">131</td><td class="code" align="right">17</td><td class="code" align="right">13</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">131</td><td class="code" align="right">23</td><td class="code" align="right">26</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">131</td><td class="code" align="right">131</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">133</td><td class="code" align="right">11</td><td class="code" align="right">18</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">133</td><td class="code" align="right">35</td><td class="code" align="right">5</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">133</td><td class="code" align="right">59</td><td class="code" align="right">24</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code">133</td><td class="code" align="right">95</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code">133</td><td class="code" align="right">133</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">137</td><td class="code" align="right">1</td><td class="code" align="right">4</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">137</td><td class="code" align="right">41</td><td class="code" align="right">40</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">137</td><td class="code" align="right">137</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">137</td><td class="code" align="right">503</td><td class="code" align="right">18</td><td class="code" align="right">3.7</td></tr>
+                <tr><td class="code">137</td><td class="code" align="right">743</td><td class="code" align="right">18</td><td class="code" align="right">5.4</td></tr>
+                <tr><td class="code">137</td><td class="code" align="right">967</td><td class="code" align="right">18</td><td class="code" align="right">7.1</td></tr>
+                <tr><td class="code">139</td><td class="code" align="right">11</td><td class="code" align="right">74</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">139</td><td class="code" align="right">139</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">7</td><td class="code" align="right">80</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">11</td><td class="code" align="right">1</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">13</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">17</td><td class="code" align="right">7</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">29</td><td class="code" align="right">7</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">143</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">169</td><td class="code" align="right">8</td><td class="code" align="right">1.2</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">1441</td><td class="code" align="right">15</td><td class="code" align="right">10.1</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">2321</td><td class="code" align="right">5</td><td class="code" align="right">16.2</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">2497</td><td class="code" align="right">5</td><td class="code" align="right">17.5</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">2761</td><td class="code" align="right">5</td><td class="code" align="right">19.3</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">2849</td><td class="code" align="right">5</td><td class="code" align="right">19.9</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">3113</td><td class="code" align="right">5</td><td class="code" align="right">21.8</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">3157</td><td class="code" align="right">5</td><td class="code" align="right">22.1</td></tr>
+                <tr><td class="code">143</td><td class="code" align="right">3509</td><td class="code" align="right">5</td><td class="code" align="right">24.5</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">1</td><td class="code" align="right">2</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">5</td><td class="code" align="right">1</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">23</td><td class="code" align="right">10</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">29</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">47</td><td class="code" align="right">18</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">55</td><td class="code" align="right">9</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">145</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">551</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">667</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">5423</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">10063</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">19055</td><td class="code" align="right">41</td><td class="code" align="right">131.4</td></tr>
+                <tr><td class="code">145</td><td class="code" align="right">35275</td><td class="code" align="right">41</td><td class="code" align="right">243.3</td></tr>
+                <tr><td class="code">149</td><td class="code" align="right">19</td><td class="code" align="right">33</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">149</td><td class="code" align="right">149</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">149</td><td class="code" align="right">667</td><td class="code" align="right">26</td><td class="code" align="right">4.5</td></tr>
+                <tr><td class="code">151</td><td class="code" align="right">41</td><td class="code" align="right">40</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">151</td><td class="code" align="right">113</td><td class="code" align="right">10</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code">151</td><td class="code" align="right">151</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">1</td><td class="code" align="right">18</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">31</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">65</td><td class="code" align="right">12</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">155</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">589</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">713</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">5797</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code">155</td><td class="code" align="right">10757</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code">157</td><td class="code" align="right">13</td><td class="code" align="right">12</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">157</td><td class="code" align="right">157</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">11</td><td class="code" align="right">6</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">19</td><td class="code" align="right">6</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">25</td><td class="code" align="right">22</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">35</td><td class="code" align="right">2</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">49</td><td class="code" align="right">2</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">79</td><td class="code" align="right">16</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">115</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">161</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">161</td><td class="code" align="right">287</td><td class="code" align="right">26</td><td class="code" align="right">1.8</td></tr>
+                <tr><td class="code">163</td><td class="code" align="right">11</td><td class="code" align="right">49</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">163</td><td class="code" align="right">17</td><td class="code" align="right">36</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">163</td><td class="code" align="right">163</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">167</td><td class="code" align="right">13</td><td class="code" align="right">20</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">167</td><td class="code" align="right">95</td><td class="code" align="right">9</td><td class="code" align="right">0.6</td></tr>
+                <tr><td class="code">167</td><td class="code" align="right">127</td><td class="code" align="right">9</td><td class="code" align="right">0.8</td></tr>
+                <tr><td class="code">167</td><td class="code" align="right">167</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">11</td><td class="code" align="right">9</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">13</td><td class="code" align="right">1</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">17</td><td class="code" align="right">23</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">169</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">1703</td><td class="code" align="right">15</td><td class="code" align="right">10.1</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">2743</td><td class="code" align="right">5</td><td class="code" align="right">16.2</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">2951</td><td class="code" align="right">5</td><td class="code" align="right">17.5</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">3263</td><td class="code" align="right">5</td><td class="code" align="right">19.3</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">3367</td><td class="code" align="right">5</td><td class="code" align="right">19.9</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">3679</td><td class="code" align="right">5</td><td class="code" align="right">21.8</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">3731</td><td class="code" align="right">5</td><td class="code" align="right">22.1</td></tr>
+                <tr><td class="code">169</td><td class="code" align="right">4147</td><td class="code" align="right">5</td><td class="code" align="right">24.5</td></tr>
+                <tr><td class="code">173</td><td class="code" align="right">7</td><td class="code" align="right">14</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">173</td><td class="code" align="right">37</td><td class="code" align="right">7</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">173</td><td class="code" align="right">173</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">29</td><td class="code" align="right">12</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">35</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">49</td><td class="code" align="right">8</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">53</td><td class="code" align="right">8</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">65</td><td class="code" align="right">4</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">73</td><td class="code" align="right">4</td><td class="code" align="right">0.4</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">85</td><td class="code" align="right">4</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">89</td><td class="code" align="right">4</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">101</td><td class="code" align="right">4</td><td class="code" align="right">0.6</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">103</td><td class="code" align="right">4</td><td class="code" align="right">0.6</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">119</td><td class="code" align="right">4</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">125</td><td class="code" align="right">2</td><td class="code" align="right">0.7</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">143</td><td class="code" align="right">4</td><td class="code" align="right">0.8</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">175</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">665</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">805</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">6545</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code">175</td><td class="code" align="right">12145</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code">179</td><td class="code" align="right">5</td><td class="code" align="right">62</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">179</td><td class="code" align="right">179</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">181</td><td class="code" align="right">11</td><td class="code" align="right">40</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">181</td><td class="code" align="right">23</td><td class="code" align="right">10</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">181</td><td class="code" align="right">55</td><td class="code" align="right">10</td><td class="code" align="right">0.3</td></tr>
+                <tr><td class="code">181</td><td class="code" align="right">181</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">1</td><td class="code" align="right">36</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">37</td><td class="code" align="right">1</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">95</td><td class="code" align="right">3</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">115</td><td class="code" align="right">3</td><td class="code" align="right">0.6</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">145</td><td class="code" align="right">3</td><td class="code" align="right">0.8</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">185</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">703</td><td class="code" align="right">3</td><td class="code" align="right">3.8</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">851</td><td class="code" align="right">3</td><td class="code" align="right">4.6</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">6919</td><td class="code" align="right">17</td><td class="code" align="right">37.4</td></tr>
+                <tr><td class="code">185</td><td class="code" align="right">12839</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+                <tr><td class="code">187</td><td class="code" align="right">5</td><td class="code" align="right">12</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">187</td><td class="code" align="right">11</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">187</td><td class="code" align="right">17</td><td class="code" align="right">2</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">187</td><td class="code" align="right">43</td><td class="code" align="right">12</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">187</td><td class="code" align="right">187</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">187</td><td class="code" align="right">221</td><td class="code" align="right">8</td><td class="code" align="right">1.2</td></tr>
+                <tr><td class="code">187</td><td class="code" align="right">253</td><td class="code" align="right">18</td><td class="code" align="right">1.4</td></tr>
+                <tr><td class="code">191</td><td class="code" align="right">47</td><td class="code" align="right">24</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">191</td><td class="code" align="right">191</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">191</td><td class="code" align="right">961</td><td class="code" align="right">25</td><td class="code" align="right">5.0</td></tr>
+                <tr><td class="code">191</td><td class="code" align="right">2405</td><td class="code" align="right">25</td><td class="code" align="right">12.6</td></tr>
+                <tr><td class="code">193</td><td class="code" align="right">1</td><td class="code" align="right">29</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">193</td><td class="code" align="right">5</td><td class="code" align="right">5</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">193</td><td class="code" align="right">31</td><td class="code" align="right">12</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">193</td><td class="code" align="right">91</td><td class="code" align="right">50</td><td class="code" align="right">0.5</td></tr>
+                <tr><td class="code">193</td><td class="code" align="right">193</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">197</td><td class="code" align="right">5</td><td class="code" align="right">69</td><td class="code" align="right">0.0</td></tr>
+                <tr><td class="code">197</td><td class="code" align="right">197</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">199</td><td class="code" align="right">13</td><td class="code" align="right">6</td><td class="code" align="right">0.1</td></tr>
+                <tr><td class="code">199</td><td class="code" align="right">47</td><td class="code" align="right">6</td><td class="code" align="right">0.2</td></tr>
+                <tr><td class="code">199</td><td class="code" align="right">199</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                </table>
+                </td></tr></table>
+    </p>
+</div>
+
+<!-- Largest Seed -->
+
+<div class="in2 box w8 float">
+
+    <h2><a name="Largest Seed">Largest Seed</a></h2>
+    <p>
+        Searching k values up to 199 found a 41 member loop in 3x+145. This loop had
+        the largest seed of those discovered in this search.
+
+    </p><p>
+
+        <table border="1" cellpadding="4" cellspacing="0">
+          <tr>
+            <td class="code" align="right">35,275</td>
+            <td class="code" align="right">&nbsp;52,985</td>
+            <td class="code" align="right">&nbsp;39,775</td>
+            <td class="code" align="right">&nbsp;59,735</td>
+            <td class="code" align="right">&nbsp;89,675</td>
+            <td class="code" align="right">&nbsp;134,585</td>
+            <td class="code" align="right">&nbsp;100,975</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">151,535</td>
+            <td class="code" align="right">&nbsp;227,375</td>
+            <td class="code" align="right">&nbsp;341,135</td>
+            <td class="code" align="right">&nbsp;511,775</td>
+            <td class="code" align="right">&nbsp;767,735</td>
+            <td class="code" align="right">&nbsp;1,151,675</td>
+            <td class="code" align="right">&nbsp;1,727,585</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">1,295,725</td>
+            <td class="code" align="right">&nbsp;485,915</td>
+            <td class="code" align="right">&nbsp;728,945</td>
+            <td class="code" align="right">&nbsp;546,745</td>
+            <td class="code" align="right">&nbsp;410,095</td>
+            <td class="code" align="right">&nbsp;615,215</td>
+            <td class="code" align="right">&nbsp;922,895</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">1,384,415</td>
+            <td class="code" align="right">&nbsp;2,076,695</td>
+            <td class="code" align="right">&nbsp;3,115,115</td>
+            <td class="code" align="right">&nbsp;4,672,745</td>
+            <td class="code" align="right">&nbsp;3,504,595</td>
+            <td class="code" align="right">&nbsp;5,256,965</td>
+            <td class="code" align="right">&nbsp;492,845</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">184,835</td>
+            <td class="code" align="right">&nbsp;277,325</td>
+            <td class="code" align="right">&nbsp;104,015</td>
+            <td class="code" align="right">&nbsp;156,095</td>
+            <td class="code" align="right">&nbsp;234,215</td>
+            <td class="code" align="right">&nbsp;351,395</td>
+            <td class="code" align="right">&nbsp;527,165</td>
+          </tr>
+          <tr>
+            <td class="code" align="right">197,705</td>
+            <td class="code" align="right">&nbsp;148,315</td>
+            <td class="code" align="right">&nbsp;222,545</td>
+            <td class="code" align="right">&nbsp;166,945</td>
+            <td class="code" align="right">&nbsp;125,245</td>
+            <td class="code" align="right">&nbsp;46,985</td>
+            <td class="code" align="right">&nbsp;35,275</td>
+          </tr>
+        </table>
+
+    </p><p>
+
+        145 and 35275 have a common factor (5), so there is also a 41 member loop in
+        3x+29 (145/5) which has the seed 'S' based on 7055 (35275/5). These are
+        essentially the same loop and have the same S/K value, see the next section.
+    </p>
+
+</div>
+
+<!-- Record Holders -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="Record Holders">Record Holders</a></h2>
+    <p>
+        In an earlier section we observed the value of s/k for systems up to 3x+199.
+        We also noticed that the largest loop seed found was in the 3x+145 system. If we
+        look at the more interesting s/k value (it gives the same value for the
+        essentially identical loops found in 3x+29 and 3x+145) we find the largest value
+        so far is in 3x+29.
+    </p><p>
+        <table class="whitebox" border="1" cellspacing="0">
+            <tr><th>System</th><th>Seed</th><th>Size</th><th>Seed/K</th></tr>
+
+            <tr><td class="code">3x+1</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+            <tr><td class="code">3x+5</td><td class="code" align="right">347</td><td class="code" align="right">17</td><td class="code" align="right">69.4</td></tr>
+            <tr><td class="code">3x+29</td><td class="code" align="right">7055</td><td class="code" align="right">41</td><td class="code" align="right">243.3</td></tr>
+        </table>
+    </p><p>
+        This particular record isn't an easy one to calculate. To produce the above
+        values I had to run 100 million calculations for 67 different systems. Even then I
+        don't know if I've missed any loops, there may be a ridiculously large loop buried
+        somewhere in 3x+1, for instance. It does look though that any loops there are
+        are either close to 'k' or very large. I've not found any intermediate sized loops.
+    </p><p>
+        One way of scanning large numbers of systems would be to just choose a few
+        numbers and see where they end up. '1' might be a good starting point and we can
+        scan a large number of systems quite quickly. The corresponding results are.
+    </p><p>
+
+        <table class="whitebox" border="1" cellspacing="0">
+            <tr><th>System</th><th>Seed</th><th>Size</th><th>Seed/K</th></tr>
+                <tr><td class="code">3x+1</td><td class="code" align="right">1</td><td class="code" align="right">1</td><td class="code" align="right">1.0</td></tr>
+                <tr><td class="code">3x+23</td><td class="code" align="right">41</td><td class="code" align="right">26</td><td class="code" align="right">1.8</td></tr>
+                <tr><td class="code">3x+53</td><td class="code" align="right">103</td><td class="code" align="right">17</td><td class="code" align="right">1.9</td></tr>
+                <tr><td class="code">3x+191</td><td class="code" align="right">961</td><td class="code" align="right">25</td><td class="code" align="right">5.0</td></tr>
+        </table>
+    </p><p>
+        This hasn't worked very well, possibly because a seed of 1 tends to find the
+        smaller loops. How about trying a big number, say 1000001? This finds the 131
+        loop in 3x+13 giving a slightly higher record of 10.1, but still nowhere near
+        the real record of 243.3.
+    </p>
+
+</div>
+
+
+<!-- Convergence Distribution -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="Convergence distribution">Convergence Distribution</a></h2>
+
+    <p>
+        There don't seem to be any shortcuts for finding the loop record holders.
+        Maybe this is because the majority of seeds converge on one of the smaller
+        loops. Lest test this hypothesis in the 3x+29 system which has 5 loops including
+        the record holder based on 7055.</p>
+    </p><p>
+        First let's try all the seeds less than 7055. The results are shown in the
+        table on the left. The table on the right shows the same test using the first 10
+        million odd numbers. Only about 0.28% converge on 7055.
+    </p><p>
+        <table cellspacing="0" cellpadding="6pt">
+            <tr><td>
+            <table class="whitebox" border="1" cellspacing="0">
+              <tr>
+                <th>Loop</th>
+                <th>Frequency</th>
+              </tr>
+              <tr>
+                <td class="code" align="right">1</td>
+                <td class="code" align="right">291</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">11</td>
+                <td class="code" align="right">3101</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">29</td>
+                <td class="code" align="right">122</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">3811</td>
+                <td class="code" align="right">10</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">7055</td>
+                <td class="code" align="right">3</td>
+              </tr>
+            </table>
+            </td>
+            <td>
+
+            <table class="whitebox" border="1" cellspacing="0">
+              <tr>
+                <th>Loop</th>
+                <th>Frequency</th>
+              </tr>
+              <tr>
+                <td class="code" align="right">1</td>
+                <td class="code" align="right">794171</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">11</td>
+                <td class="code" align="right">8793106</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">29</td>
+                <td class="code" align="right">344828</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">3811</td>
+                <td class="code" align="right">39628</td>
+              </tr>
+              <tr>
+                <td class="code" align="right">7055</td>
+                <td class="code" align="right">28267</td>
+              </tr>
+            </table>
+            </td>
+            </tr>
+        </table>
+</div>
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,418 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Maze drawing">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="simplesquaremaze.js"> </script>
+<script src="mapped_points.js"> </script>
+
+<title> Maze drawing </title>
+
+<style>
+ DIV.w1 { width:120px; }
+ DIV.w2 { width:240px; }
+ DIV.w3 { width:360px; }
+ DIV.w4 { width:480px; }
+ DIV.w5 { width:600px; }
+ DIV.w6 { width:720px; }
+</style>
+
+<script>
+
+
+    Controller = function ()
+    {
+        this.width = 800;
+        this.height = 600;
+        this.maze_x = 7;
+        this.maze_y = 7;
+        this.maze_d = SSMCell.N;
+        this.maze_floor = 1;
+        this.maze_ceiling = 2;
+        this.maze;
+        this.maze_nx = 32;
+        this.maze_ny = 24;
+
+        this.xeye = new Controller.UIValue (x_eye_text, 0.5, parseFloat);
+        this.yeye = new Controller.UIValue (y_eye_text, -0.45, parseFloat);
+        this.zeye = new Controller.UIValue (z_eye_text, 1.7, parseFloat);
+
+        this.x_min = new Controller.UIValue (x_min_text, -6, parseInt);
+        this.x_max = new Controller.UIValue (x_max_text, 6, parseInt);
+        this.y_min = new Controller.UIValue (y_min_text, 0, parseInt);
+        this.y_max = new Controller.UIValue (y_max_text, 9, parseInt);
+        this.z_min = new Controller.UIValue (z_min_text, 0, parseInt);
+        this.z_max = new Controller.UIValue (z_max_text, 5, parseInt);
+
+        this.view_width = new Controller.UIValue (view_width_text, 0.9, parseFloat);
+        this.perspective = new Controller.UIValue (perspective_text, 0.8, parseFloat);
+        this.x_vanish = new Controller.UIValue (x_vanish_text, 400, parseInt);
+        this.y_vanish = new Controller.UIValue (y_vanish_text, 415, parseInt);
+
+
+        this.ApplyChanges();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.UIValue = function (text, value, parser)
+    {
+        this.text = text;
+        this.value = value;
+        this.parser = parser;
+
+        this.text.value = this.value;
+    }
+    Controller.UIValue.prototype.Get = function ()
+    {
+        var x = parseFloat(this.text.value);
+        if (! isNaN (x)) this.value = x;
+        this.text.value = this.value;
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.TURN_LEFT = 0;
+    Controller.MOVE_FORWARD = 1;
+    Controller.TURN_RIGHT = 2;
+    Controller.SLIDE_LEFT = 3;
+    Controller.RESTART = 4;
+    Controller.SLIDE_RIGHT = 5;
+
+    Controller.CompassPoints = ["images/north.png", "images/east.png", "images/south.png", "images/west.png"];
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.Move = function (opt)
+    {
+        if (opt == Controller.TURN_LEFT)
+        {
+            this.maze_d = SSMCell.TurnLeft [this.maze_d];
+            return true;
+        }
+        if (opt == Controller.TURN_RIGHT)
+        {
+            this.maze_d = SSMCell.TurnRight [this.maze_d];
+            return true;
+        }
+        if (opt == Controller.RESTART)
+        {
+            this.CreateMaze ();
+            return true;
+        }
+
+        var dir;
+
+        if (opt == Controller.MOVE_FORWARD)
+        {
+            dir = this.maze_d;
+        }
+        else if (opt == Controller.SLIDE_LEFT)
+        {
+            dir = SSMCell.TurnLeft [this.maze_d];
+        }
+        else if (opt == Controller.SLIDE_RIGHT)
+        {
+            dir = SSMCell.TurnRight [this.maze_d];
+        }
+
+        var next_pos = this.maze.TryMove (this.maze_x, this.maze_y, dir);
+
+        if (next_pos != null)
+        {
+            this.maze_x = next_pos[0];
+            this.maze_y = next_pos[1];
+            return true;
+        }
+        return false;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.CreateMaze = function ()
+    {
+        this.maze = new SimpleSquareMaze (this.maze_nx, this.maze_ny);
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.UpdateSettings = function ()
+    {
+        this.xeye.Get ();
+        this.yeye.Get ();
+        this.zeye.Get ();
+
+        this.x_min.Get ();
+        this.x_max.Get ();
+        this.y_min.Get ();
+        this.y_max.Get ();
+        this.z_min.Get ();
+        this.z_max.Get ();
+
+        this.x_vanish.Get ();
+        this.y_vanish.Get ();
+
+
+        this.view_width.Get ();
+        this.perspective.Get ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.ApplyChanges = function ()
+    {
+        this.mapped_points = new MappedPoints(this.x_min.value,this.x_max.value,this.y_min.value,this.y_max.value,this.z_min.value,this.z_max.value);
+        this.mapped_points.SetEye (this.xeye.value, this.yeye.value, this.zeye.value);
+        this.mapped_points.SetVanishingPoint (this.width/this.view_width.value, this.perspective.value, this.x_vanish.value, this.y_vanish.value);
+        this.mapped_points.SetScreenHeight (this.height);
+        this.mapped_points.MapPoints ();
+        this.mapped_points.BuildSquareMap ();
+
+        this.forward_view = new SimpleSquareMaze.ForwardView (8, 12, this.mapped_points, this.maze_floor, this.maze_ceiling);
+        this.overview = new SimpleSquareMaze.Overview (16, 6, 8);
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.DrawMaze = function (chelp)
+    {
+        this.forward_view.Draw (this.maze, this.maze_x, this.maze_y, this.maze_d, chelp);
+        the_image.src = chelp.canvas.toDataURL('image/png');
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.DrawOverhead = function (chelpover)
+    {
+        this.overview.Draw (this.maze, this.maze_x, this.maze_y, this.maze_d, chelpover);
+        overhead_view.src = chelpover.canvas.toDataURL('image/png');
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.DrawCompass = function ()
+    {
+        compass_view.src = Controller.CompassPoints[this.maze_d];
+    }
+
+    var animator;
+    var chelp;
+    var chelpover;
+    var controller;
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        links_go_here.innerHTML = MakeButtons ();
+
+        controller = new Controller ();
+        animator = new Animator (ContinueAnimation, 100);
+        chelp = new CanvasHelp (controller.width, controller.height);
+        chelpover = new CanvasHelp (320, 160);
+
+        controller.CreateMaze ();
+        Draw ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    UpdateSettings = function ()
+    {
+        controller.UpdateSettings ();
+        controller.ApplyChanges();
+        Draw ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Move = function (which_way)
+    {
+        if (controller.Move(which_way))
+        {
+            Draw ();
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Draw = function ()
+    {
+        controller.DrawMaze (chelp);
+        controller.DrawOverhead (chelpover);
+        controller.DrawCompass ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    ContinueAnimation = function() {}
+    //------------------------------------------------------------------------------------------------------------------------------------
+    CreateImage = function ()
+    {
+        var dataURL = chelp.canvas.toDataURL('image/png');
+
+        var w = window.open('about:blank');
+        w.document.write("<img src='" + dataURL + "' alt='from canvas' title='Right-click for menu'/>");
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Maze</h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box">
+        <div class="float w6" style="overflow: auto;">
+            <h2> Maze </h2>
+
+            <p>
+                <button onclick="CreateImage();" class="invisible" title="Click for full size">
+                    <img id="the_image" width="600" height="320">
+                </button>
+            </p>
+        </div>
+
+
+
+        <div class="float w4" style="overflow: auto;">
+            <h2> Maze </h2>
+
+            <p>
+                <img id="overhead_view" width="320" height="160">
+
+                <table>
+                  <tr>
+                      <td>
+                        <button type="button" class="clickable" onclick="Move(Controller.TURN_LEFT);" title="Turn left"> &#x21b6; </button>
+                        <button type="button" class="clickable" onclick="Move(Controller.MOVE_FORWARD);" title="Move Forward"> &#x25b3; </button>
+                        <button type="button" class="clickable" onclick="Move(Controller.TURN_RIGHT);" title="Turn right"> &#x21b7; </button>
+                      <br>
+                        <button type="button" class="clickable" onclick="Move(Controller.SLIDE_LEFT);" title="Slide left"> &#x25c1; </button>
+                        <button type="button" class="clickable" onclick="Move(Controller.RESTART);" title="Restart"> &#x25c9; </button>
+                        <button type="button" class="clickable" onclick="Move(Controller.SLIDE_RIGHT);" title="slide right"> &#x25b7; </button>
+                     </td>
+                     <td>
+                        <img id="compass_view" class="noborder" width="40" height="40">
+                     </td>
+                  </tr></table>
+            </p>
+        </div>
+
+        <div class="float w4" style="overflow: auto;">
+            <h2> Controls </h2>
+
+                <table>
+
+                <!-- Eye point -->
+
+                    <tr><td>Eye:</td>
+                        <td>
+                            X: <input type="text" maxlength="6" id="x_eye_text" size="4">
+                            Y: <input type="text" maxlength="6" id="y_eye_text" size="4">
+                            Z: <input type="text" maxlength="6" id="z_eye_text" size="4">
+                        </td>
+                    </tr>
+
+                <!-- Grid -->
+
+                    <tr><td>X-Range:</td>
+                        <td>
+                            <input type="text" maxlength="3" id="x_min_text" size="4">
+                                 - <input type="text" maxlength="3" id="x_max_text" size="4">
+                        </td>
+                    </tr>
+
+                    <tr><td>Y-Range:</td>
+                        <td>
+                            <input type="text" maxlength="3" id="y_min_text" size="4">
+                                - <input type="text" maxlength="3" id="y_max_text" size="4">
+                        </td>
+                    </tr>
+
+                    <tr><td>Z-Range:</td>
+                        <td>
+                            <input type="text" maxlength="3" id="z_min_text" size="4">
+                                - <input type="text" maxlength="3" id="z_max_text" size="4">
+                        </td>
+                    </tr>
+
+                <!-- View -->
+
+                    <tr><td>View:</td>
+                        <td>
+                            Width: <input type="text" maxlength="4" id="view_width_text" size="4">
+                            Perspective: <input type="text" maxlength="6" id="perspective_text" size="4">
+                        </td>
+                    </tr>
+
+
+                <!-- Vanishing point -->
+
+                    <tr><td>Vanishing point:</td>
+                        <td>
+                            X: <input type="text" maxlength="4" id="x_vanish_text" size="4">
+                            Y: <input type="text" maxlength="4" id="y_vanish_text" size="4">
+                        </td>
+                    </tr>
+
+                    <tr><td>&nbsp;</td>
+                        <td>
+                            <button type="button" class="clickable" onclick="UpdateSettings();" title="Apply settings"> &#x25b6; </button>
+                        </td>
+                    </tr>
+
+                </table>
+
+        </div>
+
+        <div class="endfloat"/>
+    </div>
+  </div>
+
+
+<!-- Other pages -->
+
+  <div class="in2 box">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+  </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2010 - 2017 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
+
+
+

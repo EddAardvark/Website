@@ -1,0 +1,1144 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Collatz 3x+1">
+
+<TITLE> 3x+1 (a-lists) </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
+<script type="text/javascript" src="../js_library/big_integers.js"> </script>
+
+<style>
+TEXT.svgtext { font-family: Courier;
+               font-size: small;
+               color: green;
+             }
+
+TABLE       { border: 1px solid DarkSlateGray; border-collapse: collapse;}
+TH, TD      { border: 1px solid DarkSlateGray; }
+DIV.breakable { word-wrap: break-word; }
+
+</style>
+
+<script>
+// Input boxes
+
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+
+        alist1_n.value = 3;
+        alist1_m.value = 5;
+        alist1_limit.value = 100;
+
+        alist2_n.value = 5;
+        alist2_m.value = 12;
+
+        alist3_n.value = 3;
+        alist3_m.value = 5;
+
+        alist4_n.value = 4;
+        alist4_m.value = 7;
+
+        alist5_n.value = 13;
+        alist5_m.value = 21;
+
+        DrawLists ();
+        DrawBoxes ();
+        InitialiseDAG();
+        DrawLoopCircle();
+        ShowLoopSeed();
+    }
+    //-------------------------------------------------------------
+    ExponentialFormat = function (x)
+    {
+        // 'x' must be a big unsigned integer
+
+        var exp = x.MantissaExponent ();
+
+        return exp[0].toFixed(6) + "&times;10<span class=\"superscript\">" + exp[1] + "</span>";
+    }
+    //-------------------------------------------------------------
+    DrawLists = function ()
+    {
+        var n = parseInt (alist1_n.value);
+        var m = parseInt (alist1_m.value);
+        var l = parseInt (alist1_limit.value);
+
+        var lists = T3A1.CreateALists (m, n, l);
+
+        if (lists.length == 0)
+        {
+            alist1_result.innerHTML = "Input (" + [n,m,l] + ") didn't generate any lists";
+        }
+        else
+        {
+            var text = "";
+
+            for (var i = 0 ; i < lists.length ; ++i)
+            {
+                var value = T3A1.AListToValue (lists[i]);
+                text += "List [" + lists[i] + "], value = " + value + "<br>";
+            }
+            alist1_result.innerHTML = text;
+        }
+    }
+
+    var max_bead_boxes = 12;
+    var bead_boxes = [];
+    var num_bead_boxes = 0;
+    var beads_n = 0;
+    var beads_m = 0;
+    //-------------------------------------------------------------
+    DrawBoxes = function ()
+    {
+        var n = parseInt (alist2_n.value);
+        var m = parseInt (alist2_m.value);
+
+        if (n < 1 || n > max_bead_boxes)
+        {
+            alert ("Please choose 1-" + max_bead_boxes + " boxes");
+            return;
+        }
+        if (m < n)
+        {
+            alert ("Please choose at least " + n + " beads");
+            return;
+        }
+
+        beads_n = n;
+        beads_m = m;
+        num_bead_boxes = n;
+
+        for (var i = 0 ; i < n ; ++i)
+        {
+            bead_boxes [i] = 1;
+        }
+
+        bead_boxes [n-1] = 1 + m - n;
+
+        UpdateBoxes ();
+    }
+    //-------------------------------------------------------------
+    MoveBead = function (idx)
+    {
+        if (idx < 0 || idx >= num_bead_boxes)
+        {
+            return;
+        }
+        if (idx == 0)
+        {
+            alert ("You can't remove the beads from this box");
+            return;
+        }
+        if (bead_boxes [idx] == 1)
+        {
+            alert ("Moving this bead would leave the box empty");
+            return;
+        }
+        ++ bead_boxes [idx-1];
+        -- bead_boxes [idx];
+
+        UpdateBoxes ();
+    }
+    //-------------------------------------------------------------
+    UpdateBoxes = function ()
+    {
+        for (var i = 0 ; i < max_bead_boxes ; ++i)
+        {
+            var button = document.getElementById("b" + i);
+
+            if (i >= num_bead_boxes)
+            {
+                button.style.background = "gray";
+                button.style.color = "gray";
+                button.innerHTML = "";
+            }
+            else if (i == 0)
+            {
+                button.style.background = "lightblue";
+                button.style.color = "darkblue";
+                button.innerHTML = bead_boxes [i];
+            }
+            else if (bead_boxes [i] == 1)
+            {
+                button.style.background = "pink";
+                button.style.color = "darkred";
+                button.innerHTML = 1;
+            }
+            else
+            {
+                button.style.background = "lightgreen";
+                button.style.color = "darkgreen";
+                button.innerHTML = bead_boxes [i];
+            }
+        }
+        var alist = bead_boxes.slice (0,num_bead_boxes);
+        var s0 = T3A1.AListToValue (alist);
+        var K = T3A1.GetK (beads_m, beads_n);
+
+        text = "n = " + beads_n + ", m = " + beads_m + ", K = " + K;
+        text += ", list = [" + alist + "]";
+        text += ", S<span class=\"subscript\">0</span> = " + s0;
+        text += "<br>";
+
+        for (var i = 0 ; i < beads_n ; ++i)
+        {
+            var s1 = (3 * s0 + K) / Math.pow (2, alist[i]);
+
+            text += "<br>";
+            text += "(3 &times; " + s0 + " + " + K +") &#xf7;" + " 2<span class=\"superscript\">" + alist [i] + "</span> = " + s1;
+            s0 = s1;
+        }
+
+        alist2_result.innerHTML = text;
+    }
+    //-------------------------------------------------------------
+    // Variables used when drawing a-list graphs
+    var box_height = 24;
+    var box_x_margin = 8;
+    var box_y_margin = 24;
+    var box_x_padding = 4;
+    var box_y_padding = 6;
+    var max_row_length = 0;
+    var dag_k = 1;
+    var num_rows = 0;
+    var dag_visited;
+    var dag_row_lengths;
+    var dag_num_loops;
+    var dag_loops;
+    var dag_loop_limits;
+    var dag_colour_mode = 0;    // 0 = none, 1-num_loops = loop, num_loops+1 = end-points
+    //-------------------------------------------------------------
+    InitialiseDAG = function ()
+    {
+        // Sets up the data for drawing the A-list graph
+
+        dag_n = parseInt (alist3_n.value);
+        dag_m = parseInt (alist3_m.value);
+
+        if (dag_m < dag_n || dag_n < 1)
+        {
+            alert ("Please enter n > 1 and m >= n")
+            return;
+        }
+        var dag = NodeInAlistDAG.CreateAListDAG (dag_m, dag_n);
+
+        dag_k = T3A1.GetK (dag_m, dag_n);
+        dag_visited = dag [0];
+        dag_row_lengths = dag [1];
+        dag_colour_mode = 0;
+        max_row_length = 0;
+        num_rows = dag_row_lengths.length;
+
+        alist3_mode.innerHTML = "none";
+
+        for (var i = 0 ; i < dag_row_lengths.length ; ++i)
+        {
+            if (dag_row_lengths[i] > max_row_length) max_row_length = dag_row_lengths[i];
+        }
+
+        // Get the loop information for colouring in
+
+        dag_loops = T3A1.FindLoops (dag_m, dag_n, 10000);
+        dag_num_loops = 0;
+        dag_loop_limits = {};
+
+        for (var key in dag_loops)
+        {
+            if (dag_loops.hasOwnProperty (key))
+            {
+                var idx = dag_loops[key][0];
+                var s = dag_loops[key][2];
+
+                if (! dag_loop_limits.hasOwnProperty (idx))
+                {
+                    dag_loop_limits [idx] = [s,s];
+                }
+                else if (s < dag_loop_limits [idx][0])
+                {
+                    dag_loop_limits [idx][0] = s;
+                }
+                else if (s > dag_loop_limits [idx][1])
+                {
+                    dag_loop_limits [idx][1] = s;
+                }
+
+                if (idx > dag_num_loops)
+                {
+                    dag_num_loops = idx;
+                }
+            }
+        }
+
+        ++ dag_num_loops;
+
+        // Draw
+
+        DrawDAG ();
+    }
+    //-------------------------------------------------------------
+    DrawDAG = function ()
+    {
+        var svg = GetDAGSVG ();
+        alist3_picture.innerHTML = svg;
+    }
+    //-------------------------------------------------------------
+    GetMaxDAGTextLength = function (dag_mode)
+    {
+        // Not a very efficient solution, the values for the last look in the diagram
+        // are probably the longest.
+
+        var max_len = 0;
+
+        for (var key in dag_visited)
+        {
+            if (dag_visited.hasOwnProperty (key))
+            {
+                var node = dag_visited [key];
+                var text = "";
+
+                if (dag_mode == "lists") text += node.alist;
+                else if (dag_mode == "values") text += node.s_value;
+                else if (dag_mode == "SoK")
+                {
+                    var x = Math.round (1000 * node.s_value / dag_k) / 1000;
+                    text += x;
+                }
+
+                if (text.length > max_len)
+                {
+                    max_len = text.length;
+                }
+            }
+        }
+        return max_len;
+    }
+    //-------------------------------------------------------------
+    GetDAGSVG = function (text_len)
+    {
+        // Draw the A-list tree
+
+        var mode = dag_mode.value;
+        var box_width = 8 * (1 + GetMaxDAGTextLength(mode));
+        var width = max_row_length * box_width + (max_row_length - 1) * box_x_margin;
+        var height = num_rows * box_height + (num_rows - 1) * box_y_margin;
+
+        var svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"";
+
+        svg += " width=\"" + width + "\" height=\"" + height + "\"";
+        svg += " viewBox=\"" + 0 + "," + 0 + "," + width + "," + height + "\">";
+
+        // Draw the lines first, then put the boxes on top
+
+        for (var key in dag_visited)
+        {
+            if (dag_visited.hasOwnProperty (key))
+            {
+                var node = dag_visited [key];
+                var offset = (max_row_length - dag_row_lengths[node.level]) * (box_width + box_x_margin) / 2;
+                var x0 = offset + node.x * (box_width + box_x_margin) + box_width / 2;
+                var y0 = node.level * (box_height + box_y_margin) + box_height / 2 ;
+                for (var i = 0 ; i < node.next.length ; ++i)
+                {
+                    var other = dag_visited [node.next [i].key];
+                    var offset2 = (max_row_length - dag_row_lengths[other.level]) * (box_width + box_x_margin) / 2;
+                    var x1 = offset2 + other.x * (box_width + box_x_margin) + box_width / 2;
+                    var y1 = other.level * (box_height + box_y_margin) + box_height / 2 ;
+                    svg += SVGHelp.Line ([x0,y0], [x1,y1], "blue");
+                }
+            }
+        }
+        // Now the boxes on top
+
+        for (var key in dag_visited)
+        {
+            if (dag_visited.hasOwnProperty (key))
+            {
+                var node = dag_visited [key];
+                var offset = (max_row_length - dag_row_lengths[node.level]) * (box_width + box_x_margin) / 2;
+                var x = offset + node.x * (box_width + box_x_margin);
+                var y = node.level * (box_height + box_y_margin);
+                var tx = x + box_x_padding;
+                var ty = y + box_height - box_y_padding;
+
+                svg += SVGHelp.Rect (x, y, box_width, box_height, GetDAGNodeColour(key), "black");
+
+                svg += "<text class=\"svgtext\" x=\"" + tx+ "\" y=\"" + ty + "\">";
+
+                if (mode == "lists") svg += node.alist;
+                else if (mode == "values") svg += node.s_value;
+                else if (mode == "SoK")
+                {
+                    var x = Math.round (1000 * node.s_value / dag_k) / 1000;
+                    svg += x;
+                }
+
+                svg += "</text>";
+            }
+        }
+        svg += "</svg>";
+        return svg;
+    }
+    //-------------------------------------------------------------
+    AdvanceDAGColourMode = function (delta)
+    {
+        dag_colour_mode += delta;
+
+        if (dag_colour_mode < 0)
+        {
+            dag_colour_mode = dag_num_loops + 1;
+        }
+        else if (dag_colour_mode > dag_num_loops + 1)
+        {
+            dag_colour_mode = 0;
+        }
+
+        if (dag_colour_mode == 0)
+        {
+            alist3_mode.innerHTML = "none";
+        }
+        else if (dag_colour_mode >= 1 && dag_colour_mode <= dag_num_loops)
+        {
+            alist3_mode.innerHTML = "Loop " + dag_colour_mode;
+        }
+        else
+        {
+            alist3_mode.innerHTML = "Loop seeds";
+        }
+
+        DrawDAG();
+    }
+    //-------------------------------------------------------------
+    GetDAGNodeColour = function (target_key)
+    {
+        if (dag_colour_mode == 0) return "white";
+
+        if (dag_colour_mode >= 1 && dag_colour_mode <= dag_num_loops)
+        {
+            for (var key in dag_loops)
+            {
+                if (key == target_key)
+                {
+                    return (dag_loops[key][0] == dag_colour_mode - 1) ? "cyan" : "white";
+                }
+            }
+        }
+
+        // Seeds in green, max values in red
+
+        var s = dag_loops[target_key][2];
+
+        for (var i = 0 ; i < dag_num_loops ; ++i)
+        {
+            if (s == dag_loop_limits[i][0]) return "lightgreen";
+            if (s == dag_loop_limits[i][1]) return "pink";
+        }
+
+        return "white";
+    }
+    //-------------------------------------------------------------
+    DrawLoopCircle = function ()
+    {
+        var svg = GetCircleSVG ();
+        alist4_picture.innerHTML = svg;
+    }
+    //-------------------------------------------------------------
+    GetCircleSVG = function ()
+    {
+        // Draw the A-list tree
+
+        var radius = 300;
+        var r2 = 4;
+        var width = 2 * (radius + r2 + 1);
+        var height = 2 * (radius + r2 + 1);
+        var max_seed = 0;
+        var xc = width / 2;
+        var yc = height / 2;
+
+        var n = parseInt (alist4_n.value);
+        var m = parseInt (alist4_m.value);
+
+        if (m < n || n < 1)
+        {
+            alert ("Please enter n > 1 and m >= n")
+            return;
+        }
+
+        // Get the loop data
+
+        var loops = T3A1.FindLoops (m, n, 10000);
+        var loop_limits = {};
+        var k = T3A1.GetK (m, n);
+
+        for (var key in loops)
+        {
+            if (loops.hasOwnProperty (key))
+            {
+                var idx = loops[key][0];
+                var s = loops[key][2];
+
+                if (! loop_limits.hasOwnProperty (idx))
+                {
+                    loop_limits [idx] = [s,s];
+                }
+                else if (s < loop_limits [idx][0])
+                {
+                    loop_limits [idx][0] = s;
+                }
+                else if (s > loop_limits [idx][1])
+                {
+                    loop_limits [idx][1] = s;
+                }
+            }
+        }
+
+        // loops contains a map, alist_key -> [loop, list, value]
+        // loop_limits[i][0] is the loop seed, dag_loop_limits[i][1] is the max value
+
+        for (var key in loop_limits)
+        {
+            if (loop_limits.hasOwnProperty (key))
+            {
+                if (loop_limits[key][1] > max_seed)
+                {
+                    max_seed = loop_limits[key][1];
+                }
+            }
+        }
+
+        var svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"";
+
+        svg += " width=\"" + width + "\" height=\"" + height + "\"";
+        svg += " viewBox=\"" + 0 + "," + 0 + "," + width + "," + height + "\">";
+
+        // Outer circle
+
+        svg += SVGHelp.Circle (xc, yc, radius, "none", "black");
+
+        // Loops
+
+        var angle_factor = 2 * Math.PI / max_seed;;
+
+        for (var key in loops)
+        {
+            if (loops.hasOwnProperty (key))
+            {
+                var s1 = loops [key][2];
+                var s2 = 3 * s1 + k
+
+                while (s2 % 2 == 0) s2 /= 2;
+
+                var theta1 = s1 * angle_factor;
+                var theta2 = s2 * angle_factor;
+                var x1 = xc + Math.sin (theta1) * radius;
+                var y1 = yc - Math.cos (theta1) * radius;
+                var x2 = xc + Math.sin (theta2) * radius;
+                var y2 = yc - Math.cos (theta2) * radius;
+                svg += SVGHelp.Line ([x1,y1], [x2,y2], "blue");
+            }
+        }
+
+        // Outer circle
+
+        var angle_factor = 2 * Math.PI / max_seed;;
+
+        for (var key in loops)
+        {
+            if (loops.hasOwnProperty (key))
+            {
+                var s1 = loops [key][2];
+
+                var theta1 = s1 * angle_factor;
+                var x1 = xc + Math.sin (theta1) * radius;
+                var y1 = yc - Math.cos (theta1) * radius;
+                var idx = loops [key][0];
+                var colour;
+
+                if (s1 == loop_limits [idx][0]) colour = "green";
+                else if (s1 == loop_limits [idx][1]) colour = "red";
+                else colour="white";
+
+                svg += SVGHelp.Circle (x1, y1, r2, colour, "black");
+            }
+        }
+
+        svg += "</svg>";
+        return svg;
+    }
+    //-------------------------------------------------------------
+    MakePrintable = function (fun, message)
+    {
+        //var print_size = parseInt (document.getElementById("print_size").value);
+        var print_size = 1024;
+        if (print_size < 64)
+        {
+            alert ("Minimim print size is 64");
+            return;
+        }
+
+        var svg = fun ();
+        var opened = window.open("");
+        var text = "<html><head><title>"
+
+        text += message + " by Edd Aardvark (www.eddaardvark.co.uk)";
+        text += message;
+        text += "</title></head><body>";
+        text += svg;
+        text += "</body></html>";
+
+        opened.document.write(text);
+    }
+    //-------------------------------------------------------------
+    ShowLoopSeed = function ()
+    {
+        var n = parseInt (alist5_n.value);
+        var m = parseInt (alist5_m.value);
+        var min_m = Math.ceil (T3A1.LOG_3_O_2 * n);
+
+        var text = "m = " + m + ", n = " + n + ", m<span class=\"subscript\">min</span> = " + min_m + "<br>";
+
+        if (m < min_m)
+        {
+            text += "m < " + min_m + " produces a negative 'K' value.";
+            alist5_result.innerHTML = text;
+            return;
+        }
+
+        var p2 = new BigUnsignedInt (2).Pow (m);
+        var p3 = new BigUnsignedInt (3).Pow (n);
+        var K = p2.Subtract(p3);
+
+        text += "2<span class=\"superscript\">" + m + "</span> = " + p2 + "<br>";
+        text += "3<span class=\"superscript\">" + n + "</span> = " + p3 + "<br>";
+        text += "K = " + K + "<br>";
+
+        var seed_list = T3A1.MakeBalancedList (m,n);
+
+        text += "Seed list = " + seed_list  + "<br>";
+
+        var seed = T3A1.BigAListToValue (seed_list);
+
+        text += "Seed = " + seed + " (" + ExponentialFormat (seed) + ")<br>";
+
+        var isok = seed.Divide (K);
+        var fsok = BigUnsignedInt.Ratio (seed, K);
+        var mon = m / n;
+        var delta = mon - T3A1.LOG_3_O_2;
+
+        text += "S/K = " + fsok + " (" + isok + ")<br>";
+        text += "m/n = " + mon + "<br>";
+        text += "m/n - log(3)/log(2) = " + (mon - T3A1.LOG_3_O_2) + "<br>";
+        text += "S/K * (m / n - T3A1.LOG_3_O_2) = " + fsok * delta + "<br>";
+
+        alist5_result.innerHTML = text;
+    }
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+             a-lists
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w8 float">
+
+<h2> Contents </h2>
+
+<div class="in2">
+<ul>
+  <li><a href="#Introduction"> Introduction</a></li>
+  <li><a href="#genlists"> Generating a-lists</a></li>
+  <li><a href="#alistvals"> Converting a-lists to values</a></li>
+  <li><a href="#alistloops"> A-lists and loops </a></li>
+  <li><a href="#alisttrees"> A-list Graphs </a></li>
+  <li><a href="#loopseeds"> Loop Seeds </a></li>
+  <li><a href="#bigseeds"> Largest Loop Seeds </a></li>
+  <li><a href="#constraints"> Constraints </a></li>
+</ul>
+</div>
+
+</div>
+
+<!-- Introduction -->
+
+    <div class="in2 box w8 float">
+
+        <h2><a name="Introduction">Introduction</a></h2>
+
+        <p>On the <a href="algorithmic_loops.html"> Analysis page</a> we saw that the members of the
+        n-cycles in a 3x+K system, where
+
+        K = 2<span class="superscript">m</span>&minus;3<span class="superscript">n</span>,
+
+        can be generated from sets of 'n' integers [a<span class="subscript">1</span>, a<span class="subscript">2</span>, ..., a<span class="subscript">n</span>], where
+        'm'&nbsp;=&nbsp;&sum;a<span class="subscript">i</span> and all a<span class="subscript">i</span>&#x2265;1.
+        </p>
+        <p>
+        I'm calling these lists "a-lists".
+        </p>
+        <p>
+        The set of values generated by rotating the members of the a-list
+        [s<span class="subscript">1</span>, s<span class="subscript">2</span>, ..., s<span class="subscript">n</span>, s<span class="subscript">1</span>] forms a loop in 3x+K. I'm
+        calling the smallest member of this set the "Loop Seed".
+        </p>
+
+
+</div>
+
+<!-- Generating a-lists -->
+
+    <div class="in2 box w8 float">
+
+        <h2><a name="genlists"> Generating a-lists </a></h2>
+
+        <p>
+            The attached Javascript file (<a href="t3a1.js">t3a1.js</a>) contains a function called "T3A1.CreateALists" that can be used
+            to generate all the lists associated with a pair of numbers.
+        </p><p>
+
+            Try it, choose n&nbsp;&#x2265;&nbsp;1 and m&nbsp;&#x2265;&nbsp;n (Limit will restrict the numner of lists created).
+            N: <input type="text" id="alist1_n" size="6">
+            M: <input type="text" id="alist1_m" size="6">
+            Limit: <input type="text" id="alist1_limit" size="6">
+            <button onclick="DrawLists();"> Show </button>
+
+        <div class="code in2 w6">
+            <p class="code" id="alist1_result"> &nbsp; <p>
+        </div><p>
+
+</p>
+
+
+</div></div>
+
+
+</div>
+
+<!-- Converting a-lists to values -->
+
+    <div class="in2 box w8 float">
+
+        <h2><a name="alistvals"> Converting a-lists to values </a></h2>
+
+        <p>
+            If you tried the a-list generator in the previous section you will notice that each list is associated with a value.
+            These values are calculated using the equation
+        </p><p>
+            <div class="code in2 w6">
+        S = 3<span class="superscript">n-1</span> + 3<span class="superscript">n-2</span> &times; 2<span class="superscript">a1</span> + 3<span class="superscript">n-3</span> &times; 2<span class="superscript">a1+a2</span> +
+        &hellip; + 2<span class="superscript">a1+a2+...+a(n-1)</span>
+            </div>
+        </p><p>
+            This is implemented the function T3A1.AListToValue also in <a href="t3a1.js">t3a1.js</a>.
+        </p>
+    </div>
+
+<!-- a-list Graphs -->
+
+    <div class="in2 box w8 float">
+
+        <h2><a name="alistloops"> A-lists and loops </a></h2>
+
+        <p>
+            Another way to generate a-lists from the 'm' and 'n' values us to use the beads in boxes analogy. If you distrubute
+            the 'm' beads among the 'n' boxes with at least one bead in each box you will have an a-list.
+            You can see how this works it using the boxes below.
+            We start with one bead in each box and then place all the leftovers in the box on the right. If you click on a box
+            it will move one bead from that box to the box one to the left.
+
+        </p> <p>
+
+            Boxes (n): <input type="text" id="alist2_n" size="6">
+            Beads (m): <input type="text" id="alist2_m" size="6">
+            <button onclick="DrawBoxes();"> Show </button>
+
+        </p> <p>
+
+            <button id="b0" class="colour clickable" onclick="MoveBead(0)"> &nbsp; </button>
+            <button id="b1" class="colour clickable" onclick="MoveBead(1)"> &nbsp; </button>
+            <button id="b2" class="colour clickable" onclick="MoveBead(2)"> &nbsp; </button>
+            <button id="b3" class="colour clickable" onclick="MoveBead(3)"> &nbsp; </button>
+            <button id="b4" class="colour clickable" onclick="MoveBead(4)"> &nbsp; </button>
+            <button id="b5" class="colour clickable" onclick="MoveBead(5)"> &nbsp; </button>
+            <button id="b6" class="colour clickable" onclick="MoveBead(6)"> &nbsp; </button>
+            <button id="b7" class="colour clickable" onclick="MoveBead(7)"> &nbsp; </button>
+            <button id="b8" class="colour clickable" onclick="MoveBead(8)"> &nbsp; </button>
+            <button id="b9" class="colour clickable" onclick="MoveBead(9)"> &nbsp; </button>
+            <button id="b10" class="colour clickable" onclick="MoveBead(10)"> &nbsp; </button>
+            <button id="b11" class="colour clickable" onclick="MoveBead(11)"> &nbsp; </button>
+
+        </p> <p>
+
+            <div class="code in2 w6">
+                <p class="code" id="alist2_result"> &nbsp; <p>
+            </div><p>
+
+        </p> <p>
+
+            Every time you move a bead the display above updates to shows the list you have generated
+            along with the corresponding 'S' value. Below that I show the loop that this 'S' value generates in the
+            3x&nbsp;+&nbsp;K system. You will notice that as you move the beads to the left
+            the 'S' value always gets larger. So we can conclude that the list with the largest 'S' value is the one generated
+            by [m&minus;n+1,&nbsp;&hellip;,&nbsp;1,&nbsp;1] and that the starting list,
+            [1,&nbsp;1,&nbsp;&hellip;,&nbsp;m&minus;n+1], represents the smallest 'S' that forms a loop with the selected 'm' and 'n'
+            values.
+
+        </p> <p>
+
+            Another interesting consequence is that as lists [m&minus;n+1,&nbsp;&hellip;,&nbsp;1,&nbsp;1] and
+            [1,&nbsp;1,&nbsp;&hellip;,&nbsp;m&minus;n+1] are rotations of each other the largest and smallest values will appear
+            in the same loop, and will be adjacent.
+
+        </p>
+    </div>
+
+<!-- a-list Graphs -->
+
+    <div class="in2 box w8 float">
+
+        <h2><a name="alisttrees"> a-list Graphs </a></h2>
+        <p>
+            The controls above will only allow you to explore one of the possible paths from the smallest 'S' value to the largest,
+            whichever path you follow you will always move from smaller to larger values. All paths are the same length, involving
+            m&minus;n steps.
+
+        </p> <p>
+
+            If you combine all the routes you can generate a directed graph (strictly a DAG or directed acyclic graph)
+            all the a-lists for a given (m,n) pair. You canuse these controls to generate one of these graphs. The combol
+            box allows you to switch between three modes, the "a-lists", the 'S' values and the ratio of S/K. This last value is
+            interesting when in a later section we use the "a-lists" to constrain the possibilities of finding loops
+            in 3x&nbsp;&plus;&nbsp;1. I haven't limited the range of values you can input, but you will find that 'm' values bigger
+            than 12 become impractical.
+
+        </p> <p>
+
+            Boxes (n): <input type="text" id="alist3_n" size="6">
+            Beads (m): <input type="text" id="alist3_m" size="6">
+            <button onclick="InitialiseDAG();"> Draw </button>
+            Show:  <select id="dag_mode" onchange="DrawDAG();">
+                <option value="lists">Lists</option>
+                <option value="values">'S' Values</option>
+                <option value="SoK">S/K</option>
+            </select>
+            Colour mode:
+            <button type="button" class="clickable" onclick="AdvanceDAGColourMode(-1);"> &#x25c1; </button>
+            <button type="button" class="clickable" onclick="AdvanceDAGColourMode(1);"> &#x25b7; </button>
+            <span id="alist3_mode"> &nbsp; </span>
+            <button type="button" class="clickable" onclick="MakePrintable(GetDAGSVG, 'A-list Hierarchy');"> Printable Version </button>
+
+        </p> <p>
+            <span id="alist3_picture"> &nbsp; </span>
+        </p>
+
+</div></div>
+
+</div>
+
+<!-- Loop Seeds -->
+
+    <div class="in2 box w8 float">
+
+<h2><a name="loopseeds"> Loop Seeds </a></h2>
+<p>
+    The previous section shows how generate a set of a-lists for a given pair of 'm' and 'n' values.
+    Each a-list generates a single seed. The set of seeds generated by rotating an a-list form a loop in the
+    3x&nbsp;+&nbsp;K system. If we could find a seed value that is a multiple of K we we would identify a a loop
+    in the 3x&nbsp;+&nbsp;1 system that contains 'm' even values and 'n' odd values.
+
+    </p><p>
+
+    The controls in the <a href="#alisttrees">previous section</a> allow you to experiment with loops and seeds
+    for some small values of 'm' and 'n'. All loops will contain a smallest value, and by using the colour options
+    you can see that the smallest values in each loop are all near the top of the diagram.
+    For a given (m,n) pair we can work out the range of possible seed values
+</p><p>
+    S<span class="subscript">min</span>&nbsp;&#x2264;&nbsp;S&nbsp;&#x2264;&nbsp;S<span class="subscript">max</span>
+</p><p>
+    relatively easily.
+    We can then use the values S<span class="subscript">min</span>&nbsp;&#x2215;&nbsp;K and S<span class="subscript">max</span>&nbsp;&#x2215;&nbsp;K to
+    constrain the range of x values that could form a loop containing 'm' even values and 'n' odd values in 3x+1.
+    This quite quickly leads to the observation that when m&nbsp;&#x2265;&nbsp;2n all potential x values are less
+    than are equal to one, so there can be no loops with twice as many (or more) even values as odd ones.
+</p><p>
+    An even stronger constraint can be on the locations of loops can be obtained by focusing on the smallest
+    member of each loop (the "loop seed"), which will be one of the green values in the above diagram (when you choose
+    "Loop Seeds" as the colour mode).
+    As you search through the 'm' and 'n' values you can see that the largest loop seed value grows much more slowly than
+    the largest loop value, as we will see in the
+    <a href="#bigseeds">Largest Loop Seeds</a></li> section. You can also observe this effect in the circle drawing
+    tool below.
+
+</p><p>
+
+    This divides a circle into a set of points, starting at 0 and moving around to
+    S<span class="subscript">max</span>. 0 and S<span class="subscript">max</span> are both at the top.
+    All the 'S' values generated by a (m,n) pair are plotted around the circumferance. The smallest value in each
+    loop is coliured green and the largest is red, all the others are white.
+    The lines join the points in each loop.
+</p><p>
+
+    Boxes (n): <input type="text" id="alist4_n" size="6">
+    Beads (m): <input type="text" id="alist4_m" size="6">
+    <button onclick="DrawLoopCircle();"> DrawCircle </button>
+    <button type="button" class="clickable" onclick="MakePrintable(GetCircleSVG, 'A-list Loops');"> Printable Version </button>
+
+    </p><p>
+        <span id="alist4_picture"> &nbsp; </span>
+    </p>
+
+</div>
+
+
+<!-- Largest Loop Seeds -->
+
+    <div class="in2 box w8 float">
+
+<h2><a name="bigseeds"> Largest Loop Seeds </a></h2>
+
+
+<p>
+    The largest loop seed for a given pair (m,n) determines the range of values that need to be searched to find
+    or eliminate the possibility of a loop in 3x+1. For instance, the largest loop seed in (7,4) is 101. As K is
+    47, the largest odd number that could form a loop with seven even values and 4 odd ones in 3x+1 must be less than
+    101&#x2215;47. As 101&#x2215;47 is about 2.14m the only value we need test is one. This does form a loop, but not
+    a (7,4) one.
+
+</p><p>
+
+    From the graphs above we can see that all the loops seeds are clustered at the top. We can postulate that this patten continues for larger n values. We can
+    also notice that the largest loop seed has an a-list that has the form of what I call the most balanced list.
+    This is generated using the function T3A1.MakeBalancedList in the associated javascript.
+
+</p><p>
+
+    Which tries to spread the extra m-n 'beads' as uniformly as possible.
+    It is based on <a href="http://en.wikipedia.org/wiki/Bresenham's_line_algorithm"> Bresenham's Line Algorithm</a>
+    which is used to draw lines on pixelated devices like a computer screen. The algorithm above is equivalent to drawing
+    a line from (1,1) to (n,m). Here are some examples. The 'm' values are chosen to give the smallest positive K values for
+    a given 'n' (m = ceil(n&times;log(3)/log(2)).
+</p><p>
+
+    <table>
+        <tr><th>n</th><th>m</th><th>a-list</th><th>K</th><th>S</th><th>S/K</th></tr>
+        <tr><td> 2 </td><td> 4 </td><td> [2,2] </td><td> 7 </td><td> 7 </td><td> 1 </td></tr>
+        <tr><td> 3 </td><td> 5 </td><td> [1,2,2] </td><td> 5 </td><td> 23 </td><td> 4.6 </td></tr>
+        <tr><td> 4 </td><td> 7 </td><td> [1,2,2,2] </td><td> 47 </td><td> 101 </td><td> 2.149 </td></tr>
+        <tr><td> 5 </td><td> 8 </td><td> [1,2,1,2,2] </td><td> 13 </td><td> 319 </td><td> 24.538 </td></tr>
+        <tr><td> 6 </td><td> 10 </td><td> [1,2,2,1,2,2] </td><td> 295 </td><td> 1357 </td><td> 4.6 </td></tr>
+        <tr><td> 7 </td><td> 12 </td><td> [1,2,2,1,2,2,1] </td><td> 1909 </td><td> 5095 </td><td> 2.669 </td></tr>
+        <tr><td> 8 </td><td> 13 </td><td> [1,2,1,2,2,1,2,2] </td><td> 1631 </td><td> 14501 </td><td> 8.891 </td></tr>
+        <tr><td> 9 </td><td> 15 </td><td> [1,2,2,1,2,2,1,2,2] </td><td> 13085 </td><td> 60191 </td><td> 4.6 </td></tr>
+        <tr><td> 10 </td><td> 16 </td><td> [1,2,1,2,2,1,2,1,2,2] </td><td> 6487 </td><td> 159181 </td><td> 24.538 </td></tr>
+        <tr><td> 11 </td><td> 18 </td><td> [1,2,1,2,2,1,2,2,1,2,2] </td><td> 84997 </td><td> 579943 </td><td> 6.823 </td></tr>
+        <tr><td> 12 </td><td> 20 </td><td> [1,2,2,1,2,2,1,2,2,1,2,2] </td><td> 517135 </td><td> 2378821 </td><td> 4.6 </td></tr>
+    </table>
+
+</p><p>
+    The largest ratio (seed/K) in this list appears at (5,8), but the same ratio reappears
+    in (10,16) and (15,24). This is no coincidence, as the balanced list for (10,16) is
+    [1,2,1,2,2,1,2,1,2,2]. This is the same cycle as generated by (5,8) only repeated twice.
+</p><p>
+
+    The next table looks for records in seed/K as we increase 'n', it runs up to about 500. It also shows how close m/n is getting
+    to log(3)/log(2).
+</p><p>
+
+<div class="code in2 w6">
+<pre class="code">
+
+   n    m    seed/K      m/n   m/n - log(3)/log(2)
+
+   2    4      1.000   2.000     0.415037
+   3    5      4.600   1.667     0.081704
+   5    8     24.538   1.600     0.015037
+  17   27    108.012   1.588     0.003273
+  29   46    281.944   1.586     0.001244
+  41   65    867.140   1.585     0.000403
+  94  149   2419.681   1.585     0.000144
+ 147  233   4862.054   1.585     0.000072
+ 200  317   9266.540   1.585     0.000037
+ 253  401  19584.905   1.585     0.000018
+ 306  485  72058.065   1.585     0.000005
+</pre>
+</div>
+
+</p><p>
+
+    The first ratio greater than
+    24.538, which we found at n&nbsp;=&nbsp;5, is 108.012 at n&nbsp;=&nbsp;17. This tells us that to eliminate the possibility
+    of a loop with 17 or fewer odd numbers we have to test seeds up to 107 (the largest odd number less than 108.012). To eliminate
+    loops with fewer than 307 odd members we only need to search up to 72057.
+
+</p><p>
+
+    <a name="c1"/>You can use the controls below to examine seeds generated by other 'm' and 'n' values:
+
+</p><p>
+
+    N: <input type="text" id="alist5_n" size="6">
+    M: <input type="text" id="alist5_m" size="6">
+    <button onclick="ShowLoopSeed();"> Show </button>
+
+    <div class="code in2 w6 breakable">
+        <p class="code" id="alist5_result"> &nbsp; <p>
+    </div>
+
+
+</p>
+
+
+</div>
+
+<!-- Generating a-lists -->
+
+    <div class="in2 box w8 float">
+
+        <h2> <a name="constraints" />Constraints </h1>
+<p>
+
+</p><p>
+    Notice how new records correspond to cases where m/n is very close to log(3)/log(2). This is
+    because in these cases K is atypically small. The values either side of n&nbsp;=&nbsp;306 are shown in the
+    next table.
+
+</p><p>
+<div class="code in2 w6">
+<pre class="code">
+             (a)              (b)                  a x b
+  n    m  seed/K      m/n     m/n - log(3)/log(2)
+
+304  482    615.073   1.586   0.000564            0.3467876
+305  484    180.521   1.587   0.001923            0.3470956
+306  485  72058.065   1.585   0.000005            0.3472867
+307  487    255.704   1.586   0.001357            0.3469187
+308  489    128.512   1.588   0.002700            0.3469625
+</pre>
+</div>
+</p><p>
+    I've added an extra column, "seed&times(m/n&nbsp;&minus;&nbsp;log(3)/log(2))". Notice that the values in this column
+    are all close to 0.347. You can use the <a href="#c1">controls</a> in the previous section to try some other values.
+    For instance, for 'n' values around 13,000 we get:
+</p><p>
+<div class="code in2 w6">
+<pre class="code">
+                 (a)                   (b)                 a x b
+    n      m    seed/K      m/n     m/n - log(3)/log(2)
+
+13000  20605   9234.977   1.585     0.000037499           0.3463050
+13001  20607   4997.281   1.585     0.000069420           0.3469108
+13002  20608  14202.647   1.585     0.000024424           0.3468907
+</pre>
+</div>
+</p><p>
+
+    Note: The above interactive section will calculate numbers of this magniture but it isn't very quick.
+    The value of S/K provodes a constraint on where loops might be in the 3x+1 system, for there to actually
+    be a loop, S/K needs to be an integer. From the above experiments we can find a rough estimate of S/K just
+    from the values of 'm' and 'n';
+</p><p class="code">
+    S/K ~= 0.347/(m/n - log(3)/log(2))
+</p><p>
+    Given that most small numbers have beed tested we probably need to start looking for seed values greater than
+    10<span class="superscript">16</span>, which requires
+</p><p class="code">
+    m/n - log(3)/log(2) < 3.47&times;10<span class="superscript">-17</span>
+</p><p>
+
+    This gives us a way to constrain the smallest cycle that might appear in 3x+1, but doesn't really
+    say anything about the smallest value, as there are an infinite number of a-lists and K values that
+    will have ratios in any range we care to mention. What appears to be missing is seed values that are
+    exact multiples of K. Whether there is some fundamental reason why these values are never multiples
+    of K or it is just a statisticaly unlikely I don't know.
+
+</p><p>
+
+    The fact that these largest seeds increase so slowly relative to K is what allows us to
+    put major constraints on where any loops may be found in 3x+1.
+
+    There is more about log(3)/log(2) on its <a href="int_log32.html">own page</a>.
+
+</p><p>
+
+If we assume that the relationship between seed/K and m/n&nbsp;&minus;&nbsp;log(3)/log(2) converges around 0.36
+and that all numbers up to somewhere in the region of 10<span class="superscript">16</span> have been tested, then
+any loop in 3x+1 requires m/n&nbsp;&minus;&nbsp;log(3)/log(2) to be less than 3.6&times;<span class="superscript">-15</span>.
+
+</p>
+</div>
+
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("Ua-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,420 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="JW Celular Automatom Patterns Mathematics">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/fivecell.js"> </script>
+
+<title>   Five Colour Cellular Automaton<br> javascript Version </title>
+<style>
+    BUTTON.colour
+    {
+        margin:             12pt;
+        vertical-align:     text-top;
+        border:             2px solid black;
+        border-radius:      6pt;
+        padding:            6pt;
+        margin:             6pt;
+        height:             36pt;
+        width:              36pt;
+        background-color:   white;
+        font-weight:        bold;
+        font-familty:       monospace;
+        font-size:          115%;
+        color:              white;
+    }
+    BUTTON.action
+    {
+        margin:             12pt;
+        vertical-align:     text-top;
+        border:             2px solid black;
+        border-radius:      6pt;
+        padding:            6pt;
+        margin:             6pt;
+        height:             36pt;
+        min-width:          36pt;
+        font-weight:        bold;
+        font-familty:       monospace;
+        font-size:          115%;
+    }
+    BUTTON.invisible
+    {
+        margin:             0pt;
+        vertical-align:     text-top;
+        border:             none;
+        padding:            0pt;
+        margin:             0pt;
+        cursor:             pointer;
+    }
+
+    DIV.float { float: left;}
+    DIV.endfloat { clear: both; }
+    BUTTON.arrow { width:56; height:56; font-weight:bold; font-size:200%; ertical-align: text-top; }
+</style>
+<script>
+    var button_name = ["m0","m1","m2","m3","m4","m5","m6","m7","m8","m9","m10","m11","m12","left","right"];
+    var starting_pattern = "5,014131203341404,123";
+    var canvas;
+    var pattern;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        canvas = document.createElement('canvas');
+
+        code_input.value = starting_pattern;
+
+        ApplyCode ();
+        InitialiseButtons ();
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //-------------------------------------------------------------
+    ShowInNew = function (what)
+    {
+       window.open(what, '_blank');
+    }
+    //-------------------------------------------------------------
+    NextColour = function (idx)
+    {
+        pattern.colour_map[idx] = (pattern.colour_map[idx] + 1) % FiveCell.NUM_COLOURS;
+        pattern.Reset ();
+        SetIndexedButton(idx);
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    ApplyCode = function ()
+    {
+        var new_pattern = FiveCell.Pattern.FromCode (code_input.value);
+
+        if (! new_pattern)
+        {
+            Misc.Alert ("\"{0}\" is not a valid code", code_input.value);
+            return;
+        }
+        pattern = new_pattern;
+        DisplayPatternColours ();
+        DrawCentreCells ();
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    ResetColours = function ()
+    {
+        code_input.value = starting_pattern;
+
+        ApplyCode ();
+    }
+    //-------------------------------------------------------------
+    DisplayPatternColours = function ()
+    {
+        for (var i in pattern.colour_map)
+        {
+            SetIndexedButton(i);
+        }
+    }
+    //-------------------------------------------------------------
+    SetSize = function (n)
+    {
+        pattern.SetSize (Math.pow (2,n));
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    NextCentreColour = function (idx)
+    {
+        var name = "c" + idx;
+        pattern.centre_cells[idx] = (pattern.centre_cells[idx] + 1) % FiveCell.NUM_COLOURS;
+
+        SetNamedButton(name, pattern.centre_cells[idx]);
+        pattern.Reset ();
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    InitialiseButtons = function ()
+    {
+        for (var i = 0 ; i < FiveCell.MAP_LENGTH ; ++i)
+        {
+            SetIndexedButton (i);
+        }
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    SetIndexedButton = function (idx)
+    {
+        SetNamedButton (button_name [idx], pattern.colour_map[idx]);
+    }
+    //-------------------------------------------------------------
+    SetNamedButton = function (name, colour)
+    {
+        var button = document.getElementById(name);
+
+        button.style.background = FiveCell.colour_names [colour];
+        button.style.color = FiveCell.text_names [colour];
+        button.innerHTML = colour;
+    }
+    //-------------------------------------------------------------
+    AddCentre = function ()
+    {
+        ++ pattern.num_centre_colours;
+
+        while (pattern.num_centre_colours > pattern.centre_cells.length)
+        {
+            pattern.centre_cells.push (0);
+        }
+        DrawCentreCells ();
+        pattern.Reset ();
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    RemoveCentre = function ()
+    {
+        if (pattern.num_centre_colours > 0)
+        {
+            -- pattern.num_centre_colours;
+        }
+        DrawCentreCells ();
+        pattern.Reset ();
+        DrawPattern ();
+    }
+    //-------------------------------------------------------------
+    DrawCentreCells = function ()
+    {
+        var text = "";
+
+        for (var i = 0 ; i < pattern.num_centre_colours ; ++i)
+        {
+            text += "<button id=\"c" + i + "\" class=\"colour clickable\" onclick=\"NextCentreColour("
+                     + i + ")\"> &nbsp; </button>";
+        }
+
+        document.getElementById("centre").innerHTML = text;
+
+        for (var i = 0 ; i < pattern.num_centre_colours ; ++i)
+        {
+            var name = "c" + i;
+            SetNamedButton (name, pattern.centre_cells[i]);
+        }
+    }
+    //-------------------------------------------------------------
+    DrawPattern = function ()
+    {
+        pattern.Draw (canvas);
+        position.innerHTML = "(" + pattern.x_start + ", " + pattern.y_start + ")";
+        code.innerHTML = pattern.GetCode ();
+
+        the_image.src = canvas.toDataURL();
+    }
+    //-------------------------------------------------------------
+    CreateImage = function()
+    {
+        var dataURL = canvas.toDataURL('image/png');
+        var w = window.open('about:blank');
+        w.document.write("<img src='" + dataURL + "' alt='from canvas' title='Right-click for menu'/>");
+    }
+    //-------------------------------------------------------------
+    Scroll = function (dx, dy)
+    {
+        var value = parseInt(scroll_step.value);
+
+        if (isNaN (value) || value < 1)
+        {
+            alert ("Value " + scroll_step.value + " is invalid");
+            return;
+        }
+        pattern.Scroll (value * dx, value * dy);
+        DrawPattern ();
+    }
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> One Dimensional Cellular Automaton </h1>
+        <p> Five Colours  </p>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- Main content -->
+
+<div class="float w11" style="overflow: auto;">
+
+    <div class="in2 box w10">
+        <h2> Colour Mappings </h2>
+          <p>
+              Click to advance colour
+          </p><p>
+            <button id="m0" class="colour clickable" onclick="NextColour(0)"> &nbsp; </button>
+            <button id="m1" class="colour clickable" onclick="NextColour(1)"> &nbsp; </button>
+            <button id="m2" class="colour clickable" onclick="NextColour(2)"> &nbsp; </button>
+            <button id="m3" class="colour clickable" onclick="NextColour(3)"> &nbsp; </button>
+            <button id="m4" class="colour clickable" onclick="NextColour(4)"> &nbsp; </button>
+            <button id="m5" class="colour clickable" onclick="NextColour(5)"> &nbsp; </button>
+            <button id="m6" class="colour clickable" onclick="NextColour(6)"> &nbsp; </button>
+            <button id="m7" class="colour clickable" onclick="NextColour(7)"> &nbsp; </button>
+            <button id="m8" class="colour clickable" onclick="NextColour(8)"> &nbsp; </button>
+            <button id="m9" class="colour clickable" onclick="NextColour(9)"> &nbsp; </button>
+            <button id="m10" class="colour clickable" onclick="NextColour(10)"> &nbsp; </button>
+            <button id="m11" class="colour clickable" onclick="NextColour(11)"> &nbsp; </button>
+            <button id="m12" class="colour clickable" onclick="NextColour(12)"> &nbsp; </button>
+          </p>
+
+        <h2> Starting Pattern </h2>
+          <p>
+              Click to advance colour or +/- for more colours.
+          <p>
+            <button class="action clickable" onclick="AddCentre()"> &plus; </button>
+            <button class="action clickable" onclick="RemoveCentre()"> &minus; </button>
+
+            <button id="left" class="colour clickable" onclick="NextColour(13)"> &nbsp; </button>
+            <span id="centre"> &nbsp;</span>
+            <button id="right" class="colour clickable" onclick="NextColour(14)"> &nbsp; </button>
+
+        <h2> The Pattern </h2>
+
+           <div>
+            <p>
+              <button onclick="CreateImage();" class="invisible" title="Click for full size">
+                <img id="the_image" width="600" height="400">
+              </button>
+            </p><p>
+
+            <button class="clickable" onclick="ResetColours();"> reset </button> &nbsp;
+            <button onclick="CreateImage();"> full size </button>
+              Enter Code: <input type="text" size="40" value="5,014131203341404," maxlength="260" id="code_input"> </input>
+              <button onclick="ApplyCode();"> apply </button>
+           </div>
+
+           <div>
+            <h4> Size</h4>
+            <p>
+              <button class="clickable" onclick="SetSize(0);"> small </button>
+              <button class="clickable" onclick="SetSize(1);"> medium </button>
+              <button class="clickable" onclick="SetSize(2);"> large </button>
+              <button class="clickable" onclick="SetSize(3);"> XL </button>
+              <button class="clickable" onclick="SetSize(4);"> XXL </button>
+            </p>
+
+            <h4> Scroll </h4>
+            <p>
+              Step: <input type="text" size="4" value="10" maxlength="4" id="scroll_step"> </input>: Position: <span id="position"/>
+            </p><p>
+              <button class="arrow clickable" onclick="Scroll(1,0);"> &rarr; </button>
+              <button class="arrow clickable" onclick="Scroll(1,1);"> &searr; </button>
+              <button class="arrow clickable" onclick="Scroll(0,1);"> &darr; </button>
+              <button class="arrow clickable" onclick="Scroll(-1,1);"> &swarr; </button>
+              <button class="arrow clickable" onclick="Scroll(-1,0);"> &larr; </button>
+              <button class="arrow clickable" onclick="Scroll(-1,-1);"> &nwarr; </button>
+              <button class="arrow clickable" onclick="Scroll(0,-1);"> &uarr; </button>
+              <button class="arrow clickable" onclick="Scroll(1,-1);"> &nearr; </button>
+            </p>
+
+            </p>
+            <h4> Code</h4>
+                <p><span id="code"/>
+                </p><p style="max-width:540px;">
+                    This string can be used to recreate a pattern. Codes can also be obtained from the
+                    <a href="#sg">sculpture garden</a>.
+                </p>
+           </div>
+
+        </div>
+
+<!-- Automata Index page -->
+
+    <div class="float w10 box in2" style="overflow: auto;">
+      <h2> Cellular Automata Index Page </h2>
+      
+
+      <button class="link" onclick="Show('index.html')">
+        <div style="width:200;">
+        <p>
+            <strong>Cellular Automata Index</strong>
+        <p>
+            <img class="button" src="images/automata_icon.png" width="160" ALT="index page" title="The Cellular Automata index page">
+        </p><p>
+            The Cellular Automata index page.
+        </p>
+
+        </div>
+      </button>
+
+    </div>
+  
+  
+
+    <!-- Generic links -->
+
+    <div class="float w10 box in2" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+          
+      </div>
+
+
+</div>
+<!-- Copyright -->
+
+  <div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2010 - 2020 <p>
+
+
+<!-- Visit counter -->
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
+
+
+

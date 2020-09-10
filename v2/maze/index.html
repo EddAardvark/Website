@@ -1,0 +1,230 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Interactive javascript Maze">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+
+<style></style>
+
+
+<script>
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    function OnStart ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+    }
+
+</script>
+
+<title>Mazes index page</title>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart ();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;height:260px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(MAZE_HOMEPAGE)" style="height:260px;">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/maze_icon.png" alt="Banner Picture" title="Maze Index" width="128">
+        </p><p style="max-width: 420px;" >
+            <h1> <br> Maze Index Page  </h1>
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px; height:260px;" class="banner">
+        <script"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+   </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w8" style="overflow: auto;">
+       <h2> Mazes </h2>
+
+       <p>
+           A long time ago I wrote a number of maze drawing applets in Java. As time passed browser support for
+           Java applets kept changing and now these applets no longer work. I've started re-implementing some of them
+           in javascript (no relation). The first of these is the simple square maze, below.
+       </p><p>
+            I've also writen an interactive multi-level maze, to which there are two links, see below.
+        </p>
+
+        <table>
+            <tr>
+                <td class="clickable">
+                    <a href="maze.html" alt="Clickable image" title="Click here for multilevel maze">
+                        <img src="./images/multilevel_maze.png" width="160"></a>
+                </td>
+
+                <td>
+                    A multi-level maze that is revealed as you wander around. To get to the exit you need to move up and
+                    down between the levels. I also experimented creating animated spells and including artifacts that you
+                    can pick up and drop.
+                </td>
+            <tr>
+            <tr>
+                <td class="clickable">
+                    <a href="maze3d.html" alt="Clickable image" title="Click here for the 3D rendering of the multilevel maze">
+                        <img src="./images/multilevel_maze_3d.png" width="160"></a>
+                </td>
+
+                <td>
+                    This is a 3D version of the multi-level maze rendered using WebGL.
+                </td>
+            <tr>
+
+<!-- Sculpture garden -->
+
+            <tr>
+                <td class="clickable">
+                    <a href="../sculpture_garden/sculpture_garden.html" alt="Clickable image" title="Click here to visit the sculpture garden">
+                        <img src="./images/sculpture_garden_icon.png" width="160"></a>
+                    <a href="../sculpture_garden/sculpture_garden.html" alt="Clickable image" title="Click here to visit the sculpture garden">
+                        <img src="../sculpture_garden/images/maze.png" width="160"></a>
+                </td>
+                <td>
+                    <p>
+                        This is a first person walk-through of a "sculpture garden" The garden contains a number of attractions (which I intend to add to)
+                        including mazes and sculptures, as well as paths and maps.
+                    </p><p>
+                        The garden also includes some art gallery blocks that display a range of images generated using the algorithms descibed elsewhere on
+                        the site. There are only a few of these at the moment but I intend to expand on these too.
+                    </p><p>
+                        If you see any artworks you are interested in you can go for a close-up and generate a printable/savable copy, of follow
+                        a link to an explanatory page where you can explore the pattern you have chosen in more detail.
+                    </p>
+                </td>
+            <tr>
+
+<!-- Simple square maze -->
+
+            <tr>
+                <td class="clickable">
+                    <a href="simplesquaremaze.html" alt="Clickable image" title="Click here for the simple square maze">
+                        <img src="./images/simple_square_icon.png" width="160"></a>
+                </td>
+                <td>
+                    <p>
+                        Draws a simple square maze with only one route through. There is also an animation option which will show the
+                        workings of some solution strategies.
+                    </p><p>
+                        The image on the left shows a rather simple 12&times;9 maze, the page will allow you to construct mazes
+                        up to 80&times;60. All the source code is accessible if you'd like to construct even larger ones.
+                    </p>
+                </td>
+            <tr>
+
+<!-- Octagonal maze -->
+
+            <tr>
+                <td class="clickable">
+                    <a href="octagonalmaze.html" alt="Clickable image" title="Click here for the octagonal maze">
+                        <img src="./images/octagonal_maze_icon.png" width="160"></a>
+                </td>
+                <td>
+                    <p>
+                        Draws a simple maze based on the octagons and squares tessellation.
+                    </p>
+                </td>
+            <tr>
+
+
+        </table>
+
+       <h2> Test Pages</h2>
+
+       <p>
+           Pages used to tune an verify the details used in the mazes above.
+
+        </p>
+        <table>
+
+<!-- Single sculpture view -->
+
+            <tr>
+                <td class="clickable">
+                    <a href="../sculpture_garden/sculpture_view.html" alt="Clickable image" title="Click here for the sculpture">
+                        <img src="../sculpture_garden/images/sculpture.png" width="160"></a>
+                </td>
+                <td>
+                    <p>
+                        This is a version of the sculpture garden that contains a single sculpture. You can choose the type
+                        interactively. I use it to test the sculptures before adding them to the main garden.
+                    </p>
+                </td>
+            <tr>
+            <tr>
+                <td class="clickable">
+                    <a href="octo_cells.html" alt="Clickable image" title="Click here for the octagonal maze">
+                        <img src="./images/octocells_icon.png" width="160"></a>
+                </td>
+                <td>
+                    <p>
+                        Unit cells in the octagonal maze, there are 4, 2 because you may be standing in
+                        an octagon or a square and two because the squares may be at 45&deg; or 90&deg;.
+                        This page is used to verify that the Octagonal points mappings are correct.
+                    </p>
+                </td>
+            <tr>
+        </table>
+    </div>
+
+<!-- End of normal mode -->
+
+        <div class="endfloat"></div>
+
+<!-- Generic links -->
+
+    <div class="in2 box">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+    </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2018 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

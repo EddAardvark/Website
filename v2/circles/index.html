@@ -1,0 +1,252 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Circles">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="../js_library/event_parser.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/ui_value.js"> </script>
+<script src="circles.js"> </script>
+
+<title> Circles </title>
+
+
+<style>
+
+DIV.w75 { width: 750px; }
+
+.popup { position: absolute; visibility: hidden; display: inline-block; top:350px; left:100px; overflow: auto; background-color: sandybrown; border-style: solid; border-color: blue;}
+
+</style>
+
+<script>
+
+    var controller;
+    var event_handler;
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        links_go_here.innerHTML = MakeButtons ();
+        
+        CircleController.Initialise();
+
+        controller = new CircleController ();
+        controller.Initialise (circle_image, circle_state);
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+	<div style="margin: auto; widtd: 1024px;">
+		<button style="widtd: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+			<p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+			<p> <strong>Home page</strong>
+		</button>
+
+		<button class="banner">
+			<h1> Circles</h1>
+		</button>
+
+		 <!-- Ads -->
+
+	</div>
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->
+
+    <div class="in2 box w10">
+    
+    <!--  -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> Circles </h1>
+            <p>
+                The circles application was originally written in Python and then moved to Native Client. The native client version used
+                to be able to draw animations but no longer works, the Python version can be found
+                <a href="http://www.eddaardvark.co.uk/python_patterns/python_circles.html">here</a>.
+            </p><p>
+                This page recreates the animations using javascript and the html canvas.
+            </p><p>
+                See some videos generated using this page  <a href="http://www.eddaardvark.co.uk/ytvideos.html">here</a>.
+            </p>
+        
+        </div>
+	
+	<!-- The picture -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> The Animation </h1>
+          
+            <p>
+                <img id="circle_image" width="640" height="480" />
+            </p><p>
+                <p><span id="circle_state">&nbsp;</span></p>
+            </p>
+        </div>
+        
+    <!-- The controls -->
+    
+        <div class="float" style="overflow: auto;">
+
+            <h1> Controls </h1>
+            <p>
+            <table>
+                <tr>
+                    <td>Equation:</td>
+                    <td colspan="2">
+                    <select id="pattern" onchange="controller.ChangePattern();">
+                        <option value="circle"> Circle (z = x^2 + y^2)</option>
+                        <option value="ellipse"> Elipse (z = a&times;x^2 + b&times;y^2)</option>
+                        <option value="line"> Line (z = a&times;x + b&times;y)</option>
+                        <option value="conic"> Conic (z = a&times;x&times;x + b&times;y&times;y + c&times;x&times;y + d&times;x + e&times;y + f)</option>
+                        <option value="elliptic"> Eliptic (z = a&times;y&times;y + b&times;x&times;x&times;x + c&times;x&times;x + d&times;x + e)</option>
+ 
+                    </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Zoom:</td>
+                    <td>
+                        Start: <input type="text" maxlength="12" id="z0" size="6">
+                        Delta: <input type="text" maxlength="12" id="dz" size="6">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>a:</td>
+                    <td>
+                        Start: <input type="text" maxlength="12" id="a0" size="6">
+                        Delta: <input type="text" maxlength="12" id="da" size="6">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>b:</td>
+                    <td>
+                        Start: <input type="text" maxlength="12" id="b0" size="6">
+                        Delta: <input type="text" maxlength="12" id="db" size="6">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>c:</td>
+                    <td>
+                        Start: <input type="text" maxlength="12" id="c0" size="6">
+                        Delta: <input type="text" maxlength="12" id="dc" size="6">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>d:</td>
+                    <td>
+                        Start: <input type="text" maxlength="12" id="d0" size="6">
+                        Delta: <input type="text" maxlength="12" id="dd" size="6">
+                    </td>
+                </tr>
+                
+                <tr>
+                
+                    <td>e:</td>
+                    <td>
+                        Start: <input type="text" maxlength="12" id="e0" size="6">
+                        Delta: <input type="text" maxlength="12" id="de" size="6">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>f:</td>
+                    <td>
+                        Start: <input type="text" maxlength="12" id="f0" size="6">
+                        Delta: <input type="text" maxlength="12" id="df" size="6">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Colours:</td>
+                    <td>
+                        Start: <select id="s_colour"> </select>
+                        End: <select id="e_colour"> </select>
+                        Num: <input type="text" maxlength="12" id="n_colour" size="6">
+                    </td>
+                </tr>
+                
+              <tr>
+                  <td>Actions:</td>
+                  <td>
+                    <button type="button" onclick="controller.Draw ();" title="Draw pattern"> Draw </button>
+                    Animate:
+                    <button type="button" onclick="controller.StartAnimation ();" title="Start"> Start </button>
+                    <button type="button" onclick="controller.PauseAnimation ();" title="Pause"> Pause </button>
+                    <button type="button" onclick="controller.ResetAnimation ();" title="Reset"> Reset </button>
+                  </td>
+              </tr>
+            </table>
+
+        </div>
+
+        <!-- END FLOAT -->
+    
+		<div class="endfloat"> &nbsp; </div>
+        
+        
+        
+	</div>
+	    
+		
+	<!-- 
+    ==============================================================================================================
+    Popup to show help
+    ==============================================================================================================
+    -->		
+          
+    <div id="show_help" class="float w6 popup">
+    
+        <h2> Instructions </h2>
+        <p>
+            Text goes here
+        </p>
+        <p style="text-align:right;">
+            <button type="button" class="clickable" onclick="controller.HideHelp();" title="hide this section"> close </button>
+        </p>
+    </div>
+
+	<!-- Other pages -->
+
+	<div class="in2 box w10">
+	    <h2> Other pages </h2>
+		    <p><span id="links_go_here">&nbsp;</span></p>
+    </div>
+
+<!-- Copyright -->
+
+    <p class="small"> (c) John Whitehouse 2019 <p>
+
+			  
+
+</body>
+</html>
+
+
+
+

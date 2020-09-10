@@ -1,0 +1,591 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Sculpture Garden">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/mapped_points.js"> </script>
+<script src="../js_library/mapped_points_shape.js"> </script>
+<script src="../js_library/direction.js"> </script>
+<script src="../js_library/octopoints.js"> </script>
+<script src="../js_library/octopoints_shape.js"> </script>
+<script src="../js_library/octopoints_square.js"> </script>
+<script src="../js_library/octopoints_octagon.js"> </script>
+<script src="../js_library/triangle_pattern.js"> </script>
+<script src="../js_library/coordinate_maths.js"> </script>
+<script src="../js_library/fivecell.js"> </script>
+<script src="../js_library/octo_position.js"> </script>
+<script src="../js_library/anchors.js"> </script>
+<script src="../js_library/rectangle.js"> </script>
+
+<script src="sculpture_garden.js"> </script>
+<script src="sculpture_garden_gallery.js"> </script>
+<script src="sculpture_garden_maze.js"> </script>
+<script src="sculpture_garden_junction.js"> </script>
+<script src="sculpture_garden_gazebo.js"> </script>
+<script src="sculpture_garden_statue.js"> </script>
+<script src="sculpture_garden_cell.js"> </script>
+<script src="sculpture_garden_room.js"> </script>
+<script src="sculpture_garden_path.js"> </script>
+<script src="sculpture_garden_walker.js"> </script>
+<script src="sculpture_garden_artwork.js"> </script>
+<script src="sculpture_garden_panels.js"> </script>
+<script src="sculpture_garden_gallery_map.js"> </script>
+<script src="sculpture_garden_garden_map.js"> </script>
+<script src="sculpture_garden_items.js"> </script>
+
+<title> Sculpture Garden</title>
+
+<style>
+
+DIV.w75 { width: 750px; }
+
+.big { font-size: 200%; margin: 0;}
+.nopad { padding: 0px; }
+.fill { padding: 0px; width: 99%; }
+
+</style>
+
+<script>
+
+    Controller = function ()
+    {
+        this.width = 720;
+        this.height = 480;
+        this.maze_floor = 1;
+        this.maze_ceiling = 2;
+        this.maze_nx = 40;
+        this.maze_ny = 30;
+
+        this.xeye = new Controller.UIValue (x_eye_text, 0.1, parseFloat);
+        this.yeye = new Controller.UIValue (y_eye_text, -2, parseFloat);
+        this.zeye = new Controller.UIValue (z_eye_text, 1.82, parseFloat);
+
+        this.x_min = new Controller.UIValue (x_min_text, -6, parseInt);
+        this.x_max = new Controller.UIValue (x_max_text, 6, parseInt);
+        this.y_min = new Controller.UIValue (y_min_text, 0, parseInt);
+        this.y_max = new Controller.UIValue (y_max_text, 9, parseInt);
+        this.z_min = new Controller.UIValue (z_min_text, 0, parseInt);
+        this.z_max = new Controller.UIValue (z_max_text, 5, parseInt);
+
+        this.view_width = new Controller.UIValue (view_width_text, 0.9, parseFloat);
+        this.perspective = new Controller.UIValue (perspective_text, 0.8, parseFloat);
+        this.x_vanish = new Controller.UIValue (x_vanish_text, 400, parseInt);
+        this.y_vanish = new Controller.UIValue (y_vanish_text, 415, parseInt);
+
+        this.print_size = new Controller.UIValue (print_size_text, 1024, parseInt);
+
+        this.chelp_maze = new CanvasHelp (this.width, this.height);
+        this.chelp_art = new CanvasHelp (720, 480);
+
+        distance_shading.checked = MappedPoints.Shape.distance_shading;
+
+        SculptureGarden.Cell.Initialise ();
+        OctoPoints.Initialise(true);
+        SculptureGarden.Room.Initialise ();
+        SculptureGarden.Maze.Initialise ();
+        SculptureGarden.Junction.Initialise ();
+        SculptureGarden.Gazebo.Initialise ();
+        SculptureGarden.Statue.Initialise ();
+
+        this.CreateMappedPoints();
+    }
+
+    // Range of cells we might be able to see in first person view.
+    Controller.view_xmin = -6;
+    Controller.view_xmax = 6;
+    Controller.view_ymin = -1;
+    Controller.view_ymax = 12;
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.UIValue = function (text, value, parser)
+    {
+        this.text = text;
+        this.value = value;
+        this.parser = parser;
+
+        this.text.value = this.value;
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.UIValue.prototype.Get = function ()
+    {
+        var x = parseFloat(this.text.value);
+        if (! isNaN (x)) this.value = x;
+        this.text.value = this.value;
+        return this.value;
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.CompassPoints = ["images/north.png", "images/east.png", "images/south.png", "images/west.png",
+                                "images/ne.png", "images/se.png", "images/sw.png", "images/nw.png" ];
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.CreateGarden = function ()
+    {
+        this.garden = new SculptureGarden();
+        this.garden.Initialise ();
+        this.walker = new SculptureGarden.Walker ();
+        this.walker.Initialise (this.garden, this.mapped_points, 1);
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.Move = function (opt)
+    {
+        this.walker.Move (opt);
+        this.Draw ();
+        this.ShowStatus ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.UpdateSettings = function ()
+    {
+        this.xeye.Get ();
+        this.yeye.Get ();
+        this.zeye.Get ();
+
+        this.x_min.Get ();
+        this.x_max.Get ();
+        this.y_min.Get ();
+        this.y_max.Get ();
+        this.z_min.Get ();
+        this.z_max.Get ();
+
+        this.x_vanish.Get ();
+        this.y_vanish.Get ();
+
+        this.view_width.Get ();
+        this.perspective.Get ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.CreateMappedPoints = function ()
+    {
+        this.mapped_points = new MappedPoints(this.x_min.value,this.x_max.value,this.y_min.value,this.y_max.value,this.z_min.value,this.z_max.value);
+        this.mapped_points.SetEye (this.xeye.value, this.yeye.value, this.zeye.value);
+        this.mapped_points.SetVanishingPoint (this.width/this.view_width.value, this.perspective.value, this.x_vanish.value, this.y_vanish.value);
+        this.mapped_points.SetScreenHeight (this.height);
+
+        OctoPoints.MakeShapes(Controller.view_xmin, Controller.view_ymin, Controller.view_xmax, Controller.view_ymax);
+        OctoPoints.Make3dWalls(this.mapped_points,this.maze_floor,this.maze_ceiling, 0, 0, this.width, this.height);
+        OctoPoints.MakeSpecialWalls (this.mapped_points, this.maze_floor,this.maze_ceiling);
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.Draw = function ()
+    {
+        this.DrawMaze();
+        this.DrawCompass();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.DrawMaze = function ()
+    {
+        this.walker.DrawPOV (this.chelp_maze, 5, 10);
+        maze_view.src = this.chelp_maze.canvas.toDataURL('image/png');
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.AnimateMaze = function ()
+    {
+        if (this.walker.animated)
+        {
+            this.walker.DrawPOV (this.chelp_maze, 5, 10);
+            maze_view.src = this.chelp_maze.canvas.toDataURL('image/png');
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.DrawCompass = function ()
+    {
+        compass_view.src = Controller.CompassPoints[this.walker.facing.d];
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.ShowStatus = function ()
+    {
+        maze_loc.innerHTML = Misc.Format ("Position = {0}, Direction = {1}", this.walker.position, this.walker.facing);
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.PrintArt = function ()
+    {
+        if (this.walker.current_artwork)
+        {
+            var art = this.walker.current_artwork;
+            var size = this.print_size.Get ();
+            var position = art.GetHangingParameters (); // x, y, w, h.
+            var height = size * position [3] / position [2];
+            var chelp = new CanvasHelp (size, height);
+
+            art.DrawFullSize (chelp);
+
+            var dataURL = chelp.canvas.toDataURL('image/png');
+
+            var text = print_page.innerHTML;
+
+            text = text.replace ("<!--", "");
+            text = text.replace ("-->", "");
+            text = text.replace ("%AUTHOR%", art.author);
+            text = text.replace ("%TITLE%", art.title);
+            text = text.replace ("%WIDTH%", size);
+            text = text.replace ("%HEIGHT%", height);
+            text = text.replace ("%DATA_URL%", dataURL);
+
+            var w = window.open('about:blank');
+            w.document.write(text);
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.PrintView = function ()
+    {
+        var size = this.print_size.Get ();
+        var height = size * this.height / this.width;
+        var dataURL = this.chelp_maze.canvas.toDataURL('image/png');
+        var text = print_page.innerHTML;
+
+        text = text.replace ("<!--", "");
+        text = text.replace ("-->", "");
+        text = text.replace ("%AUTHOR%", "Edd Aardvark");
+        text = text.replace ("%TITLE%", "Sculpture Garden");
+        text = text.replace ("%WIDTH%", size);
+        text = text.replace ("%HEIGHT%", height);
+        text = text.replace ("%DATA_URL%", dataURL);
+
+        var w = window.open('about:blank');
+        w.document.write(text);
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.HideArt = function ()
+    {
+        artwork.style.display = "none";
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Controller.prototype.SelectCurrentArt = function ()
+    {
+        this.walker.SelectCurrentArt ();
+
+        if (this.walker.current_artwork)
+        {
+            artwork.style.display = "block";
+            this.walker.current_artwork.DrawFullSize (this.chelp_art);
+            art_view.src = this.chelp_art.canvas.toDataURL('image/png');
+
+            var text = this.walker.current_artwork.description + ".";
+            var code = this.walker.current_artwork.GetCode ();
+
+            if (code)
+            {
+                text += "<br>This image's code is \"" + code + "\". You can cut and past this value into the pattern's ";
+                text += "<a href=\"" + this.walker.current_artwork.homepage + "\" target=\"_blank\">homepage</a> to ";
+                "reproduce the image in an interactive environment."
+            }
+            else
+            {
+                text += " See <a href=\"" + this.walker.current_artwork.homepage + "\" target=\"_blank\">homepage</a>.";
+            }
+
+            artview_text.innerHTML = text;
+        }
+        else
+        {
+            artwork.style.display = "none";
+            this.PrintView ();
+        }
+    }
+    //====================================================================================================================================
+    var animator;
+    var controller;
+    var xmax = 40;
+    var ymax = 30;
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        links_go_here.innerHTML = MakeButtons ();
+
+        controller = new Controller ();
+        animator = new Animator (ContinueAnimation, 100);
+
+        controller.CreateGarden ();
+        controller.Draw ();
+
+        animator.Start ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Manual Start (for debugging)
+    //------------------------------------------------------------------------------------------------------------------------------------
+    Start = function ()
+    {
+        controller = new Controller ();
+        animator = new Animator (ContinueAnimation, 100);
+
+        controller.CreateGarden ();
+        controller.Draw ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    ContinueAnimation = function()
+    {
+        controller.AnimateMaze ();
+    }
+    //------------------------------------------------------------------------------------------------------------------------------------
+    UpdateShading = function()
+    {
+        MappedPoints.Shape.distance_shading = distance_shading.checked;
+        controller.Draw();
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Sculpture Garden</h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript">
+        <!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+        -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+      -->
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box">
+        <div class="float w75" style="overflow: auto;">
+            <h2> The garden </h2>
+            <p> This is the first iteration of this page, currently the garden is rather empty but there art galleries within the building. The layout is generated randomly.
+                When you are standing in front of a work of art you can click on it to view it in more detail, then print it or visit the associated web-page.
+            </p>
+
+        <!--
+        <button type="button" class="clickable big" onclick="Start()" title="start"> Start </button></td>
+        -->
+
+            <p>
+                <img id="maze_view" width="720" height="480" onclick="controller.SelectCurrentArt();" alt="Computer generated image" title="Click on artwork for details view, click on scenary to print.">
+            </p>
+        </div>
+
+
+        <div class="float w3" style="overflow: auto;">
+
+            <h2> Movement </h2>
+                  <table>
+                      <tr>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.TURN_LEFT);" title="Turn left"> &#x21b6; </button></td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_315);" title="Move NW"> &#x2b09; </button></td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_FORWARD);" title="Move Forward"> &#x25b3; </button></td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_45);" title="Move NE"> &#x2b08; </button></td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.TURN_RIGHT);" title="Turn right"> &#x21b7; </button></td>
+                          <td class="fill"> &nbsp;</td>
+                      </tr>
+                      <tr>
+                          <td class="nopad"> &nbsp; </td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_LEFT);" title="Slide left"> &#x25c1; </button></td>
+                          <td class="nopad"> <img id="compass_view" class="noborder" width="40" height="40"> </td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_RIGHT);" title="slide right"> &#x25b7; </button></td>
+                          <td class="nopad"> &nbsp; </td>
+                          <td class="fill"> &nbsp;</td>
+                      </tr>
+                      <tr>
+                          <td class="nopad"> &nbsp; </td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_225);" title="Move SE"> &#x2b0b; </button></td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_BACK);" title="Move Back"> &#x25bd; </button></td>
+                          <td class="nopad"><button type="button" class="clickable big" onclick="controller.Move(SculptureGarden.Walker.MOVE_135);" title="Move SW"> &#x2b0a; </button></td>
+                          <td class="nopad"> &nbsp; </td>
+                          <td class="fill"> &nbsp;</td>
+                      </tr>
+                      <tr>
+                          <td colspan="6">Distance Shading: <input type="checkbox" id="distance_shading" onclick="UpdateShading();"></td>
+                      </tr>
+                      <tr>
+                          <td colspan="6"> <p id="maze_loc"></p> </td>
+                      </tr>
+                  </table>
+            </p><p>
+
+                  <table>
+                      <tr>
+                          <td class="nopad"><img src="images/overlay.png" title="navigation overlay" alt="overlay" width="80"></img></td>
+                          <td class="fill"> This overlay shows you immediate neighbourhood. You will start of in the garden, the brown cells show the path to the entrance, the white cells
+                              are the corridors within the gallery and the yellow ones the galleries.
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="nopad"><img src="images/map.png" title="Map" alt="map" width="80"></img></td>
+                          <td class="fill"> Look out for the gallery and garden maps. These show you where you are and what attractions are available.
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="nopad"><a href="galleries.html" target="_blank"><img src="images/automata_gallery.png" title="Click to see description of the galleries" alt="link" width="80"></img></a></td>
+                          <td class="fill"> Click on the image to see a description of the galleries.
+                          </td>
+                      </tr>
+                  </table>
+            </p>
+
+
+        </div>
+
+<!-- Artwork view -->
+
+        <div id="artwork" class="float w75" style="overflow: auto; display: none;">
+            <h2> Artwork View </h2>
+
+            <p>
+                <img id="art_view" width="720" height="480">
+            </p><p>
+                Print size: <input type="text" maxlength="5" id="print_size_text" size="4">
+                <button onclick="controller.PrintArt ()"> Print</button>
+                <button onclick="controller.HideArt ()"> Hide</button>
+            </p><p>
+                <span id="artview_text">&nbsp;</span>
+            </p>
+
+        </div>
+
+<!-- Perspective parameters -->
+
+        <div class="float w6" style="overflow: auto; display: none;">
+            <h2> Perspective </h2>
+
+                <table>
+
+                <!-- Eye point -->
+
+                    <tr><td>Eye:</td>
+                        <td>
+                            X: <input type="text" maxlength="6" id="x_eye_text" size="4">
+                            Y: <input type="text" maxlength="6" id="y_eye_text" size="4">
+                            Z: <input type="text" maxlength="6" id="z_eye_text" size="4">
+                        </td>
+                    </tr>
+
+                <!-- Grid -->
+
+                    <tr><td>X-Range:</td>
+                        <td>
+                            <input type="text" maxlength="3" id="x_min_text" size="4">
+                                 - <input type="text" maxlength="3" id="x_max_text" size="4">
+                        </td>
+                    </tr>
+
+                    <tr><td>Y-Range:</td>
+                        <td>
+                            <input type="text" maxlength="3" id="y_min_text" size="4">
+                                - <input type="text" maxlength="3" id="y_max_text" size="4">
+                        </td>
+                    </tr>
+
+                    <tr><td>Z-Range:</td>
+                        <td>
+                            <input type="text" maxlength="3" id="z_min_text" size="4">
+                                - <input type="text" maxlength="3" id="z_max_text" size="4">
+                        </td>
+                    </tr>
+
+                <!-- View -->
+
+                    <tr><td>View:</td>
+                        <td>
+                            Width: <input type="text" maxlength="4" id="view_width_text" size="4">
+                            Perspective: <input type="text" maxlength="6" id="perspective_text" size="4">
+                        </td>
+                    </tr>
+
+
+                <!-- Vanishing point -->
+
+                    <tr><td>Vanishing point:</td>
+                        <td>
+                            X: <input type="text" maxlength="4" id="x_vanish_text" size="4">
+                            Y: <input type="text" maxlength="4" id="y_vanish_text" size="4">
+                        </td>
+                    </tr>
+
+                    <tr><td>&nbsp;</td>
+                        <td>
+                            <button type="button" class="clickable" onclick="UpdateSettings();" title="Apply settings"> &#x25b6; </button>
+                        </td>
+                    </tr>
+
+
+
+                </table>
+
+        </div>
+
+<!-- HTML templates -->
+
+        <div class="float w6" style="overflow: auto; display: none;">
+            <p id="print_page">
+<!-- <html><head>
+    <title> %TITLE% by %AUTHOR% </title>
+    <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+    </head>
+
+    <body class="printable">
+    <img class="noborder" width="%WIDTH%" height="%HEIGHT%" src="%DATA_URL%" title="Use browser controls to print" alt="Printable image">
+    </body>
+    </html> -->
+            </p>
+        </div>
+
+
+        <div class="endfloat"/>
+    </div>
+  </div>
+
+<!-- Other pages -->
+
+  <div class="in2 box">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+  </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2010 - 2019 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+
+</body>
+</html>
+
+
+
+

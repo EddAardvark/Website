@@ -1,0 +1,470 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python 3x+1">
+
+<TITLE> 3x+1 (Observations) </TITLE>
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+
+<script>
+
+    // Controls
+
+    var number1_input;
+    var number2_input;
+    var result1_paragraph;
+    var result2_paragraph;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+
+        number1_input = document.getElementById("number1");
+        number2_input = document.getElementById("number2");
+        result1_paragraph = document.getElementById("result1");
+        result2_paragraph = document.getElementById("result2");
+
+        number1_input.value = 27;
+        number2_input.value = 993;
+
+        DrawGlideSequence();
+        ShowResidue();
+    }
+
+    DrawGlideSequence = function ()
+    {
+        var x = parseInt (number1_input.value);
+
+        if (x > 1)
+        {
+            var seq = T3A1.MakeGlideSequence (x);
+            result1_paragraph.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+    // Show the residue calculation
+    ShowResidue = function (x)
+    {
+        var x = parseInt (number2_input.value);
+
+        if (x > 1)
+        {
+            var seq = T3A1.MakeAlphaSequence (x);
+            var m = seq.reduce(function(a, b) {return a + b;}, 0);
+            var n = seq.length;
+            var m1 = Math.pow(2/3,n);
+            var m2 = Math.pow(2,m-n);
+            var res = m1 * m2 / x;
+
+            text = "a = [" + T3A1.SequenceToText (seq) + "]<br>";
+            text += "m = " + m + ", ";
+            text += "n = " + n + "<br>";
+            text += "(2/3)<span class=\"superscript\">n</span> x "
+            text += "2<span class=\"superscript\">m-n</span> = " + (m1 * m2) + "<br>";
+            text += "R = " + res;
+
+            result2_paragraph.innerHTML = text;
+        }
+    }
+</script>
+</head>
+
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+            Observations
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w7 float">
+
+    <h2><a name="s1">Introduction</a></h2>
+
+    <p>
+        This section of the site discusses the discoveries that can be made simply by iterating the equation and noting the results.
+
+        <!-- Don't change these numbers as other pages may refer to them -->
+
+        <ol class="in4">
+          <li><a href="#s1">Introduction</a></li>
+          <li><a href="#s2">The full tree</a></li>
+          <li><a href="#s3">The odd tree</a></li>
+          <li><a href="#s4">The glide tree</a></li>
+          <li><a href="#s5">Residues</a></li>
+          <li><a href="workingback.html">Working Backwards</a></li>
+          <li><a href="#s6">The 5x+1 system</a></li>
+          <li><a href="index.html"> 3x + 1 Index </a></li>
+        </ol>
+
+    </p>
+
+    </div>
+
+<!-- Full tree -->
+
+    <div class="in2 box w7 float">
+
+    <h2><a name="s2">The full tree</a></h2>
+
+    <p>
+        Although we stated at the start of the site we would be concentrating on the
+        odd numbers, let us first look at the whole tree. This can be constructed by combining all the
+        individual sequences, like the one based on 29 we saw on the home page, into a
+        single tree. This illustration shows a few nodes near the root.
+
+        <div align="center">
+            <img src="images/tree.gif" width="486" height="456"></p>
+        </div>
+
+    <p>
+
+    I've coloured the nodes to highlight some aspects of the structure.
+
+    <p>
+        <table border="1" cellpadding="4" cellspacing="0">
+          <tr>
+            <td>Yellow</td>
+            <td>Multiples of 2</td>
+          </tr>
+          <tr>
+            <td>Red</td>
+            <td>Multiples of 3</td>
+          </tr>
+          <tr>
+            <td>Green</td>
+            <td>Numbers of the form 6n+1</td>
+          </tr>
+          <tr>
+            <td>Blue</td>
+            <td>Numbers of the form 6n+5</td>
+          </tr>
+        </table>
+
+    <p>
+
+        The tree consists of a collection of infinitely long strings of even numbers [...,
+        16n, 8n, 4n, 2n], each one rooted on an odd number, 'n'. The illustration shows the
+        strings based on 1, 3, 5 and 21.
+
+    </p><p>
+
+        Some of these strings spawn sub-strings (for instance, 16 in the string based on 1 spawns a new
+        string based on 5). Strings based on multiples of 3 never spawn
+        sub-strings, other odd numbers spawn a new string every second node (1st,
+        3rd, 5th, ... for blue nodes and 2nd, 4th, 6th, ... for green ones).
+
+    </p><p>
+        The root of the tree is the loop [4,2,1]. This is probably the only loop. If
+        there are any other loops they will anchor independent trees that have no
+        connections to this one.
+
+    </p>
+    </div>
+
+    <div class="in2 box w7 float">
+
+    <h2>The <a name="s3">odd tree</a></h2>
+
+    <p>
+        As we have noted earlier, all even numbers are the product of an odd number
+        and a power of 2. Once the sequence encounters an even number we are destined to
+        reach the root odd number. We can simplify the above tree by collapsing the
+        infinite set [n, 2n, 4n, 8n, ...] into the single node 'n'. When we do this to
+        the previous tree we get this simpler representation
+
+        <div align="center">
+            <img src="images/oddtree.gif" width="283" height="223">
+        </div>
+
+    </p><p>
+
+        The [4,2,1] loop reduces to just '1'. The numbers on the lines represent the number of iterations to get from one
+        number to the next, one more than the number of even numbers encountered along
+        the way and hence one more than the 'a' values mentioned on the <a href="index.html">introductory page</a>
+        and discussed in more detail on the <a href="a_lists.html">a-lists page</a>. To calculate how far numbers are from the root we have
+        add together the lengths of these vectors. For example, to get from 213 to 1 will take
+        8&nbsp;+&nbsp;5&nbsp;=&nbsp;13 steps.
+
+    </p><p>
+
+        The set of odd numbers that precedes a value displays the colour sequence green, blue, red, though
+        they don't always start on the same colour. This is because these numbers follow the sequence
+        n&nbsp;&rarr;&nbsp;4n&nbsp;+&nbsp;1. For instance the
+        predecessors of 5 follow the sequence 3, 13, 53, 213, ...
+
+    </p><p>
+
+        Drawing these trees by hand (as in the above example) is a bit tedious so
+        most similar images on this site are generated using
+        a combination of Python
+        and <a href="http://www.research.att.com/sw/tools/graphviz/">GraphViz</a>. A Python
+        script creates the GraphViz 'dot' files and GraphViz converts these to illustrations. Click <a href="upto201.html">here</a>
+        to see the tree containing all the odd numbers up to 201.
+
+    </p>
+
+    <h3>See also</h3>
+
+    <p>
+
+        <a href="sizerecords.html">Size Records</a>: Every sequence will have a
+        largest member. As we explore the sequences generated from ever increasing seed values we will
+        continuously encounter larger largest values. This page enumerates a few of
+        these record holders.
+
+    </p><p>
+
+        Length Records: Each sequence will have a length. As we increase the seed
+        value we will encounter longer sequences. Each time we encounter a sequence that
+        is longer than all the previous ones this will be a length record. <i>To be
+        continued.</i>
+
+    </p>
+    </div>
+
+<!-- Glide Tree -->
+
+    <div class="in2 box w7 float">
+
+    <h2>The <a name="s4"> glide tree</a></h2>
+
+    <p>
+        Glides are sequences that end when a number smaller than the seed is
+        encountered. The sequence we met earlier based on 29
+
+    <p class="code">
+
+        [29, 88, 44, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1]
+
+    <p>
+
+        includes the glide
+
+    <p class="code">
+
+        [29, 88, 44, 22]
+
+    <p>
+
+        as 22 is the first number smaller than 29 encountered. I prefer to work with
+        odd glides, and ignore the even numbers. The glide of 29 then becomes
+
+    <p class="code">
+
+        [29, 11].
+
+    <p>
+
+        Construct a glide sequence: <input type="text" id="number1" size="12">
+                                    <button onclick="DrawGlideSequence();"> Show </button>
+        <p>
+
+        <div class="code in2 w6">
+            <p class="code" id="result1"> &nbsp; <p>
+        </div><p>
+
+    </p><p>
+
+        The odd glide maps one odd number to second (smaller) one, so it will eventually arrive at 1 (or get caught in a loop).
+        This gives us another way of
+        constructing a tree of odd numbers, the &quot;glide tree&quot;. This
+        illustration shows the glide tree for odd numbers up to 39. Note that '1' is
+        drawn differently, to identify that there isn't a glide. In 3x+1 this is the only
+        known number that doesn't have a glide, but in other systems like 3x+5 there can
+        be many (see &quot;Glide Structure&quot;, below).
+
+        <div align="center">
+            <img src="images/struct1_39.png">
+        </div>
+    </p>
+
+    <h3>See also </h3>
+
+    <p>
+        <a href="glide_structure.html">Glide Structure</a>:  If you start with a value and
+        iterate until you reach a smaller value you have a &quot;glide&quot;.&nbsp;Join
+        all these together and you have the glide structure. In 3x+1 the structure
+        is a tree. This link shows the 3x+1 tree for a larger range of values and also examines the structure of other systems,
+        3x+5, 7, 11 and 13, where there
+        are multiple loops. Where the basic tree seems to be tall and narrow, the glide
+        trees tend to be short and wide.
+
+    </p><p>
+
+        <a href="oddglides.html">Glide Record Holders</a>: These identify the longest
+        glide encountered so far as we increase the seed number. The link actually
+        refers to a page showing the first 12 odd glide record holders. These get quite
+        long quite quickly, for instance, the 3rd record holder is 27, which has 38
+        members.
+    </p>
+
+    <div class="in2">
+    <p class="code">[27, 41, 31, 47, 71, 107, 161, 121, 91, 137, 103, 155, 233, 175, 263, 395, 593, 445, 167, 251, 377, 283, 425, 319, 479, 719, 1079, 1619, 2429, 911, 1367, 2051, 3077, 577, 433, 325, 61,
+    23]</p>
+    </div>
+    <p><a href="glidechainrecords.html">Glide Chain Records</a>:  If you examine the
+    diagram above you can see that '3' is the smallest number only one step away
+    from 1. The smallest number two steps away is 7, and for 3 steps it is 9. These,
+    being the smallest numbers at successive distances from the root form the glide
+    chain record holders. The <a href="glidechainrecords.html">Glide Chain Records</a>  page
+    explores these record holders for a larger sequence of seeds.</p>
+
+    </div>
+
+    <!-- Residues -->
+
+    <div class="in2 box w7 float">
+
+    <h2><a name="s5"> Residues</a></h2>
+
+    <p>
+        The &quot;residue&quot; of a sequence is calculated by counting the number of odd and
+        even terms in a descent and then calculating 2<span class="superscript">even</span>/(x&nbsp;*&nbsp;3<span class="superscript">odd</span>).
+        If we choose x=7, for instance we get the series [7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2,
+        1], which has 11 even and 5 odd members (we don't count the '1'),&nbsp; so:
+
+    <p class="code">
+
+        R(7) = 2<span class="superscript">11</span>/ (7&nbsp;*&nbsp;3<span class="superscript">5</span>) = 2048/1701 = 1.2039976...
+
+    <p>
+
+        Eric Roosendaal introduces residues on one of his pages -
+        see <a href="http://www.ericr.nl/wondrous/index.html">http://www.ericr.nl/wondrous/index.html</a>
+        - where he discusses the non-uniformity of the distribution and postulates that the largest residue is
+        R(993):
+
+    <p class="code">
+
+        R(993) = 2<span class="superscript">61</span>/ (993 * 3<span class="superscript">32</span>) = 1.2531421...
+
+    <p>
+        This chart shows the residue distribution for all the odd numbers in the range
+        3 to 1048575, in bins of 0.001. See the following links for more information.
+    <p>
+        <img class="noborder" src="images/residue_chart.gif" width="781" height="287">
+    <p>
+        Residues can be calculated from the a-list generated by the seed (<a href="index.html">see the introductory page</a>).
+        Set 'n' to the number of 'a' values and 'm' to their sum.
+        The residue is now:
+    <p class="code">
+        R(seed) = 2<span class="superscript">m</span>/(seed&nbsp;x&nbsp;3<span class="superscript">n</span>)
+        &equiv;
+        (2/3)<span class="superscript">n</span> x 2<span class="superscript">m-n</span> / seed;
+    <p>
+        The second version is better for calculating as it is less likely to overflow and
+        probably more accurate. Calculate a residue: <input type="text" id="number2" size="12">
+                                    <button onclick="ShowResidue();"> Show </button>
+    <p>
+
+        <div class="code in2 w6">
+            <p class="code" id="result2"> &nbsp; <p>
+        </div><p>
+
+
+    <h3> See also</h3>
+
+    <p>
+        <a href="residues.html">The Residue Page</a>: On this page we discus the distribution of the residue values
+        (see illustration above) and speculate on whether
+        R(993) really is the largest value. My distribution will be slightly different
+        from Eric's as I ignore the even numbers.
+
+    </p><p>
+
+        <a href="residue_records.html">Residue Records</a>:  Although 993 is probably the
+        largest residue among all numbers, finding record holders when we exclude
+        multiples of 3 is more interesting.
+
+    </p><p>
+
+        <a href="attraction.html">Domains of Attraction</a>: Before converging on one,
+        sequences must pass through one of one's predecessors (1, 5, 21, etc).
+        Which of these routes a number takes has a large impact on its residue as we can
+        see in the chart above, which is colour coded according to domain.
+        This link explores the relative popularity of these gateways.
+
+    </p>
+    </div>
+
+</div>
+
+    <div class="in2 box w7 float">
+
+    <h2>The <a name="s6">5x</a> + 1 System</h2>
+
+    <p>
+        <a href="fiveandone.html">5x+1</a>:  A related system based on the 5x+1 equation.
+    </p>
+</div>
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2016 <p> </td>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,351 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Symmetry Operation Patterns">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/triangle_pattern.js"> </script>
+<script src="triangle_controller.js"> </script>
+
+<style></style>
+
+<script>
+
+    var controller;
+    //------------------------------------------------------------------------------------------------------------
+    function OnStart ()
+    {
+        print_size.value = 1000;
+        r_depth.value = 2;
+        SVGColours.AddColours (colour_select);
+        controller = new TriangleController;
+        controller.NewPattern();
+    }
+
+
+</script>
+
+<title>Symmetry Operation Patterns</title>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Repeated Symmetry Operations </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>   
+    
+
+<!-- MAIN CONTENT -->
+
+
+<div class="float  w9" style="overflow: auto;">
+  <div class="in2 box">
+
+   <h2> The Pattern </h2>
+      <p> This application draws patterns based on applying basic symmetry operations to a starting pattern
+        constructed from a 2&nbsp;&times;&nbsp;2 array of simple shapes.</p>
+      </p><p>
+        <img id="pattern_image" width="500", height="500"  style="border: 0px;" alt="Computer generated image" title="Renders the shapes in a canvas.">
+      </p>
+   </div>
+</div>
+ 
+ 
+ <!-- C O N T R O L S -->
+ 
+<div class="float  w9" style="overflow: auto;">
+  <div class="in2 box">
+
+    <h2> Controls </h2>
+    
+    <table>
+     <tr>
+      <td> Pattern type: </td>
+      <td>
+       <p>
+        <select id="seed_type" onchange="controller.SetSeedType(seed_type);">
+            <option value="0">Random Triangles</option>
+            <option value="1">Random Rectangles</option>
+            <option value="2">Random Spots</option>
+            <option value="3">Random Triangles + Rectangles</option>
+            <option value="4">Random Triangles + Spots</option>
+            <option value="5">Random Rectangles + Spots</option>
+            <option value="6">Random All three</option>
+            <option value="7">Custom</option>
+        </select>
+        
+        <input type="checkbox" id="use_custom_colours" name="use_custom_colours" value="0" onclick="controller.SetUseCustomColours(use_custom_colours.checked);">
+        <label for="use_custom_colours"> Use Custom Colours </label>
+
+       </p>
+      </td>
+     </tr>
+     
+    <tr>
+      <td> Custom: </td>
+      <td>
+      
+      <p>
+      The 4 squares on the left show the initial pattern, with one of the cells highlighted. Click on a pattern cell 
+      to select it then an element (on the right) to update the pattern.
+      
+      </p><p>
+
+        <table>
+          <tr><th> Starting Pattern </th> <th> Element </th> <th> Colour </th> </tr>
+          <tr>
+            <td>
+              <table>
+                <tr>
+                  <td> <img id="target_1" width="32" height="32" onclick="controller.SelectTarget(1);"> </td>
+                  <td> <img id="target_3" width="32" height="32" onclick="controller.SelectTarget(3);"> </td>
+                </tr>
+                <tr>
+                  <td> <img id="target_0" width="32" height="32" onclick="controller.SelectTarget(0);"> </td>
+                  <td> <img id="target_2" width="32" height="32" onclick="controller.SelectTarget(2);"> </td>
+                </tr>
+              </table>
+            </td>
+
+            <td>
+              <table>
+                <tr>
+                  <td> <img id="source_0" width="32" height="32" onclick="controller.SelectSource(0);"> </td>
+                  <td> <img id="source_1" width="32" height="32" onclick="controller.SelectSource(1);"> </td>
+                  <td> <img id="source_2" width="32" height="32" onclick="controller.SelectSource(2);"> </td>
+                  <td> <img id="source_3" width="32" height="32" onclick="controller.SelectSource(3);"> </td>
+                  <td> <img id="source_4" width="32" height="32" onclick="controller.SelectSource(4);"> </td>
+                  <td> <img id="source_10" width="32" height="32" onclick="controller.SelectSource(10);"> </td>
+                  </tr>
+                <tr>
+                  <td> <img id="source_9" width="32" height="32" onclick="controller.SelectSource(9);"> </td>
+                  <td> <img id="source_5" width="32" height="32" onclick="controller.SelectSource(5);"> </td>
+                  <td> <img id="source_6" width="32" height="32" onclick="controller.SelectSource(6);"> </td>
+                  <td> <img id="source_7" width="32" height="32" onclick="controller.SelectSource(7);"> </td>
+                  <td> <img id="source_8" width="32" height="32" onclick="controller.SelectSource(8);"> </td>
+                  <td> <img id="source_11" width="32" height="32" onclick="controller.SelectSource(11);"> </td>
+                  </tr>
+              </table>
+            </td>
+            
+            
+            <td>
+              <table>
+                <tr>
+                  <td> <img id="colour_0" width="32" height="32" onclick="controller.SelectColour(0);"> </td>
+                  <td> <img id="colour_1" width="32" height="32" onclick="controller.SelectColour(1);"> </td>
+                  <td> <img id="colour_2" width="32" height="32" onclick="controller.SelectColour(2);"> </td>
+                  <td> <img id="colour_3" width="32" height="32" onclick="controller.SelectColour(3);"> </td>
+                  <td> <img id="colour_4" width="32" height="32" onclick="controller.SelectColour(4);"> </td>
+                </tr>
+                <tr>
+                  <td> <img id="colour_5" width="32" height="32" onclick="controller.SelectColour(5);"> </td>
+                  <td> <img id="colour_6" width="32" height="32" onclick="controller.SelectColour(6);"> </td>
+                  <td> <img id="colour_7" width="32" height="32" onclick="controller.SelectColour(7);"> </td>
+                  <td> <img id="colour_8" width="32" height="32" onclick="controller.SelectColour(8);"> </td>
+                  <td> <img id="colour_9" width="32" height="32" onclick="controller.SelectColour(9);"> </td>
+                </tr>
+                <tr> <td colspan="5"> <select id = "colour_select" onchange="controller.SelectComboColour(colour_select);"> </select>
+              </table>              
+            </td>
+            
+          </tr>
+        </table>
+      
+      </p>
+     </td>
+    </tr>
+     
+     
+    <tr> 
+    <td> Transform: </td>
+    <td>      
+      <p>
+        <select id="expand_type" onchange="controller.SetExpand(expand_type);">
+
+            <option value="A">Slide</option>
+            <option value="B">Invert</option>
+            <option value="C">Rotate 90</option>
+            <option value="D">Rotate 180</option>
+            <option value="E">Rotate 270</option>
+            <option value="F">Reflect</option>
+            <option value="G">Rotate 90 + Invert</option>
+            <option value="H">Rotate 180 + Invert</option>
+            <option value="I">Rotate 270 + Invert</option>
+            <option value="J">Reflect + Invert</option>
+            
+        </select>
+      </p>
+     </td>
+    </tr>
+        
+        
+     
+    <tr>
+     <td> Actions: </td>
+     <td>
+       <p>
+       <button onclick='controller.NewPattern();'> New Pattern</button>
+       <button onclick='controller.RandomPattern(r_depth);'> Random Pattern</button>
+       <button onclick='controller.Expand();'> Apply Transform</button>
+       <button onclick='controller.ApplyCode(new_code);'> Apply Code</button>
+       <button onclick='controller.MakePrintable (print_page, print_size);' > Printable Version </button>
+       </p>
+     </td>
+    </tr>
+     
+    <tr>
+     <td> Print Size: </td>
+     <td>
+      <p>
+      The size (in pixels) or the printable image:
+       <input type="text" "text" size="5" maxlen="5" id="print_size" /> 
+      </p>
+     </td>
+    </tr>
+     
+    <tr>
+     <td> Random Depth: </td>
+     <td>
+      <p>
+      The number of operations to apply when creating a random pattern:
+       <input type="text" size="5" maxlen="1" id="r_depth" /> 
+      </p>
+     </td>
+    </tr>
+     
+        
+    <tr>
+     <td> Pattern Code: </td>
+     <td>
+      <p>
+      The current code identifies the operations used to generate the current pattern, the new code can be used to apply a specific set of operations
+      to the current templage. Click the "Apply Code" button.
+      </p><p>
+       Current: "<span class="inner" id="code"> &nbsp; </span>", New code: <input type="text" "text" size="8" maxlen="8" id="new_code" placeholder="code"/> 
+      </p>
+     </td>
+    </tr>
+     
+    </table>
+   </div>
+ </div>
+ 
+ 
+        
+
+
+
+ <!-- I N S T R U C T I O N S -->
+  
+ 
+<div class="float_r w9" style="overflow: auto;">
+
+    <div class="in2 box">
+    <h2><a name="instructions">Instructions</a></h2>
+    
+    <h3> Codes </h3>
+        <ol style="list-style-type: upper-alpha;">
+            <li>Slide<//li>
+            <li>Invert<//li>
+            <li>Rotate 90<//li>
+            <li>Rotate 180<//li>
+            <li>Rotate 270<//li>
+            <li>Reflect<//li>
+            <li>Rotate 90 + Invert<//li>
+            <li>Rotate 180 + Invert<//li>
+            <li>Rotate 270 + Invert<//li>
+            <li>Reflect + Invert<//li>
+        </ol>
+    
+    </div>
+</div>
+
+<!-- HTML templates -->
+
+        <div class="float w6" style="overflow: auto; display: none;">
+            <p id="print_page">
+<!-- <html><head>
+    <title> %TITLE% by %AUTHOR% </title>
+    <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+    </head>
+
+    <body class="printable">
+    <img class="noborder" width="%WIDTH%" height="%HEIGHT%" src="%DATA_URL%" title="Use browser controls to print" alt="Printable image">
+    </body>
+    </html> -->
+            </p>
+        </div>
+        
+        
+    
+
+    <!-- Generic links -->
+
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+
+        <h2> Other pages </h2>
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+          
+      </div>
+    </div>
+
+</div>
+<!-- Copyright -->
+
+  <div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2019 - 2020 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

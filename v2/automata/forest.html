@@ -1,0 +1,322 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Interactive Forest Fire Simulator">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="../js_library/forest.js"> </script>
+
+<style>
+
+</style>
+
+<script>
+
+    var forest;
+
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //------------------------------------------------------------------------------------
+    // Start
+    //------------------------------------------------------------------------------------
+    function OnStart ()
+    {
+        ForestFire.SetLegendText ("fresh",ForestFire.FRESH_FIRE);
+        ForestFire.SetLegendText ("burning",ForestFire.ESTABLISHED_FIRE);
+        ForestFire.SetLegendText ("embers",ForestFire.GLOWING_EMBERS);
+        ForestFire.SetLegendText ("ash",ForestFire.ASH);
+        ForestFire.SetLegendText ("shoots",ForestFire.FRESH_SHOOTS);
+        ForestFire.SetLegendText ("shrub",ForestFire.SHRUB);
+        ForestFire.SetLegendText ("forest",ForestFire.MATURE);
+
+        forest = new ForestFire ("drawing");
+
+        document.getElementById("p1").value = forest.GetProbability (ForestFire.PROB_TO_ESTABLISHED);
+        document.getElementById("p2").value = forest.GetProbability (ForestFire.PROB_TO_EMBERS);
+        document.getElementById("p3").value = forest.GetProbability (ForestFire.PROB_TO_ASH);
+        document.getElementById("p4").value = forest.GetProbability (ForestFire.PROB_TO_FRESH);
+        document.getElementById("p5").value = forest.GetProbability (ForestFire.PROB_TO_SCRUB);
+        document.getElementById("p6").value = forest.GetProbability (ForestFire.PROB_TO_MATURE);
+        document.getElementById("p7").value = forest.GetProbability (ForestFire.PROB_IGNIGHT);
+        document.getElementById("p8").value = forest.GetProbability (ForestFire.PROB_SPREAD);
+
+        var intervalID = setInterval(Next, 200);
+
+        ShowValues ();
+    }
+    //------------------------------------------------------------------------------------
+    function Next ()
+    {
+        forest.Next ();
+        forest.Draw ();
+        forest.DisplayImage ();
+    }
+    //------------------------------------------------------------------------------------
+    function ShowValues ()
+    {
+        document.getElementById("p1").value = forest.GetProbability (ForestFire.PROB_TO_ESTABLISHED);
+        document.getElementById("p2").value = forest.GetProbability (ForestFire.PROB_TO_EMBERS);
+        document.getElementById("p3").value = forest.GetProbability (ForestFire.PROB_TO_ASH);
+        document.getElementById("p4").value = forest.GetProbability (ForestFire.PROB_TO_FRESH);
+        document.getElementById("p5").value = forest.GetProbability (ForestFire.PROB_TO_SCRUB);
+        document.getElementById("p6").value = forest.GetProbability (ForestFire.PROB_TO_MATURE);
+        document.getElementById("p7").value = forest.GetProbability (ForestFire.PROB_IGNIGHT);
+        document.getElementById("p8").value = forest.GetProbability (ForestFire.PROB_SPREAD);
+    }
+    //------------------------------------------------------------------------------------
+    function OnUpdate ()
+    {
+        forest.SetProbability (ForestFire.PROB_TO_ESTABLISHED, document.getElementById("p1").value);
+        forest.SetProbability (ForestFire.PROB_TO_EMBERS, document.getElementById("p2").value);
+        forest.SetProbability (ForestFire.PROB_TO_ASH, document.getElementById("p3").value);
+        forest.SetProbability (ForestFire.PROB_TO_FRESH, document.getElementById("p4").value);
+        forest.SetProbability (ForestFire.PROB_TO_SCRUB, document.getElementById("p5").value);
+        forest.SetProbability (ForestFire.PROB_TO_MATURE, document.getElementById("p6").value);
+        forest.SetProbability (ForestFire.PROB_IGNIGHT, document.getElementById("p7").value);
+        forest.SetProbability (ForestFire.PROB_SPREAD, document.getElementById("p8").value);
+
+        ShowValues ();
+
+        window.location.href = '#picture';
+    }
+
+</script>
+
+<title>Forest Fire Simulator</title>
+</head>
+
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Forest Fire Simulator </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+    <!-- Main content -->
+
+    <div class="float w9" style="overflow: auto;">
+      <div class="in2 box">
+
+       <h1> Forest Fire Simulator </h1>
+
+        <!-- The display -->
+
+          <h3> <a name="picture"> The Forest </a> </h3>
+           <p> <img id="drawing" > </p>
+
+      </div>
+    </div>
+
+    <!-- Colour scheme -->
+    
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+    
+            <h3><a name="ColourScheme">Colour Scheme</a></h3>
+            <p>
+                The cells follow a 7 colour cycle, starting with light green (grass),
+                maturing into forest (dark green) which is burnt to ash (black) where the grass
+                can regrow. The probability of a cell changing colour is controlled in the
+                settings section.
+            </p>
+
+            <ul>
+              <li id="fresh"> &nbsp; </li>
+              <li id="burning"> &nbsp; </li>
+              <li id="embers"> &nbsp; </li>
+              <li id="ash"> &nbsp; </li>
+              <li id="shoots"> &nbsp; </li>
+              <li id="shrub"> &nbsp; </li>
+              <li id="forest"> &nbsp; </li>
+            </ul>
+
+      </div>
+    </div>
+        
+    <!-- Interactive section -->
+    
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+          <h3> Probabilities </h3>
+            <p>
+                Use this section to update the probabilities used in the simulation.
+            </p>
+            <table>
+             <tr>
+                <td> Fire &rarr; Establised </td>
+                <td> <input type="text" id="p1" maxlength="9" size="6"/> </td>
+                <td> &nbsp; </td>
+             </tr>
+
+             <tr>
+                <td> Establised &rarr; Embers </td>
+                <td> <input type="text" id="p2" maxlength="9" size="6"/> </td>
+                <td> &nbsp; </td>
+             </tr>
+
+             <tr>
+                <td> Embers &rarr; Ash </td>
+                <td> <input type="text" id="p3" maxlength="9" size="6"/> </td>
+                <td> &nbsp; </td>
+             </tr>
+
+             <tr>
+                <td> Ash &rarr; Shoots </td>
+                <td> <input type="text" id="p4" maxlength="9" size="6"/> </td>
+                <td> &nbsp; </td>
+             </tr>
+
+             <tr>
+                <td> Shoots &rarr; Shrub  </td>
+                <td> <input type="text" id="p5" maxlength="9" size="6"/> </td>
+                <td> &nbsp; </td>
+             </tr>
+
+             <tr>
+                <td> Shrub &rarr; Mature  </td>
+                <td> <input type="text" id="p6" maxlength="9" size="6"/>  </td>
+                <td> &nbsp; </td>
+             </tr>
+
+             <tr>
+                <td> Ignite  </td>
+                <td> <input type="text" id="p7" maxlength="9" size="6"/>  </td>
+                <td> &nbsp; </td>
+             </tr>
+
+             <tr>
+                <td> Spread  </td>
+                <td> <input type="text" id="p8" maxlength="9" size="6"/>  </td>
+                <td> <button onclick='OnUpdate ()'> Update </button>
+                     <button onclick="window.location.href = '#Explanation'"> ? </button>
+                </td>
+             </tr>
+
+            </table>
+
+      </div>
+    </div>
+        
+    <!-- Explanation -->
+    
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+
+            <h3><a name="Explanation">Explanation</a></h3>
+            <p>
+            This page simulates a forest fire using a cellular automaton. There are seven types of cell which represent the
+            stages of vegitation growth and fire progression. Vegitation starts with fresh shoots and evolves to mature forest.
+            Mature forest
+            then has the possibility of catching fire. Once alight a fire passes through four stages, freshly alight, burning,
+            embers and ash. The cycle is completed by the possibility that fresh shoots will sprout from the ash.
+            </p><p>
+            These transitions are all determined by the probabilies entered into the table above.
+            </p><p>
+            The simulation is made more interesting by the possibily that fire may spread from freshly lit squares
+            to adjacent mature forest.
+            </p><p>
+            The "ignite" probability determines how often a mature tree will catch fire. This needs to be quite low, otherwise
+            the forest will never grow.
+            </p><p>
+            The "spread" probability determines how often a furiously burning cell will ignite adjacent trees. This needs to
+            be around 0.2 or higher or the fires will never get going.
+            </p><p>
+            <a href="forest.js">The script</a>
+            </p>            
+
+      </div>
+    </div>
+
+<!-- Automata Index page -->
+
+    <div class="float w9" style="overflow: auto;">
+      <div class="in2 box">
+      <h2> Cellular Automata Index Page </h2>
+      
+
+      <button class="link" onclick="Show('index.html')">
+        <div style="width:200;">
+        <p>
+            <strong>Cellular Automata Index</strong>
+        <p>
+            <img class="button" src="images/automata_icon.png" width="160" ALT="index page" title="The Cellular Automata index page">
+        </p><p>
+            The Cellular Automata index page.
+        </p>
+
+        </div>
+      </button>
+      </div>
+    </div>
+    
+
+    <!-- Generic links -->
+
+    <div class="float_r w9" style="overflow: auto;">
+      <div class="in2 box">
+
+        <h2> Other pages </h2>
+            
+          <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+          </p>
+          
+      </div>
+    </div>
+
+</div>
+<!-- Copyright -->
+
+  <div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2014 - 2020 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
