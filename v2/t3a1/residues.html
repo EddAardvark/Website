@@ -1,0 +1,1641 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (3x+1 Residues) </TITLE>
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+
+<style>
+
+TD {
+        font-family: Courier;
+        font-size: 75%;
+        padding-right: 12pt;
+        padding-left: 0pt;
+        padding-top: 0pt;
+        padding-bottom: 0pt;
+    }
+
+</style>
+
+
+
+<script>
+
+    // Controls
+
+    var number1_input;
+    var number2_input;
+    var number4_input;
+    var result2_paragraph;
+    var result4_paragraph;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+
+        number1_input = document.getElementById("number1");
+        number2_input = document.getElementById("number2");
+        number3_input = document.getElementById("number3");
+        number4_input = document.getElementById("number4");
+        result1_paragraph = document.getElementById("result1");
+        result2_paragraph = document.getElementById("result2");
+        result3_paragraph = document.getElementById("result3");
+        result4_paragraph = document.getElementById("result4");
+
+        number1_input.value = 5;
+        number2_input.value = 11;
+        number3_input.value = 100;
+        number4_input.value = 5;
+
+        Do4nBinary ();
+        ExploreHorizontalChain ();
+        ShowResidue ();
+        SearchResidueLimits ();
+    }
+
+    SearchResidueLimits = function ()
+    {
+        var count = parseInt (number3_input.value);
+
+        if (count != 0)
+        {
+            var text = "<table><tr><th>Seed</th><th>Residue</th><th>Asymptote</th></tr>";
+            var max_res = 0;
+
+            for (var i = 1 ; i < count ; i += 2)
+            {
+                var x = i;
+                var seq = T3A1.MakeAlphaSequence (x);
+                var m = seq.reduce(function(a, b) {return a + b;}, 0);
+                var n = seq.length;
+                var m1 = Math.pow(2/3,n);
+                var m2 = Math.pow(2,m-n);
+                var original_res = m1 * m2 / x;
+                var res = original_res;
+
+                while (x <= T3A1.MAX_PREDECESSOR)
+                {
+                    x = 4 * x + 1;
+                    res -= res * (1 / x);
+                }
+
+                if (res > max_res)
+                {
+                    text += "<tr><td>" + i;
+                    text += "</td><td>" + original_res;
+                    text += "</td><td>" + res;
+                    text += "</td></tr>";
+                    max_res = res;
+                }
+            }
+
+            text += "</table>";
+            result3_paragraph.innerHTML = text;
+        }
+    }
+
+    Do4nBinary = function ()
+    {
+        var x = parseInt (number4_input.value);
+
+        if (x != 0)
+        {
+            var binary = T3A1.ToBinary (x);
+            var seq = T3A1.Binary4n (binary);
+            var text = "Binary: " + T3A1.SequenceToText (binary.reverse());
+
+            text += ", Value = " + seq [0];
+            text += ", Residue = " + seq [1];
+            result4_paragraph.innerHTML = text;
+        }
+    }
+
+    FormatLineIn4nTable = function (seq, binary)
+    {
+        var text = "";
+
+        text += "<tr><td>" + T3A1.FromBinary (binary);
+        text += "</td><td>" + T3A1.SequenceToText (binary.reverse());
+        text += "</td><td>" + seq[0];
+        text += "</td><td>" + seq[1];
+        text += "</td></tr>";
+
+        return text;
+    }
+    Do4nTable = function ()
+    {
+        var x = parseInt (number4_input.value);
+
+        if (x != 0)
+        {
+            var text = "<table><tr><th>Seed</th><th>Binary</th><th>Value</th><th>residue</th></tr>";
+            var start = T3A1.ToBinary (x);
+            var binary = [].concat (start);
+            var seq = T3A1.Binary4n (binary);
+
+            x = T3A1.FromBinary (binary);
+            text += FormatLineIn4nTable (seq, binary);
+
+            for (i = 0 ; i < 128 ; ++i)
+            {
+                var offset = T3A1.ToBinary (i);
+                var binary = offset.concat (start);
+
+                x = T3A1.FromBinary (binary);
+                seq = T3A1.Binary4n (binary);
+                text += FormatLineIn4nTable (seq, binary);
+            }
+            text += "</table>";
+            result4_paragraph.innerHTML = text;
+        }
+    }
+    // Follows residues along an x -> 4n+1 chain
+    ExploreHorizontalChain = function ()
+    {
+        var x = parseInt (number1_input.value);
+
+        if (x != 0)
+        {
+            var text = "<table><tr><th>Seed</th><th>Binary</th><th>Value</th><th>residue</th></tr>";
+            var start = T3A1.ToBinary (x);
+            var binary = [].concat (start);
+            var seq = T3A1.Binary4n (binary);
+
+            text += FormatLineIn4nTable (seq, binary);
+
+            while (seq [0] > 0 && seq [0] < T3A1.MAX_PREDECESSOR)
+            {
+                start = [1].concat (start);
+                binary = [].concat (start);
+
+                seq = T3A1.Binary4n (binary);
+                text += FormatLineIn4nTable (seq, binary);
+            }
+            text += "</table>";
+            result1_paragraph.innerHTML = text;
+        }
+    }
+
+    // Show the residue calculation
+    ShowResidue = function ()
+    {
+        var x = parseInt (number2_input.value);
+
+        if (x > 1)
+        {
+            var text = "";
+            var seq = T3A1.MakeAlphaSequence (x);
+            var m = seq.reduce(function(a, b) {return a + b;}, 0);
+            var n = seq.length;
+            var m1 = Math.pow(2/3,n);
+            var m2 = Math.pow(2,m-n);
+            var res = m1 * m2 / x;
+
+            text += "m = " + m + ", ";
+            text += "n = " + n + "<br>";
+            text += "2<span class=\"superscript\">m</span> / "
+            text += "3<span class=\"superscript\">n</span> = " + (m1 * m2) + "<br>";
+            text += "R = " + res;
+
+            result2_paragraph.innerHTML = text;
+        }
+    }
+
+    </script>
+</head>
+
+</head>
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+            Residues
+        </p>
+
+     </button>
+
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w7 float">
+
+
+ <h2> Contents </h2>
+
+<ul class="in4">
+  <li><a href="#s1">Introduction</a></li>
+  <li><a href="#s2">The Distribution</a></li>
+  <li><a href="#s3">A-Lists and Residues</a></li>
+  <li><a href="#s4">Working Backwards</a></li>
+  <li><a href="#s5">Partitioning the Distribution</a></li>
+  <li><a href="#s6">Finding the Maximum</a></li>
+  <li><a href="#s10">Exploring the limits</a></li>
+  <li><a href="#s7">Value Limited Backward Searching</a></li>
+  <li><a href="#s8">Width Limited Backward Searching</a></li>
+  <li><a href="#s9">See Also</a></li>
+</ul>
+
+</div>
+
+<!-- Introduction -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s1">Introduction</a></h2>
+
+<p>
+    The residue of a sequence is calculated by counting the number of odd and
+    even terms in a descent and then calculating 2<sup>even</sup>/(x&nbsp;*&nbsp;3<sup>odd</sup>).
+    If we choose x=7, for instance we get the series [7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2,
+    1], which has 11 even and 5 odd members (we don't count the '1'),&nbsp; so:
+
+</p><p class="code">
+    R(7) = 2<sup>11</sup> / (7&nbsp;*&nbsp;3<sup>5</sup>) = 2048/1701 = 1.2039976...
+
+</p><p>
+    From her on we will refer to the number of even steps as 'm' and odd steps as 'n'.
+    You can calculate residues using these controls:
+</p><p>
+    <input type="text" id="number2" size="12"> <button onclick="ShowResidue();"> Show </button>
+</p><p>
+
+    <div class="code in2 w6">
+        <p class="code" id="result2"> &nbsp; </p>
+    </div>
+
+</p><p>
+    Eric Roosendaal introduces residues on one of his pages -
+    <a href="http://www.ericr.nl/wondrous/index.html">http://www.ericr.nl/wondrous/index.html</a>,
+    where he discusses the non-uniformity of the distribution and postulates that the largest residue is
+    R(993):</p>
+
+</p><p class="code">
+    R(993) = 2<sup>61</sup> / (993 * 3<sup>32</sup>) = 1.2531421...
+
+</p><p>
+    On the rest of this page we
+    will discus the distribution of the residue values and speculate on whether
+    R(993) really is the largest value. My distribution will be slightly different
+    from Eric's as I ignore the even numbers.</p>
+</p>
+</div>
+
+<!-- The Distribution -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s2">The Distribution</a></h2>
+
+<p>
+    I've taken all the odd numbers in the range 3-1048575 (2<sup>20</sup>-1) and
+    divided their residues into bins of 0.001, in the range 1-1.260. The resulting
+    distribution looks like</p>
+
+</p><p>
+    <img class="noborder" src="images/residue_chart.gif" width="781" height="287">
+
+</p><p>
+    Clearly this is non-uniform. There is a large gap between 1.012 and 1.065 (actually
+    there is one entry at R(21)=1.015873... which doesn't register on
+    the chart) and numerous smaller gaps. The colour coding is explained in a <a href="#s5">later
+    section</a>.
+</p>
+</div>
+
+
+<!-- A-Lists and Residues-->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s3"> A-Lists and Residues</a></h2>
+
+    <p>
+        The a-lists we introduced on the <a href="index.html">index page</a> (and continued on their <a href="a_lists.html">own page</a>)
+        to help locate cycles can also give some insight into the search for
+        residue values. On the <a href="observations.html#Residues">observations page</a> we presented an interactive residue
+        calculator that was underpinned by the a-list generated by a seed. The residue equation is;
+    </p><p class="code">
+        R(seed) = 2<span class="superscript">m</span>/(seed&nbsp;x&nbsp;3<span class="superscript">n</span>)
+        &equiv;
+        (2/3)<span class="superscript">n</span> &times; 2<span class="superscript">m-n</span> / seed;
+
+    </p><p>
+        where 'n' is the number of 'a' values and 'm' their sum.
+    </p><p>
+        We can set up an algorithm that generates all possible a-lists and then searches this for residue values, this is esentially
+        the same as the working backwards algorithm introduced previously, but is more compact.
+    </p><p>
+        The set of a-lists with one member
+        is infinite, starting [[1], [2], [3], ...]. The tree is anchored at 1 and for a single 'a' value, a<span class="subscript">1</span>,
+        the next number is:
+    </p><p class="code">
+         1&nbsp;&times;&nbsp;(2<span class="superscript">a1</span>&nbsp;&minus;&nbsp;1)&nbsp;/&nbsp;3 =
+        [1/3, 1, 7/3, 5, 31/3, ...].
+    </p><p>
+        The odd 'a' values don't generate integers and we can skip 2 as this generates the
+        loop [1,4,2,1], so the set of viable 1-member lists starts with [[4], [6], [8], ...].
+    </p><p>
+        We can now look at the second term.
+        The set of lists starting with [4] is also infinite and starts [[4,1], [4,2], [4,3], ...} and generate the sequence
+    </p><p class="code">
+        5&nbsp;&times;&nbsp;(2<span class="superscript">a2</span>&nbsp;&minus;&nbsp;1)&nbsp;/&nbsp;3 =
+        [3, 19/3, 13, 79, 3].
+    </p><p>
+        This time only the odd terms are valid, and the set of viable 2-member lists based on [4] starts
+        [[4,1], [4,3], [4,5], ...].
+    </p><p>
+        The set of lists starting with [6]: [6,1], [6,2], [6,3], ...] generates the series
+    </p><p class="code">
+        21&nbsp;&times;&nbsp;(2<span class="superscript">a2</span>&nbsp;&minus;&nbsp;1)&nbsp;/&nbsp;3 =
+        [41/3, 83/3, 167/3, ...]
+    </p><p>
+         which contains no integer values. Generally if an a-list generates a value that is a multiple of 3 it is the
+         end of the line. If a list generates a number of the form 6n&nbsp;&plus;&nbsp;1 then the next 'a'  value must be
+         even and for 6n&nbsp;&plus;&nbsp;5 it must be odd.
+    </p>
+</div>
+
+<!-- Working Backwards -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s4">Working</a> Backwards</h2>
+
+<p>
+    If we have a number 'x' and its residue R(x) we can use reverse iteration to
+    find the residues of its immediate odd precursors.
+    The <a href="workingback.html">working back page</a> describes this reverse iteration in detail,
+    here we look at searching this backwards tree for residue records.
+    As we saw in the <a href="#s3">a-lists section</a> the equation to calculate a residue is:
+
+</p><p class="code">
+    R(x) = 2<span class="superscript">m</span>/(x &times; 3<span class="superscript">n</span>)
+    &equiv;
+    (2/3)<span class="superscript">n</span> &times; 2<span class="superscript">m-n</span> / x;
+</p><p>
+    The forward equation (for odd numbers only) is
+</p><p class="code">
+    x &rarr; (3 &times; x + 1) / 2<span class="superscript">k</span>.
+</p><p>
+    So the reverse calculation is
+</p><p class="code">
+    x &rarr; (2<span class="superscript">k</span> &times; x - 1) / 3.
+</p><p>
+    Which has the effect of increasing m by k and n by 1. Not all 'k' values are valid, for instance if we start with 5, we can
+    use k values of 1, 3, 5, 7, ... giving new x values of 3, 13, 53, 213, ...
+</p><p class="code">
+    R(x<span class="subscript">n+1</span>) / R(x<span class="subscript">n</span>) =
+    (2<span class="superscript">m+k</span>/(3<span class="superscript">n+1</span> &times; x<span class="subscript">n+1</span>) /
+    (2<span class="superscript">m</span>/(3<span class="superscript">n</span> &times; x<span class="subscript">n</span>))
+</p><p class="code">
+    = (2<span class="superscript">m+k</span> &times; 3<span class="superscript">n</span> &times; x<span class="subscript">n</span>)
+    / (2<span class="superscript">m</span> &times; 3<span class="superscript">n+1</span> &times; x<span class="subscript">n+1</span>)
+</p><p class="code">
+    = (2<span class="superscript">k</span> &times; x<span class="subscript">n</span>)
+    / (3 &times; x<span class="subscript">n+1</span>)
+</p><p class="code">
+    = (2<span class="superscript">k</span> &times; x<span class="subscript">n</span>)
+    / (3 &times; ((2<span class="superscript">k</span> &times; x<span class="subscript">n</span> - 1) / 3)
+</p><p class="code">
+    = (2<span class="superscript">k</span> &times; x<span class="subscript">n</span>)
+    / (2<span class="superscript">k</span> &times; x<span class="subscript">n</span> - 1)
+</p><p class="code">
+    = 1 + 1 / (2<span class="superscript">k</span> &times; x<span class="subscript">n</span> - 1)
+</p><p>
+    This term is alway greater than one so the residues of
+    the precursors of a number will always be greater than the residue of the number
+    itself.
+    This implies that if there there is a largest residue then it must be a multiple of 3 (as
+    multiples of 3 don't have precursors).
+</p><p>
+    Although the value is always increasing, for large x the difference is very small.
+    I suspect that the most you can get out of a sequence is
+    limited, but this isn't easy to analyse, as for instance, when k is 1 the value of x decreases, whereas for 2 or
+    more it increases.
+
+</p><p>
+    Another way to work backwards uses the 4n+1 series described <a href="4nm1.html">here</a>. This only has one or two predecessors at
+    each level and k is always 1 or 2. Because there are only two routes the tree can take at each step we can map the
+    options onto the binary digits 0 and 1.
+    The choice is arbitrary, but I'm choosing to have '0' represent the (2x&minus;1)/3 and (4x&minus;1)/3
+    options and 1 represent the 4n+1 option. You can iterate backwards in this tree using these controls. The number creates a binary
+    sequence of steps, the table option extends it.
+</p><p>
+    <input type="text" id="number4" size="12">
+    <button onclick="Do4nBinary();"> Show </button>
+    <button onclick="Do4nTable();"> Create Table </button>
+</p><p>
+
+    <div class="code in2 w6">
+        <p class="code" id="result4"> &nbsp;</p>
+    </div>
+</p>
+</div>
+
+<!-- Partitioning the Distribution -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s5">Partitioning</a> the Distribution</h2>
+
+<p>
+    From the previous section we see that all odd numbers not divisible by 3 have an infinite number of immediate
+    precursors. This diagram shows the first
+    few for '1'. The labels show the number of
+    iterations.
+</p><p>
+    <img class="noborder" src="images/one_zone.gif">
+
+</p><p>
+    When discussing <a href="attraction.html">domains of attraction</a>, we
+    noticed that most (small) numbers (about 95%) pass through 5 on their way to one. These
+    domains are used as the basis of the colour coding in the above chart. The
+    half a million values used to construct the above chart are colour coded
+    acording to which of these values they pass through on their way to 1. The
+    details for each domain are shown in the table.
+
+</p><p>
+    <table class="noborder" cellpadding="4" cellspacing="0">
+      <tr>
+        <td>
+          <table border="1" cellpadding="4" cellspacing="0">
+            <tr>
+              <td>Domain</td>
+              <td>Frequency</td>
+              <td>min</td>
+              <td>max</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td class="code">491,853</td>
+              <td class="code">1.066</td>
+              <td class="code">1.253</td>
+            </tr>
+            <tr>
+              <td>21</td>
+              <td class="code">1</td>
+              <td class="code">1.015</td>
+              <td class="code">1.015</td>
+            </tr>
+            <tr>
+              <td>85</td>
+              <td class="code">12,317</td>
+              <td class="code">1.003</td>
+              <td class="code">1.011</td>
+            </tr>
+            <tr>
+              <td>341</td>
+              <td class="code">19,819</td>
+              <td class="code">1.000</td>
+              <td class="code">1.008</td>
+            </tr>
+            <tr>
+              <td>1,365</td>
+              <td class="code">1</td>
+              <td class="code">1.000</td>
+              <td class="code">1.000</td>
+            </tr>
+            <tr>
+              <td>5,461</td>
+              <td class="code">42</td>
+              <td class="code">1.000</td>
+              <td class="code">1.000</td>
+            </tr>
+            <tr>
+              <td>21,845</td>
+              <td class="code">231</td>
+              <td class="code">1.000</td>
+              <td class="code">1.000</td>
+            </tr>
+            <tr>
+              <td>87,381</td>
+              <td class="code">1</td>
+              <td class="code">1.000</td>
+              <td class="code">1.000</td>
+            </tr>
+            <tr>
+              <td>349,525</td>
+              <td class="code">21</td>
+              <td class="code">1.000</td>
+              <td class="code">1.000</td>
+            </tr>
+            <tr>
+              <td>1,398,101</td>
+              <td class="code">1</td>
+              <td class="code">1.000</td>
+              <td class="code">1.000</td>
+            </tr>
+          </table>
+        </td>
+        <td>&nbsp; </td>
+        <td><p>The multiples of 3 (21, 1365, ...) can only ever have one value so they
+          don't really enter into the calculation. The values generated by the 85
+          and 341 sub-domains overlap but are confined to very small values compared
+          to 5 (though there is no guarantee this is the case when we include the
+          infinite set). The other values, 5461 etc. don't lead to any values
+          greater than 1.001 which is why they don't feature in the above chart.<br>
+          <br>
+          This is a close up view of the range 1-1.015 where the contribution from
+          21845 becomes visible. 5461 is still too small to register.<br>
+          <br>
+          <img class="noborder" src="images/residue_chart_detail.gif"></td>
+      </tr>
+    </table>
+
+</p><p>
+    If we run the reverse iteration for 1 we get the precursors and residues:</p>
+</p><p>
+    <table class="noborder" cellpadding="4" cellspacing="0" border="1">
+      <tr>
+        <td>Precursor</td>
+        <td>Residue</td>
+      </tr>
+      <tr>
+        <td class="code">5</td>
+        <td class="code">1 + 1/15</td>
+      </tr>
+      <tr>
+        <td class="code">21</td>
+        <td class="code">1 + 1/63</td>
+      </tr>
+      <tr>
+        <td class="code">85</td>
+        <td class="code">1 + 1/255</td>
+      </tr>
+      <tr>
+        <td class="code">341</td>
+        <td class="code">1 + 1/1023</td>
+      </tr>
+      <tr>
+        <td class="code">1365</td>
+        <td class="code">1 + 1/4095</td>
+      </tr>
+      <tr>
+        <td class="code">5461</td>
+        <td class="code">1 + 1/16383</td>
+      </tr>
+      <tr>
+        <td class="code">21845</td>
+        <td class="code">1 + 1/65535</td>
+      </tr>
+      <tr>
+        <td class="code">87381</td>
+        <td class="code">1 + 1/262143</td>
+      </tr>
+      <tr>
+        <td class="code">349525</td>
+        <td class="code">1 + 1/1048575</td>
+      </tr>
+      <tr>
+        <td class="code">...</td>
+        <td class="code">...</td>
+      </tr>
+    </table>
+
+</p><p>
+    The second value of each pair is how much the residue will be multiplied by
+    when moving from 1 to the corresponding precursor, but as R(1)&nbsp;=&nbsp;1, so
+    R(5)&nbsp;=&nbsp;1+1/15.&nbsp; Because the residue always
+    increases as we move back up the tree all values that
+    converge on 5 will have a residue greater than 1+1/15. Similarly all the values
+    that converge on 85 will have a residue greater than 1+1/255 and those that
+    converge on 341, 1+1/1023. This explains the leftmost extent of the
+    distributions, but doesn't constrain the right.</p>
+
+</p><p>
+    The structure of the 5-domain is also quite complicated. We can use reverse
+    iteration again to find the immediate precursors of 5 and their residue
+    multipliers (shown in the next table). To get the actual residues the numbers
+    in the second column need to be multiplied by R(5)=16/15. We also show the
+    number of iterations that start with numbers in the range that 3-1048575 that go
+    through each, and the range of residue values encountered. The first row
+    represents '5' which doesn't go through a precursor.</p>
+
+</p><p>
+
+    <div class="code in2 w6">
+        (1 + 1 / a) * (1 + 1 / b) = 1 + (a + b + 1) / ab
+    </div>
+</p><p>
+
+    <table class="noborder" cellpadding="4" cellspacing="0" border="1">
+      <tr>
+        <th>Precursor</th>
+        <th>Multiplier</th>
+        <th colspan="2">Residue</th>
+        <th>Frequency</th>
+        <th>Min</th>
+        <th>Max</th>
+      </tr>
+      <tr>
+        <td>-</td>
+        <td class="code"> &nbsp; </td>
+        <td class="code">1 + 1/15</td>
+        <td class="code">1.066666666667</td>
+        <td class="code">1</td>
+        <td class="code">1.066</td>
+        <td class="code">1.066</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td class="code">1 + 1/9</td>
+        <td class="code">1 + 5/27</td>
+        <td class="code">1.185185185185</td>
+        <td class="code">1</td>
+        <td class="code">1.185</td>
+        <td class="code">1.185</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td class="code">1 + 1/39</td>
+        <td class="code">1 + 11/117</td>
+        <td class="code">1.0940170940171</td>
+        <td class="code">249,018</td>
+        <td class="code">1.094</td>
+        <td class="code">1.253</td>
+      </tr>
+      <tr>
+        <td>53</td>
+        <td class="code">1 + 1/159&nbsp;</td>
+        <td class="code">1 + 35/477</td>
+        <td class="code">1.0733752620545</td>
+        <td class="code">239,467</td>
+        <td class="code">1.073</td>
+        <td class="code">1.198</td>
+      </tr>
+      <tr>
+        <td>213</td>
+        <td class="code">1 + 1/639&nbsp;</td>
+        <td class="code">1 + 131/1917</td>
+        <td class="code">1.0683359415754</td>
+        <td class="code">1</td>
+        <td class="code">1.068</td>
+        <td class="code">1.068</td>
+      </tr>
+      <tr>
+        <td>853</td>
+        <td class="code">1 + 1/2559&nbsp;</td>
+        <td class="code">1 + 515/7677</td>
+        <td class="code">1.0670834961574</td>
+        <td class="code">2,577</td>
+        <td class="code">1.067</td>
+        <td class="code">1.068</td>
+      </tr>
+      <tr>
+        <td>3,413</td>
+        <td class="code">1 + 1/10239&nbsp;</td>
+        <td class="code">1 + 2051/30717</td>
+        <td class="code">1.0667708435069</td>
+        <td class="code">756</td>
+        <td class="code">1.066</td>
+        <td class="code">1.067</td>
+      </tr>
+      <tr>
+        <td>13,653</td>
+        <td class="code">1 + 1/40959</td>
+        <td class="code">1 + 8195/122877</td>
+        <td class="code">1.0666927089691</td>
+        <td class="code">1</td>
+        <td class="code">1.066</td>
+        <td class="code">1.066</td>
+      </tr>
+      <tr>
+        <td>54,613</td>
+        <td class="code">1 + 1/163839</td>
+        <td class="code">1 + 32771/491517</td>
+        <td class="code">1.0666731771231</td>
+        <td class="code">25</td>
+        <td class="code">1.066</td>
+        <td class="code">1.066</td>
+      </tr>
+      <tr>
+        <td>218,453</td>
+        <td class="code">1 + 1/655359</td>
+        <td class="code">1 + 131075/1966077</td>
+        <td class="code">1.0666682942733</td>
+        <td class="code">4</td>
+        <td class="code">1.066</td>
+        <td class="code">1.066</td>
+      </tr>
+      <tr>
+        <td>873,813</td>
+        <td class="code">1 + 1/2621439</td>
+        <td class="code">1 + 524291/7864317</td>
+        <td class="code">1.0666670735679</td>
+        <td class="code">1</td>
+        <td class="code">1.066</td>
+        <td class="code">1.066</td>
+      </tr>
+    </table>
+</p><p>
+    The chart obtained by plotting these values looks like this. The uniform
+    block that represented '5' in the previous chart now has 4 noticeable
+    sub-components, of which two (13 and 53) cover a significant range.
+
+</p><p>
+    <img class="noborder" src="images/residue_chart_5.gif" width="769" height="310">
+</p><p>
+    The next graph shows the 13 and 53 routes further sub-divided.
+</p><p>
+    <img class="noborder" src="images/residue_chart_5plus.gif" width="823" height="292">
+
+</p><p>
+    It looks like all largish
+    residues (for starting values less than 1048576) will pass through 35,53,5,1 or
+    17,13,5,1, with all values over 1.2 taking the second route.</p>
+</p>
+</div>
+
+<!-- Finding the Maximum -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s6">Finding the Maximum</a></h2>
+
+<p>
+    The residues of a number's precursors are always larger than that of the
+    number itself. The problem is that for largish numbers the increment is quite
+    small. To obtain a large residue we therefore need a sequence with plenty of
+    small numbers. All the tractable examples of this sort of sequence have been
+    studied and the conclusion is that R(993) is the largest residue. To disprove
+    this we would have to find a very long sequence, with very big numbers, where a lot of very small increments
+    combine to overcome this.</p>
+</p><p>
+
+    <table class="noborder" cellpadding="4" cellspacing="0">
+      <tr>
+        <td><img class="noborder" src="images/graph993.gif" width="199" height="2462"></td>
+        <td><p>The image on the left shows the descent of 993, R(993)=1.2531421. The
+          branches show the points along this descent where the route doesn't follow
+          the path of maximum residue multiplier. For instance at 43 (R=1.2389) the possible
+          precursors were 57, 229 and 917. The corresponding inverse residue
+          multipliers were:
+          <p>
+          <table border="1" cellpadding="4" cellspacing="0">
+            <tr>
+              <th>N</th>
+              <th>Multiplier</th>
+              <th>R(N)</th>
+            </tr>
+            <tr>
+              <td class="code">57</td>
+              <td class="code">1 + 1/171</td>
+              <td class="code">1.2461562550043928</td>
+            </tr>
+            <tr>
+              <td class="code">229</td>
+              <td class="code">1 + 1/687</td>
+              <td class="code">1.2407145246331945</td>
+            </tr>
+            <tr>
+              <td class="code">917</td>
+              <td class="code"> 1 + 1/2751</td>
+              <td class="code">1.2393615098844124</td>
+            </tr>
+          </table>
+        </p><p>
+            By following the 917 route we took a hit of about 0.007, quite significant
+            in this game. R(745)=1.2527, not much less than 1.2531.
+        </p><p>
+            There is an
+            infinite tree of numbers rooted on 745, all of which have residues greater
+            than 1.2527. Are none of these greater than 1.2531? The immediate
+            predecessors of 745 are<br>
+        </p><p>
+
+          <table border="1" cellpadding="4" cellspacing="0">
+            <tr>
+              <td>N</td>
+              <td>Multiplier</td>
+              <td>R(N)</td>
+            </tr>
+            <tr>
+              <td class="code">993</td>
+              <td class="code">1 + 1/2979</td>
+              <td class="code">1.2531421443950681</td>
+            </tr>
+            <tr>
+              <td class="code">3973</td>
+              <td class="code">1 + 1/11919</td>
+              <td class="code">1.2528267298105236</td>
+            </tr>
+            <tr>
+              <td class="code">15893</td>
+              <td class="code"> 1 + 1/47679</td>
+              <td class="code">1.2527479009720532</td>
+            </tr>
+          </table>
+          </p><p>
+
+        A second excursion was made at 505, where the precursors are<br>
+
+        </p><p>
+
+          <table border="1"  cellpadding="4" cellspacing="0">
+            <tr>
+              <td>N</td>
+              <td>Multiplier</td>
+              <td>R(N)</td>
+            </tr>
+            <tr>
+              <td class="code">673</td>
+              <td class="code">1 + 1/2019</td>
+              <td class="code">1.2494773856412769</td>
+            </tr>
+            <tr>
+              <td class="code">2693</td>
+              <td class="code">1 + 1/8079</td>
+              <td class="code">1.2490134133480568</td>
+            </tr>
+            <tr>
+              <td class="code">10773</td>
+              <td class="code"> 1 + 1/32319</td>
+              <td class="code">1.2488974741098366</td>
+            </tr>
+          </table>
+
+      </p><p>
+
+      Here by taking the less obvious route we sacrificed about 0.0046. This next
+      chart shows the range of residues in the trees based on 673, 2693 and 3973
+      for values up to a million.<br>
+
+      </p><p>
+
+      <img class="noborder" src="images/residue_chart_993_options.gif" width="512" height="257"><br>
+
+      </p><p>
+
+      This shows that although 673 might have appeared a better option at the
+      time, 2693 had more potential overall and eventually produced the record
+      holder at 993. 3973 is the next predecessor of 745 after 993 and would be
+      a good candidate to start a search for higher residues from.&nbsp;I
+      extended the above search out to 10 million but the shape of the chart was
+      almost unchanged.
+      </p>
+    </td>
+  </tr>
+</table>
+
+<!-- Exploring the limits -->
+
+</div>
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s10">Exploring the limits</h2>
+
+<p>
+    Every number has an infinite sequence of precursors (in the 4n+1 tree) related by the formula
+
+</p><p class="code">
+    x &rarr; 4 &times; x + 1
+
+</p><p>
+    Where the residue decreases by the factor (1 - 1 / (4 &times; x + 1)). You can see how the residue converges as
+    you move along this sequence using the following controls. The number in the first box is the value of the binary
+    sequence that generates the first seed, for instance, '5' generates the sequence [1,0,1], which leads to 13.
+
+    <input type="text" id="number1" size="12"> <button onclick="ExploreHorizontalChain();"> Show </button>
+</p><p>
+
+    <div class="code in2 w6">
+        <p id="result1"> &nbsp; </p>
+    </div>
+
+</p><p>
+    These next controls will search various seeds for residue records along the 4n+1 chains. It's been initialised with seeds up
+    to 100, if you try a larger number you may find some more.
+
+    <input type="text" id="number3" size="12"> <button onclick="SearchResidueLimits();"> Show </button>
+</p><p>
+
+    <div class="code in2 w6">
+        <p id="result3"> &nbsp; </p>
+    </div>
+
+</p><p>
+    If you do try larger numbers you will find the residue for 993 is 1.253142&hellip;, the largest known, but this isn't the value
+    with the largest asymptote. The 993 sequence converges on about 1.252722&hellip;, whereas the number 35271,
+    whose residue is only 1.252995&hellip; converges on 1.252983&hellip; As you get deeper into the tree the penalty for taking
+    the 4n+1 route gets smaller and smaller so there is plenty of scope for searching. For instance there are an infinite
+    number of values in the 4n+1 sequence based on 35271 that have residues around 1.252983, a lot of these will all have predecessors with
+    higher residues.
+</p>
+</div>
+<!-- Value Limited Backward Searching -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s7">Value Limited</a> Backward Searching</h2>
+<p>
+<table class="noborder" cellpadding="4" cellspacing="0">
+  <tr>
+    <td><img class="noborder" src="images/back_value_limited.gif" width="348" height="722"></td>
+    <td><p>The charts on the left show the results of what I call &quot;Value Limited
+      Backward Searching&quot;, based on the seed of 3973, R=1.252827. The
+      results are divided into bins of 0.00001.<br>
+      <br>
+      VLBS works by taking the seed and calculating all the immediate precursors
+      that are less than the limit. For 3973 and a limit of 1000000 these are
+      5297, 21189, 84757 and 339029. We then repeat this process on all the
+      precursors, building up a list of all the numbers that converge on the
+      seed without venturing outside the limit. This won't find all the values
+      in a given range, though it will get most of those less than the
+      square root of the range.<br>
+      <br>
+      The charts on the left show the application of this algorithm with widths
+      of 1 million, 10m, 100m and 1 billion. Notice how the distribution hardly
+      changes.<br>
+      <br>
+      The little peak to the right of the first chart represents 3531, where
+      R=1.253024.</td>
+  </tr>
+</table>
+</p>
+</div>
+
+<!-- Width Limited Backward Searching -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s8">Width Limited</a> Backward Searching</h2>
+
+<p>
+
+<table class="noborder" cellpadding="4" cellspacing="0">
+  <tr>
+    <td><img class="noborder" src="images/width_search_5.gif"></td>
+    <td>
+
+</p><p>
+This works by taking a seed and finding the 'n' smallest precursors, 'n'
+being the width. The next iteration works by finding the precursors of the
+current set of 'n' values and extracting the 10 smallest. There is no stopping
+condition for this search, we can either stop when the smallest value is greater
+than some threshold or after a fixed number of iterations (depth). If we try this for
+a seed of 5,
+with a width of 4 and depth of 5 we get the chart on the left.
+
+</p><p>
+
+Because this algorithm only takes the smallest values for each
+      iteration it has the potential to miss interesting results. In this
+      example, for instance, the branch at 61 is chopped off.
+
+
+</p><p>
+Using a width of 4 would also miss 993.&nbsp;This is because the
+precursor, 917, appears in the 12th column, as can be seen in the next table,
+      which shows how the iteration would progress with a width of 12.
+</p>
+
+   </td>
+  </tr>
+</table>
+
+</p><p>
+
+      <table border="1" cellpadding="2" cellspacing="0">
+        <tr>
+          <td class="code">3</td>
+          <td class="code" bgcolor="#C4E0FF">13</td>
+          <td class="code">53</td>
+          <td class="code">213</td>
+          <td class="code">853</td>
+          <td class="code">3413</td>
+          <td class="code">13653</td>
+          <td class="code">54613</td>
+          <td class="code">218453</td>
+          <td class="code">873813</td>
+          <td class="code">3495253</td>
+          <td class="code">13981013</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">17</td>
+          <td class="code">35</td>
+          <td class="code">69</td>
+          <td class="code">141</td>
+          <td class="code">277</td>
+          <td class="code">565</td>
+          <td class="code">1109</td>
+          <td class="code">1137</td>
+          <td class="code">2261</td>
+          <td class="code">2275</td>
+          <td class="code">4437</td>
+          <td class="code">4549</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">11</td>
+          <td class="code">23</td>
+          <td class="code">45</td>
+          <td class="code">93</td>
+          <td class="code">181</td>
+          <td class="code">369</td>
+          <td class="code">373</td>
+          <td class="code">725</td>
+          <td class="code">739</td>
+          <td class="code">753</td>
+          <td class="code">1477</td>
+          <td class="code">1493</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">7</td>
+          <td class="code">15</td>
+          <td class="code">29</td>
+          <td class="code">61</td>
+          <td class="code">117</td>
+          <td class="code">241</td>
+          <td class="code">245</td>
+          <td class="code">469</td>
+          <td class="code">483</td>
+          <td class="code">497</td>
+          <td class="code">965</td>
+          <td class="code">981</td>
+        </tr>
+        <tr>
+          <td class="code">9</td>
+          <td class="code">19</td>
+          <td class="code" bgcolor="#C4E0FF">37</td>
+          <td class="code">77</td>
+          <td class="code">81</td>
+          <td class="code">149</td>
+          <td class="code">163</td>
+          <td class="code">309</td>
+          <td class="code">321</td>
+          <td class="code">325</td>
+          <td class="code">331</td>
+          <td class="code">597</td>
+        </tr>
+        <tr>
+          <td class="code">25</td>
+          <td class="code" bgcolor="#C4E0FF">49</td>
+          <td class="code">51</td>
+          <td class="code">99</td>
+          <td class="code">101</td>
+          <td class="code">197</td>
+          <td class="code">205</td>
+          <td class="code">217</td>
+          <td class="code">397</td>
+          <td class="code">405</td>
+          <td class="code">433</td>
+          <td class="code">441</td>
+        </tr>
+        <tr>
+          <td class="code">33</td>
+          <td class="code" bgcolor="#C4E0FF">65</td>
+          <td class="code">67</td>
+          <td class="code">131</td>
+          <td class="code">133</td>
+          <td class="code">261</td>
+          <td class="code">269</td>
+          <td class="code">273</td>
+          <td class="code">289</td>
+          <td class="code">525</td>
+          <td class="code">529</td>
+          <td class="code">533</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">43</td>
+          <td class="code">87</td>
+          <td class="code">89</td>
+          <td class="code">173</td>
+          <td class="code">177</td>
+          <td class="code">179</td>
+          <td class="code">349</td>
+          <td class="code">355</td>
+          <td class="code">357</td>
+          <td class="code">385</td>
+          <td class="code">693</td>
+          <td class="code">705</td>
+        </tr>
+        <tr>
+          <td class="code">57</td>
+          <td class="code">59</td>
+          <td class="code">115</td>
+          <td class="code">119</td>
+          <td class="code">229</td>
+          <td class="code">237</td>
+          <td class="code">461</td>
+          <td class="code">465</td>
+          <td class="code">473</td>
+          <td class="code">477</td>
+          <td class="code">513</td>
+          <td class="code" bgcolor="#C4E0FF">917</td>
+        </tr>
+        <tr>
+          <td class="code">39</td>
+          <td class="code">79</td>
+          <td class="code">153</td>
+          <td class="code">157</td>
+          <td class="code">305</td>
+          <td class="code">307</td>
+          <td class="code">315</td>
+          <td class="code">317</td>
+          <td class="code" bgcolor="#C4E0FF">611</td>
+          <td class="code">613</td>
+          <td class="code">629</td>
+          <td class="code">1221</td>
+        </tr>
+        <tr>
+          <td class="code">105</td>
+          <td class="code">203</td>
+          <td class="code">209</td>
+          <td class="code">211</td>
+          <td class="code" bgcolor="#C4E0FF">407</td>
+          <td class="code">409</td>
+          <td class="code">419</td>
+          <td class="code">421</td>
+          <td class="code">813</td>
+          <td class="code">817</td>
+          <td class="code">837</td>
+          <td class="code">845</td>
+        </tr>
+        <tr>
+          <td class="code">135</td>
+          <td class="code">139</td>
+          <td class="code" bgcolor="#C4E0FF">271</td>
+          <td class="code">279</td>
+          <td class="code">281</td>
+          <td class="code">541</td>
+          <td class="code">545</td>
+          <td class="code">557</td>
+          <td class="code">561</td>
+          <td class="code">563</td>
+          <td class="code">1085</td>
+          <td class="code">1089</td>
+        </tr>
+        <tr>
+          <td class="code">185</td>
+          <td class="code">187</td>
+          <td class="code" bgcolor="#C4E0FF">361</td>
+          <td class="code">363</td>
+          <td class="code">371</td>
+          <td class="code">375</td>
+          <td class="code">721</td>
+          <td class="code">723</td>
+          <td class="code">741</td>
+          <td class="code">749</td>
+          <td class="code">1445</td>
+          <td class="code">1453</td>
+        </tr>
+        <tr>
+          <td class="code">123</td>
+          <td class="code">247</td>
+          <td class="code">249</td>
+          <td class="code" bgcolor="#C4E0FF">481</td>
+          <td class="code">493</td>
+          <td class="code">499</td>
+          <td class="code">961</td>
+          <td class="code">963</td>
+          <td class="code">989</td>
+          <td class="code">997</td>
+          <td class="code">1925</td>
+          <td class="code">1937</td>
+        </tr>
+        <tr>
+          <td class="code">329</td>
+          <td class="code" bgcolor="#C4E0FF">641</td>
+          <td class="code">657</td>
+          <td class="code">659</td>
+          <td class="code">665</td>
+          <td class="code">1281</td>
+          <td class="code">1283</td>
+          <td class="code">1291</td>
+          <td class="code">1317</td>
+          <td class="code">1329</td>
+          <td class="code">2565</td>
+          <td class="code">2629</td>
+        </tr>
+        <tr>
+          <td class="code">219</td>
+          <td class="code" bgcolor="#C4E0FF">427</td>
+          <td class="code">439</td>
+          <td class="code">443</td>
+          <td class="code">855</td>
+          <td class="code">877</td>
+          <td class="code">1709</td>
+          <td class="code">1721</td>
+          <td class="code">1757</td>
+          <td class="code">1773</td>
+          <td class="code">3421</td>
+          <td class="code">3505</td>
+        </tr>
+        <tr>
+          <td class="code">295</td>
+          <td class="code" bgcolor="#C4E0FF">569</td>
+          <td class="code">585</td>
+          <td class="code">1139</td>
+          <td class="code">1147</td>
+          <td class="code">1169</td>
+          <td class="code">1171</td>
+          <td class="code">1181</td>
+          <td class="code">2277</td>
+          <td class="code">2341</td>
+          <td class="code">4557</td>
+          <td class="code">4561</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">379</td>
+          <td class="code">393</td>
+          <td class="code">759</td>
+          <td class="code">779</td>
+          <td class="code">787</td>
+          <td class="code">1517</td>
+          <td class="code">1529</td>
+          <td class="code">1561</td>
+          <td class="code">1573</td>
+          <td class="code">3037</td>
+          <td class="code">3117</td>
+          <td class="code">3121</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">505</td>
+          <td class="code">519</td>
+          <td class="code">1011</td>
+          <td class="code">1019</td>
+          <td class="code">1049</td>
+          <td class="code">2021</td>
+          <td class="code">2077</td>
+          <td class="code">2081</td>
+          <td class="code">2097</td>
+          <td class="code">4045</td>
+          <td class="code">4049</td>
+          <td class="code">4077</td>
+        </tr>
+        <tr>
+          <td class="code">673</td>
+          <td class="code">679</td>
+          <td class="code">699</td>
+          <td class="code">1347</td>
+          <td class="code">1387</td>
+          <td class="code" bgcolor="#C4E0FF">2693</td>
+          <td class="code">2699</td>
+          <td class="code">2717</td>
+          <td class="code">2769</td>
+          <td class="code">2797</td>
+          <td class="code">5389</td>
+          <td class="code">5393</td>
+        </tr>
+        <tr>
+          <td class="code">897</td>
+          <td class="code">905</td>
+          <td class="code" bgcolor="#C4E0FF">1795</td>
+          <td class="code">1799</td>
+          <td class="code">1811</td>
+          <td class="code">1849</td>
+          <td class="code">3589</td>
+          <td class="code">3595</td>
+          <td class="code">3621</td>
+          <td class="code">3729</td>
+          <td class="code">7181</td>
+          <td class="code">7185</td>
+        </tr>
+        <tr>
+          <td class="code">603</td>
+          <td class="code">1199</td>
+          <td class="code">1207</td>
+          <td class="code" bgcolor="#C4E0FF">2393</td>
+          <td class="code">2413</td>
+          <td class="code">2465</td>
+          <td class="code">4785</td>
+          <td class="code">4787</td>
+          <td class="code">4793</td>
+          <td class="code">4797</td>
+          <td class="code">4829</td>
+          <td class="code">9573</td>
+        </tr>
+        <tr>
+          <td class="code">799</td>
+          <td class="code" bgcolor="#C4E0FF">1595</td>
+          <td class="code">1609</td>
+          <td class="code">1643</td>
+          <td class="code">3191</td>
+          <td class="code">3195</td>
+          <td class="code">3197</td>
+          <td class="code">3217</td>
+          <td class="code">3219</td>
+          <td class="code">6381</td>
+          <td class="code">6437</td>
+          <td class="code">6573</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">1063</td>
+          <td class="code">1065</td>
+          <td class="code">1095</td>
+          <td class="code">2127</td>
+          <td class="code">2131</td>
+          <td class="code">2145</td>
+          <td class="code">4253</td>
+          <td class="code">4261</td>
+          <td class="code">4289</td>
+          <td class="code">4291</td>
+          <td class="code">4381</td>
+          <td class="code">8509</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">1417</td>
+          <td class="code">2835</td>
+          <td class="code">2841</td>
+          <td class="code">2859</td>
+          <td class="code">5669</td>
+          <td class="code">5681</td>
+          <td class="code">5721</td>
+          <td class="code">5841</td>
+          <td class="code">11341</td>
+          <td class="code">11345</td>
+          <td class="code">11365</td>
+          <td class="code">11437</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">1889</td>
+          <td class="code">3779</td>
+          <td class="code">3787</td>
+          <td class="code">7557</td>
+          <td class="code">7563</td>
+          <td class="code">15117</td>
+          <td class="code">15121</td>
+          <td class="code">15149</td>
+          <td class="code">15153</td>
+          <td class="code">15249</td>
+          <td class="code">30229</td>
+          <td class="code">30253</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">1259</td>
+          <td class="code">2519</td>
+          <td class="code">5037</td>
+          <td class="code">5049</td>
+          <td class="code">10077</td>
+          <td class="code">10099</td>
+          <td class="code">20149</td>
+          <td class="code">20161</td>
+          <td class="code">20197</td>
+          <td class="code">40305</td>
+          <td class="code">40309</td>
+          <td class="code">40337</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">839</td>
+          <td class="code">1679</td>
+          <td class="code">3357</td>
+          <td class="code">6717</td>
+          <td class="code">13429</td>
+          <td class="code">13465</td>
+          <td class="code">26865</td>
+          <td class="code">26869</td>
+          <td class="code">26881</td>
+          <td class="code">26891</td>
+          <td class="code">26929</td>
+          <td class="code">53717</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">559</td>
+          <td class="code">1119</td>
+          <td class="code">2237</td>
+          <td class="code">4477</td>
+          <td class="code">8949</td>
+          <td class="code">17905</td>
+          <td class="code">17909</td>
+          <td class="code">17927</td>
+          <td class="code">17953</td>
+          <td class="code">35797</td>
+          <td class="code">35811</td>
+          <td class="code">35825</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">745</td>
+          <td class="code">1491</td>
+          <td class="code">2981</td>
+          <td class="code">5965</td>
+          <td class="code">5969</td>
+          <td class="code">11925</td>
+          <td class="code">11939</td>
+          <td class="code">11951</td>
+          <td class="code">23861</td>
+          <td class="code">23873</td>
+          <td class="code">23877</td>
+          <td class="code">23883</td>
+        </tr>
+        <tr>
+          <td class="code" bgcolor="#C4E0FF">993</td>
+          <td class="code">1987</td>
+          <td class="code">3973</td>
+          <td class="code">3979</td>
+          <td class="code">7949</td>
+          <td class="code">7953</td>
+          <td class="code">7959</td>
+          <td class="code">7967</td>
+          <td class="code">15893</td>
+          <td class="code">15907</td>
+          <td class="code">15915</td>
+          <td class="code">15917</td>
+        </tr>
+      </table>
+
+</p><p>
+
+<table class="noborder" cellpadding="4" cellspacing="0">
+  <tr>
+    <td>
+      <img class="noborder" src="images/residues_wlbs_5x12x30.gif" width="350" height="168"><br>
+      <img class="noborder" src="images/residues_wlbs_5x12x300.gif" width="350" height="165"><br>
+      <img class="noborder" src="images/residues_wlbs_5x12x300_log.gif" width="345" height="166">
+    </td>
+    <td> &nbsp; </td>
+    <td>
+      <p>
+      The residues generated from the above table are shown in&nbsp; the chart on the
+      left. If you compare this chart with the earlier ones you will see that
+      here the residues are clustered more towards the right. So although this
+      algorithm has flaws it does tend to find the higher residues.<br>
+      </p><p>
+      If we extend the iteration to a depth of 300 we get the second chart,
+      where all the values are crammed up at the right hand edge.
+      </p><p>
+      The 3rd chart
+      is a log<sub>10</sub> chart of the spike in the second chart. This only shows values
+      greater than one so 993 at 1.2531 doesn't appear. By the 300th iteration
+      the numbers and residues we were working with are shown in the following
+      table.
+      </p><p>
+      <table class="noborder" cellpadding="4" cellspacing="0" border="1">
+        <tr>
+          <td class="code">149316262419637465401</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">298632524839274930785</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">298632524839274930803</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">597265049678549861569</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">597265049678549861571</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">597265049678549861575</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">597265049678549861605</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">1194530099357099723139</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">1194530099357099723141</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">1194530099357099723213</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">1194530099357099723217</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+        <tr>
+          <td class="code">2389060198714199446277</td>
+          <td class="code">&nbsp;1.2521362730073768</td>
+        </tr>
+      </table>
+     </p><p>
+      These residues are a bit unreliable as if we calculate R(149316262419637465401)
+      directly we get 1.2521362730073702 (a difference of 0.0000000000000066). Depending on how you do the calculations
+      introduces different rounding errors.
+     </p>
+    </td>
+  </tr>
+  <tr>
+    <td><img class="noborder" src="images/residues_wlbs_5x24x300_log.gif" width="343" height="166"></td>
+    <td> &nbsp; </td>
+    <td>
+     <p>
+      The chart on the left shows the effect (on the log plot) of widening the
+      search to 24. It's found a few more of the very high ones around 1.2529
+      but the current search value is R(4556863913839675) = 1.25211, which is
+      actually worse than the narrower search.<br>
+     </p><p>
+      The largest non multiple of 3 found along the way R(250817)&nbsp;=&nbsp;1.2529895.
+      This and the other top 10 values found form part of a tree routed at 5297
+      (R=1.2529), which is one of the predecessors of 3973 (R=1.2528) we found
+      earlier.
+     </p>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+<!-- Other Pages -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="s9">See Also</a></h2>
+<p>
+<table border="2" cellpadding="4" cellspacing="0" width="500">
+  <tr>
+    <td><a href="workingback.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
+    <td><strong>Working Backwards:</strong> The forward equation we introduced above is quite
+      straightforward. This page explores working backward to find a number's
+      predecessors.&nbsp;</td>
+  </tr>
+</table>
+</p><p>
+<table border="2" cellpadding="4" cellspacing="0" width="500">
+  <tr>
+    <td><a href="attraction.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
+    <td><strong>Domains of Attraction:</strong> Before converging on one,
+      sequences must pass through one of one's predecessors (1, 5, 21, etc).
+      This pages explores the relative popularity of these gateways.</td>
+  </tr>
+</table>
+</p><p>
+<table border="2" cellpadding="4" cellspacing="0" width="500">
+  <tr>
+    <td><a href="residue_records.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
+    <td><strong>Residue Records:</strong>  Although 993 is probably the
+      largest , if we ignore multiples of three the numbers keep growing.</td>
+  </tr>
+</table>
+</p>
+
+</div>
+
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2016 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

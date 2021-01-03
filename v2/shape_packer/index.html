@@ -1,0 +1,371 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Shape Packer">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/circular_buffer.js"> </script>
+<script src="../js_library/charts.js"> </script>
+<script src="../js_library/density_map.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/coordinate_maths.js"> </script>
+<script src="shape_constants.js"> </script>
+<script src="shapes.js"> </script>
+<script src="circle.js"> </script>
+<script src="polygon.js"> </script>
+<script src="shape_packer.js"> </script>
+<script src="shapes_controller.js"> </script>
+
+<style></style>
+
+<script>
+
+    var controller = new ShapesController ();
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    function OnStart ()
+    {
+        ShapePacker.Initialise ();
+
+        controller.RedrawBestCombo ();
+        controller.StartAnimation ();
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+
+
+</script>
+
+<title>Shape Packer</title>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<table>
+
+ <tr>
+  <td width="200" class="top">
+   <p> Home page
+   </p><p>
+   <a href="http://www.eddaardvark.co.uk"><img border="0" src="http://www.eddaardvark.co.uk/images/home.png"></a>
+   </p>
+  </td>
+
+  <td class="top" width="100%">
+      <h1> <br> Shape Packer </h1>
+  </td>
+
+  <td>
+    <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-3534237235440125";
+      /* Small Square */
+      google_ad_slot = "0024655068";
+      google_ad_width = 200;
+      google_ad_height = 200;
+      //-->
+    </script>
+    <script type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </td>
+ </tr>
+</table>
+
+<!-- MAIN CONTENT -->
+
+<div class="in2 box">
+
+ <div class="float  w9" style="overflow: auto;">
+   <h2> Shape packing</h2>
+      <p> This application searches for the best way to arrange a number of shapes (circles and polygons)
+      within another shape. It does this by maximising the radius of the inner shapes with respect to the
+      radius of the outer shape. For polygons the radius is the distance from the centre to one of the
+      vertices.</p>
+
+    <ul class="outer">
+
+     <li class="outer">
+      <ul class="inner" style="border: none;">
+        <img id="canvas_version" width="500", height="500"  style="border: 0px;" alt="Computer generated image" title="Renders the shapes in a canvas.">
+      </ul>
+     </li>
+     
+     <li class="outer">
+      <ul class="inner" style="border: none;">
+        <p> <span class="inner" id="stats"> &nbsp; </span> </p>
+      </ul>
+     </li>
+
+    </ul>
+
+
+   <p>
+     <button onclick='controller.StartAnimation ();'> Start </button> &nbsp;
+     <button onclick='controller.StopAnimation ();'> Pause </button> &nbsp;
+     <button onclick='controller.ResumeAnimation ();'> Resume </button> &nbsp;
+     <button onclick='controller.ApplySettings ();'> Update </button> &nbsp;
+     Best: <span id="combo1">&nbsp;</span>&nbsp;
+     <button onclick='controller.ResetBest ();'> Reset Best </button> &nbsp;
+     <button onclick='controller.ToggleTCycle();'> T-Cycle </button> &nbsp;
+     <button onclick='controller.ToggleTouching();'> Touching </button> &nbsp;
+     <button onclick='window.open("results.html","_blank");'> Results </button> &nbsp;
+     <button onclick='location.href = "#instructions";'> Instructions </button> &nbsp;
+
+   </p>
+ </div>
+ 
+ 
+ <!-- S E T T I N G S -->
+ 
+ <div class="float" style="overflow: auto;">
+
+   <h2> Settings </h2>
+
+    <table>
+      <tr>
+        <td> Circles:  </td>
+        <td> <span id="current_num_circles" /></input>
+        <td> <input type="text" size="4" value="5" id="new_num_circles"> </input>
+        <td> Temperature:  </td>
+        <td> <span id="current_temperature" /></input>
+        <td> <input type="text" size="8" value="0.001" id="new_temperature"> </input>
+      </tr>
+
+      <tr>
+        <td> Triangles:  </td>
+        <td> <span id="current_num_p3" /></input>
+        <td> <input type="text" size="4" value="0" id="new_num_p3"> </input>
+        <td> Per second:  </td>
+        <td> <span id="current_ps" /></input>
+        <td> <input type="text" size="8" value="5000" id="new_ps"> </input>
+      </tr>
+
+      <tr>
+        <td> Squares:  </td>
+        <td> <span id="current_num_p4" /></input>
+        <td> <input type="text" size="4" value="0" id="new_num_p4"> </input>
+        <td> Outer Shape:  </td>
+        <td> <span id="current_outer" /></input>
+        <td>
+            <select id="outer_combo">
+                <option value="0">Circle</option>
+                <option value="3">Triangle</option>
+                <option value="4">Square</option>
+                <option value="5">Pentagon</option>
+                <option value="6">Hexagon</option>
+                <option value="7">Heptagon</option>
+                <option value="8">Octagon</option>
+                <option value="9">Nonagon</option>
+            </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td> Pentagons:  </td>
+        <td> <span id="current_num_p5" /></input>
+        <td> <input type="text" size="4" value="0" id="new_num_p5"> </input>
+        <td columnspan="3"> &nbsp; </td>
+      </tr>
+
+      <tr>
+        <td> Hexagons:  </td>
+        <td> <span id="current_num_p6" /></input>
+        <td> <input type="text" size="4" value="0" id="new_num_p6"> </input>       
+        <td columnspan="3"> &nbsp; </td>
+      </tr>
+
+      <tr>
+        <td> Heptagons:  </td>
+        <td> <span id="current_num_p7" /></input>
+        <td> <input type="text" size="4" value="0" id="new_num_p7"> </input>
+        <td columnspan="3"> &nbsp; </td>
+      </tr>
+
+      <tr>
+        <td> Octogons:  </td>
+        <td> <span id="current_num_p8" /></input>
+        <td> <input type="text" size="4" value="0" id="new_num_p8"> </input>
+        <td columnspan="3"> &nbsp; </td>
+      </tr>
+
+      <tr>
+        <td> Nonogons:  </td>
+        <td> <span id="current_num_p9" /></input>
+        <td> <input type="text" size="4" value="0" id="new_num_p9"> </input>
+        <td columnspan="3"> &nbsp; </td>
+      </tr>
+        
+    </table>
+ </div>
+ 
+ <!-- C H A R T S -->
+ 
+ <div class="float" style="overflow: auto;">
+ 
+    <h2><a name="charts">Charts</a></h2>
+     
+    <p> Choose chart: 
+            <select id="chart_combo" onchange="controller.SelectChart();">
+                <option value="0">None</option>
+                <option value="1">Scale history (ranges)</option>
+                <option value="2">Scale history (best)</option>
+                <option value="3">Proximity Map</option>
+            </select>
+            
+            &nbsp;
+            
+            <button onclick='controller.DrawCurrentChart ();'> Refresh </button>
+            
+    <p>
+        <img id="chart_img" width="960" height="480" style="border: 0px;" alt="Computer generated image" title="Shows how the scale varies over time.">
+    </p>
+
+
+
+ <!-- I N S T R U C T I O N S -->
+  
+ </div>
+ <div class="float w9" style="overflow: auto;">
+
+    <h2><a name="instructions">Instructions</a></h2>
+
+    <table>
+      <tr>
+        <td> Start </td>
+        <td> Will start a new simulation using the shape counts and attributes specified in the table above. </td>
+      </tr>
+      <tr>
+        <td> Pause </td>
+        <td> Pauses the current simulation. </td>
+      </tr>
+      <tr>
+        <td> Resume </td>
+        <td> Resumes a paused simulation. </td>
+      </tr>
+      <tr>
+        <td> Update </td>
+        <td> Updates the attributes of the current simulation but leaves the shapes unchanged. </td>
+      </tr>
+      <tr>
+        <td> Best </td>
+        <td> Shows the best fit achieved since the simulation started. The simulation will also pause, but
+        can be resumed. </td>
+      </tr>
+      <tr>
+        <td> Reset Best </td>
+        <td> Clears the best so far value and saved state. </td>
+      </tr>
+      <tr>
+        <td> T-Cycle </td>
+        <td> Starts a temperature cycling mode to help find solutions. This will keep decreasing
+        the temperature until a minimum is reached, at which point it resets to a high temperature
+        and starts again. This mode can be cancelled using "Start" or "Update". </td>
+      </tr>
+      <tr>
+        <td> Shapes </td>
+        <td> Determines how many of each shape type are used in the simulation. </td>
+      </tr>
+      <tr>
+        <td> Temperature </td>
+        <td> Determines how much freedom of movement the shapes have. Low temperatures tend to freeze in
+        a configuration, larger temperatures allow the shapes to explore a larger range of
+        sizes. If your simulation seems to be trapped in a sub-optimal configuration you can
+        raise the temperature for a bit to try to shake it out.</td>
+      </tr>
+      <tr>
+        <td> Move step </td>
+        <td> The size of the random moves that will be generated. </td>
+      </tr>
+      <tr>
+        <td> Angle step </td>
+        <td> The size of the random rotations that will be generated (radians). </td>
+      </tr>
+      <tr>
+        <td> Per second </td>
+        <td> The number of iterations that will be attempted in one second. The actual number may
+        be smaller if your computer isn't up to it.
+        </td>
+      </tr>
+
+    </table>
+
+
+    <h3> Strategy </h3>
+    <p>
+        To find good packing solutions:
+        <ul>
+         <li> Choose a set of shapes and the outer border </li>
+         <li> Run the simulation for a while to see what configuration the system
+                settles into. </li>
+         <li> Once it has settled into a stable configuration reduce the temperature to freeze it in and measure
+                the packing value. This is the value shown by "Scale". The lager this value is the better the shapes
+                are packed. After changing the temperature use "Update" to apply the change. This will retain the
+                current shape positions and remember the best configuration found so far.</li>
+         <li> If you think there may be a better packing arrangement increase the temperature to shake it up a bit,
+                then cool it down a bit to freeze a configuration in.
+         <li> Alternatively you could use the "T-Cycle" mode which attempts to automate this process.
+        </ul>
+
+    <h3> Best Text </h3>
+
+      <p> Cut and past this text to preserve your best packings. That's how I've encoded the images
+      on the <a href="results.html" target="_blank">results page</a>. One day I might implement a viewer. Or you
+      could create your own results page by copying and editing mine.</p>
+      <p> <input type="text" value="" id="best_text" size="120"/> </p>
+
+    <h3> Java Version </h3>
+    <p>
+        The original Java applet that this javascript application is based on can be found
+        <a href="http://www.eddaardvark.co.uk/shapes/bshapes.html">here</a>. It no longer workds with the
+        latest versions of Java.
+    </p>
+    
+  </div>
+
+<!-- No more floating divs -->
+
+  <div class="endfloat"> </div>
+</div>
+
+<!-- Generic links -->
+
+<div class="in2 box">
+  <h2> Other pages </h2>
+              
+  <p>
+      <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+  </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<p class="small"> (c) John Whitehouse 2014 - 2020 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

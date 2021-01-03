@@ -1,0 +1,1278 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (Working Backwards) </TITLE>
+
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+
+<script>
+
+    // Controls
+
+    var number1_input;
+    var result1_paragraph;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+
+        number1_input = document.getElementById("number1");
+        result1_paragraph = document.getElementById("result1");
+
+        number1_input.value = 29;
+        ShowPredecessors();
+    }
+
+    ShowPredecessors = function ()
+    {
+        var x = parseInt (number1_input.value);
+
+        if (x > 0)
+        {
+            var seq = T3A1.GetPredecessors(x);
+            result1_paragraph.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+</script>
+</head>
+
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+             Working Backwards
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w8 float">
+
+<h1> Contents </h1>
+
+    <ol class="in4">
+        <li><a href="#s1">Introduction</a></li>
+        <li><a href="#s2"> Blue Chains </a></li>
+        <li><a href="#s3"> Applying Reverse Iteration </a></li>
+        <li><a href="#s4"> Tree routed on 85  </a></li>
+        <li><a href="index.html"> 3x + 1 Index </a></li>
+    </ol>
+
+</div>
+
+    <div class="in2 box w8 float">
+
+<h1> <a name="s1"/>Introduction </h1>
+
+<p>
+    The forward equation we introduced above is quite
+    straight forward . When dealing with the odd
+    numbers only, when we look in the opposite direction every odd number not
+    divisible by three has an infinite number of immediate precursors. This page explores
+    identifying those numbers.
+</p><p>
+    Although the forward equation we introduced earlier is quite easy to calculate, as it is a one to one mapping,
+    calculating the precursors of a given number is more interesting. Looking at &quot;1&quot;, we see that it
+    is preceded by the infinite sequence of powers of 2. On this site, though we are focusing focusing on the odd
+    numbers, and we will see below, every odd number that isn't a multiple of 3 has an infiniite number of odd precursors.
+</p><p>
+    To find the precursors of 1 we have to find powers of two that fit the equation
+</p><p>
+
+    <div class="in2 w5 code">
+        2<span class="superscript">k</span> = 3x+1 &rArr; x = (2<span class="superscript">k</span>-1) / 3.
+    </div>
+
+</p><p>
+
+    Where x is an integer. Only even values of k lead to integer solutions, giving;
+</p><p>
+
+    <div align="center">
+    <table border="0" cellpadding="4">
+      <tr>
+        <td>
+          <table border="1" cellpadding="4" cellspacing="0">
+            <tr>
+                <td><strong>k</strong> </td>
+                <td><strong> (2<span class="superscript">k</span>-1) / 3</strong> </td>
+            </tr>
+            <tr>
+                <th>2 </th>
+                <td class="code">(4-1)/3 = 1 </td>
+            </tr>
+            <tr>
+                <th>4</th>
+                <td class="code">(16-1)/3 = 5 </td>
+            </tr>
+            <tr>
+                <th>6</th>
+                <td class="code">(64-1)/3 = 21 </td>
+            </tr>
+            <tr>
+                <th>8</th>
+                <td class="code">(256-1)/3 = 85 </td>
+            </tr>
+            </table>
+        </td>
+        <td></td>
+        <td>
+            <table border="1" cellpadding="4" cellspacing="0">
+              <tr>
+                <td><strong>k</strong></td>
+                <td><strong> (2<span class="superscript">k</span>-1) / 3</strong> </td>
+              </tr>
+              <tr>
+                <th>10</th>
+                <td class="code">(1024-1)/3 = 341</td>
+              </tr>
+              <tr>
+                <th>12</th>
+                <td class="code">(4096-1)/3 = 1,365</td>
+              </tr>
+              <tr>
+                <th>14</th>
+                <td class="code">(16384-1)/3 = 5,461</td>
+              </tr>
+              <tr>
+                <th>16</th>
+                <td class="code">(65536-1)/3 = 21,845</td>
+              </tr>
+            </table>
+        </td>
+      </tr>
+    </table>
+    </div>
+
+</p><p>
+
+    For numbers other than 1, say 'A', we get the similar equation
+</p><p>
+
+    <div class="in2 w5 code">
+        A.2<span class="superscript">k</span> = 3x+1  &rArr; (A.2<span class="superscript">k</span>-1)&nbsp;/&nbsp;3.
+    </div>
+
+</p><p>
+
+    Calculating x for a few values of A and k we can see a pattern;
+</p><p>
+    <div align="center">
+
+    <table border="0" cellpadding="4">
+      <tr>
+        <td>
+
+            <table border="1" cellpadding="4" cellspacing="0">
+              <tr>
+                <th>x(A,k)</th>
+                <th>k = 2 </th>
+                <th>k = 4 </th>
+                <th>k = 6 </th>
+              </tr>
+              <tr>
+                <th>A = 1</th>
+                <td class="code">1</td>
+                <td class="code">5</td>
+                <td class="code">21</td>
+              </tr>
+              <tr>
+                <th>A = 7</th>
+                <td class="code">9</td>
+                <td class="code">37</td>
+                <td class="code">149</td>
+              </tr>
+              <tr>
+                <th>A = 13</th>
+                <td class="code">17</td>
+                <td class="code">69</td>
+                <td class="code">277</td>
+              </tr>
+            </table>
+          </td>
+        <td>
+        <table border="1" cellpadding="4" cellspacing="0">
+          <tr>
+            <th>x(A,k)</th>
+            <th>k = 1</th>
+            <th>k = 3</th>
+            <th>k = 5</th>
+          </tr>
+          <tr>
+            <th>A = 5</th>
+            <td class="code">3</td>
+            <td class="code">13</td>
+            <td class="code">53</td>
+          </tr>
+          <tr>
+            <th>A = 11</th>
+            <td class="code">7</td>
+            <td class="code">29</td>
+            <td class="code">117</td>
+          </tr>
+          <tr>
+            <th>A = 17</th>
+            <td class="code">11 </td>
+            <td class="code">45 </td>
+            <td class="code">181 </td>
+         </tr>
+        </table>
+       </td>
+      </tr>
+    </table>
+    </div>
+
+</p><p>
+    When A is a multiple of three we get no predecessors, as a multiple of three
+    can't be of the form 3x+1. When A is one more than a multiple of 6, k will be
+    even, and when it is one less than a multiple of 6, k will be odd. The smallest
+    precursors are therefore:
+</p><p>
+    <div class="in2 w5 code">
+        6n+1 &rarr; 8n+1 <br> 6n+5 &rarr; 4n+3.
+    </div>
+
+</p><p>
+    When reading down the columns the values increase linearly in steps of
+    x&nbsp;&rarr;&nbsp;x&nbsp;+&nbsp;2<span class="superscript">(k+1)</span>,
+    whereas across the table they increase geometrically as x&nbsp;&rarr;&nbsp;4x+1.
+</p>
+<h2> Try it for yourself </h2>
+
+<p>
+    Starting number: <input type="text" id="number1" size="12">
+                        <button onclick="ShowPredecessors();"> Show </button>
+</p><p>
+    Predecessors:
+        <div class="code in2 w5">
+            <p class="code" id="result1"> &nbsp; <p>
+        </div><p>
+</p>
+
+<h2> More examples </h2>
+<p>
+    The next two tables are extensions of the previous tables, but now the
+    numbers are colour-coded according to their remainders when divided by 6.
+
+<p>
+
+<table border="1" cellpadding="4" cellspacing="0">
+<tr>
+    <th bgcolor="#FFE0C4">A\k </th>
+    <th>&nbsp; </th>
+    <th bgcolor="#FFE0C4">2 </th>
+    <th bgcolor="#FFE0C4">4 </th>
+    <th bgcolor="#FFE0C4">6 </th>
+    <th bgcolor="#FFE0C4">8 </th>
+    <th bgcolor="#FFE0C4">10 </th>
+    <th bgcolor="#FFE0C4">12 </th>
+    <th bgcolor="#FFE0C4"> 14 </th>
+    <th bgcolor="#FFE0C4"> 16 </th>
+    <th bgcolor="#FFE0C4"> 18 </th>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 1 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#6Af980" align="right" class="code"> 1 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 5 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 21 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 85 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 341 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 1,365 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 5,461 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 21,845 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 87,381 </td>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 7 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#FF91C8" align="right" class="code"> 9 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 37 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 149 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 597 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 2,389 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 9,557 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 38,229 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 152,917 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 611,669 </td>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 13 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#A6BADB" align="right" class="code"> 17 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 69 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 277 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 1,109 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 4,437 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 17,749 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 70,997 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 283,989 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 1,135,957 </td>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 19 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#6Af980" align="right" class="code"> 25 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 101 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 405 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 1,621 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 6,485 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 25,941 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 103,765 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 415,061 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 1,660,245 </td>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 25 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#FF91C8" align="right" class="code"> 33 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 133 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 533 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 2,133 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 8,533 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 34,133 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 136,533 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 546,133 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 2,184,533 </td>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 31 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#A6BADB" align="right" class="code"> 41 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 165 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 661 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 2,645 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 10,581 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 42,325 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 169,301 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 677,205 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 2,708,821 </td>
+</tr>
+</table>
+
+<p>
+
+<table border="1" cellpadding="4" cellspacing="0">
+<tr>
+    <th bgcolor="#FFE0C4">A\k</th>
+    <th>&nbsp;</th>
+    <th bgcolor="#FFE0C4">1</th>
+    <th bgcolor="#FFE0C4">3</th>
+    <th bgcolor="#FFE0C4">5</th>
+    <th bgcolor="#FFE0C4">7</th>
+    <th bgcolor="#FFE0C4">9</th>
+    <th bgcolor="#FFE0C4">11</th>
+    <th bgcolor="#FFE0C4"> 13 </th>
+    <th bgcolor="#FFE0C4"> 15 </th>
+    <th bgcolor="#FFE0C4"> 17 </th>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 5 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#FF91C8" align="right" class="code"> 3 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 13 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 53 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 213 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 853 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 3,413 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 13,653 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 54,613 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 21,8453 </td>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 11 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#6Af980" align="right" class="code"> 7 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 29 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 117 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 469 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 1,877 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 7,509 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 30,037 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 120,149 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 480,597 </td>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 17 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#A6BADB" align="right" class="code"> 11 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 45 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 181 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 725 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 2,901 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 11,605 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 46,421 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 185,685 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 742,741 </td>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 23 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#FF91C8" align="right" class="code"> 15 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 61 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 245 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 981 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 3,925 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 15,701 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 62,805 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 251,221 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 1,004,885 </td>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 29 </th>
+    <th>&nbsp;</th>
+    <td bgcolor="#6Af980" align="right" class="code"> 19 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 77 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 309 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 1,237 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 4,949 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 19,797 </td>
+    <td bgcolor="#6Af980" align="right" class="code"> 79,189 </td>
+    <td bgcolor="#A6BADB" align="right" class="code"> 316,757 </td>
+    <td bgcolor="#FF91C8" align="right" class="code"> 1,267,029 </td>
+</tr>
+</table>
+
+<p>
+    Notice that numbers of the form 6n+5 have a smaller odd predecessor. This can
+    be used to generate arbitrary long sequences of
+    numbers where (3x+1)/2 is odd and (3&times;(3x+1)/2+1) is larger than 3x+1, see <a href="#s2">blue chains</a>, below.
+<p>
+    The colour patterns repeat every 3 rows, as we can see from the following tables
+<p>
+
+<table border="1" cellpadding="4" cellspacing="0">
+<tr>
+    <th bgcolor="#FFE0C4">A\k</th>
+    <th>&nbsp;</th>
+    <th bgcolor="#FFE0C4">2</th>
+    <th bgcolor="#FFE0C4">4</th>
+    <th bgcolor="#FFE0C4">6</th>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 18n+1 </th>
+    <td> &nbsp; </td>
+    <td bgcolor="#6Af980" class="code"> 24n+1 = 6.(4n)+1 </td>
+    <td bgcolor="#A6BADB" class="code"> 96n+5 = 6.(16n)+5 </td>
+    <td bgcolor="#FF91C8" class="code"> 384n+21 = 6.(64n+3)+3 </td>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 18n+7 </th>
+    <td> &nbsp; </td>
+    <td bgcolor="#FF91C8" class="code"> 24n+9 = 6.(4n+1)+3 </td>
+    <td bgcolor="#6Af980" class="code"> 96n+37 = 6.(16n+6)+1 </td>
+    <td bgcolor="#A6BADB" class="code"> 384n+149 = 6.(64n+24)+5 </td>
+</tr>
+<tr>
+    <th bgcolor="#6AF980"> 18n+13 </th>
+    <td> &nbsp; </td>
+    <td bgcolor="#A6BADB" class="code"> 24n+17 = 6.(4n+2)+5 </td>
+    <td bgcolor="#FF91C8" class="code"> 96n+69 = 6.(16n+11)+3 </td>
+    <td bgcolor="#6Af980" class="code"> 384n+277 = 6.(64n+46)+1 </td>
+</tr>
+</table>
+
+<p>
+
+<table border="1" cellpadding="4" cellspacing="0">
+<tr>
+    <th bgcolor="#FFE0C4">A\k</th>
+    <th>&nbsp;</th>
+    <th bgcolor="#FFE0C4">1</th>
+    <th bgcolor="#FFE0C4">3</th>
+    <th bgcolor="#FFE0C4">5</th>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 18n+5 </th>
+    <td> &nbsp; </td>
+    <td bgcolor="#FF91C8" class="code"> 12n+3 = 6.(2n)+3 </td>
+    <td bgcolor="#6Af980" class="code"> 48n+13 = 6.(8n+2)+1 </td>
+    <td bgcolor="#A6BADB" class="code"> 192n+53 = 6.(32n+8)+5 </td>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 18n+11 </th>
+    <td> &nbsp; </td>
+    <td bgcolor="#6Af980" class="code"> 12n+7 = 6.(2n+1)+1 </td>
+    <td bgcolor="#A6BADB" class="code"> 48n+29 = 6.(8n+4)+5 </td>
+    <td bgcolor="#FF91C8" class="code"> 192n+117 = 6.(128n+19)+3 </td>
+</tr>
+<tr>
+    <th bgcolor="#A6BADB"> 18n+17 </th>
+    <td> &nbsp; </td>
+    <td bgcolor="#A6BADB" class="code"> 12n+11 = 6.(2n+1)+5 </td>
+    <td bgcolor="#FF91C8" class="code"> 48n+45 = 6.(8n+7)+3 </td>
+    <td bgcolor="#6Af980" class="code"> 192n+181 = 6.(128n+30)+1 </td>
+</tr>
+</table>
+
+</div>
+
+<!-- Blue Chains -->
+
+    <div class="in2 box w8 float">
+
+<h1> <a name="s2"/> Blue Chains </h1>
+
+<p>
+    We have been colouring the numbers according to their remainder when divided
+    by 6. Numbers of the form 6n+5, which we call blue numbers, always have a predecessor of the form
+    4n+3 (which for large n is about 2/3rds of the starting value) eg.
+<p>
+    <img class="noborder" src="images/bluenodes.gif">
+<p>
+    The colour of the this smallest node varies but a third of the time it will also be blue,
+    so we can start constructing a chain of blue numbers, each one roughly 2/3rds
+    of its predecessor. So for 17 in the above list we can construct the larger tree;
+
+<p>
+    <img class="noborder" src="images/bluenodes17_11.gif" width="257" height="215">
+
+<p>
+    Examining a few of these trees we can see that sequences of decreasing blue
+    nodes end in a number of the form 3&times;2<span class="superscript">n</span>-1. The numbers in this
+    sequence start with [5,11,23,47,95,191,...]. If we take a number of this form
+    and put it through the (3x+1)/2 equation n-1 times we get 2&times;3<span class="superscript">n</span>-1
+
+
+<p>For instance
+
+
+<table border="2" cellpadding="4" cellspacing="0">
+  <tr>
+    <td>n</td>
+    <td>Sequence</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td class="code">[5]</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td class="code">[11,17]</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td class="code">[23,35, 53]</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td class="code">[47, 71, 107, 161]</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td class="code">[95, 143, 215, 323, 485]</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td class="code">[191, 287, 431, 647, 971, 1457]</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td class="code">[383, 575, 863, 1295, 1943, 2915, 4373]</td>
+  </tr>
+</table>
+<p>
+    All the numbers in the above table are of the form 6n+5 and appear blue in the diagram.
+    This shows that we can create an arbitrarily long sequence of increasing values,
+    just by increasing the value of n.
+<p>
+    The figure on the left shows the tree generated by these first seven sequences.&nbsp;
+<p>
+    The end number divided by the start (for
+    large n) is 2&times;3<span class="superscript">n</span>/3*2<span class="superscript">n</span>,
+    or (1.5)<span class="superscript">n-1</span>. Here
+
+    <div class="in2 w5 code">
+        log(Max(N))/log(N) = (log(2)+n*log(3))/(log(3)+n*log(2))
+    </div>
+
+<p>
+    which converges on
+    log(3)/log(2), about 1.5849625007211563. If there is a limit to log(Max(N))/log(N),
+    it must be at least this large. This chart shows the largest value of log(Max(N))/log(N)
+    for successive ranges of N of the form (2<span class="superscript">i</span> to 2<span class="superscript">i+1</span>-1).&nbsp;
+<p>
+    <img class="noborder" src="images/maxloglog.gif" width="477" height="253">
+<p>
+    The dotted line is log(3)/log(2). The highlights are
+
+    <div class="in2 w5 code">
+    &nbsp;&nbsp;&nbsp; 27 &rarr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3077, ratio = 2.4369<br>
+    &nbsp;&nbsp;&nbsp; 41 &rarr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3077, ratio = 2.1628<br>
+    270271 &rarr; 8216025965, ratio = 1.8253
+    </div>
+
+</p><p>
+    This chart shows the path taken by 270271. The Y axis is Log<sub>10</sub>.
+</p><p>
+    <img class="noborder" src="images/chart270271.gif" width="319" height="186">
+</p><p>
+    If we <a href="sizerecords.html">continue</a> we find that 6,631,675 gives a log
+    (Max(N))/log(N) of 1.9502. So, although this blue chains method will find
+    sequences where log (Max(N))/log(N) is about 1.585, there are series with larger
+    values.
+<p>
+    The image on the left was drawn using GraphViz,
+    see <a href="http://www.research.att.com/sw/tools/graphviz/">http://www.research.att.com/sw/tools/graphviz/</a>
+
+    </div>
+
+<!-- Applying Reverse Iteration -->
+
+    <div class="in2 box w8 float">
+
+<h1><a name="s3"/>Applying Reverse Iteration</h1>
+
+<h2> Introduction </h2>
+
+<p>
+    In <a href="#s2">blue chains</a> we noticed that except for 27 and 41, log (Max(N))/log(N) doesn't
+    appear to exceed 2. Though I can't prove this is true I can assume it and use it
+    as the basis of a backwards searching algorithm for numbers that converge on a
+    particular root. For instance if I want to find all the numbers than converge on
+    85 that are less than 1024 I can reject sequences that pass through numbers
+    greater than 1024 squared (1048576).
+<p>
+    Applying this algorithm gives us the following results;
+<p>
+    Start (1 value):
+<p class="code">
+    [85]
+<p>
+    First iteration (7 values):
+<p class="code">
+    [113, 453, 1813, 7253, 29013, 116053, 464213]
+<p>
+    2nd iteration (19 values):
+<p class="code">
+    [75, 301, 1205, 4821, 19285, 77141, 308565, 2417, 9669, 38677, 154709, 618837, 4835, 19341, 77365, 309461, 154737, 618949, 309475]
+<p>
+    3rd iteration (39 values):
+
+<p class="code">
+    [401, 1605, 6421, 25685, 102741, 410965, 803, 3213, 12853, 51413, 205653, 822613, 25713, 102853, 411413, 51427, 205709, 822837, 1611, 6445, 25781, 103125, 412501, 51569, 206277, 825109, 103139, 412557, 3223, 12893, 51573, 206293, 825173, 103153, 412613, 206307, 825229, 825265, 412633]
+
+<p>
+    The results are summarised in the <a href="#table"> table</a> below where you will see that the search reaches
+    a maxmum width of 357 at iteration 18.
+
+<p>
+    This chart shows the location of the found values (numbers less than 1024) in each row of the table.
+    All the target values were found in the first 8 rows (7 iteration, the first value is 85 itself).
+    These are the green cells in the <a href="#table">table</a> below.
+
+<p>
+    <img class="noborder" src="images/tree_width_85_1024.gif" width="362" height="239">
+
+<p>
+    This second chart shows the width (vertical axis) and depth (horizontal) of the search tree, and includes all
+    for odd numbers up to 1048576 that we examined. Although we found all the values we were looking
+    for in the first 7 iterations, the algorithm itself didn't stop until 60 iterations, after it had examined
+    7582 values.
+
+<p> <img class="noborder" src="images/converge_on_85_chart.gif" width="452" height="255">
+
+<p>
+    Testing the 511 values smaller than 1024 would have been quicker.
+    You can see the corresponding tree <a href="#s4">here</a>.
+
+<p>
+    To get numbers out to 4096 this algorithm requires that 118564 possibilities be
+    explored, for 8192 this grows to 468857, just to find the first 99 values that
+    converge on 85. This chart shows the distribution of those 99 values in terms of
+    the number of odd-hops from the root.
+
+<p> <img class="noborder" src="images/tree_width_85_8192.gif" width="476" height="286">
+
+<p>
+    As we double the depth to search we roughly quadruple the set of values to search.
+
+<p><img class="noborder" src="images/converge_85_comp.gif" width="599" height="241">
+
+<p>So it's not looking that good an algorithm.
+
+<h2>Searching for values out to 1024</h2>
+
+<table border="1" cellpadding="4">
+   <tr>
+<th bgcolor="#FFFFFF"><a name="table">Iteration</a></th><th bgcolor="#FFFFFF">Tree Width</th>
+<th colspan="5" bgcolor="#FFFFFF">Five smallest values</th>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">0</th><th bgcolor="#FFFFFF" class="code">1</th>
+<td bgcolor="#CCFF99" class="code">85</td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">1</th><th bgcolor="#FFFFFF" class="code">7</th>
+<td bgcolor="#CCFF99" class="code">113</td>
+<td bgcolor="#CCFF99" class="code">453</td>
+<td class="code">1813</td>
+<td class="code">7253</td>
+<td class="code">29013</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">2</th><th bgcolor="#FFFFFF" class="code">19</th>
+<td bgcolor="#CCFF99" class="code">75</td>
+<td bgcolor="#CCFF99" class="code">301</td>
+<td class="code">1205</td>
+<td class="code">2417</td>
+<td class="code">4821</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">3</th><th bgcolor="#FFFFFF" class="code">39</th>
+<td bgcolor="#CCFF99" class="code">401</td>
+<td bgcolor="#CCFF99" class="code">803</td>
+<td class="code">1605</td>
+<td class="code">1611</td>
+<td class="code">3213</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">4</th><th bgcolor="#FFFFFF" class="code">60</th>
+<td bgcolor="#CCFF99" class="code">267</td>
+<td bgcolor="#CCFF99" class="code">535</td>
+<td class="code">1069</td>
+<td class="code">2141</td>
+<td class="code">4277</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">5</th><th bgcolor="#FFFFFF" class="code">101</th>
+<td bgcolor="#CCFF99" class="code">713</td>
+<td class="code">1425</td>
+<td class="code">1427</td>
+<td class="code">2851</td>
+<td class="code">2853</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">6</th><th bgcolor="#FFFFFF" class="code">156</th>
+<td bgcolor="#CCFF99" class="code">475</td>
+<td bgcolor="#CCFF99" class="code">951</td>
+<td class="code">1901</td>
+<td class="code">3801</td>
+<td class="code">3805</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">7</th><th bgcolor="#FFFFFF" class="code">177</th>
+<td bgcolor="#CCFF99" class="code">633</td>
+<td class="code">1267</td>
+<td class="code">2533</td>
+<td class="code">5067</td>
+<td class="code">5069</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">8</th><th bgcolor="#FFFFFF" class="code">232</th>
+<td class="code">1689</td>
+<td class="code">3377</td>
+<td class="code">3379</td>
+<td class="code">6755</td>
+<td class="code">6757</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">9</th><th bgcolor="#FFFFFF" class="code">230</th>
+<td class="code">2251</td>
+<td class="code">4503</td>
+<td class="code">4505</td>
+<td class="code">9005</td>
+<td class="code">9009</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">10</th><th bgcolor="#FFFFFF" class="code">276</th>
+<td class="code">3001</td>
+<td class="code">3003</td>
+<td class="code">6003</td>
+<td class="code">6007</td>
+<td class="code">6011</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">11</th><th bgcolor="#FFFFFF" class="code">339</th>
+<td class="code">4001</td>
+<td class="code">4007</td>
+<td class="code">8003</td>
+<td class="code">8007</td>
+<td class="code">8009</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">12</th><th bgcolor="#FFFFFF" class="code">316</th>
+<td class="code">2667</td>
+<td class="code">2671</td>
+<td class="code">5335</td>
+<td class="code">5339</td>
+<td class="code">5343</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">13</th><th bgcolor="#FFFFFF" class="code">354</th>
+<td class="code">3559</td>
+<td class="code">3561</td>
+<td class="code">7113</td>
+<td class="code">7119</td>
+<td class="code">7123</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">14</th><th bgcolor="#FFFFFF" class="code">305</th>
+<td class="code">4745</td>
+<td class="code">9483</td>
+<td class="code">9491</td>
+<td class="code">9497</td>
+<td class="code">18967</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">15</th><th bgcolor="#FFFFFF" class="code">329</th>
+<td class="code">3163</td>
+<td class="code">6327</td>
+<td class="code">6331</td>
+<td class="code">12653</td>
+<td class="code">12655</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">16</th><th bgcolor="#FFFFFF" class="code">278</th>
+<td class="code">4217</td>
+<td class="code">8435</td>
+<td class="code">8441</td>
+<td class="code">16859</td>
+<td class="code">16869</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">17</th><th bgcolor="#FFFFFF" class="code">308</th>
+<td class="code">2811</td>
+<td class="code">5623</td>
+<td class="code">5627</td>
+<td class="code">11239</td>
+<td class="code">11245</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">18</th><th bgcolor="#FFFFFF" class="code">357</th>
+<td class="code">3751</td>
+<td class="code">7497</td>
+<td class="code">7503</td>
+<td class="code">14985</td>
+<td class="code">14993</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">19</th><th bgcolor="#FFFFFF" class="code">305</th>
+<td class="code">5001</td>
+<td class="code">9995</td>
+<td class="code">10003</td>
+<td class="code">19991</td>
+<td class="code">19993</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">20</th><th bgcolor="#FFFFFF" class="code">321</th>
+<td class="code">6663</td>
+<td class="code">13327</td>
+<td class="code">13337</td>
+<td class="code">13343</td>
+<td class="code">26653</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">21</th><th bgcolor="#FFFFFF" class="code">259</th>
+<td class="code">8891</td>
+<td class="code">8895</td>
+<td class="code">17769</td>
+<td class="code">17771</td>
+<td class="code">17775</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">22</th><th bgcolor="#FFFFFF" class="code">261</th>
+<td class="code">5927</td>
+<td class="code">11847</td>
+<td class="code">11855</td>
+<td class="code">23691</td>
+<td class="code">23695</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">23</th><th bgcolor="#FFFFFF" class="code">294</th>
+<td class="code">3951</td>
+<td class="code">7903</td>
+<td class="code">15805</td>
+<td class="code">31593</td>
+<td class="code">31599</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">24</th><th bgcolor="#FFFFFF" class="code">232</th>
+<td class="code">10537</td>
+<td class="code">21073</td>
+<td class="code">21075</td>
+<td class="code">42119</td>
+<td class="code">42123</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">25</th><th bgcolor="#FFFFFF" class="code">245</th>
+<td class="code">14049</td>
+<td class="code">28079</td>
+<td class="code">28097</td>
+<td class="code">28099</td>
+<td class="code">56159</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">26</th><th bgcolor="#FFFFFF" class="code">181</th>
+<td class="code">18719</td>
+<td class="code">18731</td>
+<td class="code">37439</td>
+<td class="code">37463</td>
+<td class="code">37465</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">27</th><th bgcolor="#FFFFFF" class="code">176</th>
+<td class="code">12479</td>
+<td class="code">12487</td>
+<td class="code">24959</td>
+<td class="code">24975</td>
+<td class="code">24991</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">28</th><th bgcolor="#FFFFFF" class="code">137</th>
+<td class="code">8319</td>
+<td class="code">16639</td>
+<td class="code">16649</td>
+<td class="code">33263</td>
+<td class="code">33277</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">29</th><th bgcolor="#FFFFFF" class="code">138</th>
+<td class="code">11099</td>
+<td class="code">22175</td>
+<td class="code">22185</td>
+<td class="code">22199</td>
+<td class="code">44351</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">30</th><th bgcolor="#FFFFFF" class="code">139</th>
+<td class="code">7399</td>
+<td class="code">14783</td>
+<td class="code">14799</td>
+<td class="code">29567</td>
+<td class="code">29579</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">31</th><th bgcolor="#FFFFFF" class="code">106</th>
+<td class="code">9855</td>
+<td class="code">9865</td>
+<td class="code">19711</td>
+<td class="code">19719</td>
+<td class="code">19731</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">32</th><th bgcolor="#FFFFFF" class="code">108</th>
+<td class="code">13153</td>
+<td class="code">26281</td>
+<td class="code">26307</td>
+<td class="code">52561</td>
+<td class="code">52563</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">33</th><th bgcolor="#FFFFFF" class="code">88</th>
+<td class="code">17537</td>
+<td class="code">35041</td>
+<td class="code">35075</td>
+<td class="code">35079</td>
+<td class="code">35103</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">34</th><th bgcolor="#FFFFFF" class="code">89</th>
+<td class="code">11691</td>
+<td class="code">23383</td>
+<td class="code">46721</td>
+<td class="code">46765</td>
+<td class="code">93441</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">35</th><th bgcolor="#FFFFFF" class="code">93</th>
+<td class="code">31147</td>
+<td class="code">31177</td>
+<td class="code">62295</td>
+<td class="code">62353</td>
+<td class="code">62355</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">36</th><th bgcolor="#FFFFFF" class="code">70</th>
+<td class="code">41529</td>
+<td class="code">41569</td>
+<td class="code">41575</td>
+<td class="code">83059</td>
+<td class="code">83099</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">37</th><th bgcolor="#FFFFFF" class="code">72</th>
+<td class="code">55399</td>
+<td class="code">55425</td>
+<td class="code">55433</td>
+<td class="code">55471</td>
+<td class="code">110745</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">38</th><th bgcolor="#FFFFFF" class="code">57</th>
+<td class="code">36955</td>
+<td class="code">73865</td>
+<td class="code">73899</td>
+<td class="code">73911</td>
+<td class="code">73961</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">39</th><th bgcolor="#FFFFFF" class="code">51</th>
+<td class="code">49243</td>
+<td class="code">49273</td>
+<td class="code">49307</td>
+<td class="code">98439</td>
+<td class="code">98487</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">40</th><th bgcolor="#FFFFFF" class="code">40</th>
+<td class="code">32871</td>
+<td class="code">65657</td>
+<td class="code">65697</td>
+<td class="code">65743</td>
+<td class="code">131315</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">41</th><th bgcolor="#FFFFFF" class="code">36</th>
+<td class="code">43771</td>
+<td class="code">87543</td>
+<td class="code">87657</td>
+<td class="code">175003</td>
+<td class="code">175007</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">42</th><th bgcolor="#FFFFFF" class="code">36</th>
+<td class="code">58361</td>
+<td class="code">116671</td>
+<td class="code">116723</td>
+<td class="code">116783</td>
+<td class="code">116795</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">43</th><th bgcolor="#FFFFFF" class="code">28</th>
+<td class="code">38907</td>
+<td class="code">77815</td>
+<td class="code">77855</td>
+<td class="code">77863</td>
+<td class="code">155559</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">44</th><th bgcolor="#FFFFFF" class="code">30</th>
+<td class="code">51903</td>
+<td class="code">103707</td>
+<td class="code">103753</td>
+<td class="code">103817</td>
+<td class="code">207415</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">45</th><th bgcolor="#FFFFFF" class="code">20</th>
+<td class="code">69211</td>
+<td class="code">138337</td>
+<td class="code">138423</td>
+<td class="code">276553</td>
+<td class="code">276673</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">46</th><th bgcolor="#FFFFFF" class="code">18</th>
+<td class="code">92281</td>
+<td class="code">184449</td>
+<td class="code">184551</td>
+<td class="code">184563</td>
+<td class="code">368737</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">47</th><th bgcolor="#FFFFFF" class="code">17</th>
+<td class="code">123041</td>
+<td class="code">245931</td>
+<td class="code">246059</td>
+<td class="code">246083</td>
+<td class="code">491643</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">48</th><th bgcolor="#FFFFFF" class="code">9</th>
+<td class="code">82027</td>
+<td class="code">164039</td>
+<td class="code">164055</td>
+<td class="code">327915</td>
+<td class="code">328109</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">49</th><th bgcolor="#FFFFFF" class="code">9</th>
+<td class="code">109359</td>
+<td class="code">109369</td>
+<td class="code">218739</td>
+<td class="code">437437</td>
+<td class="code">437477</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">50</th><th bgcolor="#FFFFFF" class="code">5</th>
+<td class="code">145825</td>
+<td class="code">291651</td>
+<td class="code">583249</td>
+<td class="code">583301</td>
+<td class="code">583307</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">51</th><th bgcolor="#FFFFFF" class="code">5</th>
+<td class="code">194433</td>
+<td class="code">388867</td>
+<td class="code">388871</td>
+<td class="code">777665</td>
+<td class="code">777733</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">52</th><th bgcolor="#FFFFFF" class="code">5</th>
+<td class="code">259247</td>
+<td class="code">518443</td>
+<td class="code">518489</td>
+<td class="code">1036977</td>
+<td class="code">1036989</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">53</th><th bgcolor="#FFFFFF" class="code">4</th>
+<td class="code">172831</td>
+<td class="code">345659</td>
+<td class="code">691257</td>
+<td class="code">691325</td>
+<td class="code"> &nbsp; </td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">54</th><th bgcolor="#FFFFFF" class="code">5</th>
+<td class="code">230439</td>
+<td class="code">230441</td>
+<td class="code">460883</td>
+<td class="code">921757</td>
+<td class="code">921765</td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">55</th><th bgcolor="#FFFFFF" class="code">3</th>
+<td class="code">153627</td>
+<td class="code">307255</td>
+<td class="code">614509</td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">56</th><th bgcolor="#FFFFFF" class="code">2</th>
+<td class="code">409673</td>
+<td class="code">819345</td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">57</th><th bgcolor="#FFFFFF" class="code">1</th>
+<td class="code">273115</td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">58</th><th bgcolor="#FFFFFF" class="code">1</th>
+<td class="code">364153</td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">59</th><th bgcolor="#FFFFFF" class="code">1</th>
+<td class="code">485537</td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+   </tr>
+   <tr>
+<th bgcolor="#FFFFFF" class="code">60</th><th bgcolor="#FFFFFF" class="code">1</th>
+<td class="code">323691</td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+<td class="code"> &nbsp; </td>
+   </tr>
+</table>
+
+    </div>
+
+<!-- Tree routed on 85 -->
+
+    <div class="in2 box w8 float">
+        <h1> <a name="s4"/>Tree routed on 85 </h1>
+
+        <p>
+            This picture shows the tree containing all the numbers less than
+            1024 that converge on 85&nbsp;=&nbsp;(256-1)/3. 633 is the furthest
+            out, being 30 iterations from 1. Even numbers are omitted, being encapsulated in
+            the small white boxes, for instance the '4'
+            steps between 803 and 2141 includes 1606, 3212 and 6424.</p>
+        </p><p>
+
+            <div align="center">
+            <img class="noborder" src="images/tree85.gif">
+            </div>
+        </p>
+    </div>
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+   <p class="small"> (c) John Whitehouse 2011-2016 <p> </td>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

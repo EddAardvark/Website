@@ -1,0 +1,303 @@
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (Searching for 3-cycles) </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="ShowLinks()">
+
+<table>
+
+ <tr>
+  <td width="200" class="top">
+   <p> Home page
+   </p><p>
+   <a href="http://www.eddaardvark.co.uk">
+      <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+   </a>
+   </p>
+  </td>
+
+  <td class="top" width="100%">
+      <p></p>
+       <h1>  3x+1: Searching for 3&minus;cycles  </h1>
+  </td>
+  </td>
+
+  <td>
+    <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-3534237235440125";
+      /* Small Square */
+      google_ad_slot = "0024655068";
+      google_ad_width = 200;
+      google_ad_height = 200;
+      //-->
+    </script>
+    <script type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </td>
+ </tr>
+</table>
+
+<div class="ad_align">
+
+<table class="layout">
+
+ <tr>
+
+<!-- Main content -->
+
+  <td class="left">
+
+<div class="box" style="background-color: #c0c0d0">
+<div class="margins">
+
+<p> Looking for solutions to x&nbsp;=&nbsp;s/K, where
+<p class="in2">
+K = 2<sup>a1+a2+...+an</sup> - 3<sup>n</sup> <br/>
+s = 3<sup>n-1</sup> + 3<sup>n-2</sup>*2<sup>a1</sup> + 3<sup>n-3</sup>*2<sup>a1+a2</sup> +
+... + 2<sup>a1+a2+...+a(n-1)</sup>
+</p>
+
+<p>
+when n&nbsp;=&nbsp;3, we can construct the following table, organised by m&nbsp;=&nbsp;&sum;a<sub>i</sub>
+for 'a' values up to 4.
+</p>
+
+<h3>m = 3, K = &minus;19</h3>
+
+<div class="in2">
+ <table id="indent" border="1">
+  <tr>
+   <td class="heading"> a1 </td> <td class="heading"> a2 </td> <td class="heading"> a3 </td> <td class="heading"> s </td> <td class="heading"> K </td> <td class="heading"> s/K </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 19 </td> <td class="number"> &minus;19 </td> <td class="number" id="green"> &minus;1 </td>
+  </tr>
+ </table>
+</div>
+
+<h3>m = 4, K = &minus;11</h3>
+
+<div class="in2">
+ <table id="indent" border="1">
+  <tr>
+   <td class="heading"> a1 </td> <td class="heading"> a2 </td> <td class="heading"> a3 </td> <td class="heading"> s </td> <td class="heading"> K </td> <td class="heading"> s/K </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 19 </td> <td class="number"> &minus;11 </td> <td class="number"> &minus;19/11 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 23 </td> <td class="number"> &minus;11 </td> <td class="number"> &minus;23/11 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 29 </td> <td class="number"> &minus;11 </td> <td class="number"> &minus;29/11 </td>
+  </tr>
+ </table>
+</div>
+
+<h3>m = 5, K = 5</h3>
+
+<div class="in2">
+ <table id="indent" border="1">
+  <tr>
+   <td class="heading"> a1 </td> <td class="heading"> a2 </td> <td class="heading"> a3 </td> <td class="heading"> s </td> <td class="heading"> K </td> <td class="heading"> s/K </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 3 </td> <td class="number"> 19 </td> <td class="number"> 5 </td> <td class="number"> 19/5 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 23 </td> <td class="number"> 5 </td> <td class="number"> 23/5 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 31 </td> <td class="number"> 5 </td> <td class="number"> 31/5 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 29 </td> <td class="number"> 5 </td> <td class="number"> 29/5 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 37 </td> <td class="number"> 5 </td> <td class="number"> 37/5 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 49 </td> <td class="number"> 5 </td> <td class="number"> 49/5 </td>
+  </tr>
+ </table>
+</div>
+
+<h3>m = 6, K = 37</h3>
+
+<div class="in2">
+ <table id="indent" border="1">
+  <tr>
+   <td class="heading"> a1 </td> <td class="heading"> a2 </td> <td class="heading"> a3 </td> <td class="heading"> s </td> <td class="heading"> K </td> <td class="heading"> s/K </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 4 </td> <td class="number"> 19 </td> <td class="number"> 37 </td> <td class="number"> 19/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 3 </td> <td class="number"> 23 </td> <td class="number"> 37 </td> <td class="number"> 23/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 3 </td> <td class="number"> 2 </td> <td class="number"> 31 </td> <td class="number"> 37 </td> <td class="number"> 31/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 4 </td> <td class="number"> 1 </td> <td class="number"> 47 </td> <td class="number"> 37 </td> <td class="number"> 47/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 3 </td> <td class="number"> 29 </td> <td class="number"> 37 </td> <td class="number"> 29/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 37 </td> <td class="number"> 37 </td> <td class="number" id="green"> 1 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 53 </td> <td class="number"> 37 </td> <td class="number"> 53/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 49 </td> <td class="number"> 37 </td> <td class="number"> 49/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 65 </td> <td class="number"> 37 </td> <td class="number"> 65/37 </td>
+  </tr>
+  <tr>
+   <td class="number"> 4 </td> <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 89 </td> <td class="number"> 37 </td> <td class="number"> 89/37 </td>
+  </tr>
+ </table>
+</div>
+
+<h3>m = 7, K = 101</h3>
+
+<div class="in2">
+ <table id="indent" border="1">
+  <tr>
+   <td class="heading"> a1 </td> <td class="heading"> a2 </td> <td class="heading"> a3 </td> <td class="heading"> s </td> <td class="heading"> K </td> <td class="heading"> s/K </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 4 </td> <td class="number"> 23 </td> <td class="number"> 101 </td> <td class="number"> 23/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 3 </td> <td class="number"> 3 </td> <td class="number"> 31 </td> <td class="number"> 101 </td> <td class="number"> 31/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 4 </td> <td class="number"> 2 </td> <td class="number"> 47 </td> <td class="number"> 101 </td> <td class="number"> 47/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 4 </td> <td class="number"> 29 </td> <td class="number"> 101 </td> <td class="number"> 29/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 3 </td> <td class="number"> 37 </td> <td class="number"> 101 </td> <td class="number"> 37/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 3 </td> <td class="number"> 2 </td> <td class="number"> 53 </td> <td class="number"> 101 </td> <td class="number"> 53/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 4 </td> <td class="number"> 1 </td> <td class="number"> 85 </td> <td class="number"> 101 </td> <td class="number"> 85/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 3 </td> <td class="number"> 49 </td> <td class="number"> 101 </td> <td class="number"> 49/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 65 </td> <td class="number"> 101 </td> <td class="number"> 65/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 97 </td> <td class="number"> 101 </td> <td class="number"> 97/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 4 </td> <td class="number"> 1 </td> <td class="number"> 2 </td> <td class="number"> 89 </td> <td class="number"> 101 </td> <td class="number"> 89/101 </td>
+  </tr>
+  <tr>
+   <td class="number"> 4 </td> <td class="number"> 2 </td> <td class="number"> 1 </td> <td class="number"> 121 </td> <td class="number"> 101 </td> <td class="number"> 121/101 </td>
+  </tr>
+ </table>
+</div>
+
+
+<h3>m = 8, K = 229</h3>
+
+
+<div class="in2">
+ <table id="indent" border="1">
+  <tr>
+   <td class="heading"> a1 </td> <td class="heading"> a2 </td> <td class="heading"> a3 </td> <td class="heading"> s </td> <td class="heading"> K </td> <td class="heading"> s/K </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 3 </td> <td class="number"> 4 </td> <td class="number"> 31 </td> <td class="number"> 229 </td> <td class="number"> 31/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 1 </td> <td class="number"> 4 </td> <td class="number"> 3 </td> <td class="number"> 47 </td> <td class="number"> 229 </td> <td class="number"> 47/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 4 </td> <td class="number"> 37 </td> <td class="number"> 229 </td> <td class="number"> 37/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 3 </td> <td class="number"> 3 </td> <td class="number"> 53 </td> <td class="number"> 229 </td> <td class="number"> 53/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 2 </td> <td class="number"> 4 </td> <td class="number"> 2 </td> <td class="number"> 85 </td> <td class="number"> 229 </td> <td class="number"> 85/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 4 </td> <td class="number"> 49 </td> <td class="number"> 229 </td> <td class="number"> 49/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 2 </td> <td class="number"> 3 </td> <td class="number"> 65 </td> <td class="number"> 229 </td> <td class="number"> 65/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 3 </td> <td class="number"> 2 </td> <td class="number"> 97 </td> <td class="number"> 229 </td> <td class="number"> 97/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 3 </td> <td class="number"> 4 </td> <td class="number"> 1 </td> <td class="number"> 161 </td> <td class="number"> 229 </td> <td class="number"> 161/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 4 </td> <td class="number"> 2 </td> <td class="number"> 2 </td> <td class="number"> 121 </td> <td class="number"> 229 </td> <td class="number"> 121/229 </td>
+  </tr>
+  <tr>
+   <td class="number"> 4 </td> <td class="number"> 3 </td> <td class="number"> 1 </td> <td class="number"> 185 </td> <td class="number"> 229 </td> <td class="number"> 185/229 </td>
+  </tr>
+ </table>
+</div>
+
+</div></div>
+
+  </td>
+
+<!-- Right sidebar -->
+
+  <td class="right">
+
+   <div id="links"> &nbsp; </div>
+
+  </td>
+ </tr>
+
+ <tr>
+  <td class="bottom" colspan="2">
+   <p class="small"> (c) John Whitehouse 2011-2013 <p> </td>
+ </tr>
+</table>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

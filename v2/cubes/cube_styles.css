@@ -1,0 +1,43 @@
+
+
+DIV.w75 { width: 750px; }
+
+.big { font-size: 200%; margin: 0;}
+.nopad { padding: 0px; }
+.fill { padding: 0px; width: 99%; }
+.popup { position: absolute; visibility: hidden; display: inline-block; top:350px; left:100px; overflow: auto; background-color: sandybrown; border-style: solid; border-color: blue;}
+
+TD.positive {
+    padding: 0px;
+    text-align: right;
+    background-color: DarkTurquoise;
+    vertical-align: middle;
+    padding: 3pt;
+    border: 1px solid black;
+    }
+TD.centre {
+    padding: 0px;
+    text-align:right;
+    background-color: LightGreen;
+    vertical-align: middle;
+    padding: 3pt;
+    border: 1px solid black;
+    }
+TD.negative {
+    padding: 0px;
+    text-align:right;
+    background-color: HotPink;
+    vertical-align: middle;
+    padding: 3pt;
+    border: 1px solid black;
+    }
+
+TABLE
+{
+    border-collapse: collapse;
+}
+
+DIV.scroll {
+    overflow:auto;
+    max-width:800px;
+}

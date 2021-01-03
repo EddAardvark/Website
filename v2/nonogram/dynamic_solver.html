@@ -1,0 +1,531 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Nonogram javascript">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="../js_library/colours.js"> </script>
+
+<script src="nonorow.js"> </script>
+<script src="nonoexample.js"> </script>
+<script src="nonogram.js"> </script>
+<script src="nonodraw.js"> </script>
+<title>Dynamic Nonogram Solver</title>
+
+<style>
+
+SELECT { min-width:100px; }
+</style>
+
+<script>
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+
+    var animator;
+    var nonogram;
+    var max_cell_size = 24;
+    var cell_size = 24;
+    var grid_cols = 23;
+    var grid_rows = 17;
+    var min_size = 2;
+    var max_size = 80;
+    var col_pos = 0;
+    var row_pos = 0;
+    var temperature = 0.1;
+    var speed = 100;
+    var min_row_energy = 1000000;
+    var min_cell_energy = 1000000;
+
+
+//---------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+        col_text.value = grid_cols;
+        row_text.value = grid_rows;
+        speed_text.value = speed;
+        stop_on_solution.checked = true;
+
+        animator = new Animator (Shuffle, 100);
+
+        var exlist = NonoExample.GetKeys ();
+
+        for (var i in exlist)
+        {
+            var option = document.createElement("option");
+            option.text = exlist[i];
+            examples.add(option);
+        }
+
+        UpdateSize();
+        Begin ();
+    }
+//---------------------------------------------------------------------------------------------
+    StartAnimation = function () { if (! animator.IsRunning ()) { console.log ("Starting animation"); animator.Start (); } }
+    StopAnimation = function () { if (animator.IsRunning ()) { console.log ("Stopping animation"); animator.Stop (); } }
+    Randomise = function () { nonogram.Randomise (); Begin ();}
+//---------------------------------------------------------------------------------------------
+    var count = 0;
+
+    Shuffle = function ()
+    {
+        var redraw = false;
+        for (var i = 0 ; i < speed ; ++i)
+        {
+            if (nonogram.Shuffle ())
+            {
+                redraw = true;
+
+                min_row_energy = Math.min (nonogram.energy, min_row_energy);
+                min_cell_energy = Math.min (nonogram.cell_energy, min_cell_energy);
+                if (stop_on_solution.checked && nonogram.energy == 0)
+                {
+                    console.log ("Shuffle, energy = " + nonogram.energy + ", stopping");
+                    StopAnimation ();
+                    break;
+                }
+            }
+        }
+
+        if (redraw)
+        {
+            nonogram.Draw (canvasImg);
+        }
+        UpdateStatus ();
+        console.log (count + ": Shuffle 2");
+        ++count;
+    }
+//---------------------------------------------------------------------------------------------
+    SingleStep = function ()
+    {
+        var redraw = false;
+        if (nonogram.Shuffle ())
+        {
+            redraw = true;
+
+            min_row_energy = Math.min (nonogram.energy, min_row_energy);
+            min_cell_energy = Math.min (nonogram.cell_energy, min_cell_energy);
+        }
+        if (redraw)
+        {
+            nonogram.Draw (canvasImg);
+        }
+        UpdateStatus ();
+    }
+//---------------------------------------------------------------------------------------------
+    UpdateSize = function ()
+    {
+        var w = parseInt(col_text.value);
+        var h = parseInt(row_text.value);
+
+        if (w < min_size || h < min_size || w > max_size || h > max_size)
+        {
+            alert ("Please enter values in the range " + min_size + " to " + max_size);
+            returnl
+        }
+        grid_cols = w;
+        grid_rows = h;
+
+        ClearLists ();
+
+        var size = Math.max (grid_cols, grid_rows);
+        cell_size = Math.min (Math.floor (800 / size), max_cell_size);
+
+        nonogram = new Nonogram (grid_rows, grid_cols, cell_size);
+
+        Begin ();
+    }
+//-------------------------------------------------------------------------------------------------
+    Begin = function ()
+    {
+        draw_mode.value = "draw_rc";
+        temperature_text.value = temperature;
+        nonogram.temperature = temperature;
+        nonogram.UpdateRowList (row_select);
+        nonogram.UpdateColumnList (col_select);
+
+        SelectView ();
+
+        min_energy = 2 * nonogram.occupied_cells;
+
+        UpdateStatus ();
+    }
+//-------------------------------------------------------------------------------------------------
+    SelectView = function ()
+    {
+        var mode = draw_mode.value;
+
+        if (mode == "draw_rc")
+            nonogram.draw_mode = Nonogram.DRAW_ROWS_AND_COLS;
+        else if (mode == "draw_match")
+            nonogram.draw_mode = Nonogram.DRAW_MATCHES;
+        else if (mode == "draw_heat")
+            nonogram.draw_mode = Nonogram.DRAW_HEAT;
+        else if (mode == "draw_rows")
+            nonogram.draw_mode = Nonogram.DRAW_ROWS_ONLY;
+        else if (mode == "draw_cols")
+            nonogram.draw_mode = Nonogram.DRAW_COLS_ONLY;
+
+        nonogram.Draw (canvasImg);
+    }
+//---------------------------------------------------------------------------------------------
+    ShowExample = function ()
+    {
+        var example = NonoExample.map [examples.value];
+
+        grid_cols = example.cols.length;
+        grid_rows = example.rows.length;;
+
+        ClearLists ();
+
+        nonogram = new Nonogram (grid_rows, grid_cols, cell_size);
+
+        for (var i = 0 ; i < grid_cols ; ++i)
+        {
+            nonogram.AddColumn (i, example.cols [i]);
+        }
+        for (var i = 0 ; i < grid_rows ; ++i)
+        {
+            nonogram.AddRow (i, example.rows [i])
+        }
+
+        col_select.selectedIndex = 0;
+        row_select.selectedIndex = 0;
+        col_text.value = grid_cols;
+        row_text.value = grid_rows;
+
+        var size = Math.max (grid_cols, grid_rows);
+        cell_size = Math.min (Math.floor (800 / size), max_cell_size);
+
+        Begin ();
+
+        example_text.innerHTML = example.text;
+    }
+//---------------------------------------------------------------------------------------------
+    ClearLists = function ()
+    {
+        // Clear the options list
+
+        while (col_select.options.length > 0)
+        {
+            col_select.remove(0);
+        }
+        while (row_select.options.length > 0)
+        {
+            row_select.remove(0);
+        }
+
+        // Put them back in
+
+        for (var i = 0 ; i < grid_cols ; ++i)
+        {
+            var option = document.createElement("option");
+            option.text = "";
+            col_select.add(option);
+        }
+        for (var i = 0 ; i < grid_rows ; ++i)
+        {
+            var option = document.createElement("option");
+            option.text = "";
+            row_select.add(option);
+        }
+
+        col_select.size = grid_cols;
+        row_select.size = grid_rows;
+        example_text.innerHTML = "";
+    }
+//---------------------------------------------------------------------------------------------
+    AddRow = function ()
+    {
+        var pos = row_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.AddRow (pos, row_data.value))
+        {
+            Begin ();
+            row_select.selectedIndex = (row_select.selectedIndex + 1) % nonogram.num_rows;
+        }
+    }
+//---------------------------------------------------------------------------------------------
+    AddColumn = function ()
+    {
+        var pos = col_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.AddColumn (pos, row_data.value))
+        {
+            Begin ();
+            col_select.selectedIndex = (col_select.selectedIndex + 1) % nonogram.num_cols;
+        }
+    }
+//---------------------------------------------------------------------------------------------
+    RemoveRow = function ()
+    {
+        var pos = row_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.RemoveRow (pos))
+        {
+            Begin ();
+            row_select.selectedIndex = (row_select.selectedIndex + 1) % nonogram.num_rows;
+        }
+    }
+//---------------------------------------------------------------------------------------------
+    RemoveColumn = function ()
+    {
+        var pos = col_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.RemoveColumn (pos))
+        {
+            Begin ();
+            col_select.selectedIndex = (col_select.selectedIndex + 1) % nonogram.num_cols;
+        }
+    }
+//---------------------------------------------------------------------------------------------
+    RowUp = function ()
+    {
+        var pos = row_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.MoveRowUp (pos)) { -- row_select.selectedIndex ; Begin ();}
+    }
+//---------------------------------------------------------------------------------------------
+    ColumnLeft = function ()
+    {
+        var pos = col_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.MoveColumnLeft (pos)) { -- col_select.selectedIndex ; Begin (); }
+    }
+//---------------------------------------------------------------------------------------------
+    RowDown = function ()
+    {
+        var pos = row_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.MoveRowDown (pos))  { ++ row_select.selectedIndex ; Begin (); }
+    }
+//---------------------------------------------------------------------------------------------
+    ColumnRight = function ()
+    {
+        var pos = col_select.selectedIndex ;
+
+        if (pos >=0 && nonogram.MoveColumnRight (pos)) { ++ col_select.selectedIndex ; Begin (); }
+    }
+//---------------------------------------------------------------------------------------------
+    UpdateStatus = function ()
+    {
+        var vals = nonogram.energy;
+
+        row_status.innerHTML = nonogram.num_row_cells + " Cells.";
+        col_status.innerHTML = nonogram.num_col_cells + " Cells.";
+
+        var text = "Accepted: " + nonogram.accepted + "<br>";
+
+        text += "Rejected: " + nonogram.rejected + "<br>";
+        text += "Temperature: " + nonogram.temperature + "<br>";
+        text += "Energy: " + nonogram.energy + " (min = " + min_row_energy + ")<br>";
+
+        grid_status.innerHTML = text;
+    }
+//---------------------------------------------------------------------------------------------
+    UpdateTemperature = function ()
+    {
+        var t = parseFloat (temperature_text.value);
+
+        if (t > 0)
+        {
+            temperature = t;
+            nonogram.temperature = t;
+        }
+
+        temperature_text.value = temperature;
+    }
+//---------------------------------------------------------------------------------------------
+    UpdateSpeed = function ()
+    {
+        var t = parseInt (speed_text.value);
+        if (t > 0)
+        {
+            speed = t;
+        }
+        speed_text.value = speed;
+    }
+
+
+</script>
+
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart ()">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;height:260px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(NONOGRAM_HOMEPAGE)" style="height:260px;">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/nono_icon.png" alt="Banner Picture" title="Nonogram Index" width="128">
+        </p><p style="max-width: 420px;" >
+             Dynamic Nonogram Solver
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px; height:260px;" class="banner">
+        <script"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+   </div>
+
+<!-- Main content -->
+
+<div class="in2 w8 box">
+
+<h2>Nonogram</h2>
+
+    <div class="in2 w2 float">
+        <h3> Rows </h3>
+        <p>
+            <select id="row_select"> </select>
+        </p><p>
+            <button onclick="AddRow();">&plus;</button>
+            <button onclick="RemoveRow();">&minus;</button>
+            <button onclick="RowUp();">&#x25b3;</button>
+            <button onclick="RowDown();">&#x25bd;</button>
+        </p><p>
+            <p><span id="row_status"/>
+        </p>
+    </div>
+
+    <div class="in2 w2 float">
+        <h3> Columns </h3>
+        <p>
+            <select id="col_select"> </select>
+        </p><p>
+            <button onclick="AddColumn();">&plus;</button>
+            <button onclick="RemoveColumn();">&minus;</button>
+            <button onclick="ColumnLeft();">&#x25c1;</button>
+            <button onclick="ColumnRight();">&#x25b7;</button>
+        </p><p>
+            <p><span id="col_status"/>
+        </p>
+    </div>
+
+    <div class="in2 w2 float">
+        <h3> Display </h3>
+        <p>
+            <table>
+                <tr><td>Columns:</td><td> <input type="text" id="col_text" size="6"> </td></tr>
+                <tr><td>Rows:</td><td> <input type="text" id="row_text" size="6"> <button onclick="UpdateSize();"> &#x25b7; </button> </td></tr>
+                <tr><td>Pieces:</td><td> <input type="text" id="row_data" size="20" maxlength="64" value="1,2,3"/> </tr>
+                <tr><td>Temperature:</td><td> <input type="text" id="temperature_text" size="6"> <button onclick="UpdateTemperature();">&#x25b7;</button></tr>
+                <tr><td>Speed:</td><td> <input type="text" id="speed_text" size="6"> <button onclick="UpdateSpeed();">&#x25b7;</button></tr>
+                <tr><td>Stop when solved:</td><td> <input type="checkbox" id="stop_on_solution"> </tr>
+
+                <tr><td>Example:</td>
+                   <td>
+                       <select id="examples" onchange="ShowExample();">
+                            <option value="choose" hidden>Choose...</option>
+                       </select>
+                   </td></tr>
+                <tr><td>Draw:</td>
+                    <td>
+                    <select id="draw_mode" onchange="SelectView();">
+                        <option value="draw_rc">Rows and Columns</option>
+                        <option value="draw_match">Matching cells</option>
+                        <option value="draw_heat">Combined heat</option>
+                        <option value="draw_rows">Rows only</option>
+                        <option value="draw_cols">Columns only</option>
+                    </select>
+                </td></tr>
+
+            </table>
+        </p><p>
+            <p><span id="grid_status"/>
+        </p>
+    </div>
+
+    <div class="in2 w7 float">
+        <h3> Display </h3>
+        <p>
+            <button onclick="StartAnimation();"> Shuffle </button>
+            <button onclick="StopAnimation();"> Stop </button>
+            <button onclick="Randomise();"> Randomise </button>
+            <button onclick="SingleStep();"> Single Step </button>
+            <span id="example_text"> &nbsp; </span>
+
+        </p><p>
+            <img id="canvasImg" class="noborder" width="800" height="800">
+        </p><p>
+            <span id="debug_text"> &nbsp; </span>
+        </p>
+
+    </div>
+
+<!-- medium solution -->
+
+    <div class="in2 w7 float">
+        <h3> Solution </h3>
+        <p>
+            <img src="medium.png" class="noborder" alt="medium solution" title="Medium Solution">
+        </p>
+    </div>
+
+
+
+     <!-- End of normal mode -->
+
+    <div class="endfloat"></div>
+</div>
+<!-- Generic links -->
+
+    <div class="in2 box">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2018 <p> </td>
+
+
+<script>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script>
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

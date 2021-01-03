@@ -1,0 +1,198 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="JW Cellular Automaton JAVA AppletEvolving Patterns Mathematics">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<title>Cellular Automaton Index</title>
+
+<script>
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+    }
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Cellular Automata Index Page</h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+
+<!-- Main content -->
+
+<div class="float w10" style="overflow: auto;">
+    <div class="in2 box w9">
+
+    <h1> Introduction </h1>
+      <p>
+          This page is the gateway to the various cellular automata I have written over the years.
+      <p>
+          Recently I have rewritten them all using javascript and the canvas element, the older versions written in Java and Python have been removed.
+          Click on one of the panels below to view the corresponding Automatom. All of them are interactive, you can change
+          the pattern parameters to explore the possibilities.
+
+      </p>
+    
+    <h1> Index </h1>
+      <p>
+
+   <!-- 1d - five colours -->
+
+      <button class="link" onclick="Show('fivecell.html')">
+        <div style="width:240;">
+        <p>
+            <strong>1D - Five colours</strong>
+        <p>
+            <img class="button" src="images/fivecell.png" width="200" ALT="image" title="The five colour version">
+        </p><p>
+            A five colour one dimensional automata. Here time is represented as the second dimension to create the two
+            dimensional images. The pattern evolves from top to bottom,
+            the next state of a cell depending on its current state and the states of its
+            two immediate neighbours.
+        </p>
+
+        </div>
+      </button>
+
+   <!-- 1d - six colours -->
+
+      <button class="link" onclick="Show('sixcell.html')">
+        <div style="width:240;">
+        <p>
+            <strong>1D - Six colours</strong>
+        <p>
+            <img class="button" src="images/fivecell6.png" width="200" ALT="image" title="The six colour version">
+        </p><p>
+            A six colour one dimensional automata, this is essentially the same as the five colour automaton in the previous link,
+            only with more colours.
+        </p>
+
+        </div>
+      </button>
+
+   <!-- Forest Fire -->
+
+      <button class="link" onclick="Show('forest.html')">
+        <div style="width:240;">
+        <p>
+            <strong>2D - Forest Fire</strong>
+        <p>
+            <img class="button" src="images/forest.png" width="200" ALT="image" title="Some example output">
+        <p>
+             A forest Fire simulator. This is a real 2D automaton, with the patterns changing over time.
+         <p>
+             This is really one for sitting and watching and snapshots don't do it justice, so I haven't included any.
+        </div>
+      </button>
+
+
+   <!-- Game of Life -->
+
+      <button class="link" onclick="Show('life.html')">
+        <div style="width:240;">
+        <p>
+            <strong>2D - Game of Life</strong>
+        <p>
+            <img class="button" src="images/life.png" width="200" ALT="image" title="game of life">
+        <p>
+            Conway's famous "Game of Life". The image above arises if you run the default starting configuration on the
+            "large" square grid.
+        </div>
+      </button>
+
+   <!-- 2D Five colours -->
+
+      <button class="link" onclick="Show('fivecell2d.html')">
+        <div style="width:240;">
+        <p>
+            <strong>2D - Five Colour Version</strong>
+        <p>
+            <img class="button" src="images/fivecell2d.png" width="200" ALT="image" title="2D five colour version">
+        <p>
+            A two dimensionaly analogue of the 1D version introduced earlier. Not the image is naturally
+            2D and time is represented using animation.
+        </div>
+      </button>
+
+
+   </div>
+   
+<!-- Generic links -->
+
+
+<div class="float w10" style="overflow: auto;">
+    <div class="in2 box w9">
+    
+    <h2> Other pages </h2>
+    
+      <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+      </p>
+      
+    </div>
+</div>
+
+
+<!-- Copyright -->
+
+  <div class="endfloat"/>
+
+</div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2000 - 2020 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

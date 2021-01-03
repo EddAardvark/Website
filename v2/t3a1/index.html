@@ -1,0 +1,480 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Collatz 3x+1">
+
+<TITLE> 3x+1 (Collatz Conjecture) </TITLE>
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="../js_library/big_integers.js"> </script>
+
+<script>
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+
+        number1.value = 27;
+        number2.value = 27;
+        number3.value = 27;
+        number4.value = 27;
+
+        avalues1.value = "1,1,3";
+
+        DrawSequence();
+        DrawOddSequence();
+        DrawOdd4Sequence();
+        DrawAlphaSequence();
+        DrawAlphaLoop();
+    }
+
+    Show = function (what) { window.location = what; }
+
+    DrawSequence = function ()
+    {
+        var x = parseInt (number1.value);
+
+        if (x != 0)
+        {
+            var seq = T3A1.MakeRawSequence (x);
+            result1.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+    DrawOddSequence = function ()
+    {
+        var x = parseInt (number2.value);
+
+        if (x != 0)
+        {
+            var seq = T3A1.MakeOddSequence (x);
+            result2.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+    DrawOdd4Sequence = function ()
+    {
+        var x = parseInt (number3.value);
+
+        if (x != 0)
+        {
+            var seq = T3A1.MakeOdd4Sequence (x);
+            result3.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+    DrawAlphaSequence = function ()
+    {
+        var x = parseInt (number4.value);
+
+        if (x != 0)
+        {
+            var seq = T3A1.MakeAlphaSequence (x);
+            result4.innerHTML = T3A1.SequenceToText (seq);
+        }
+    }
+
+    DrawAlphaLoop = function ()
+    {
+        var bits = avalues1.value.split(',');
+        var n = bits.length;
+        var m = 0;
+        var alist = [];
+
+        for (var i = 0 ; i < n ; ++i)
+        {
+            var x = parseInt (bits[i]);
+            if (x <= 0)
+            {
+                result_a1.innerHTML = "Invalid input \"[" + avalues1.value + "]\", all 'a' values must be positive integers";
+                return;
+            }
+            m += x;
+            alist.push(x);
+        }
+        var s0 = T3A1.AListToValue (alist);
+        var K = T3A1.GetK (m,n);;
+
+        text = "n = " + n + ", m = " + m + ", K = " + K;
+        text += ", S<span class=\"subscript\">0</span> = " + s0;
+        text += "<br>";
+
+        for (var i = 0 ; i < n ; ++i)
+        {
+            var s1 = (3 * s0 + K) / Math.pow (2, alist[i]);
+
+            text += "<br>";
+            text += "(3 &times; " + s0 + " + " + K +") &#xf7;" + " 2<span class=\"superscript\">" + alist [i] + "</span> = " + s1;
+            s0 = s1;
+        }
+
+        result_a1.innerHTML = text;
+    }
+
+
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+
+     <h1>  The 3x+1 Problem (Collatz Conjecture) </h1>
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages">
+        </p><p style="max-width: 420px;" >
+        Updated November 2017 - Started tidying up this whole section,
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w7 float">
+        <h2> Contents </h2>
+
+        <ol class="in4">
+          <li><a href="#section1">Introduction</a></li>
+          <li><a href="#section2"> Updates </a></li>
+          <li><a href="#section3">The 3x+1 equation</a></li>
+          <li><a href="#section4">a-lists </a></li>
+          <li><a href="#section5">The (x-1)/4 Modification</a></li>
+          <li><a href="#section6">Site organisation</a></li>
+        </ol>
+    </div>
+
+    <!-- Introduction -->
+
+    <div class="in2 box w7 float">
+
+        <h2 id="section1">Introduction</h2>
+
+        <p>
+            The <a href="http://en.wikipedia.org/wiki/Collatz_conjecture" target="_blank">3x+1 problem</a>
+            is one I find interesting as it is based on some rather
+            simple arithmetic but generates some very interesting questions.
+
+        <p>
+
+            The 3x+1 equation appears to connect all the positive integers into <a href="observations.html#s2"> a tree</a> rooted on the
+            cycle [4, 2, 1, 4]. No-one has been able to find any positive integers that
+            aren't in this tree, even though all numbers up to about 10<span class="superscript">16</span>
+            have been tested, or probably more by now, see the link below.
+
+        <p>
+
+            A full description of the
+            problem and the current records for various properties of the equation can be
+            found at <a href="http://www.ericr.nl/wondrous/index.html" target="_blank">http://www.ericr.nl/wondrous/index.html</a>
+            and <a href="http://www.cecm.sfu.ca/organics/papers/lagarias/" target="_blank">www.cecm.sfu.ca/organics/papers/lagarias/</a>.
+
+    </div>
+
+    <!-- Updates -->
+
+    <div class="in2 box w7 float">
+
+        <h2 id="section2">Updates</h2>
+
+        <ul>
+            <li> November 2016, made interactive. </li>
+            <li> July 2009, Some updates to the <a href="#Modification">(x-1)/4 section</a></li>
+        </ul>
+
+    </div>
+
+    <!-- Main section -->
+
+    <div class="in2 box w7 float">
+
+        <h2 id="section3">The 3x+1 equation</h2>
+
+        <p>
+
+            The 3x+1 equation maps every integer onto another different integer (no integer can be
+            mapped onto itself).
+
+        <p>
+
+            If the starting integer 'x' is even the next value is 'x' divided by 2, otherwise it is three times 'x' plus 1.
+            You can see this (implemented in javascript) in the "NextRaw" function
+            in the <a href="t3a1.js" target="_blank">code attached to this page</a>.
+
+        <p>
+            To generate the sequence based on a particular number you take the result of
+            this operation and feed it back into the equation until the result is '1'. For
+            example, if we start with 29 and keep applying this function we get the sequence
+                [29, 88, 44, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1]
+
+        <p>
+
+            Try it: <input type="text" id="number1" size="12">
+                        <button onclick="DrawSequence();"> Show </button>
+        <div class="code in2 w6">
+            <p class="code" id="result1"> &nbsp; <p>
+        </div><p>
+
+        <p>
+            Most of the subsequent discussion on these pages involves the abbreviated sequence where only the odd numbers
+            are displayed. If n<span class="subscript">1</span> and n<span class="subscript">2</span> are consecutive members of this sequence they they are
+            related by the expression:
+
+        <p>
+            n<span class="subscript">2</span> = (3 &times; n<span class="subscript">1</span> + 1) / 2<span class="superscript">a</span>.
+        <p>
+        The 'a' in this expression will reappear later when we look at creating equations that will identify
+        the locations of loops within this system.
+        <p>
+        See the "odd" sequence: <input type="text" id="number2" size="12"> <button onclick="DrawOddSequence();"> Show </button>
+        <p>
+
+        <div class="code in2 w6">
+            <p class="code" id="result2"> &nbsp; <p>
+        </div><p>
+
+        I also define <a href="#Modification">a sequence</a> based on the fact the all the immediate odd predecessors of a value are related by the sequence
+        n<span class="subscript">i+1</span> = 4 &times; n<span class="subscript">i</span> + 1. You can see what these sequences look like here:
+
+        <p>
+        <input type="text" id="number3" size="12"> <button onclick="DrawOdd4Sequence();"> Show </button>
+        <p>
+
+        <div class="code in2 w6">
+            <p class="code" id="result3"> &nbsp; <p>
+        </div><p>
+
+    </div>
+
+<!-- a-lists -->
+
+    <div class="in2 box w7 float">
+
+    <h2 id="section4"> a-lists </h2>
+
+    <p>
+        When working with the odd sequences the equation becomes:
+        n&nbsp;&rarr;&nbsp;(3n&nbsp;+&nbsp;1)&nbsp;/&nbsp;2<span class="superscript">a</span>, which
+        replaces the conditional part of the iteration with a new variable 'a'. The route taken by a number
+        as it converges on 1 can be represented by a list of 'a' values.
+    <p>
+        See an example:
+        <input type="text" id="number4" size="12"> <button onclick="DrawAlphaSequence();"> Show </button>
+    <p>
+        <div class="code in2 w6">
+            <p class="code" id="result4"> &nbsp; <p>
+        </div><p>
+
+    <p>
+        For a set of a-values,
+        [a<span class="subscript">1</span>, a<span class="subscript">2</span>, ..., a<span class="subscript">n</span>],
+        we can define two integers, 'n' and 'm'.
+
+        'n' is simply the number of terms in the list and 'm' is the sum:
+    <p>
+        m&nbsp;=&nbsp;
+        &sum;(a<span class="subscript">1</span>,&nbsp;a<span class="subscript">2</span>,&nbsp;...,&nbsp;a<span class="subscript">n</span>)
+
+    <p>
+        More interestingly, if we pick an arbitrary sequence of 'a', values we can use it to generate a loop in the more generic iteration
+    <p>
+
+        n&nbsp;&rarr;&nbsp;(3n<span class="subscript">1</span>&nbsp;+&nbsp;K)&nbsp;/&nbsp;2<span class="superscript">a</span>
+    <p>
+        where
+        K&nbsp;=&nbsp;2<span class="superscript">m</span>&minus;3<span class="superscript">n</span>.
+    <p>
+        For a set of 'n' a-values,
+        [a<span class="subscript">1</span>, a<span class="subscript">2</span>, ..., a<span class="subscript">n</span>].
+        we can calculate a seed value:
+    <p>
+        S = 3<sup>n-1</sup> + 3<sup>n-2</sup> &times; 2<sup>a1</sup> + 3<sup>n-3</sup> &times; 2<sup>a1+a2</sup> +
+                    &hellip; + 2<sup>a1+a2+...+a(n-1)</sup>
+    <p>
+        Which we can then feed into the iteration to generate a loop. Try it, enter some 'a' values:
+        <input type="text" id="avalues1" size="60"> <button onclick="DrawAlphaLoop();"> Show </button>
+    <p>
+        <div class="code in2 w6">
+            <p class="code" id="result_a1"> &nbsp; <p>
+        </div><p>
+    <p>
+        If you use the default values in the interactive element above
+        you will generate the cycle [19,&nbsp;31,&nbsp;49] in the 3x&nbsp;+&nbsp;5 system. There is
+        another cycle in this system that can be generated using the a-list [1,&nbsp;2,&nbsp;2]. In fact,
+        when m&nbsp;=&nbsp;5 and n&nbsp;=&nbsp;3 there are 6 possible a-lists (shown with the associated values).
+
+    <pre class="in2">
+    [1, 1, 3] = 19    [1, 2, 2] = 23
+    [1, 3, 1] = 31    [2, 2, 1] = 37
+    [3, 1, 1] = 49    [2, 1, 2] = 29
+    </pre>
+
+    <p>
+    Examining these you can see that the loops are generated by cycling the members of these lists, so the six lists generate
+    2 loops.
+    <p>
+    These lists are explored in detail on the <a href="a_lists.html">a-lists</a> page, where I will show that they can be used
+    to prove that a systematic search for loops in the 3x&nbsp;+&nbsp;1 system is doomed to failure.
+    <p>
+    Another interesting consequence is that if you can find a solution for
+    2<span class="superscript">m</span>&minus;3<span class="superscript">n</span>&nbsp;=&nbsp;1 you will find a loop
+    in the 3x&nbsp;+&nbsp;1 system, for instance 2<span class="superscript">2</span>&minus;3<span class="superscript">1</span>
+    gives the list [1] and the loop [1].
+    <p>
+    The calculation also works when K is negative, for instance the two examples where
+    2<span class="superscript">m</span>&minus;3<span class="superscript">n</span>&nbsp;=&nbsp;&minus;1,
+    (1,1) and (3,2) lead to loops in the negative domain, [-1] and [-5,-7]. You can generate these using the interactive
+    elements above with negative seeds,
+
+    </div>
+
+<!-- (x-1)/4 -->
+
+    <div class="in2 box w7 float">
+
+    <h2 id="section5"> Modification</h2>
+
+    <p>The image on the left (below) shows the odd-tree, described on
+    the &quot;<a href="observations.html">Observations</a>&quot; page. This is the
+    3x+1 tree after the even nodes have been collapsed.
+
+
+    <p>
+    <table>
+      <tr>
+        <td><img class="noborder" src="images/oddtree.gif" alt="picture"></td>
+        <td><img class="noborder" src="images/oddtree_4n.gif" alt="picture"></td>
+      </tr>
+    </table>
+
+
+    <p>In the diagram on the left two thirds of the odd nodes (those
+    that aren't divisible by three) have an infinite number of immediate
+    predecessors, each being one more than 4 times the previous one. All except the
+    smallest are also of the form 8n+5. So, if we modify the 3x+1 equation slightly,
+    so that numbers 'x' of the form 8n+5, map to (x-1)/4 = (2n+1) we get the tree on
+    the right.
+
+    <p>
+    This tree no longer has nodes with infinite numbers of branches, instead each node has
+    either one or two predecessors as shown in the following diagrams, which shows all odd
+    numbers within 6 iterations of 1.
+
+    <p><img class="noborder" src="images/ftree5.png" alt="picture">
+
+    <p>
+    The colour scheme has been changed. Nodes of the form 8n+5 are coloured yellow, the remainder
+    according to the value modulo 6.
+    Every node has a yellow predecessor of the form 4n+1, so even though only 25% of numbers
+    will be yellow they occupy a large percentage of any finite depth portion of the tree,
+    about 60% I estimate.
+    This tree is explored on its <a href="4nm1.html">own page</a>.
+
+    </div>
+
+    <div class="in2 box w7 float">
+
+    <h2 id="section6">organisation</h2>
+
+        <p>
+            The remainder of this site concentrates on the odd numbers. This
+            transformation can be made because every even number is a power of two times an
+            odd number. Once we encounter an even number we can keep on dividing by two
+            until we reach the
+            root odd number. We can therefore represent the infinite set [n, 2n, 4n, 8n, ...] by
+            just 'n'.
+        <p>
+            There are two main sections:
+        <p>
+            The first, called &quot;<a href="observations.html">Observations</a>&quot; discusses a number of empirical
+            observations of the system (and related ones
+            like 3x+5 and 5x+1). It includes record holders for various properties (like residues the longest sequence) and illustrations
+            of sections of the tree, such as this glide tree example.
+        <p>
+            <img class="noborder" src="images/struct1_39.png" alt="picture">
+        <p>
+            <a href="residues.html">Residues</a> also have their own page where the structure of the residue distribution is analysed.
+
+        <p>
+
+          <img class="noborder" src="images/residue_chart.gif" alt="picture">
+
+        <p>
+
+            The second part called &quot;<a href="algorithmic_loops.html">Analysis</a>&quot; explores the possibility of identifying
+            loops algorithmically by looking for solutions to particular equations.
+
+        <p>
+            There are also some Python code samples which can be used to generate the odd
+            sequences and&nbsp; the colour
+            information and vector lengths used to draw some of the diagrams found on
+            this site.
+
+    </div>
+
+<!-- Generic links -->
+
+    <div class="endfloat in2 box">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p>
+
+
+<script>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script>
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,578 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Collatz 3x+1">
+
+<TITLE> 3x+1 (Size records) </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
+<script>
+OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+            Size records
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="in2 box w7 float">
+
+    <h2>Contents</h2>
+
+    <p>
+
+    <ol class="in4">
+      <li><a href="#Introduction">Introduction</a></li>
+      <li><a href="#The first few values">The first few values</a></li>
+      <li><a href="#Larger Records">Larger Records</a></li>
+      <li><a href="#Example sequences">Example sequences</a></li>
+    </ol>
+
+    </p>
+    </div>
+
+<!-- Introduction -->
+
+    <div class="in2 box w7 float">
+
+    <h2><a name="Introduction">Introduction</a></h2>
+
+    <p>
+        The route from a seed number (N) to it's ultimate destination at
+        &quot;1&quot; will pass through a largest number, which I will call Max (N).
+
+    </p><p>
+        This page introduces the
+        successive record holders for Max (N), and also the related values: Max(N)/N and
+        log(Max(N))/log(N). We will only be dealing with odd numbers, If you were to
+        recalculate these values including the event numbers then the actual Max(N)
+        would be 3*Max(N)+1, which appears as &quot;Even Max&quot; in the table.</p>
+
+    </p><p>
+        The following table shows the values of the three terms introduced above for
+        the first few odd seeds, and highlights new records along the way.</p>
+    </p>
+    </div>
+
+<!-- The first few values -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="The first few values">The first few values</a></h2>
+
+<p>The following table shows the values of the terms introduced above for
+the first few odd seeds, and highlights new records along the way.</p>
+  <table border="1" cellpadding="4" cellspacing="4">
+    <tr>
+      <th bgcolor="#FFFFFF">N</th>
+      <th bgcolor="#FFFFFF">Max (N)</th>
+      <th bgcolor="#FFFFFF">Max(N) / N</th>
+      <th bgcolor="#FFFFFF">log (Max(N)) / log (N)</th>
+      <th bgcolor="#FFFFFF">Even Max</th>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">3</th>
+      <td bgcolor="#FFFFCC" class="code" align="right">5</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">1.6667</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">1.4650</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">16</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">5</th>
+      <td class="code" align="right">5</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">16</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">7</th>
+      <td bgcolor="#FFFFCC" class="code" align="right">17</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">2.4286</td>
+      <td class="code" align="right">1.4560</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">52</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">9</th>
+      <td class="code" align="right">17</td>
+      <td class="code" align="right">1.8889</td>
+      <td class="code" align="right">1.2894</td>
+      <td class="code" align="right">52</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">11</th>
+      <td class="code" align="right">17</td>
+      <td class="code" align="right">1.5455</td>
+      <td class="code" align="right">1.1815</td>
+      <td class="code" align="right">52</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">13</th>
+      <td class="code" align="right">13</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">40</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">15</th>
+      <td bgcolor="#FFFFCC" class="code" align="right">53</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">3.5333</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">1.4661</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">160</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">17</th>
+      <td class="code" align="right">17</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">52</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">19</th>
+      <td class="code" align="right">29</td>
+      <td class="code" align="right">1.5263</td>
+      <td class="code" align="right">1.1436</td>
+      <td class="code" align="right">88</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">21</th>
+      <td class="code" align="right">21</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">64</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">23</th>
+      <td class="code" align="right">53</td>
+      <td class="code" align="right">2.3043</td>
+      <td class="code" align="right">1.2662</td>
+      <td class="code" align="right">160</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">25</th>
+      <td class="code" align="right">29</td>
+      <td class="code" align="right">1.1600</td>
+      <td class="code" align="right">1.0461</td>
+      <td class="code" align="right">88</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">27</th>
+      <td bgcolor="#FFFFCC" class="code" align="right">3077</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">113.9630</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">2.4369</td>
+      <td bgcolor="#FFFFCC" class="code" align="right">9232</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">29</th>
+      <td class="code" align="right">29</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">88</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">31</th>
+      <td class="code" align="right">3077</td>
+      <td class="code" align="right">99.2581</td>
+      <td class="code" align="right">2.3389</td>
+      <td class="code" align="right">9232</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">33</th>
+      <td class="code" align="right">33</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">100</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">35</th>
+      <td class="code" align="right">53</td>
+      <td class="code" align="right">1.5143</td>
+      <td class="code" align="right">1.1167</td>
+      <td class="code" align="right">160</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">37</th>
+      <td class="code" align="right">37</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">1.0000</td>
+      <td class="code" align="right">112</td>
+    </tr>
+    <tr>
+      <th bgcolor="#FFFFFF">39</th>
+      <td class="code" align="right">101</td>
+      <td class="code" align="right">2.5897</td>
+      <td class="code" align="right">1.2597</td>
+      <td class="code" align="right">304</td>
+    </tr>
+  </table>
+
+      </div>
+
+<!-- Larger Records -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="Larger Records">Larger Records</a></h2>
+
+<p>The next table extends this search up to seeds of about 100,000. Some quite
+large numbers are encountered along they way: The Max(n) record is broken quite
+frequently, and the Max(N)/N record is hanging on in there, but the log&nbsp;(Max(N))&nbsp;/&nbsp;log (N)
+record set by 27 doesn't look like being broken. It looks like it might stay
+below 2, in which case Max(N) will always be less than N squared.
+
+</p><p>
+
+<table border="1" cellpadding="4" cellspacing="4">
+<tr>
+      <th bgcolor="#FFFFFF">N</th>
+      <th bgcolor="#FFFFFF">Max (N)</th>
+      <th bgcolor="#FFFFFF">Max(N) / N</th>
+      <th bgcolor="#FFFFFF">log (Max(N)) / log (N)</th>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 3 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 5 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 1.6667 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 1.4650 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 7 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 17 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 2.4286 </td>
+   <td class="code" align="right"> 1.4560 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 15 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 53 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 3.5333 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 1.4661 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 27 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 3,077 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 113.9630 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 2.4369 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 255 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 4,373 </td>
+   <td class="code" align="right"> 17.1490 </td>
+   <td class="code" align="right"> 1.5129 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 447 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 13,121 </td>
+   <td class="code" align="right"> 29.3535 </td>
+   <td class="code" align="right"> 1.5538 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 639 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 13,841 </td>
+   <td class="code" align="right"> 21.6604 </td>
+   <td class="code" align="right"> 1.4761 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 703 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 83,501 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 118.7781 </td>
+   <td class="code" align="right"> 1.7288 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 1,819 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 425,645 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 233.9995 </td>
+   <td class="code" align="right"> 1.7268 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 4,255 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 2,270,045 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 533.5006 </td>
+   <td class="code" align="right"> 1.7515 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 4,591 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 2,717,873 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 592.0002 </td>
+   <td class="code" align="right"> 1.7571 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 9,663 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 9,038,141 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 935.3349 </td>
+   <td class="code" align="right"> 1.7455 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 20,895 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 16,714,421 </td>
+   <td class="code" align="right"> 799.9244 </td>
+   <td class="code" align="right"> 1.6720 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 26,623 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 35,452,673 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 1,331.6558 </td>
+   <td class="code" align="right"> 1.7060 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 31,911 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 40,337,621 </td>
+   <td class="code" align="right"> 1,264.0663 </td>
+   <td class="code" align="right"> 1.6887 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 60,975 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 197,759,717 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 3,243.2918 </td>
+   <td class="code" align="right"> 1.7337 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 77,671 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 523,608,245 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 6,741.3609 </td>
+   <td class="code" align="right"> 1.7829 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 113,383 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 827,370,449 </td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 7,297.1296 </td>
+   <td class="code" align="right"> 1.7643 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 138,367 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 932,774,453 </td>
+   <td class="code" align="right"> 6,741.3072 </td>
+   <td class="code" align="right"> 1.7447 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 159,487 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 5,734,125,917</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 35,953.5630 </td>
+   <td class="code" align="right"> 1.8756 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 270,271 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 8,216,025,965</td>
+   <td class="code" align="right"> 30,399.2140 </td>
+   <td class="code" align="right"> 1.8253 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 665,215 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 17,494,428,437</td>
+   <td class="code" align="right"> 26,298.9085 </td>
+   <td class="code" align="right"> 1.7590 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 704,511 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 18,997,161,173</td>
+   <td class="code" align="right"> 26,965.0313 </td>
+   <td class="code" align="right"> 1.7577 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 1,042,431 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 30,079,718,549</td>
+   <td class="code" align="right"> 28,855.3569 </td>
+   <td class="code" align="right"> 1.7411 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 1,212,415 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 46,548,912,269</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 38,393.5470 </td>
+   <td class="code" align="right"> 1.7535 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 1,441,407 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 50,543,191,457</td>
+   <td class="code" align="right"> 35,065.1769 </td>
+   <td class="code" align="right"> 1.7379 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 1,875,711 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 51,968,116,565</td>
+   <td class="code" align="right"> 27,705.8228 </td>
+   <td class="code" align="right"> 1.7082 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 1,988,859 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 52,304,792,741</td>
+   <td class="code" align="right"> 26,298.8944 </td>
+   <td class="code" align="right"> 1.7017 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 2,643,183 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 63,486,606,161</td>
+   <td class="code" align="right"> 24,018.9976 </td>
+   <td class="code" align="right"> 1.6821 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 2,684,647 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 117,539,270,981</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 43,782.0209 </td>
+   <td class="code" align="right"> 1.7219 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 3,041,127 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 207,572,633,873</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 68,255.1679 </td>
+   <td class="code" align="right"> 1.7457 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 3,873,535 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 286,185,056,525</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 73,882.1404 </td>
+   <td class="code" align="right"> 1.7390 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 4,637,979 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 439,600,764,977</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 94,782.8278 </td>
+   <td class="code" align="right"> 1.7465 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 5,656,191 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 804,164,538,869</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 142,174.2192 </td>
+   <td class="code" align="right"> 1.7631 </td>
+</tr>
+
+<tr>
+   <th align="right" bgcolor="#FFFFFF"> 6,416,623 </th>
+   <td bgcolor="#FFFFCC" align="right" class="code"> 1,599,998,981,789</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 249,352.1876 </td>
+   <td class="code" align="right"> 1.7928 </td>
+</tr>
+
+<tr>
+   <th bgcolor="#FFFFFF" align="right"> 6,631,675 </th>
+   <td bgcolor="#FFFFCC" class="code"> 20,114,203,639,877</td>
+   <td bgcolor="#FFFFCC" class="code" align="right"> 3,033,050.2686 </td>
+   <td class="code" align="right"> 1.9502 </td>
+</tr>
+</table>
+</p>
+
+      </div>
+
+<!-- Example sequences -->
+
+    <div class="in2 box w7 float">
+
+<h2><a name="Example sequences">Example sequences</a> </h2>
+
+    <p>
+        The chart shows the (odd number) sequences generated by 6,631,675 (blue), 6,416,623
+        (pink) and 27 (red). 6,631,675 beats the previous record holder (6,416,623) by
+        a factor of 12. The chart is a log (base 10) plot.
+    </p><p>
+        <div align="center">
+            <img src="images/chart6631675.gif">
+        </div>
+    </p>
+    </div>
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p>
+          <span id="links_go_here">&nbsp;</span>
+      </p>
+
+    </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

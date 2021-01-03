@@ -1,0 +1,304 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (Domains of attraction) </TITLE>
+
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
+<script>
+OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+</script>
+
+</head>
+
+
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+            Domains of attraction
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+<div class="in2 box w7 float">
+
+    <h2> Introduction </h2>
+
+    <p>
+        We've seen earlier that once we remove the even numbers the tree becomes more
+        compact. Now the root node (one) has an infinite number of immediate precursors,
+        starting with:
+    </p><p class="code">
+        1, 5, 21, 85, 341, 1365, 5461, 21845, 87381, 349525, 1398101, 5592405, 22369621, 89478485, 357913941, 1431655765,
+        5726623061, 22906492245, 91625968981, 366503875925, ...
+    </p><p>
+        This gives us the opportunity to partition the set of positive integers
+        according to which of these precursors they pass through on their way to one.
+        Most numbers appear to go through 5, with no obvious pattern to how they
+        are arranged. The following sections discus this in more detail.
+    </p><p>
+        <div class="in2">
+        <ul>
+            <li><a href="#The Distributions">The Distributions</a></li>
+            <li><a href="#Smallest Node">Smallest Node</a></li>
+            <li><a href="#Other Pages">Other Pages</a></li>
+        </ul>
+        </div>
+    </p>
+</div>
+
+<!-- The Distributions -->
+
+<div class="in2 box w7 float">
+
+    <h2><a name="The Distributions">The Distributions</a></h2>
+
+    <p>
+        For small numbers most sequences pass through 5, but how do the proportions vary as we move to higher numbers? To get a better
+        feel for this I've written some C++ code using Microsoft's C++ 7 64 bit integer
+        support, which runs quite fast even on my 800MHz PC. I divided the seeds into tranches of 2<sup>19</sup> (512288) odd numbers.
+        This first chart show the number of seeds in the first 99 tranches that converge
+        on 5. The first 5 tranches contain about 492000 values (about 93.8%) but the
+        distribution spreads out as we move to larger numbers. The lowest value observed, 472345 is 90.1%.
+    </p>
+
+        <p><img class="noborder" src="images/converge_5_chart.gif" width="639" height="238"></p>
+        <p>This next chart shows the corresponding values for 85 (dark blue) and 341 (light blue).
+        Here 20,000 represents about 3.8% of the values. </p>
+        <p><img class="noborder" src="images/converge_85_341_chart.gif" width="638" height="252"></p>
+        <p>This 3rd chart compares 5,461 (dark blue) with 21,845 (light blue). 200 is about 0.04%.</p>
+        <p><img class="noborder" src="images/converge_5461_21845_chart.gif" width="636" height="236"></p>
+        <p>These chart shows the ratio of nodes converging on 341 to those converging on
+        85. The first chart shows the ratios in the corresponding
+        tranches, the second the cumulative ratio.</p>
+        <p><img class="noborder" src="images/ratio_341_85_chart.gif" width="637" height="221"></p>
+        <p><img class="noborder" src="images/ratio_341_85_cumulative.gif" width="638" height="280"></p>
+
+</div>
+
+<!-- Smallest node -->
+
+<div class="in2 box w7 float">
+
+    <h2><a name="Smallest Node">Smallest Node</a></h2>
+
+    <p>
+        By running an exhaustive search of the first 2 million numbers I've identified the smallest member
+        of the first 11 sub-trees. We can also see how the frequency of the various
+        routes varies as the sample size increases. The red (6n+3) sub-trees have very few members are they are confined to just
+        the root multiplied by successive powers of two. What is more interesting is that the
+        6n+5 sub-trees have more members that the preceding 6n+1 sub-tree, whereas
+        statistically one would expect there to be more converging on the smaller
+        number. This might change as we include much larger numbers.
+    </p><p>
+        <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+            <th bgcolor="#FFE0C4">Sub-tree
+            </th>
+            <th bgcolor="#FFE0C4">Smallest
+            </th>
+            <th bgcolor="#FFE0C4">1-99
+            </th>
+            <th bgcolor="#FFE0C4">1-255
+            </th>
+            <th bgcolor="#FFE0C4">1-1023
+            </th>
+            <th bgcolor="#FFE0C4">1-4095
+            </th>
+            <th bgcolor="#FFE0C4">1-1048575
+            </th>
+        </tr>
+        <tr>
+            <th bgcolor="#6AF980" class="code" align="right"> 1 </th>
+            <td bgcolor="#6Af980" align="right" class="code"> 1 </td>
+            <td align="right" class="code"> 7 </td>
+            <td align="right" class="code"> 8 </td>
+            <td align="right" class="code"> 10 </td>
+            <td align="right" class="code"> 12 </td>
+            <td align="right" class="code"> 20 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#A6BADB" class="code" align="right"> 5 </th>
+            <td bgcolor="#FF91C8" align="right" class="code"> 3 </td>
+            <td align="right" class="code"> 87 </td>
+            <td align="right" class="code"> 234 </td>
+            <td align="right" class="code"> 953 </td>
+            <td align="right" class="code"> 3839 </td>
+            <td align="right" class="code"> 983,309 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#FF91C8" class="code" align="right"> 21 </th>
+            <td bgcolor="#FF91C8" align="right" class="code"> 21 </td>
+            <td align="right" class="code"> 3 </td>
+            <td align="right" class="code"> 4 </td>
+            <td align="right" class="code"> 6 </td>
+            <td align="right" class="code"> 8 </td>
+            <td align="right" class="code"> 16 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#6AF980" class="code" align="right"> 85 </th>
+            <td bgcolor="#FF91C8" align="right" class="code"> 75 </td>
+            <td align="right" class="code"> 2 </td>
+            <td align="right" class="code"> 6 </td>
+            <td align="right" class="code"> 27 </td>
+            <td align="right" class="code"> 98 </td>
+            <td align="right" class="code"> 24,830 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#A6BADB" class="code" align="right"> 341 </th>
+            <td bgcolor="#6AF980" align="right" class="code"> 151 </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> 3 </td>
+            <td align="right" class="code"> 26 </td>
+            <td align="right" class="code"> 136 </td>
+            <td align="right" class="code"> 39,768 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#FF91C8" class="code" align="right"> 1,365 </th>
+            <td bgcolor="#FF91C8" align="right" class="code"> 1,365 </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> 2 </td>
+            <td align="right" class="code"> 10 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#6AF980" class="code" align="right"> 5,461 </th>
+            <td align="right" bgcolor="#6AF980" class="code"> 5,461 </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> 104 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#A6BADB" class="code" align="right"> 21,845 </th>
+            <td align="right" bgcolor="#6AF980" class="code"> 14,563 </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> 480 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#FF91C8" class="code" align="right"> 87,381 </th>
+            <td align="right" bgcolor="#FF91C8" class="code"> 87,381 </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> 4 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#6AF980" class="code" align="right"> 349,525 </th>
+            <td align="right" bgcolor="#6AF980" class="code"> 184,111 </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> 33 </td>
+        </tr>
+        <tr>
+            <th bgcolor="#A6BADB" class="code" align="right"> 1,398,101 </th>
+            <td align="right" bgcolor="#FF91C8" class="code"> 932,067 </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> &nbsp; </td>
+            <td align="right" class="code"> 1 </td>
+        </tr>
+        </table>
+    </p>
+
+</div>
+
+<!-- Other pages -->
+
+<div class="in2 box w7 float">
+
+    <h2><a name="Other Pages">Other Pages</a></h2>
+    <p>
+        <table border="2" cellpadding="4" cellspacing="0" width="500">
+            <tr>
+                <td><a href="residues.html"><img src="images/icon.gif" width="97" height="97"></a></td>
+                <td class="linkP"><b>Residues:</b> These are defined as 2<sup>even</sup>/(X
+                        * 3<sup>odd</sup>). Their distribution is quite interesting, and is
+                        related to these domains of attraction.</td>
+            </tr>
+        </table>
+    </p>
+
+</div>
+
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

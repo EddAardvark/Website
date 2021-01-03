@@ -1,0 +1,1580 @@
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Collatz 3x+1">
+<TITLE> 3x+1 (Rational Approximations to ln(3)/ln(2)) </TITLE>
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="../js_library/big_integers.js"> </script>
+<script type="text/javascript" src="t3a1.js"> </script>
+<script type="text/javascript" src="log3over2.js"> </script>
+
+<style>
+TABLE       { border: 1px solid DarkSlateGray; border-collapse: collapse;}
+TH, TD      { border: 1px solid DarkSlateGray; }
+DIV.breakable { word-wrap: break-word; }
+</style>
+
+<script>
+    OnStart = function ()
+    {
+        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+
+        log32_a.value = 2;
+        log32_b.value = 1;
+        log32_limit.value = 10;
+
+        FindApproximations ();
+    }
+
+    //-------------------------------------------------------------
+    FindApproximations = function ()
+    {
+        var a = parseInt (log32_a.value);
+        var b = parseInt (log32_b.value);
+        var l = parseInt (log32_limit.value);
+
+        var sequence = Log3Over2.FindFactors (a,b,l);
+
+        var best = Math.abs (Log3Over2.LOG_3_O_2 - (b / a));
+        var list = [[b,a]];
+
+        for (var i in sequence)
+        {
+            var row = sequence [i];
+            var b1 = Math.abs (Log3Over2.LOG_3_O_2 - row[0] / row[1]);
+            var b2 = Math.abs (Log3Over2.LOG_3_O_2 - row[3] / row[2]);
+
+            if (b1 < b2)
+            {
+                if (b1 < best)
+                {
+                    best = b1;
+                    list.push ([row[0],row[1]]);
+                }
+            }
+            else if (b2 < best)
+            {
+                best = b2;
+                list.push ([row[3],row[2]]);
+            }
+        }
+
+        text = '<table><tr><th>Iteration</th>';
+        text += '<th>M</th>';
+        text += '<th>N</th>';
+        text += '<th>M/N</th>';
+        text += '<th>M/N - log(3)/log(2)</th></tr>';
+
+        for (var i in list)
+        {
+            var row = list [i];
+
+            text += "<tr><td>" + i + "</td>";
+            text += "<td>" + row[0] + "</td>";
+            text += "<td>" + row[1] + "</td>";
+            text += "<td>" + (row[0] / row[1]).toFixed(8) + "</td>";
+            text += "<td>" + (Log3Over2.LOG_3_O_2 - row[0] / row[1]).toFixed(8) + "</td>";
+            text += "</tr>";
+        }
+
+        text += '</table>';
+
+        log32_result.innerHTML = text;
+    }
+
+</script>
+</head>
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages">
+        </p><p style="max-width: 420px;" >
+             Rational Approximations to ln(3)&nbsp;/&nbsp;ln(2)
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+<div class="in2 box w8 float">
+
+<h2>In this section</h2>
+    <p>
+        <div class="in2">
+            <ul>
+              <li><a href="#rational_ln2">Rational Approximations to ln(2)</a></li>
+              <li><a href="#Calculating_ln32">Calculating ln(3)&nbsp;/&nbsp;ln(2)</a></li>
+              <li><a href="#Factorising_2">Factorising 2</a></li>
+              <li><a href="#ln32_revisited"> ln(3)&nbsp;/&nbsp;ln(2) revisited</a></li>
+              <li><a href="#thebest">Are these the best?</a></li>
+            </ul>
+        </div>
+    </p>
+</div>
+
+<!-- Rational Approximations to ln(2) -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="rational_ln2">Rational Approximations to ln(2)</a></h2>
+
+    <p>
+
+        The exponential logarithm &quot;ln(1+x)&quot; can be approximated by the series
+
+    </p>
+        <div class="code w5 in2">
+            <p class="code">
+                ln(1+x) = x - x<span class="superscript">2</span>/2 + x<span class="superscript">3</span>/3
+                            - x<span class="superscript">4</span>/4 ...
+            </p>
+        </div>
+    <p>
+        So to calculate ln(2) we can substitute x=1 and get the following series of approximations
+
+    </p><p>
+
+        <div class="in2">
+
+            <table border="0" cellpadding="4" cellspacing="0">
+              <tr>
+                <td>
+
+                <table class="whitebox" border="0" cellpadding="4" cellspacing="0">
+                  <tr>
+                    <td width="68">Terms </td>
+                    <td width="99">ln(2)</td>
+                    <td width="27"></td>
+                    <td width="45"></td>
+                  </tr>
+                  <tr>
+                    <td class="code" width="68">1</td>
+                    <td class="code" width="99">1/1</td>
+                    <td class="code" width="27">=</td>
+                    <td class="code" width="45">1.0</td>
+                  </tr>
+                  <tr>
+                    <td class="code" width="68">2</td>
+                    <td class="code" width="99">1/2</td>
+                    <td class="code" width="27">=</td>
+                    <td class="code" width="45">0.5</td>
+                  </tr>
+                  <tr>
+                    <td class="code" width="68">3</td>
+                    <td class="code" width="99">5/6</td>
+                    <td class="code" width="27">= ~</td>
+                    <td class="code" width="45">0.833</td>
+                  </tr>
+                  <tr>
+                    <td class="code" width="68">4</td>
+                    <td class="code" width="99">7/12</td>
+                    <td class="code" width="27">= ~</td>
+                    <td class="code" width="45">0.583</td>
+                  </tr>
+                  <tr>
+                    <td class="code" width="68">5</td>
+                    <td class="code" width="99">47/60</td>
+                    <td class="code" width="27">= ~</td>
+                    <td class="code" width="45">0.783</td>
+                  </tr>
+                  <tr>
+                    <td class="code" width="68">6</td>
+                    <td class="code" width="99">37/60</td>
+                    <td class="code" width="27">= ~</td>
+                    <td class="code" width="45">0.617</td>
+                  </tr>
+                </table>
+            </td>
+            <td>
+
+            <table class="whitebox" border="0" cellpadding="4" cellspacing="0">
+              <tr>
+                <td width="68">Terms </td>
+                <td width="99">ln(2)</td>
+                <td width="27"></td>
+                <td width="45"></td>
+              </tr>
+              <tr>
+                <td class="code" width="68">7</td>
+                <td class="code" width="99">319/420</td>
+                <td class="code" width="27">= ~</td>
+                <td class="code" width="45">0.760</td>
+              </tr>
+              <tr>
+                <td class="code" width="68">8</td>
+                <td class="code" width="99">533/840</td>
+                <td class="code" width="27">= ~</td>
+                <td class="code" width="45">0.635</td>
+              </tr>
+              <tr>
+                <td class="code" width="68">9</td>
+                <td class="code" width="99">1879/2520</td>
+                <td class="code" width="27">= ~</td>
+                <td class="code" width="45">0.746</td>
+              </tr>
+              <tr>
+                <td class="code" width="68">0</td>
+                <td class="code" width="99">1627/2520</td>
+                <td class="code" width="27">= ~</td>
+                <td class="code" width="45">0.646</td>
+              </tr>
+              <tr>
+                <td class="code" width="68">11</td>
+                <td class="code" width="99">20417/27720</td>
+                <td class="code" width="27">= ~</td>
+                <td class="code" width="45">0.737</td>
+              </tr>
+              <tr>
+                <td class="code" width="68">12</td>
+                <td class="code" width="99">18107/27720</td>
+                <td class="code" width="27">= ~</td>
+                <td class="code" width="45">0.653</td>
+              </tr>
+            </table>
+
+            </td>
+        </tr>
+        </table>
+    </div>
+
+    </p><p>
+        ln(2) is approximately 0.69314718 so this calculation looks like it could take a
+        long time to get there. Using this to calculate ln(3) is even worse, as the series diverges.
+        The series converges much faster for smaller 'x' values, so to improve the convergence rate we need
+        to find an expression involving values closer to 1.
+        We we can make substitutions like
+    </p><p>
+
+        <div class="code w5 in2">
+            <p class="code">
+                2 = (3/2) * (4/3)
+            <br>
+                &#x21d2; ln(2) = ln(3/2) + ln(4/3)
+            </p>
+        </div>
+
+    <p>
+        How this converges can be seen in the next table.</p>
+
+        <div class="in2">
+
+        <table class="whitebox" border="0" cellpadding="4" cellspacing="0">
+          <tr>
+            <td>Terms </td>
+            <td>ln(3/2)</td>
+            <td>ln(4/3)</td>
+            <td>ln(3/2) + ln(4/3)</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="code">1</td>
+            <td class="code">1/2</td>
+            <td class="code">1/3</td>
+            <td class="code">5/6</td>
+            <td class="code">= ~</td>
+            <td class="code">0.833333333333</td>
+          </tr>
+          <tr>
+            <td class="code">2</td>
+            <td class="code">3/8</td>
+            <td class="code">5/18</td>
+            <td class="code">47/72</td>
+            <td class="code">= ~</td>
+            <td class="code">0.652777777778</td>
+          </tr>
+          <tr>
+            <td class="code">3</td>
+            <td class="code">5/12 </td>
+            <td class="code">47/162</td>
+            <td class="code">229/324</td>
+            <td class="code">= ~</td>
+            <td class="code">0.706790123457</td>
+          </tr>
+          <tr>
+            <td class="code">4</td>
+            <td class="code">77/192</td>
+            <td class="code">31/108</td>
+            <td class="code">1189/1728</td>
+            <td class="code">= ~</td>
+            <td class="code">0.688078703704</td>
+          </tr>
+          <tr>
+            <td class="code">5</td>
+            <td class="code">391/960</td>
+            <td class="code">1399/4860</td>
+            <td class="code">10811/15552</td>
+            <td class="code">= ~</td>
+            <td class="code">0.695151748971</td>
+          </tr>
+          <tr>
+            <td class="code">6</td>
+            <td class="code">259/640</td>
+            <td class="code">12581/43740</td>
+            <td class="code">193805/279936</td>
+            <td class="code">= ~</td>
+            <td class="code">0.692318958619</td>
+          </tr>
+          <tr>
+            <td class="code">7</td>
+            <td class="code">909/2240</td>
+            <td class="code">88087/306180 </td>
+            <td class="code">679475/979776</td>
+            <td class="code">= ~</td>
+            <td class="code">0.693500351101</td>
+          </tr>
+          <tr>
+            <td class="code">8</td>
+            <td class="code">29053/71680 </td>
+            <td class="code">528487/1837080L </td>
+            <td class="code">65181881/94058496</td>
+            <td class="code">= ~</td>
+            <td class="code">0.692993017877</td>
+          </tr>
+          <tr>
+            <td class="code">9</td>
+            <td class="code">261617/645120 </td>
+            <td class="code">14269429/49601160 </td>
+            <td class="code">1760476247/2539579392</td>
+            <td class="code">= ~</td>
+            <td class="code">0.693215676795</td>
+          </tr>
+          <tr>
+            <td class="code">10</td>
+            <td class="code">130777/322560 </td>
+            <td class="code">2853869/9920232 </td>
+            <td class="code">4400559851/6348948480</td>
+            <td class="code">= ~</td>
+            <td class="code">0.693116327036</td>
+          </tr>
+        </table>
+        </div>
+
+    </p><p>
+
+        This is significantly better as it has achieved 4 decimal places after 10
+        terms, the previous equation barely achieved 1. We can derive even faster
+        converging equations, by making additional substitutions like </p>
+
+    </p>
+
+    <div class="code w5 in2">
+        <p class="code">
+            &nbsp; ln(3/2) = ln(4/3) + ln(9/8)
+        <br>
+            &#x21d2; ln(2)&nbsp;&nbsp; = 2 * ln(4/3) + ln(9/8)</p>
+        </p>
+    </div>
+
+    <p>
+        This converges a bit faster than the previous series, but not spectacularly
+        so, at the expense of generating much larger integers in the rational representation.
+    </p>
+
+</div>
+
+<!-- Calculating ln(3)/ln(2) -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="Calculating_ln32">Calculating ln(3)/ln(2)</a></h2>
+
+<p>To calculate ln(3)&nbsp;/&nbsp;ln(2) we notice that</p>
+
+    <div class="code w5 in2">
+        <p class="code">
+            ln(3) = ln(3/2) + ln(2)
+        </p>
+    </div>
+
+<p>which leads to</p>
+
+    <div class="code w5 in2">
+        <p class="code">
+            ln(3)/ln(2) = 1 + ln(3/2) / ln(2)
+        </p>
+    </div>
+
+<p>This isn't very good as we still have the slowly converging log(2) to calculate. But</p>
+
+
+    <div class="code w5 in2">
+        <p class="code">
+            ln(2) = ln(3/2) + ln(4/3)
+        <br>
+            &#x21d2; ln(3)/ln(2) = 1 + ln(3/2) / (ln(3/2) + ln(4/3))</p>
+        </p>
+    </div>
+
+
+<p>Calculating this gives</p>
+
+<div class="in2">
+
+<table class="whitebox" border="1" cellpadding="4" cellspacing="0">
+  <tr>
+    <td>Terms </td>
+    <td>log(3)/log(2)</td>
+    <td>Estimate</td>
+    <td>Approx Error</td>
+  </tr>
+  <tr>
+    <td class="code">1</td>
+    <td class="code">8/5</td>
+    <td class="code"> 1.6 </td>
+    <td class="code"> 0.0150</td>
+  </tr>
+  <tr>
+    <td class="code">2</td>
+    <td class="code">74/47</td>
+    <td class="code"> 1.5744681</td>
+    <td class="code">-0.0105</td>
+  </tr>
+  <tr>
+    <td class="code">3</td>
+    <td class="code">364/229</td>
+    <td class="code"> 1.5895197</td>
+    <td class="code"> 0.0046</td>
+  </tr>
+  <tr>
+    <td class="code">4</td>
+    <td class="code">1882/1189</td>
+    <td class="code"> 1.5828427</td>
+    <td class="code">-0.0021</td>
+  </tr>
+  <tr>
+    <td class="code">5</td>
+    <td class="code">85726/54055</td>
+    <td class="code"> 1.5859032</td>
+    <td class="code"> 0.0009</td>
+  </tr>
+  <tr>
+    <td class="code">6</td>
+    <td class="code">1535458/969025 </td>
+    <td class="code"> 1.5845391</td>
+    <td class="code">-0.0004</td>
+  </tr>
+  <tr>
+    <td class="code">7</td>
+    <td class="code">5385358/3397375</td>
+    <td class="code"> 1.5851527</td>
+    <td class="code"> 0.00019</td>
+  </tr>
+  <tr>
+    <td class="code">8</td>
+    <td class="code">516526138/325909405</td>
+    <td class="code"> 1.5848764</td>
+    <td class="code">-8.606 e-005</td>
+  </tr>
+  <tr>
+    <td class="code">9</td>
+    <td class="code">13951788646/8802381235</td>
+    <td class="code"> 1.5850016</td>
+    <td class="code"> 3.913 e-005</td>
+  </tr>
+  <tr>
+    <td class="code">10</td>
+    <td class="code">6974643542/4400559851</td>
+    <td class="code"> 1.5849446</td>
+    <td class="code">-1.791 e-005</td>
+  </tr>
+</table>
+</div>
+
+<p>
+    This converges quite quickly with the error roughly halving for each extra
+    term. The expected value is about 1.58496250072116. We can though make the
+    additional substitution
+</p>
+
+    <div class="code w5 in2">
+        <p class="code">
+            ln(3/2) = ln(4/3) + ln(9/8)
+        <br>
+            &#x21d2; ln(3)/ln(2) = 2 - ln(4/3)/(2 * ln(4/3) + ln(9/8))
+        </p>
+    </div>
+
+<p>
+    Which will converge even faster as 1 &lt; 9&nbsp;/&nbsp;8 &lt; 4&nbsp;/&nbsp;3 but with the same
+    drawbacks found when calculating ln(2).
+</p>
+
+</div>
+
+<!-- Factorising_2 -->
+
+<div class="in2 box w8 float">
+
+<h2><a name="Factorising_2">Factorising 2</a></h2>
+
+    <p>
+        The above calculations depend on factorising 2 into ever smaller pieces. If this
+        factorisation follows a predictable path we can generate a series that
+        converges very quickly. The first 10 factorisations are shown in the
+        following table. The &quot;1&nbsp;/&nbsp;(x-1)&quot; gives an indication of the rate of
+        convergence, so each term in the ln(2) = 41*ln(G) + 12*ln(J) summation would
+        reduce the error by a factor of about 70 (based on G).
+    </p>
+
+        <div class="in2">
+
+        <table class="whitebox" border="1" cellpadding="4" cellspacing="0">
+          <tr>
+            <td>ID</td>
+            <td>Fraction</td>
+            <td>Alternative</td>
+            <td>x-1</td>
+            <td>1/(x-1)</td>
+            <td>Equation</td>
+          </tr>
+          <tr>
+            <td class="code">A = </td>
+            <td class="code">3/2 </td>
+            <td class="code">3/2 </td>
+            <td class="code">0.5</td>
+            <td class="code">2</td>
+            <td class="code"> &nbsp; </td>
+          </tr>
+          <tr>
+            <td class="code">B = 2/A = </td>
+            <td class="code">4/3 </td>
+            <td class="code">(2^2) / 3 </td>
+            <td class="code">0.333...</td>
+            <td class="code">3</td>
+            <td class="code">2 = A * B</td>
+          </tr>
+          <tr>
+            <td class="code">C = A/B =</td>
+            <td class="code">9/8</td>
+            <td class="code">(3^2)/(2^3)</td>
+            <td class="code">0.125</td>
+            <td class="code">8</td>
+            <td class="code">2 = C * B^2</td>
+          </tr>
+          <tr>
+            <td class="code">D = B/C</td>
+            <td class="code">32/27</td>
+            <td class="code">(2^5)/(3^3)</td>
+            <td class="code">0.185...</td>
+            <td class="code">5.4</td>
+            <td class="code">2 = C^3 * D^2</td>
+          </tr>
+          <tr>
+            <td class="code">E = D/C</td>
+            <td class="code">256/243</td>
+            <td class="code">(2^8)/(3^5)</td>
+            <td class="code">1.053...</td>
+            <td class="code">18.7</td>
+            <td class="code">2 = C^5 * E^2</td>
+          </tr>
+          <tr>
+            <td class="code">F = C/E</td>
+            <td class="code">2187/2048</td>
+            <td class="code">(3^7)/(2^11)</td>
+            <td class="code">1.067...</td>
+            <td class="code">14.7</td>
+            <td class="code">2 = E^7 * F^5</td>
+          </tr>
+          <tr>
+            <td class="code">G = F/E</td>
+            <td class="code">531441/524288</td>
+            <td class="code">(3^12)/(2^19)</td>
+            <td class="code">1.013...</td>
+            <td class="code">73.3</td>
+            <td class="code">2 = E^12 * G^5</td>
+          </tr>
+          <tr>
+            <td class="code">H = E/G</td>
+            <td class="code"> &nbsp; </td>
+            <td class="code">(2^27)/(3^17)</td>
+            <td class="code">1.039...</td>
+            <td class="code">25.4</td>
+            <td class="code">2 = G^17 * H^12</td>
+          </tr>
+          <tr>
+            <td class="code">I = H/G</td>
+            <td class="code"> &nbsp; </td>
+            <td class="code">(2^46)/(3^29)</td>
+            <td class="code">1.025...</td>
+            <td class="code">39.5</td>
+            <td class="code">2 = G^29 * I^12</td>
+          </tr>
+          <tr>
+            <td class="code">J = I/G</td>
+            <td class="code"> &nbsp; </td>
+            <td class="code">(2^65)/(3^41)</td>
+            <td class="code">1.011...</td>
+            <td class="code">86.7</td>
+            <td class="code">2 = G^41 * J^12</td>
+          </tr>
+        </table>
+        </div>
+
+
+    <p>
+        The product is is always of the form
+    </p>
+
+    <div class="code w5 in2">
+        <p class="code">
+            (2<span class="superscript">a</span>/3<span class="superscript">b</span>)<span class="superscript">c</span> *
+            (3<span class="superscript">e</span>/2<span class="superscript">f</span>)<span class="superscript">g</span> =
+            2<span class="superscript">(a*c - f*g)</span>/3<span class="superscript">(f*g - b*c)</span> = 2
+        <br>
+            &#x21d2; a*c = f*g + 1 and b*c = e*g</p>
+        </p>
+    </div>
+
+    <p>
+        If we sum the first 5 terms of ln(2) = 41*log(G) + 12*ln(J) we get 0.693147180608,
+        which compares quite well with the floating point version 0.6931471805599. Unfortunately,
+        the 2 integers involved in forming this ratio are rather large: 2.953...*10<span class="superscript">127</span>
+        and 4.261...*10<span class="superscript">127</span>.
+    </p>
+
+</div>
+
+<!-- ln(3)/ln(2) revisited -->
+
+<div class="in2 box w8 float">
+
+<h2> <a name="ln32_revisited"> ln(3)&nbsp;/&nbsp;ln(2) revisited</a></h2>
+
+    <p>
+        The methods in the previous section can give us arbitrarily accurate rational
+        approximations to ln(3)&nbsp;/&nbsp;ln(2), but only at the expense of dealing with
+        unmanageably large integers. Curiously, though as the factors (2<span class="superscript">a</span>&nbsp;/&nbsp;3<span class="superscript">b</span>) and
+        (3<span class="superscript">e</span>&nbsp;/&nbsp;2<span class="superscript">f</span>) get closer to one the ratios a&nbsp;/&nbsp;b and
+        f&nbsp;/&nbsp;e get to closer ln(3)&nbsp;/&nbsp;ln(2), and obey the relation
+
+    </p><p class="code">
+
+        a/b &gt; ln(3)/ln(2) &gt; f/e
+
+    </p><p>
+
+        We can calculate a, b, e and f using the following Python script. A javascript version can be found
+        in the associated script "<a href="log3over2.js">log3over2.js</a>".
+    </p><p>
+
+<div class="code w5 in2">
+<pre>
+def findFactors(limit):
+
+    a = 2
+    b = 1
+    e = b
+    f = a-1
+
+    for i in range (limit):
+        m = a + f
+        n = b + e
+        m2 = 2**m
+        n2 = 3**n
+
+        if m2 > n2:
+            a = m
+            b = n
+        else:
+            e = n
+            f = m
+</pre>
+</div>
+<p>
+
+    <p>
+        The next table shows the first 49 iterations of this script. The blue cells show which value has changed since the previous row.
+
+    </p><p>
+
+        <div class="in2">
+
+        <table class="whitebox" border="1" cellpadding="4" cellspacing="0">
+          <tr>
+            <td>Iteration</td>
+            <td bgcolor="#FFCCFF">(a,b) in 2<span class="superscript">a</span>&nbsp;/&nbsp;3<span class="superscript">b</span></td>
+            <td bgcolor="#FFCCFF">(e,f) in 3<span class="superscript">e</span>&nbsp;/&nbsp;2<span class="superscript">f</span></td>
+            <td bgcolor="#FFCCFF">a&nbsp;/&nbsp;b</td>
+            <td bgcolor="#FFCCFF">f&nbsp;/&nbsp;e</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">0</td>
+            <td class="code">(2, 1)</td>
+            <td class="code">(1, 1)</td>
+            <td class="code">2.0</td>
+            <td class="code">1.0</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">1</td>
+            <td class="code">(2, 1)</td>
+            <td class="code" bgcolor="#C4E0FF">(2, 3)</td>
+            <td class="code">2.0</td>
+            <td class="code" bgcolor="#C4E0FF">1.5</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">2</td>
+            <td class="code" bgcolor="#C4E0FF">(5, 3)</td>
+            <td class="code">(2, 3)</td>
+            <td class="code" bgcolor="#C4E0FF">1.66666666667 </td>
+            <td class="code">1.5</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">3</td>
+            <td class="code" bgcolor="#C4E0FF">(8, 5)</td>
+            <td class="code">(2, 3)</td>
+            <td class="code" bgcolor="#C4E0FF">1.6</td>
+            <td class="code">1.5</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">4</td>
+            <td class="code">(8, 5)</td>
+            <td class="code" bgcolor="#C4E0FF">(7, 11)</td>
+            <td class="code">1.6</td>
+            <td class="code" bgcolor="#C4E0FF">1.57142857143</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">5</td>
+            <td class="code">(8, 5)</td>
+            <td class="code" bgcolor="#C4E0FF">(12, 19)</td>
+            <td class="code">1.6</td>
+            <td class="code" bgcolor="#C4E0FF">1.58333333333</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">6</td>
+            <td class="code" bgcolor="#C4E0FF">(27, 17)</td>
+            <td class="code">(12, 19)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58823529412 </td>
+            <td class="code">1.58333333333</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">7</td>
+            <td class="code" bgcolor="#C4E0FF">(46, 29)</td>
+            <td class="code">(12, 19)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58620689655 </td>
+            <td class="code">1.58333333333</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">8</td>
+            <td class="code" bgcolor="#C4E0FF">(65, 41)</td>
+            <td class="code">(12, 19)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58536585366 </td>
+            <td class="code">1.58333333333</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">9</td>
+            <td class="code">(65, 41)</td>
+            <td class="code" bgcolor="#C4E0FF">(53, 84)</td>
+            <td class="code">1.58536585366 </td>
+            <td class="code" bgcolor="#C4E0FF">1.58490566038</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">10</td>
+            <td class="code" bgcolor="#C4E0FF">(149, 94)</td>
+            <td class="code">(53, 84)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58510638298 </td>
+            <td class="code">1.58490566038</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">11</td>
+            <td class="code" bgcolor="#C4E0FF">(233, 147)</td>
+            <td class="code">(53, 84)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58503401361</td>
+            <td class="code">1.58490566038</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">12</td>
+            <td class="code" bgcolor="#C4E0FF">(317, 200)</td>
+            <td class="code">(53, 84)</td>
+            <td class="code" bgcolor="#C4E0FF">1.585 </td>
+            <td class="code">1.58490566038</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">13</td>
+            <td class="code" bgcolor="#C4E0FF">(401, 253)</td>
+            <td class="code">(53, 84)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58498023715 </td>
+            <td class="code">1.58490566038</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">14</td>
+            <td class="code" bgcolor="#C4E0FF">(485, 306)</td>
+            <td class="code">(53, 84)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496732026 </td>
+            <td class="code">1.58490566038</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">15</td>
+            <td class="code">(485, 306)</td>
+            <td class="code" bgcolor="#C4E0FF">(359, 569)</td>
+            <td class="code">1.58496732026 </td>
+            <td class="code" bgcolor="#C4E0FF">1.58495821727</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">16</td>
+            <td class="code">(485, 306)</td>
+            <td class="code" bgcolor="#C4E0FF">(665, 1054)</td>
+            <td class="code">1.58496732026 </td>
+            <td class="code" bgcolor="#C4E0FF">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">17</td>
+            <td class="code" bgcolor="#C4E0FF">(1539, 971)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496395469 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">18</td>
+            <td class="code" bgcolor="#C4E0FF">(2593, 1636)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496332518 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">19</td>
+            <td class="code" bgcolor="#C4E0FF">(3647, 2301)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496305954 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">20</td>
+            <td class="code" bgcolor="#C4E0FF">(4701, 2966)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496291301 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">21</td>
+            <td class="code" bgcolor="#C4E0FF">(5755, 3631)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496282016 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">22</td>
+            <td class="code" bgcolor="#C4E0FF">(6809, 4296)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496275605 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">23</td>
+            <td class="code" bgcolor="#C4E0FF">(7863, 4961)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496270913 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">24</td>
+            <td class="code" bgcolor="#C4E0FF">(8917, 5626)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.5849626733 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">25</td>
+            <td class="code" bgcolor="#C4E0FF">(9971, 6291)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496264505 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">26</td>
+            <td class="code" bgcolor="#C4E0FF">(11025, 6956)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.5849626222 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">27</td>
+            <td class="code" bgcolor="#C4E0FF">(12079, 7621)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496260333</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">28</td>
+            <td class="code" bgcolor="#C4E0FF">(13133, 8286)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.5849625875 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">29</td>
+            <td class="code" bgcolor="#C4E0FF">(14187, 8951)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496257401 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">30</td>
+            <td class="code" bgcolor="#C4E0FF">(15241, 9616)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.5849625624 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">31</td>
+            <td class="code" bgcolor="#C4E0FF">(16295, 10281)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496255228</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">32</td>
+            <td class="code" bgcolor="#C4E0FF">(17349, 10946)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496254339</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">33</td>
+            <td class="code" bgcolor="#C4E0FF">(18403, 11611)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496253553</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">34</td>
+            <td class="code" bgcolor="#C4E0FF">(19457, 12276)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496252851</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">35</td>
+            <td class="code" bgcolor="#C4E0FF">(20511, 12941)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496252222</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">36</td>
+            <td class="code" bgcolor="#C4E0FF">(21565, 13606)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496251654</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">37</td>
+            <td class="code" bgcolor="#C4E0FF">(22619, 14271)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496251139</td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">38</td>
+            <td class="code" bgcolor="#C4E0FF">(23673, 14936)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.5849625067 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">39</td>
+            <td class="code" bgcolor="#C4E0FF">(24727, 15601)</td>
+            <td class="code">(665, 1054)</td>
+            <td class="code" bgcolor="#C4E0FF">1.5849625024 </td>
+            <td class="code">1.58496240602</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">40</td>
+            <td class="code">(24727, 15601)</td>
+            <td class="code" bgcolor="#C4E0FF">(16266, 25781)</td>
+            <td class="code">1.5849625024 </td>
+            <td class="code" bgcolor="#C4E0FF">1.58496249846</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">41</td>
+            <td class="code">(24727, 15601)</td>
+            <td class="code" bgcolor="#C4E0FF">(31867, 50508)</td>
+            <td class="code">1.5849625024 </td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250039</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">42</td>
+            <td class="code" bgcolor="#C4E0FF">(75235, 47468)</td>
+            <td class="code">(31867, 50508)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250105 </td>
+            <td class="code">1.58496250039</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">43</td>
+            <td class="code" bgcolor="#C4E0FF">(125743, 79335)</td>
+            <td class="code">(31867, 50508)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250079 </td>
+            <td class="code">1.58496250039</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">44</td>
+            <td class="code">(125743, 79335)</td>
+            <td class="code" bgcolor="#C4E0FF">(111202, 176251)</td>
+            <td class="code">1.58496250079 </td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250067</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">45</td>
+            <td class="code" bgcolor="#C4E0FF">(301994, 190537)</td>
+            <td class="code">(111202, 176251)</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250072 </td>
+            <td class="code">1.58496250067</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">46</td>
+            <td class="code">(301994, 190537)</td>
+            <td class="code" bgcolor="#C4E0FF">(301739, 478245)</td>
+            <td class="code">1.58496250072 </td>
+            <td class="code" bgcolor="#C4E0FF">1.5849625007</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">47</td>
+            <td class="code">(301994, 190537)</td>
+            <td class="code" bgcolor="#C4E0FF">(492276, 780239)</td>
+            <td class="code">1.58496250072 </td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250071</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">48</td>
+            <td class="code">(301994, 190537)</td>
+            <td class="code" bgcolor="#C4E0FF">(682813, 1082233)</td>
+            <td class="code">1.58496250072</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250071</td>
+          </tr>
+          <tr>
+            <td class="code" bgcolor="#FFCCFF">49</td>
+            <td class="code">(301994, 190537)</td>
+            <td class="code" bgcolor="#C4E0FF">(873350, 1384227)</td>
+            <td class="code">1.58496250072</td>
+            <td class="code" bgcolor="#C4E0FF">1.58496250072</td>
+          </tr>
+        </table>
+        </div>
+
+    <p>
+        ln(3)&nbsp;/&nbsp;ln(2) =~ 1.58496250072116, so after 49 iterations we have fractions
+        that are indistinguishable from the floating point version. The a/b values
+        converge on log(3)&nbsp;/&nbsp;log(2) from above and the f&nbsp;/&nbsp;e values from below. It is the
+        a&nbsp;/&nbsp;b values that will be useful in deriving limits to where the loops might be in 3x+1.
+    </p><p>
+        When we get a particularly good value (like f&nbsp;/&nbsp;e&nbsp;=&nbsp;1054&nbsp;/&nbsp;665) the
+        other value (a/b) takes some time to catch up, see rows 17 to 39.</p>
+    </p><p>
+        Although this appears to be an easy way to find integer approximations to
+        ln(3)&nbsp;/&nbsp;ln(2) it suffers from two drawbacks:</p>
+
+    <div class="in2">
+        <ol>
+            <li>These might be good integer approximations but we don't know if they
+                are the best (some may have been missed on the way). &quot;a&nbsp;/&nbsp;b&quot; can be
+                considered the 'best' approximation so far if there is no fraction x/y
+                (x&nbsp;&lt;&nbsp;a) that is closer to the target value. We are searching
+                for two series, one that approaches from below and one from above.</li>
+            <li>To calculate the next pair of values we have to decide whether 2<span class="superscript">(a+f)</span> is
+                greater than 3<span class="superscript">(b+e)</span>; a+f is 1686221 and b+e 1063887 and 2<span class="superscript">1686221</span> is of
+                the order of 10<span class="superscript">507603</span>. </li>
+        </ol>
+    </div>
+
+    <p>
+    You can use the following controls to explore alternative routes to log(3)/log(2).
+    "Limit" controls the number of iterations. You could theoretically reproduce the table above but you may be waiting a long time.
+    A: <input type="text" id="log32_a" size="6">
+    B: <input type="text" id="log32_b" size="6">
+    Limit: <input type="text" id="log32_limit" size="6">
+    <button onclick="FindApproximations();"> Go </button>
+
+    <div class="in2">
+        <p> <span id="log32_result"> &nbsp; </span><p>
+    </div>
+
+</div>
+
+<!-- Are these the best? -->
+
+<div class="in2 box w8 float">
+
+    <h2> <a name="thebest">Are these the best?</a></h2>
+
+    <p>
+        We seeded the Python script in the previous section with 2<span class="superscript">2</span>&nbsp;/&nbsp;3<span class="superscript">1</span>.
+        In fact any seed of the form 2<span class="superscript">a</span>&nbsp;/&nbsp;3<span class="superscript">b</span> in the range 1-2 would do.
+        The next smallest unused value is 2<span class="superscript">4</span>/3<span class="superscript">2</span> = 16&nbsp;/&nbsp;9 = 1.777...
+        This is a bit high, but let's see what happens.</p>
+
+            <div class="in2">
+
+            <table class="whitebox" border="1" cellpadding="4" cellspacing="0">
+              <tr>
+                <td>Iteration</td>
+                <td bgcolor="#FFCCFF">(a,b) in 2<span class="superscript">a</span>&nbsp;/&nbsp;3<span class="superscript">b</span></td>
+                <td bgcolor="#FFCCFF">(e,f) in 3<span class="superscript">e</span>&nbsp;/&nbsp;2<span class="superscript">f</span></td>
+                <td bgcolor="#FFCCFF">a&nbsp;/&nbsp;b</td>
+                <td bgcolor="#FFCCFF">f&nbsp;/&nbsp;e</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">0 </td>
+                <td class="code">(4, 2)</td>
+                <td class="code">(2, 3)</td>
+                <td class="code">2.0 </td>
+                <td class="code"> 1.5</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">1 </td>
+                <td class="code" bgcolor="#C4E0FF">(7, 4)</td>
+                <td class="code">(2, 3)</td>
+                <td class="code" bgcolor="#C4E0FF">1.75 </td>
+                <td class="code"> 1.5</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">2 </td>
+                <td class="code" bgcolor="#C4E0FF">(10, 6)</td>
+                <td class="code">(2, 3)</td>
+                <td class="code" bgcolor="#C4E0FF">1.66666666667 </td>
+                <td class="code"> 1.5</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">3 </td>
+                <td class="code" bgcolor="#C4E0FF">(13, 8)</td>
+                <td class="code">(2, 3)</td>
+                <td class="code" bgcolor="#C4E0FF">1.625 </td>
+                <td class="code"> 1.5</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">4 </td>
+                <td class="code" bgcolor="#C4E0FF">(16, 10)</td>
+                <td class="code">(2, 3)</td>
+                <td class="code" bgcolor="#C4E0FF">1.6 </td>
+                <td class="code"> 1.5</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">5 </td>
+                <td class="code">(16, 10)</td>
+                <td class="code" bgcolor="#C4E0FF">(12, 19)</td>
+                <td class="code">1.6 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">6 </td>
+                <td class="code" bgcolor="#C4E0FF">(35, 22)</td>
+                <td class="code">(12, 19)</td>
+                <td class="code" bgcolor="#C4E0FF">1.59090909091 </td>
+                <td class="code"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">7 </td>
+                <td class="code" bgcolor="#C4E0FF">(54, 34)</td>
+                <td class="code">(12, 19)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58823529412 </td>
+                <td class="code"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">8 </td>
+                <td class="code" bgcolor="#C4E0FF">(73, 46)</td>
+                <td class="code">(12, 19)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58695652174 </td>
+                <td class="code"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">9 </td>
+                <td class="code" bgcolor="#C4E0FF">(92, 58)</td>
+                <td class="code">(12, 19)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58620689655 </td>
+                <td class="code"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            10 </td>
+                <td class="code" bgcolor="#C4E0FF">(111, 70)</td>
+                <td class="code">(12, 19)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58571428571 </td>
+                <td class="code"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            11 </td>
+                <td class="code" bgcolor="#C4E0FF">(130, 82)</td>
+                <td class="code">(12, 19)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58536585366 </td>
+                <td class="code"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            12 </td>
+                <td class="code" bgcolor="#C4E0FF">(149, 94)</td>
+                <td class="code">(12, 19)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58510638298 </td>
+                <td class="code"> 1.58333333333</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            13 </td>
+                <td class="code">(149, 94)</td>
+                <td class="code" bgcolor="#C4E0FF">(106, 168)</td>
+                <td class="code">1.58510638298 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58490566038</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            14 </td>
+                <td class="code" bgcolor="#C4E0FF">(317, 200)</td>
+                <td class="code">(106, 168)</td>
+                <td class="code" bgcolor="#C4E0FF">1.585 </td>
+                <td class="code"> 1.58490566038</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            15 </td>
+                <td class="code" bgcolor="#C4E0FF">(485, 306)</td>
+                <td class="code">(106, 168)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496732026 </td>
+                <td class="code"> 1.58490566038</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            16 </td>
+                <td class="code">(485, 306)</td>
+                <td class="code" bgcolor="#C4E0FF">(412, 653)</td>
+                <td class="code">1.58496732026 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58495145631</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            17 </td>
+                <td class="code">(485, 306)</td>
+                <td class="code" bgcolor="#C4E0FF">(718, 1138)</td>
+                <td class="code">1.58496732026 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58495821727</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            18 </td>
+                <td class="code" bgcolor="#C4E0FF">(485, 306)</td>
+                <td class="code">(1024, 1623)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496732026 </td>
+                <td class="code"> 1.5849609375</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            19 </td>
+                <td class="code">(485, 306)</td>
+                <td class="code" bgcolor="#C4E0FF">(1330, 2108)</td>
+                <td class="code">1.58496732026 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            20 </td>
+                <td class="code" bgcolor="#C4E0FF">(2593, 1636)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496332518 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            21 </td>
+                <td class="code" bgcolor="#C4E0FF">(4701, 2966)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496291301 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            22 </td>
+                <td class="code" bgcolor="#C4E0FF">(6809, 4296)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496275605 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            23 </td>
+                <td class="code" bgcolor="#C4E0FF">(8917, 5626)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.5849626733 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            24 </td>
+                <td class="code" bgcolor="#C4E0FF">(11025, 6956)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.5849626222 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            25 </td>
+                <td class="code" bgcolor="#C4E0FF">(13133, 8286)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.5849625875 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            26 </td>
+                <td class="code" bgcolor="#C4E0FF">(15241, 9616)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.5849625624 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            27 </td>
+                <td class="code" bgcolor="#C4E0FF">(17349, 10946)</td>
+                <td class="code">(1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496254339 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            28 </td>
+                <td class="code" bgcolor="#C4E0FF">(19457, 12276)</td>
+                <td class="code"> (1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496252851 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            29 </td>
+                <td class="code" bgcolor="#C4E0FF">(21565, 13606)</td>
+                <td class="code"> (1330, 2108)</td>
+                <td class="code" bgcolor="#C4E0FF">1.58496251654 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+
+
+            30 </td>
+                <td class="code" bgcolor="#C4E0FF"> (23673, 14936) </td>
+                <td class="code"> (1330, 2108) </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.5849625067 </td>
+                <td class="code"> 1.58496240602</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+
+
+            31 </td>
+                <td class="code"> (23673, 14936) </td>
+                <td class="code" bgcolor="#C4E0FF"> (16266, 25781) </td>
+                <td class="code"> 1.5849625067 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496249846</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            32 </td>
+                <td class="code" bgcolor="#C4E0FF"> (49454, 31202) </td>
+                <td class="code"> (16266, 25781) </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.5849625024 </td>
+                <td class="code"> 1.58496249846</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            33 </td>
+                <td class="code" bgcolor="#C4E0FF"> (75235, 47468) </td>
+                <td class="code"> (16266, 25781) </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250105 </td>
+                <td class="code"> 1.58496249846</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            34 </td>
+                <td class="code"> (75235, 47468) </td>
+                <td class="code" bgcolor="#C4E0FF"> (63734, 101016) </td>
+                <td class="code"> 1.58496250105 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250039</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            35 </td>
+                <td class="code"> (75235, 47468) </td>
+                <td class="code" bgcolor="#C4E0FF"> (111202, 176251) </td>
+                <td class="code"> 1.58496250105 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250067</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            36 </td>
+                <td class="code" bgcolor="#C4E0FF"> (251486, 158670) </td>
+                <td class="code"> (111202, 176251) </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250079 </td>
+                <td class="code"> 1.58496250067</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            37 </td>
+                <td class="code" bgcolor="#C4E0FF"> (427737, 269872) </td>
+                <td class="code"> (111202, 176251) </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250074 </td>
+                <td class="code"> 1.58496250067</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            38 </td>
+                <td class="code" bgcolor="#C4E0FF"> (603988, 381074) </td>
+                <td class="code"> (111202, 176251) </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072 </td>
+                <td class="code"> 1.58496250067</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            39 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (492276, 780239) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250071</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            40 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (873350, 1384227) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            41 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (1254424, 1988215) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            42 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (1635498, 2592203) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            43 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (2016572, 3196191) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">
+            44 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (2397646, 3800179) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">45 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (2778720, 4404167) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">46 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (3159794, 5008155) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">47 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (3540868, 5612143) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">48 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (3921942, 6216131) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr>
+              <tr>
+                <td class="code" bgcolor="#FFCCFF">49 </td>
+                <td class="code"> (603988, 381074) </td>
+                <td class="code" bgcolor="#C4E0FF"> (4303016, 6820119) </td>
+                <td class="code"> 1.58496250072 </td>
+                <td class="code" bgcolor="#C4E0FF"> 1.58496250072</td>
+              </tr></table>
+            </div>
+
+    <p>
+        Here a+f = 7424107 and 2<span class="superscript">7424107</span> will have something like 2234878 digits. My
+        PC nearly ground to a halt calculating these.
+    </p><p>
+        None of the values generated by 16&nbsp;/&nbsp;9 are better than those for 4&nbsp;/&nbsp;3.
+        32&nbsp;/&nbsp;9, 128&nbsp;/&nbsp;81
+        and 4096&nbsp;/&nbsp;2187 didn't produce any better values either.
+    </p>
+
+</div>
+
+
+<!-- Generic links -->
+
+    <div class="in2 box endfloat">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+      </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

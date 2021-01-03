@@ -1,0 +1,238 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Javascript Maze 3D Renderer">
+<title> Javascript Maze 3D Renderer </title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="../js_library/animation.js"> </script>
+<script type="text/javascript" src="../js_library/event_parser.js"> </script>
+<script type="text/javascript" src="mazecell.js"> </script>
+<script type="text/javascript" src="player.js"> </script>
+<script type="text/javascript" src="items.js"> </script>
+<script type="text/javascript" src="special_rooms.js"> </script>
+<script type="text/javascript" src="maze.js"> </script>
+<script type="text/javascript" src="maze_construction.js"> </script>
+<script type="text/javascript" src="shaders.js"> </script>
+<script type="text/javascript" src="drawingcontext.js"> </script>
+<script type="text/javascript" src="floordata.js"> </script>
+<script type="text/javascript" src="column.js"> </script>
+<script type="text/javascript" src="bufferset.js"> </script>
+<script type="text/javascript" src="maze3d.js"> </script>
+<script type="text/javascript" src="cell3d.js"> </script>
+<script type="text/javascript" src="spells.js"> </script>
+
+<style>
+
+.floater
+{
+   margin:         3pt;
+   padding:        3pt;
+   float:          left;
+}
+
+.narrowfloater
+{
+   margin:         3pt;
+   padding:        3pt;
+   float:          left;
+   width:          40%;
+}
+
+.tight
+{
+   margin-bottom:  0pt;
+   margin-top:     0pt;
+}
+
+.fixed_width
+{
+    float:  left;
+    width:  108pt;
+}
+
+</style>
+
+<script>
+
+    var maze_drawer;
+    var maze;
+    var bSupported = false;
+
+    //------------------------------------------------------------------------------------
+    // Start
+    //------------------------------------------------------------------------------------
+    function OnStart ()
+    {
+        document.addEventListener('keydown', OnKey);
+
+        maze_drawer = new Maze3D ("drawing");
+        bSupported = maze_drawer.mode != NO_SUPPORT;
+
+        var text = "Supported: " + bSupported + ", " + maze_drawer.message;
+
+        SetElementText ("comment", text);
+
+        maze = new MultiLevelMaze ();
+        maze_drawer.ConstructPlayerLocale (maze, maze.start_pos);
+        maze_drawer.Move (0,0);
+        ShowPosition ();
+    }
+    //-------------------------------------------------------------
+    function SetElementText (element, text)
+    {
+        var e = document.getElementById(element);
+
+        if (e != null)
+        {
+            e.innerHTML = text;
+        }
+    }
+    //-------------------------------------------------------------
+    // Keyboard handler
+    //-------------------------------------------------------------
+    function OnKey (event)
+    {
+        if (maze_drawer.OnEvent (event))
+        {
+            event.preventDefault();
+            ShowPosition ();
+        }
+    }
+    //-------------------------------------------------------------
+    function ShowPosition ()
+    {
+        var maze_pos = Cell3D.ToMazeCoord (maze_drawer.xpos, maze_drawer.zpos);
+
+        var text = "Now at (" + [maze_drawer.xpos.toFixed(2), maze_drawer.zpos.toFixed(2)] + "), ";
+        text += "&theta; = " + maze_drawer.rotate + "<br>";
+        text += "Player position = (" + maze_pos + "), floor = " + maze_drawer.floor + "<br>";
+        text += "View width = " + Maze3D.ViewWidth.toFixed(1) + "<br>";
+        text += "Near cut-off = " + Maze3D.NearCutoff.toFixed(2) + "<br>";
+        text += "Far cut-off = " + Maze3D.FarCutoff.toFixed(1) + "<br>";
+        SetElementText ("position", text);
+    }
+
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart ();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Canvas 3D Maze </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+       <h2> 3D Rendition of the Javascript Maze </h2>
+
+        <!-- The display -->
+
+        <div class="floater">
+           <p> <img id="drawing" > </p>
+        </div>
+
+        <!-- Interactive section -->
+
+        <div class="narrowfloater">
+
+          <h3> Keys </h3>
+              <p class="tight"> <span class="fixed_width"> a / right </span> Rotate to the right.</p>
+              <p class="tight"> <span class="fixed_width"> d / left </span> Rotate to the left.</p>
+              <p class="tight"> <span class="fixed_width"> w / up </span> Move forward.</p>
+              <p class="tight"> <span class="fixed_width"> s / down </span> Move backwards.</p>
+              <p class="tight"> <span class="fixed_width"> e / Shift + right </span> slide right.</p>
+              <p class="tight"> <span class="fixed_width"> q / Shift + left </span> slide left.</p>
+              <p class="tight"> <span class="fixed_width"> Shift + up </span> Move up.</p>
+              <p class="tight"> <span class="fixed_width"> Shift + down </span> Move down.</p>
+              <p class="tight"> <span class="fixed_width"> t </span> Toggle texture drawing.</p>
+        </div>
+
+        <!-- Position -->
+
+        <div class="floater">
+            <h3>Position</h3>
+            <p>
+                <span id="position"> &nbsp; </span>
+            </p>
+        </div>
+
+        <!-- Explanation -->
+
+        <div class="floater">
+            <h3><a name="Explanation">Explanation</a></h3>
+            <p>
+                This page displays the <a href="maze.html">3D Javascript Maze</a>. The underlying maze
+                is the same. Here your current location is displayed as a first person perspective using the WebGL
+                canvas. In the original version it is drawn using the basic html5 canvas.
+            </p><p>
+                You can view the code by inspecting the source of this web-page.
+            </p>
+        </div>
+
+    </div>
+    
+<!-- Generic links -->
+
+    <div class="float_r w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2010 - 2020 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
