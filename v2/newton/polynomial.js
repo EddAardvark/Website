@@ -10,6 +10,14 @@ function Polynomial ()
     this.newton_top = [];
     this.newton_bottom = [];
 }
+
+// For finding roots.
+
+Polynomial.search_depth = 1000;
+Polynomial.xvals = [-1000, 1000, 0];
+Polynomial.yvals = [0, 1000, -1000];
+Polynomial.match = 1e-24;
+
 //-------------------------------------------------------------------------------------------------
 // Construct from an array of strings
 //-------------------------------------------------------------------------------------------------
@@ -186,6 +194,11 @@ Polynomial.prototype.FindRoots = function ()
             poly.MakeNewtonPolynomials ();
         
             root = poly.FindRoot ();
+            
+            if (root == null)
+            {
+                break;
+            }
             // decide if this is a single real root or a conjugate pair.
             // we do this by dividing the polynomial by the roots and comparing
             // the remainders
@@ -215,23 +228,18 @@ Polynomial.prototype.FindRoots = function ()
 //-------------------------------------------------------------------------------------------------
 Polynomial.prototype.FindRoot = function ()
 {
-    // Find a root of the polymonial
+    // Find a root of the polynomial
     
-    var xvals = [-1000, 1000, 0];
-    var yvals = [0, 1000, -1000];
-    var match = 1e-24;
-    
-    for (var xidx in xvals)
+    for (var xidx in Polynomial.xvals)
     {
-        var x = xvals [xidx];
+        var x = Polynomial.xvals [xidx];
         
-        for (var yidx in yvals)
+        for (var yidx in Polynomial.yvals)
         {
-            var y = yvals [yidx];
-        
-            z = new Complex (x,y);
+            var y = Polynomial.yvals [yidx];
+            var z = new Complex (x,y);
 
-            for (var i = 0 ; i < 1000 ; ++i)
+            for (var i = 0 ; i < Polynomial.search_depth ; ++i)
             {
                 var num = this.newton_top.GetValue (z);
                 var den = this.newton_bottom.GetValue (z);
@@ -239,16 +247,21 @@ Polynomial.prototype.FindRoot = function ()
                 
                 z = num.Divide (den);
                 
+                if (z == null) // div by 0
+                {
+                    break;
+                }
+                
                 var dif = z.Minus (zm);
 
-                if (dif.MagnitudeSquared () < match)
+                if (dif.MagnitudeSquared () < Polynomial.match)
                 {
                     return z;
                 }
                 
                 var v = this.GetValue (z);
 
-                if (v.MagnitudeSquared () < match)
+                if (v.MagnitudeSquared () < Polynomial.match)
                 {
                     return z;
                 }

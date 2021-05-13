@@ -15,7 +15,7 @@
 <script src="shaders.js"> </script>
 <script src="examples.js"> </script>
 <script src="polynomial.js"> </script>
-<script src="automation_variable.js"> </script>
+<script src="nrf_parameters.js"> </script>
 <script src="webgl_controller.js"> </script>
 
 
@@ -50,6 +50,17 @@
         padding:          2px;
 }
 
+.player
+{
+        font-size:        large;
+        font-weight:      bold;
+        margin:           0pt;
+        padding:          0pt;
+        color:            #000080;
+        width:            30pt;
+        height:           20pt;
+}
+
 .pack
 {
        margin-left:      0pt;
@@ -63,6 +74,21 @@ BUTTON.picture
     border:    0px;
     margin-right: 12px;
 }
+
+DIV.top
+{
+    border-radius: 6pt;
+    border: 1pt solid OrangeRed;
+    margin: 4pt;
+    padding: 2pt;
+}  
+TR,TD.inner
+{
+    border-radius: 6pt;
+    border: 1pt solid DarkOrange;
+    margin: 2pt;
+    padding: 4pt;
+}  
 
 </style>
 
@@ -137,398 +163,403 @@ BUTTON.picture
             My earlier Newton Raphson pages can be accessed from
                 <a href="http://www.eddaardvark.co.uk/python_patterns/newton_index.html" alt="link to old pages" title="Click to visit my earlier NR pages">here</a>.
           </p><p>
-            If you only want to solve polynomials, rather than draw pictures, visit the <a href="../../python_patterns/polynomials.html">polynomials page</a>.
+            If you only want to solve polynomials, rather than draw pictures, visit the <a href="solve.html">polynomials page</a>.
           </p>
 
         
         <h1> Interactive Section </h2>
-          <p style="font-size: x-small;">
+            <p>
             <canvas id="canvas" style="border: none;" width="640" height="480"></canvas>
-            <br><span id="status_text"> </span> &nbsp;
-                Equation: <span id="eq_text"></span>
-          </p>
-          <p id="test_text">
-          <p id="test2_text">
-          <p id="test3_text">
+            </p><p style="font-size: x-small;">
+                Equation: <span id="eq_text"></span>, <span id="status_text"> </span>
+            </p>
+            
           </p>
           <p>
             <table>
                <tr>
-               
-                <!-- Left = options -->
-                <td>
-                 <ul>
-                  <li> <button onClick="controller.ShowDiv('div_explore');"> Explore </button></li>
-                  <li> <button onClick="controller.ShowDiv('div_animate');"> Settings </button></li>
-                  <li> <button onClick="controller.ShowDiv('div_io');"> Load/Save Settings </button></li>
-                  <li> <button onClick="controller.ShowDiv('div_colouring');"> Colouring </button></li>
-                  <li> <button onClick="controller.ShowDiv('div_highres');"> High-res view </button></li>
-                  <li> <button onClick="controller.ShowDiv('div_webgl');"> WebGL </button></li>
-                  <li> <button onClick="controller.ShowDiv(null);"> Hide </button></li>
-                 </ul>
-                </td>
-
-                <!-- Right = details -->
-                <td>
-
-                    <!-- Explore: zoom pan and iterations -->
-
-                    <div class="w6" style="display:none;" id="div_explore">
-
-                        <table>
-                        
-                        <!-- Mode -->
-                        
-                         <tr>
-                          <td class="simpleborder">
-                            <button class="picture" onclick="controller.ChangeMode(ShaderManager.STANDARD);">
-                                <img src="standard.jpg" alt="Clickable picture"
-                                                        title="View will show how points on the complex plane converge on the solutions">
-                            </button>
-                            Parallel to S<span class="subscript">x</span>&nbsp;x&nbsp;S<span class="subscript">y</span>.
-                          </td>
-                          <td class="simpleborder">
-                            <button class="picture" onclick="controller.ChangeMode(ShaderManager.ALPHA);">
-                                <img src="alpha.jpg" alt="Clickable picture"
-                                                        title="View will show how varying alpha affects the root the iteration converges on">
-                            </button>
-                            Parallel to A<span class="subscript">x</span>&nbsp;x&nbsp;A<span class="subscript">y</span>.
-                           </td>
-                          </tr>
-                          
-                          
-                         <tr>
-                         
-                         <!-- Seed settings -->
-                          <td class="simpleborder">
-                           <table>
-                            <tr> <th class="noborder"> Seed (Zx,Zy) </th> </tr>
-                            <tr>
-                              <td>
-                                <table>
-                                <tr>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(-1, 1, seed_inc);"> &nwarr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(0, 1, seed_inc);"> &uarr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(1, 1, seed_inc);"> &nearr; </button> </td>
-                                </tr>
-                                <tr>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(-1, 0, seed_inc);"> &larr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.ResetSeed();"> &oplus; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(1, 0, seed_inc);"> &rarr; </button> </td>
-                                </tr>
-                                <tr>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(-1, -1, seed_inc);"> &swarr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(0, -1, seed_inc);"> &darr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(1, -1, seed_inc);"> &searr; </button> </td>
-                                </tr>
-                              </table>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="noborder">
-                                &Delta; <input type="text" size="12" value="0.1" id="seed_inc">
-                                Current: <span id="seed_value"> &nbsp; 
-                              </td>
-                            </tr>
-                           </table>
-                          </td>
-                          
-                          
-                          
-                          
-                         <!-- Alpha settings -->
-                          <td class="simpleborder">
-                           <table>
-                            <tr> <th class="noborder"> Alpha (Ax,Ay) </th> </tr>
-                            <tr>
-                              <td>
-                              
-                              <table>
-                                <tr>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(-1, 1, alpha_inc);"> &nwarr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(0, 1, alpha_inc);"> &uarr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(1, 1, alpha_inc);"> &nearr; </button> </td>
-                                </tr>
-                                <tr>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(-1, 0, alpha_inc);"> &larr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.ResetAlpha();"> &oplus; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(1, 0, alpha_inc);"> &rarr; </button> </td>
-                                </tr>
-                                <tr>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(-1, -1, alpha_inc);"> &swarr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(0, -1, alpha_inc);"> &darr; </button> </td>
-                                  <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(1, -1, alpha_inc);"> &searr; </button> </td>
-                                </tr>
-                              </table>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="noborder">
-                                &Delta; <input type="text" size="12" value="0.011" id="alpha_inc">
-                                Current: <span id="alpha_value"> &nbsp; </span>
-                              </td>
-                            </tr>
-                           </table>
-                          </td>
-                        </tr>
-                         
-                        <tr>
-                          <td class="simpleborder">
-                            <p>                  
-                             Zoom:
-                                <button onclick="controller.ZoomBy(1.1);"> + </button> &nbsp;
-                                <button onclick="controller.ZoomBy(0.9);"> - </button> &nbsp;
-                                <button onclick="controller.ResetZoom();"> 1 </button>
-                                Current: <span id="zoom_value"> &nbsp; </span>
-                            </td><td class="simpleborder">
-                             Iterations:
-                                <button onclick="controller.AdjustIterations(1.5);"> + </button> &nbsp;
-                                <button onclick="controller.AdjustIterations(1/1.5);"> - </button>
-                                Current: <span id="steps_value"> &nbsp; </span>
-                            </p>
-                          </td>
-                         </tr>
-                         
-                         <tr>
-                          <td colspan="2">
-                            '&alpha;' is the constant in the damped iteration
-                            z&nbsp;&rarr;&nbsp;z&nbsp;&minus;&nbsp;&alpha;&nbsp;&times;&nbsp;f(z)&nbsp;/&nbsp;f'(z).
-                            Setting this to (1,0) will reproduce the standard equation.
-                          </td>
-                         </tr><tr>
-                          <td colspan="2">
-                            The seed is the starting point of the iteration. In normal mode changing the seed is the same as
-                            moving the centre of the image, in alpha mode it alters the shape of the image.
-                          </td>
-                         </tr>
-                        </table>
-
-                    </div>
-                    
-                    <!-- Save or load the settings as JSON -->
-                    
-                    <div id="div_io" style="display:none;" class="float w6 popup">
-		
-                        <p>
-                            To save the current settings click the "Display" button and then cut and paste the displayed JSON into a 
-                            file. To load previously saved settings past them into this window and click "Apply".
-                        </p><p>
-                            <button onclick="controller.ShowJson(save_text);"> Display </button> &nbsp;
-                            <button onclick="controller.ApplyJson(save_text);"> Apply </button> &nbsp;
-                            Example: 
-                                <select id="newton_example" onClick="controller.SelectExample (newton_example, save_text);">
-                                    <option value="none">Choose Example </option>
-                                </select>
-                            
-                        </p><p>
-                            <textarea style="width:100%; height:400px;" id="save_text" name="text" cols="60" rows="4000"></textarea>
-                        </p>
-                        
-                    </div>
-        
-        
-
-
-                    <!-- Adjust the parameters relating to colouring -->
-
-                    <div class="w6" style="display:none;" id="div_colouring">
-                       <table>
-                          <tr>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(-1, 1);"> &nwarr; </button> </td>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(0, 1);"> &uarr; </button> </td>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(1, 1);"> &nearr; </button> </td>
-
-                             <td rowspan="4">
-                                <p> Contours:
-                                    <button onclick="controller.AdjustContours(1/1.05);"> - </button> &nbsp;
-                                    <button onclick="controller.AdjustContours(1.05);"> + </button> &nbsp;
-                                    <button onclick="controller.ResetContours();"> &oplus; </button> </p>
-
-                                <p> Tightness:
-                                    <button onclick="controller.Tighten (2);"> - </button> &nbsp;
-                                    <button onclick="controller.Tighten (0.5);"> + </button> &nbsp;
-                                    <button onclick="controller.ResetTightness();"> &oplus; </button> </p>
-
-                                <p> Increment: <input type="text" size="12" value="0.1" id="colour_inc"> </p>
-
-                                <p> Current origin: <span id="colour_origin"> &nbsp; </span>
-
-                              </td>
-                          </tr>
-
-                          <tr>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(-1, 0);"> &larr; </button> </td>
-                             <td class="pack"> <button class="arrow" onclick="controller.ResetColourOrigin();"> &oplus; </button> </td>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(1, 0);"> &rarr; </button> </td>
-                          </tr>
-                          <tr>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(-1, -1);"> &swarr; </button> </td>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(0, -1);"> &darr; </button> </td>
-                             <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(1, -1);"> &searr; </button> </td>
-                          </tr>
-                       </table>
-
-                    </div>            
-                    
-                    <!-- High res view -->
-
-                    <div class="w6" style="display:none;" id="div_highres">
-
-                     <p>
-                        <table>
-                          <tr>
-                            <td> Width: </td>
-                            <td> <input type="text" size="5" value="1024" id="input_w"> </input>
-                          </tr>
-                          <tr>
-                            <td> height: </td>
-                            <td> <input type="text" size="5" value="800" id="input_h"> </input>
-                          <tr>
-                        </table>
-
-                        <button onclick='controller.ShowHighResView(0,0);'> Show </button>
-                        <button onclick='controller.ShowHighResView(640,480);'> Default </button>
-                     </p>
-                    </div>
-
-
-                    <!-- Animation -->
-
-                    <div class="w6" style="display:none;" id="div_animate">
-                        <p>
-                            Start and Delta are used for animation, Current shows the values in the current display.
-                        </p><p>
-
-                        <table>
-                         <tr>
-                          <th> Parameter </th> <th> Start </th> <th> Delta </th> <th> Current </th> <th> Action </th>
-                         </tr>
-
-                         <tr>
-                          <td> Z<span class="superscript">9</span> </td>
-                          <td> <input type="text" size="8" value="0" id="z9_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z9_delta"> </input>
-                          <td id="z9_current"> 0.0 </td>
-                          <td> <button onclick='controller.ApplySettings();'> Apply </button> </td>
-                         </tr>
-
-                         <tr>
-                          <td> Z<span class="superscript">8</span> </td>
-                          <td> <input type="text" size="8" value="0" id="z8_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z8_delta"> </input>
-                          <td id="z8_current"> 0.0 </td>
-                          <td> <button onclick='controller.ResetSettings();'> Reset </button> </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">7</span> </td>
-                          <td> <input type="text" size="8" value="0" id="z7_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z7_delta"> </input>
-                          <td id="z7_current"> 0.0 </td>
-                          <td> <button onclick='controller.LockInSettings();'> Lock-in </button> </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">6</span> </td>
-                          <td> <input type="text" size="8" value="0" id="z6_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z6_delta"> </input>
-                          <td id="z6_current"> 0.0 </td>
-                          <td> <button onclick='controller.Next();'> Next </button> </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">5</span> </td>
-                          <td> <input type="text" size="8" value="0" id="z5_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z5_delta"> </input>
-                          <td id="z5_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">4</span> </td>
-                          <td> <input type="text" size="8" value="0" id="z4_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z4_delta"> </input>
-                          <td id="z4_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">3</span> </td>
-                          <td> <input type="text" size="8" value="1" id="z3_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z3_delta"> </input>
-                          <td id="z3_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">2</span> </td>
-                          <td> <input type="text" size="8" value="-2.55" id="z2_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z2_delta"> </input>
-                          <td id="z2_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">1</span> </td>
-                          <td> <input type="text" size="8" value="0" id="z1_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z1_delta"> </input>
-                          <td id="z1_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Z<span class="superscript">0</span> </td>
-                          <td> <input type="text" size="8" value="-1" id="z0_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="z0_delta"> </input>
-                          <td id="z0_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Alpha </td>
-                          <td> <input type="text" size="8" value="(1,0)" id="alpha_start"> </input>
-                          <td> <input type="text" size="8" value="(0,0)" id="alpha_delta"> </input>
-                          <td id="alpha_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Seed </td>
-                          <td> <input type="text" size="8" value="(1,0)" id="seed_start"> </input>
-                          <td> <input type="text" size="8" value="(0,0)" id="seed_delta"> </input>
-                          <td id="seed_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Zoom </td>
-                          <td> <input type="text" size="8" value="0.5" id="zoom_start"> </input>
-                          <td> <input type="text" size="8" value="1.01" id="zoom_factor"> </input>
-                          <td id="zoom_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Steps </td>
-                          <td> <input type="text" size="8" value="100" id="steps_start"> </input>
-                          <td> <input type="text" size="8" value="0" id="steps_inc"> </input>
-                          <td id="steps_current"> 0.0 </td>
-                         </tr>
-                         <tr>
-                          <td> Colour </td>
-                          <td> <input type="text" size="8" value="(0,0)" id="clr_start"> </input>
-                          <td> <input type="text" size="8" value="(0,0)" id="clr_inc"> </input>
-                          <td id="clr_current"> 0.0 </td>
-                         </tr>
-                        </table>
-                     </p>
-                    </div>
-
-                    <!-- WebGL settings -->
-
-                    <div class="w6" style="display:none;" id="div_webgl">
-
-                     <p>
-                        Precision:
-                        <button onclick='controller.SetPrecision ("lowp");'> Low </button> &nbsp;
-                        <button onclick='controller.SetPrecision ("mediump");'> Medium </button> &nbsp;
-                        <button onclick='controller.SetPrecision ("highp");'> High </button>
-                     </p>
-                    </div>
-                </td>
-               </tr>
-               
+                  <td>
+                    Setup: 
+                    <button onClick="controller.ShowDiv('div_explore');"> Explore </button>
+                    <button onClick="controller.ShowDiv('div_colouring');"> Colouring </button>
+                    <button onClick="controller.ShowDiv('div_animate');"> Settings </button>
+                    <button onClick="controller.ShowDiv('div_io');"> Load/Save Settings </button>
+                    <button onClick="controller.ShowDiv('div_highres');"> High-res view </button>
+                    <button onClick="controller.ShowDiv('div_webgl');"> WebGL </button>
+                    <button onClick="controller.ShowDiv(null);"> Hide </button>
+                  </td>
+               </tr><tr>   
+                  <td>
+                    Play:
+                    <button onclick='controller.RestoreStart();' class="player"> &mid;&Lt; </button>
+                    <button onclick='controller.ResumeAnimation(-10);' class="player"> &Lt; </button>
+                    <button onclick='controller.SkipFrame(-1);' class="player"> &lt; </button>
+                    <button onclick='controller.ResumeAnimation ();' class="player"> &#x25B6;</button>
+                    <button onclick='controller.StopAnimation ();' class="player"> &parallel;</button>
+                    <button onclick='controller.SkipFrame(1);' class="player"> &gt; </button>
+                    <button onclick='controller.ResumeAnimation(10);' class="player"> &Gt; </button>
+                    <button onclick='controller.RestoreEnd();' class="player"> &Gt;&mid;</button>
+                  </td>
                      
-            </table>
+                </tr>
+                </table>
+                
+        
+        </p><p>
 
-            </p><p>
-                Animation:
-                        <button onclick='controller.StartAnimation ();'> Start </button> &nbsp;
-                        <button onclick='controller.StopAnimation ();'> Stop </button> &nbsp;
-                        <button onclick='controller.ResumeAnimation ();'> Resume </button> &nbsp;
-                        Iteration <span id="show_step"> 0 </span>
-                        of
-                        <input type="text" size="5" value="100" id="max_animation"> 
-                        </p>
+            <!-- Explore: zoom pan and iterations -->
+
+            <div class="top" style="display:none;" id="div_explore">
+
+                <table>
+                
+                <!-- Mode -->
+                
+                 <tr>
+                  <td class="inner">
+                    <button class="picture" onclick="controller.ChangeMode(ShaderManager.STANDARD);">
+                        <img src="standard.jpg" alt="Clickable picture"
+                                                title="View will show how points on the complex plane converge on the solutions">
+                    </button>
+                    Parallel to S<span class="subscript">x</span>&nbsp;x&nbsp;S<span class="subscript">y</span>.
+                  </td>
+                  <td class="inner">
+                    <button class="picture" onclick="controller.ChangeMode(ShaderManager.ALPHA);">
+                        <img src="alpha.jpg" alt="Clickable picture"
+                                                title="View will show how varying alpha affects the root the iteration converges on">
+                    </button>
+                    Parallel to A<span class="subscript">x</span>&nbsp;x&nbsp;A<span class="subscript">y</span>.
+                   </td>
+                  </tr>
+                  
+                  
+                 <tr>
+                 
+                 <!-- Seed settings -->
+                  <td class="inner">
+                   <table>
+                    <tr> <th class="noborder"> Seed (Zx,Zy) </th> </tr>
+                    <tr>
+                      <td>
+                        <table>
+                        <tr>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(-1, 1, seed_inc);"> &nwarr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(0, 1, seed_inc);"> &uarr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(1, 1, seed_inc);"> &nearr; </button> </td>
+                        </tr>
+                        <tr>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(-1, 0, seed_inc);"> &larr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.ResetSeed();"> &oplus; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(1, 0, seed_inc);"> &rarr; </button> </td>
+                        </tr>
+                        <tr>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(-1, -1, seed_inc);"> &swarr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(0, -1, seed_inc);"> &darr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveSeed(1, -1, seed_inc);"> &searr; </button> </td>
+                        </tr>
+                      </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="noborder">
+                        &Delta; <input type="text" size="12" value="0.1" id="seed_inc">
+                        <br>Current: <span id="seed_value"> &nbsp; 
+                      </td>
+                    </tr>
+                   </table>
+                  </td>
+                  
+                  
+                  
+                  
+                 <!-- Alpha settings -->
+                  <td class="inner">
+                   <table>
+                    <tr> <th class="noborder"> Alpha (Ax,Ay) </th> </tr>
+                    <tr>
+                      <td>
+                      
+                      <table>
+                        <tr>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(-1, 1, alpha_inc);"> &nwarr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(0, 1, alpha_inc);"> &uarr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(1, 1, alpha_inc);"> &nearr; </button> </td>
+                        </tr>
+                        <tr>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(-1, 0, alpha_inc);"> &larr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.ResetAlpha();"> &oplus; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(1, 0, alpha_inc);"> &rarr; </button> </td>
+                        </tr>
+                        <tr>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(-1, -1, alpha_inc);"> &swarr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(0, -1, alpha_inc);"> &darr; </button> </td>
+                          <td class="pack"> <button class="arrow" onclick="controller.MoveAlpha(1, -1, alpha_inc);"> &searr; </button> </td>
+                        </tr>
+                      </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="noborder">
+                        &Delta; <input type="text" size="12" value="0.011" id="alpha_inc">
+                        <br>Current: <span id="alpha_value"> &nbsp; </span>
+                      </td>
+                    </tr>
+                   </table>
+                  </td>
+                </tr>
+                 
+                <tr>
+                  <td class="inner">
+                    <p>                  
+                     Zoom:
+                        <button onclick="controller.ZoomBy(1.1);"> + </button> &nbsp;
+                        <button onclick="controller.ZoomBy(0.9);"> - </button> &nbsp;
+                        <button onclick="controller.ResetZoom();"> &oplus; </button>
+                        <br>Current: <span id="zoom_value"> &nbsp; </span>
+                    </td><td class="inner">
+                     Iterations:
+                        <button onclick="controller.AdjustIterations(1.5);"> + </button> &nbsp;
+                        <button onclick="controller.AdjustIterations(1/1.5);"> - </button>
+                        <button onclick="controller.ResetIterations();"> &oplus; </button>
+                        <br>Current: <span id="steps_value"> &nbsp; </span>
+                    </p>
+                  </td>
+                 </tr>
+                 
+                 <tr>
+                  <td colspan="2">
+                    '&alpha;' is the constant in the damped iteration
+                    z&nbsp;&rarr;&nbsp;z&nbsp;&minus;&nbsp;&alpha;&nbsp;&times;&nbsp;f(z)&nbsp;/&nbsp;f'(z).
+                    Setting this to (1,0) will reproduce the standard equation.
+                  </td>
+                 </tr><tr>
+                  <td colspan="2">
+                    The seed is the starting point of the iteration. In normal mode changing the seed is the same as
+                    moving the centre of the image, in alpha mode it alters the shape of the image.
+                  </td>
+                 </tr>
+                </table>
+
+            </div>
+            
+            <!-- Save or load the settings as JSON -->
+            
+            <div id="div_io" style="display:none;" class="top">
+
+                <p>
+                    To save the current settings click the "Display" button and then cut and paste the displayed JSON into a 
+                    file. To load previously saved settings past them into this window and click "Apply".
+                </p><p>
+                    <button onclick="controller.ShowJson(save_text);"> Display </button> &nbsp;
+                    <button onclick="controller.ApplyJson(save_text);"> Apply </button> &nbsp;
+                    Example: 
+                        <select id="newton_example" onClick="controller.SelectExample (newton_example, save_text);">
+                            <option value="none">Choose Example </option>
+                        </select>
+                    
+                </p><p>
+                    <textarea style="width:100%; height:400px;" id="save_text" name="text" cols="60" rows="4000"></textarea>
+                </p>
+                
+            </div>
+
+
+            <!-- Adjust the parameters relating to colouring -->
+
+            <div class="top" style="display:none;" id="div_colouring">
+               <table>
+                  <tr>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(-1, 1);"> &nwarr; </button> </td>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(0, 1);"> &uarr; </button> </td>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(1, 1);"> &nearr; </button> </td>
+
+                     <td rowspan="4" class="inner">
+                        <p> Contours:
+                            <button onclick="controller.AdjustContours(1/1.05);"> - </button> &nbsp;
+                            <button onclick="controller.AdjustContours(1.05);"> + </button> &nbsp;
+                            <button onclick="controller.ResetContours();"> &oplus; </button> </p>
+
+                        <p> Tightness:
+                            <button onclick="controller.Tighten (2);"> - </button> &nbsp;
+                            <button onclick="controller.Tighten (0.5);"> + </button> &nbsp;
+                            <button onclick="controller.ResetTightness();"> &oplus; </button> </p>
+
+                        <p> Increment: <input type="text" size="12" value="0.1" id="colour_inc"> </p>
+
+                        <p> Current origin: <span id="colour_origin"> &nbsp; </span>
+
+                      </td>
+                  </tr>
+
+                  <tr>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(-1, 0);"> &larr; </button> </td>
+                     <td class="pack"> <button class="arrow" onclick="controller.ResetColourOrigin();"> &oplus; </button> </td>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(1, 0);"> &rarr; </button> </td>
+                  </tr>
+                  <tr>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(-1, -1);"> &swarr; </button> </td>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(0, -1);"> &darr; </button> </td>
+                     <td class="pack"> <button class="arrow" onclick="controller.MoveColourOrigin(1, -1);"> &searr; </button> </td>
+                  </tr>
+               </table>
+
+            </div>            
+            
+            <!-- High res view -->
+
+            <div class="top" style="display:none;" id="div_highres">
+
+             <p>
+                <table>
+                  <tr>
+                    <td> Width: </td>
+                    <td> <input type="text" size="5" value="1024" id="input_w"> </input>
+                  </tr>
+                  <tr>
+                    <td> height: </td>
+                    <td> <input type="text" size="5" value="800" id="input_h"> </input>
+                  <tr>
+                </table>
+
+                <button onclick='controller.ShowHighResView(0,0);'> Show </button>
+                <button onclick='controller.ShowHighResView(640,480);'> Default </button>
+             </p>
+            </div>
+
+
+            <!-- Animation -->
+
+            <div class="top" style="display:none;" id="div_animate">
+                <p>
+                    "Current" shows the parameters used to generate the image above. 
+                    "Start" is the set of parameters used to initialise an animation.
+                    "End" is the target point of the animation, where it will stop.
+                    The controls in the "Action" column allow you to manipulate these.
+                </p><p>
+
+                <table>
+                 <tr>
+                  <th> Parameter </th> <th> Current </th> <th> Start </th> <th> End </th> <th> Action </th>
+                 </tr>
+
+                 <tr>
+                  <td> Z<span class="superscript">9</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z9_current"> </input> </td>
+                  <td> <span id="z9_start"> &nbsp; </span> </td>
+                  <td> <span id="z9_end"> &nbsp; </span> </td>
+                  <td rowspan="10">
+                    <table>
+                     <tr><td><button onclick='controller.ApplySettings();'> Update Current </button></td></tr>
+                     <tr><td><button onclick='controller.SaveToStart();'> Current to Start </button></td></tr>
+                     <tr><td><button onclick='controller.SaveToEnd();'> Current to End </button></td></tr>
+                     <tr><td><button onclick='controller.RestoreStart();'> Start to Current </button></td></tr>
+                     <tr><td><button onclick='controller.RestoreEnd();'> End to Current </button></td></tr>
+                     <tr><td><button onclick='controller.SwapAnimationEndpoints();'> Swap start & End </button></td></tr>
+                     <tr><td>Frames: <input type="text" size="20" value="100" id="num_iterations"> </input></td></tr>
+                     <tr><td>Frame <span id="show_step"> 0 </span></td></tr>
+                    </table>
+                  </td>
+                 </tr>
+
+                 <tr>
+                  <td> Z<span class="superscript">8</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z8_current"> </input> </td>
+                  <td> <span id="z8_start"> &nbsp; </span> </td>
+                  <td> <span id="z8_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">7</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z7_current"> </input> </td>
+                  <td> <span id="z7_start"> &nbsp; </span> </td>
+                  <td> <span id="z7_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">6</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z6_current"> </input> </td>
+                  <td> <span id="z6_start"> &nbsp; </span> </td>
+                  <td> <span id="z6_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">5</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z5_current"> </input> </td>
+                  <td> <span id="z5_start"> &nbsp; </span> </td>
+                  <td> <span id="z5_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">4</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z4_current"> </input> </td>
+                  <td> <span id="z4_start"> &nbsp; </span> </td>
+                  <td> <span id="z4_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">3</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z3_current"> </input> </td>
+                  <td> <span id="z3_start"> &nbsp; </span> </td>
+                  <td> <span id="z3_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">2</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z2_current"> </input> </td>
+                  <td> <span id="z2_start"> &nbsp; </span> </td>
+                  <td> <span id="z2_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">1</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z1_current"> </input> </td>
+                  <td> <span id="z1_start"> &nbsp; </span> </td>
+                  <td> <span id="z1_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Z<span class="superscript">0</span> </td>
+                  <td> <input type="text" size="20" value="0" id="z0_current"> </input> </td>
+                  <td> <span id="z0_start"> &nbsp; </span> </td>
+                  <td> <span id="z0_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Alpha </td>
+                  <td> <input type="text" size="20" value="(1,0)" id="alpha_current"> </input>
+                  <td> <span id="alpha_start"> &nbsp; </span> </td>
+                  <td> <span id="alpha_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Seed </td>
+                  <td> <input type="text" size="20" value="(1,0)" id="seed_current"> </input>
+                  <td> <span id="seed_start"> &nbsp; </span> </td>
+                  <td> <span id="seed_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Zoom </td>
+                  <td> <input type="text" size="20" value="(1,0)" id="zoom_current"> </input>
+                  <td> <span id="zoom_start"> &nbsp; </span> </td>
+                  <td> <span id="zoom_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Steps </td>
+                  <td> <input type="text" size="20" value="100" id="steps_current"> </input>
+                  <td> <span id="steps_start"> &nbsp; </span> </td>
+                  <td> <span id="steps_end"> &nbsp; </span> </td>
+                 </tr>
+                 <tr>
+                  <td> Colour </td>
+                  <td> <input type="text" size="20" value="100" id="clr_current"> </input>
+                  <td> <span id="clr_start"> &nbsp; </span> </td>
+                  <td> <span id="clr_end"> &nbsp; </span> </td>
+                 </tr>
+                </table>
+             </p>
+            </div>
+
+            <!-- WebGL settings -->
+
+            <div class="top" style="display:none;" id="div_webgl">
+
+             <p>
+                Precision:
+                <button onclick='controller.SetPrecision ("lowp");'> Low </button> &nbsp;
+                <button onclick='controller.SetPrecision ("mediump");'> Medium </button> &nbsp;
+                <button onclick='controller.SetPrecision ("highp");'> High </button>
+             </p>
+            </div>
        </div>
        
        <!-- Instructions -->
@@ -541,17 +572,55 @@ BUTTON.picture
                 I haven't written these yet. For now, operating this control is similar to the
                 <a href="../mandelbrot/webgl.html">WebGL Mandelbrot</a>.
             </p><p>
-                For more information about the Netron Raphson fractal see
+                For more information about the Newton Raphson fractal see
                 <a href="../python_patterns/newton_index.html"> the Newton Raphson</a> page.
             </p>
        </div>
 
+       
+       <!-- Instructions -->
+       
+
+       <div class="float w75 in2 box" style="overflow: auto;">
+         <h2> Images </h2>
+
+          <p>
+            
+            <table>
+              <tr>
+               <td>
+                 <a href="newton_2_1.png" title="see full size" target="_blank"><img src="newton_2_1.png" width="128" alt="an image"></td>
+               </td><td>
+                 An image from the fractal generated by 
+                 z<span class="superscript">3</span>&minus;2.51133z<span class="superscript">2</span>&minus;1. This is just on the
+                 well-behaved side of the transition from non-convergence to convergence. This unusual colouring in the centran region
+                 is caused by the small number of iterations (100) being unable to resolve the detail.
+               </td>
+              </tr>
+              <tr>
+               <td>
+                 <a href="newton_2_1b.png" title="see full size" target="_blank"><img src="newton_2_1b.png" width="128" alt="an image"></td>
+               </td><td>
+                 Another image close to the location of the previous on, this time though the number if iterations is 10,100
+                (and I've zoomed in a bit and changed the colour scheme).
+                 A lot more of the detail is filled in but there are still unresolved areas (at the centres of the spirals).
+                 You can make out the boundary of the Julia set like region, the transition from the non-convergent region to convergent
+                 seems to be very abrupt but it is difficult to see this with a finite number of iterations. You can use the animation
+                 controls above to narrow down on this.
+                 
+               </td>
+              </tr>
+            </table>
+            
+          </p>
+            
+       </div>
 
     </div>
     
 <!-- Generic links -->
 
-    <div class="float_r w9 in2 box" style="overflow: auto;">
+    <div class="float w9 in2 box" style="overflow: auto;">
 
         <h2> Other pages </h2>
         
@@ -564,7 +633,7 @@ BUTTON.picture
 
 <div class="endfloat"/>
 
-<p class="small"> (c) John Whitehouse 2010 - 2020 <p>
+<p class="small"> (c) John Whitehouse 2010 - 2021 <p>
 
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

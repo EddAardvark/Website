@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------
 // A complex number
-// (c) John Whitehouse 2020
+// (c) John Whitehouse 2020, 2021
 // www.eddaardvark.co.uk
 //
 // None of the methods in this class alter the instance so it is safe to reuse them rather then having
@@ -33,10 +33,83 @@ Complex.FromComplex = function (c)
 }
 //--------------------------------------------------------------------------------------------
 Complex.FromString = function (str)
-{ 
+{
+    var part1 = "";
+    var part2 = "";
+    var part = 1;
     
-    return null; // to do
+    // Remove unnecessary characters
+    
+    var text = "";
+    
+    for (var i = 0; i < str.length; ++i)
+    {
+        var ch = str.charAt(i);
+        if ("0123456789+-.i".includes(ch))
+        {
+            if (part == 2)
+            {
+                part2 += ch;
+            }
+            else if (part1 == "")
+            {
+                part1 += ch;
+            }
+            else if (ch == "-")
+            {
+                part2 += ch;
+                part = 2;
+            }
+            else if (ch == "+")
+            {
+                part = 2;
+            }
+            else
+            {
+                part1 += ch;
+            }
+        }
+    }
+    // Missing or invalid components will return 0.
+    
+    var x = 0;
+    var y = 0;
+    
+    if (part1.length > 0)
+    {
+        if (part1 == "i")
+        {
+            y = 1;
+        }
+        else if (part1 [part1.length-1] == "i")
+        {
+            y = parseFloat (part1.substring (0, part1.length-1));
+        }
+        else
+        {
+            x = parseFloat (part1);
+        }
+    }
+    
+    if (part2.length > 0)
+    {
+        if (part2 == "i")
+        {
+            y = 1;
+        }
+        else if (part2 [part2.length-1] == "i")
+        {
+            y = parseFloat (part2.substring (0, part2.length-1));
+        }
+        else
+        {
+            x = parseFloat (part2);
+        }
+    }
+    
+    return new Complex (x, y);
 }
+
 //--------------------------------------------------------------------------------------------
 Complex.prototype.toString = function ()
 {
@@ -118,7 +191,14 @@ Complex.prototype.SubtractFloat = function (f)
 //--------------------------------------------------------------------------------------------
 Complex.Compare = function (first, second)
 {    
-    //to do
+    if (first.x == second.x)
+    {
+        return (second.y == first.y) ? 0 : ((second.y > first.y) ? 1 : -1);
+    }
+    else
+    {
+        return (second.x > first.x) ? 1 : -1;
+    }
 }
 //--------------------------------------------------------------------------------------------
 // Invert
@@ -162,6 +242,32 @@ Complex.prototype.Divide = function (other)
     
     return this.Multiply (other.Transpose ()).DivideFloat (div);
 }
+//--------------------------------------------------------------------------------------------
+// Interpolate:
+// Creates a value somewhere on the line joining c1 to c2, f is the interpolation factor
+// f outside the range 0-1 will extrapolate.
+//------------------------------------------------------------------------------
+Complex.Interpolate = function (c1, c2, f)
+{
+    var x = (1 - f) * c1.x + f * c2.x;
+    var y = (1 - f) * c1.y + f * c2.y;
+    
+    return new Complex (x, y);
+}
+//--------------------------------------------------------------------------------------------
+Complex.prototype.Overwrite = function (x, y)
+{
+    this.x = x;
+    this.y = y;
+}
+//--------------------------------------------------------------------------------------------
+Complex.prototype.Copy = function (c)
+{
+    this.x = c.x;
+    this.y = c.y;
+}
+
+
 Complex.prototype.Pow = function (n)
 {
     // to do
