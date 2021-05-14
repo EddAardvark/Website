@@ -432,20 +432,16 @@ WebGLController.prototype.ApplySettings = function ()
 //-------------------------------------------------------------------------------------------------
 WebGLController.prototype.SaveToStart = function ()
 {
-    this.ApplySettings();
     this.anim_start.Copy (this.current);
     this.anim_start.DisplayText (WebGLController.start_ids, this.zidx);
-    
-    show_step.innerHTML = this.animation_step;
 }
 //-------------------------------------------------------------------------------------------------
 WebGLController.prototype.SaveToEnd = function ()
 {
-    this.ApplySettings();
     this.anim_end.Copy (this.current);
     this.anim_end.DisplayText (WebGLController.end_ids, this.zidx);
-    this.animation_step = this.max_animation;
 }
+//-------------------------------------------------------------------------------------------------
 WebGLController.prototype.SwapAnimationEndpoints = function ()
 {
     var temp = this.anim_end;

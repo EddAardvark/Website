@@ -38,8 +38,8 @@ NRFParameters.Clone = function ()
     ret.z2 = this.z2;
     ret.z1 = this.z1;
     ret.z0 = this.z0;
-    ret.zoom = this.zoom;
-    ret.steps = this.steps;
+    ret.zoom = [...this.zoom];
+    ret.steps = [...this.steps];
     ret.alpha = Complex.FromComplex (this.alpha);
     ret.seed = Complex.FromComplex (this.seed);
     ret.colour = Complex.FromComplex (this.colour);    
@@ -57,8 +57,8 @@ NRFParameters.prototype.Copy = function (other)
     this.z2 = other.z2;
     this.z1 = other.z1;
     this.z0 = other.z0;
-    this.zoom = other.zoom;
-    this.steps = other.steps;
+    this.zoom = [...other.zoom];
+    this.steps = [...other.steps];
     this.alpha = Complex.FromComplex (other.alpha);
     this.seed = Complex.FromComplex (other.seed);
     this.colour = Complex.FromComplex (other.colour);    
@@ -92,6 +92,9 @@ NRFParameters.Interpolate = function (nrf1, nrf2, f)
     ret.colour = Complex.Interpolate (nrf1.colour, nrf2.colour, f);
     
     // Zoom & iterations exponential
+    
+    ret.zoom = new Array(2);
+    ret.steps = new Array(2);
     
     for (i = 0 ; i < 2 ; ++i)
     {
