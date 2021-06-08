@@ -1,0 +1,808 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<title> 4-Dimensional Mandelbrot Patterns </title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+                          
+</head>
+
+<!-- Title -->
+
+<body onload="ShowLinks()">
+
+<table>
+
+ <tr>
+  <td width="200" class="top">
+   <p> Home page
+   </p><p>
+   <a href="http://www.eddaardvark.co.uk">
+      <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+   </a>
+   </p>
+  </td>
+
+  <td class="top" width="100%">
+      <p></p>
+      <h1> 4-Dimensional Patterns </h1>
+      <p> A fusion of classic Mandelbrot patterns and Julia sets. </p>
+  </td>
+
+  <td>
+    <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-3534237235440125";
+      /* Small Square */
+      google_ad_slot = "0024655068";
+      google_ad_width = 200;
+      google_ad_height = 200;
+      //-->
+    </script>
+    <script type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </td>
+ </tr>
+</table>
+
+<div class="ad_align">
+
+<table class="layout">
+
+ <tr>
+
+<!-- Main content -->
+ 
+  <td class="left">
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+
+    <h2>Contents</h2>
+
+    <div class="margins">
+
+    <ul>
+      <li><a href="#Description">Description</a></li>
+      <li><a href="#patterns">Using the Python Source Code</a></li>
+      <li><a href="#code"> The Python Source Code </a></li>
+      <li><a href="index.html">Python Patterns Home Page</a></li>
+    </ul>
+
+    </div></div>
+
+<!-- Description -->
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+
+    <h2><a name="Description">Description</a></h2>
+
+    <div class="margins">
+
+    <p> This page shows images of the 6 2-dimensional orthogonal slices that illustrate the 4-dimensional structure of the
+    combined Mandelbrot and Julia sets for a few points. The patterns are the result
+    of a faily random walk, starting at (0,0,-1,0), the centre of the largest circle in the Mandelbrot plane.
+    Co-ordinates are of the form (zx, zy, cx, cy), (zx,zy) being the initial Z value in the iterations and
+    (cx,cy) the constant.
+    </p>
+    <p>
+    The Mandelbrot set is generated using the 'M' plane with (zx,zy) = (0,0), the julia sets by fixing
+    (cx,cy) and varying (zx,xy). See the <a href="mandj.html">main page</a> for the detailed explanation. 
+
+    </div></div>
+
+<!-- Patterns -->
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+
+    <h2><a name="patterns"> Patterns </a></h2>
+
+    <div class="margins">
+
+    <h3> (0,0,-1,0) : Magnification = 1 </h3>
+
+    <p> We start off on the Mandelbrot plane in the centre of the largest circle at (-1,0). </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a.gif" alt="example"> </td>
+      <td> <img src="4dimages/b.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c.gif" alt="example"> </td>
+      <td> <img src="4dimages/d.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m.gif" alt="example"> </td>
+      <td> <img src="4dimages/j.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M </td>
+      <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,0,-0.5,.575) : Magnification = 10 </h3>
+
+    <p> Still on the Mandelbrot plane we move up to one of the circles attached to the cardioid at (-0.5,0.575). </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a2.gif" alt="example"> </td>
+      <td> <img src="4dimages/b2.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c2.gif" alt="example"> </td>
+      <td> <img src="4dimages/d2.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m2.gif" alt="example"> </td>
+      <td> <img src="4dimages/j2.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+         <td> M </td>
+         <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,0,-0.56,.65) : Magnification = 30 </h3>
+
+    <p>
+    Still on the Mandelbrot plane we move NW toward the point where the 5 strands meet.
+    (-0.56,0.65) is outside the mandelbrot set
+    so now the Julia set (image&nbsp;J) has become disconnected.
+    </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a3.gif" alt="example"> </td>
+      <td> <img src="4dimages/b3.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c3.gif" alt="example"> </td>
+      <td> <img src="4dimages/d3.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m3.gif" alt="example"> </td>
+      <td> <img src="4dimages/j3.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M </td>
+      <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,0,-0.53,0.669) : Magnification = 200 </h3>
+
+    <p>
+    NE of the previous point is one of the mini-mandelbrots (-0.53,0.669). This takes us back inside the mandelbrot set,
+    so the Julia set becomes reconnected. You can't really appreciate that from this view as we have zoomed in too far.
+    </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a4.gif" alt="example"> </td>
+      <td> <img src="4dimages/b4.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td> <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c4.gif" alt="example"> </td>
+      <td> <img src="4dimages/d4.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> C </td><td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m4.gif" alt="example"> </td>
+      <td> <img src="4dimages/j4.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> M </td> <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,0,-0.53,0.669) : Magnification = 2 </h3>
+
+    <p> So, staying at the same point we zoom right back out. Now the structure of the Julia set can be appreciated,
+    the previous view was well inside the central black region. The structure in the other planes has also become
+    clearer too. </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a5.gif" alt="example"> </td>
+      <td> <img src="4dimages/b5.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td> <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c5.gif" alt="example"> </td>
+      <td> <img src="4dimages/d5.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> C </td> <td> D </td>
+     </tr>
+
+
+     <tr>
+      <td> <img src="4dimages/m5.gif" alt="example"> </td>
+      <td> <img src="4dimages/j5.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> M </td> <td> J </td>
+     </tr>
+
+    </table>
+
+
+    <h3> (0,-0.5,-0.325,0.669) : Magnification = 4 </h3>
+
+    <p> Now we move off the mandelbrot plane in the zy direction, taking us closer to the spiral region
+    at the top left of the B&nbsp;plane view. </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a6.gif" alt="example"> </td>
+      <td> <img src="4dimages/b6.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td> <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c6.gif" alt="example"> </td>
+      <td> <img src="4dimages/d6.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> C </td>
+       <td> D <a href="4dimages/d6x.gif">[Big]</a> &nbsp; <a href="4dimages/d6xb.gif">[Bands]</a> </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m6.gif" alt="example"> </td>
+      <td> <img src="4dimages/j6.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> M </td> <td> J </td>
+     </tr>
+
+    </table>
+    <h3> (0,-.875,-0.075,0.669) : Magnification = 8 </h3>
+
+    <p> To produce these next views we continue moving NW in the B&nbsp;plane, getting closer to
+    the spiral region at the top left of the B&nbsp;plane. </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a7.gif" alt="example"> </td>
+      <td> <img src="4dimages/b7.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B <a href="4dimages/b7x.gif">[Big]</a></td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c7.gif" alt="example"> </td>
+      <td> <img src="4dimages/d7.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D <a href="4dimages/d7x.gif">[Big]</a> </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m7.gif" alt="example"> </td>
+      <td> <img src="4dimages/j7.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M </td>
+      <td> J <a href="4dimages/j7x.gif">[Big]</a> </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,-.894,-0.056,0.669) : Magnification = 20 </h3>
+
+    <p> <a name="mag20">We're</a> moving closer to the centre of the spiral structure in the B&nbsp;plane. The Julia
+    set at this position is quite spectacular, click on the <a href="4dimages/j8x.gif">[Big]</a>
+    link for a better view. </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a8.gif" alt="example"> </td>
+      <td> <img src="4dimages/b8.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td> <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c8.gif" alt="example"> </td>
+      <td> <img src="4dimages/d8.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+
+     <tr>
+      <td> <img src="4dimages/m8.gif" alt="example"> </td>
+      <td> <img src="4dimages/j8.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M </td>
+      <td> J <a href="4dimages/j8x.gif">[Big]</a> </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,-.894,-0.056,0.669) : Magnification = 200 </h3>
+
+    <p> Staying in the same place we zoom in by a factor of 10. </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a9.gif" alt="example"> </td>
+      <td> <img src="4dimages/b9.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c9.gif" alt="example"> </td>
+      <td> <img src="4dimages/d9.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> C </td>
+       <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m9.gif" alt="example"> </td>
+      <td> <img src="4dimages/j9.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M </td> <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,-.902,-0.056,0.673) : Magnification = 1000 </h3>
+
+    <p> And by another 5, moving a bit to the SW on the B plane. </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a10.gif" alt="example"> </td>
+      <td> <img src="4dimages/b10.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c10.gif" alt="example"> </td>
+      <td> <img src="4dimages/d10.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C <a href="4dimages/c10x.gif">[Big]</a> </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m10.gif" alt="example"> </td>
+      <td> <img src="4dimages/j10.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M </td>
+      <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,-.902,-0.056,0.6716) : Magnification = 4000 </h3>
+
+    <p> We zoom into the above images by another factor of 4, aiming for the blue cluster at the
+    bottom of the M plane view. Now all the views are very similar. </p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a11.gif" alt="example"> </td>
+      <td> <img src="4dimages/b11.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c11.gif" alt="example"> </td>
+      <td> <img src="4dimages/d11.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m11.gif" alt="example"> </td>
+      <td> <img src="4dimages/j11.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M  <a href="4dimages/m11xs.gif">[Stars]</a></td>
+      <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,-.875,-0.069,0.6716) : Magnification = 200 </h3>
+
+    <p> Here we've zoomed back out by a factor of 20 and positioned ourselves inside one of the
+    gaps that cut through the solid black regions in the <a href="#mag20">magnification 20</a> view above.</p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a12.gif" alt="example"> </td>
+      <td> <img src="4dimages/b12.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c12.gif" alt="example"> </td>
+      <td> <img src="4dimages/d12.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m12.gif" alt="example"> </td>
+      <td> <img src="4dimages/j12.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> M </td>
+      <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,-.875,-0.0650,0.6707) : Magnification = 1000 </h3>
+
+    <p> Now we've zoomed back in again, aiming for the top right end of the upper black band in the
+    previous B image, where the solid black pattern starts disintegrating. The centre point is inside
+    the highly confused (unresolved) region away from the black and probably lies outside the set.
+    The corresponding Julia image (J) is too complicated to tell if it's connected or not.</p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a13.gif" alt="example"> </td>
+      <td> <img src="4dimages/b13.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B <a href="4dimages/b13x.gif">[Big]</a></td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c13.gif" alt="example"> </td>
+      <td> <img src="4dimages/d13.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m13.gif" alt="example"> </td>
+      <td> <img src="4dimages/j13.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> M </td>
+       <td> J </td>
+     </tr>
+
+    </table>
+
+    <h3> (0,-.875,-0.0650,0.6707) : Magnification = 1000 </h3>
+
+    <p> As if the previous image wasn't confusing enough we've taken a giant leap by another
+    factor of 10 to see what lies beneath. Again as we zoom in the images start becoming more similar,
+    a property I was aware of with the Julia and Mandelbrot sets, but wasn't expecting to occur in
+    the other 4 orthogonal planes.</p>
+
+    <table>
+     <tr>
+      <td> <img src="4dimages/a14.gif" alt="example"> </td>
+      <td> <img src="4dimages/b14.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> A </td>
+      <td> B </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/c14.gif" alt="example"> </td>
+      <td> <img src="4dimages/d14.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+      <td> C </td>
+      <td> D </td>
+     </tr>
+
+     <tr>
+      <td> <img src="4dimages/m14.gif" alt="example"> </td>
+      <td> <img src="4dimages/j14.gif" alt="example"> </td>
+     </tr>
+
+     <tr>
+       <td> M </td>
+       <td> J </td>
+     </tr>
+
+    </table>
+
+    </div></div>
+
+<!-- Source code -->
+
+    <div class="box">
+
+    <h2><a name="code"> The Python Source Code </a></h2>
+
+    <div class="margins">
+
+    <p>
+      The Mandelbrot source code can be downloaded here - <a href="code/Mandelbrot.py">Mandelbrot.py</a>
+      and <a href="code/MandelbrotDriver.py">MandelbrotDriver.py</a>. (Updated October 2008)
+    </p>
+
+    <p>
+      The batch file used to create the images shown on this page is shown below.
+    </p>
+
+    <pre class="code">
+    @echo off
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,0,-1,0) -fpics/a -l32
+    python MandelbrotDriver.py -tB -s320x240 -c(0,0,-1,0) -fpics/b -l32
+    python MandelbrotDriver.py -tC -s320x240 -c(0,0,-1,0) -fpics/c -l32
+    python MandelbrotDriver.py -tD -s320x240 -c(0,0,-1,0) -fpics/d -l32
+    python MandelbrotDriver.py -tM -s320x240 -c(0,0,-1,0) -fpics/m -l32
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,0,-1,0) -fpics/j -l32
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,0,-0.5,.575) -fpics/a2 -l32 -m10
+    python MandelbrotDriver.py -tB -s320x240 -c(0,0,-0.5,.575) -fpics/b2 -l32 -m10
+    python MandelbrotDriver.py -tC -s320x240 -c(0,0,-0.5,.575) -fpics/c2 -l32 -m10
+    python MandelbrotDriver.py -tD -s320x240 -c(0,0,-0.5,.575) -fpics/d2 -l32 -m10
+    python MandelbrotDriver.py -tM -s320x240 -c(0,0,-0.5,.575) -fpics/m2 -l32 -m10
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,0,-0.5,.575) -fpics/j2 -l32 -m10
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,0,-0.56,.65) -fpics/a3 -l32 -m30
+    python MandelbrotDriver.py -tB -s320x240 -c(0,0,-0.56,.65) -fpics/b3 -l32 -m30
+    python MandelbrotDriver.py -tC -s320x240 -c(0,0,-0.56,.65) -fpics/c3 -l32 -m30
+    python MandelbrotDriver.py -tD -s320x240 -c(0,0,-0.56,.65) -fpics/d3 -l32 -m30
+    python MandelbrotDriver.py -tM -s320x240 -c(0,0,-0.56,.65) -fpics/m3 -l32 -m30
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,0,-0.56,.65) -fpics/j3 -l32 -m30
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,0,-0.53,0.669) -fpics/a4 -l32 -m200
+    python MandelbrotDriver.py -tB -s320x240 -c(0,0,-0.53,0.669) -fpics/b4 -l32 -m200
+    python MandelbrotDriver.py -tC -s320x240 -c(0,0,-0.53,0.669) -fpics/c4 -l32 -m200
+    python MandelbrotDriver.py -tD -s320x240 -c(0,0,-0.53,0.669) -fpics/d4 -l32 -m200
+    python MandelbrotDriver.py -tM -s320x240 -c(0,0,-0.53,0.669) -fpics/m4 -l32 -m200
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,0,-0.53,0.669) -fpics/j4 -l32 -m200
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,0,-0.53,0.669) -fpics/a5 -l32 -m2
+    python MandelbrotDriver.py -tB -s320x240 -c(0,0,-0.53,0.669) -fpics/b5 -l32 -m2
+    python MandelbrotDriver.py -tC -s320x240 -c(0,0,-0.53,0.669) -fpics/c5 -l32 -m2
+    python MandelbrotDriver.py -tD -s320x240 -c(0,0,-0.53,0.669) -fpics/d5 -l32 -m2
+    python MandelbrotDriver.py -tM -s320x240 -c(0,0,-0.53,0.669) -fpics/m5 -l32 -m2
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,0,-0.53,0.669) -fpics/j5 -l32 -m2
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.5,-0.325,0.669) -fpics/a6 -l32 -m4
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.5,-0.325,0.669) -fpics/b6 -l32 -m4
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.5,-0.325,0.669) -fpics/c6 -l32 -m4
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.5,-0.325,0.669) -fpics/d6 -l32 -m4
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.5,-0.325,0.669) -fpics/m6 -l32 -m4
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.5,-0.325,0.669) -fpics/j6 -l32 -m4
+
+    python MandelbrotDriver.py -tD -s1280x1024 -c(0,-.5,-0.325,0.669) -fpics/d6x -l64 -m4
+    python MandelbrotDriver.py -tDB -s1280x1024 -c(0,-.5,-0.325,0.669) -fpics/d6xb -l64 -m4
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.875,-0.075,0.669) -fpics/a7 -l32 -m8
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.875,-0.075,0.669) -fpics/b7 -l32 -m8
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.875,-0.075,0.669) -fpics/c7 -l32 -m8
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.875,-0.075,0.669) -fpics/d7 -l32 -m8
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.875,-0.075,0.669) -fpics/m7 -l32 -m8
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.875,-0.075,0.669) -fpics/j7 -l32 -m8
+
+    python MandelbrotDriver.py -tJ -s1280x1024 -c(0,-.875,-0.075,0.669) -fpics/j7x -l32 -m8 -i1200
+    python MandelbrotDriver.py -tB -s1280x1024 -c(0,-.875,-0.075,0.669) -fpics/b7x -l32 -m8 -i1200
+    python MandelbrotDriver.py -tD -s1280x1024 -c(0,-.875,-0.075,0.669) -fpics/d7x -l32 -m8 -i1200
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.894,-0.056,0.669) -fpics/a8 -l32 -m20
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.894,-0.056,0.669) -fpics/b8 -l32 -m20
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.894,-0.056,0.669) -fpics/c8 -l32 -m20
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.894,-0.056,0.669) -fpics/d8 -l32 -m20
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.894,-0.056,0.669) -fpics/m8 -l32 -m20
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.894,-0.056,0.669) -fpics/j8 -l32 -m20
+
+    python MandelbrotDriver.py -tJ -s1280x1024 -c(0,-.894,-0.056,0.669) -fpics/j8x -l32 -m20 -i1200
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.894,-0.056,0.669) -fpics/a9 -l32 -m200
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.894,-0.056,0.669) -fpics/b9 -l32 -m200
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.894,-0.056,0.669) -fpics/c9 -l32 -m200
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.894,-0.056,0.669) -fpics/d9 -l32 -m200
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.894,-0.056,0.669) -fpics/m9 -l32 -m200
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.894,-0.056,0.669) -fpics/j9 -l32 -m200
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.902,-0.056,0.673) -fpics/a10 -l32 -m1000
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.902,-0.056,0.673) -fpics/b10 -l32 -m1000
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.902,-0.056,0.673) -fpics/c10 -l32 -m1000
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.902,-0.056,0.673) -fpics/d10 -l32 -m1000
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.902,-0.056,0.673) -fpics/m10 -l32 -m1000
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.902,-0.056,0.673) -fpics/j10 -l32 -m1000
+
+    python MandelbrotDriver.py -tC -s1280x1024 -c(0,-.902,-0.056,0.673) -fpics/c10x -l32 -m1000 -i2400
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.902,-0.056,0.6716) -fpics/a11 -l32 -m4000 -i2400
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.902,-0.056,0.6716) -fpics/b11 -l32 -m4000 -i2400
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.902,-0.056,0.6716) -fpics/c11 -l32 -m4000 -i2400
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.902,-0.056,0.6716) -fpics/d11 -l32 -m4000 -i2400
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.902,-0.056,0.6716) -fpics/m11 -l32 -m4000 -i2400
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.902,-0.056,0.6716) -fpics/j11 -l32 -m4000 -i2400
+
+    python MandelbrotDriver.py -tMS -s1280x1024 -c(0,-.902,-0.056,0.6716) -fpics/m11xs -l32 -m4000
+                               -i2400 -b0.0005
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.875,-0.069,0.6716) -fpics/a12 -l32 -m200 -i2400
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.875,-0.069,0.6716) -fpics/b12 -l32 -m200 -i2400
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.875,-0.069,0.6716) -fpics/c12 -l32 -m200 -i2400
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.875,-0.069,0.6716) -fpics/d12 -l32 -m200 -i2400
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.875,-0.069,0.6716) -fpics/m12 -l32 -m200 -i2400
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.875,-0.069,0.6716) -fpics/j12 -l32 -m200 -i2400
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/a13 -l32 -m1000 -i4800
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/b13 -l32 -m1000 -i4800
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/c13 -l32 -m1000 -i4800
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/d13 -l32 -m1000 -i4800
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/m13 -l32 -m1000 -i4800
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/j13 -l32 -m1000 -i4800
+
+    python MandelbrotDriver.py -tB -s1280x1024 -c(0,-.875,-0.0650,0.6707) -fpics/b13x -l32 -m1000 -i4800
+
+    python MandelbrotDriver.py -tA -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/a14 -l32 -m10000 -i4800
+    python MandelbrotDriver.py -tB -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/b14 -l32 -m10000 -i4800
+    python MandelbrotDriver.py -tC -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/c14 -l32 -m10000 -i4800
+    python MandelbrotDriver.py -tD -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/d14 -l32 -m10000 -i4800
+    python MandelbrotDriver.py -tM -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/m14 -l32 -m10000 -i4800
+    python MandelbrotDriver.py -tJ -s320x240 -c(0,-.875,-0.0650,0.6707) -fpics/j14 -l32 -m10000 -i4800
+
+    </pre>
+    </div></div>
+
+  </td>
+
+<!-- Right sidebar -->
+
+  <td class="right">
+
+   <div id="links"> &nbsp; </div> 
+
+  </td>
+ </tr>
+
+ <tr>
+  <td class="bottom" colspan="2">
+   <p class="small"> (c) John Whitehouse 2011 <p> </td>
+ </tr>
+</table>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>
+
+
+

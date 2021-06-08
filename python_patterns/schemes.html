@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<title> Mandelbrot Colouring Algorithms </title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+                          
+</head>
+
+<!-- Title -->
+
+<body onload="ShowLinks()">
+
+<table>
+
+ <tr>
+  <td width="200" class="top">
+   <p> Home page
+   </p><p>
+   <a href="http://www.eddaardvark.co.uk">
+      <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+   </a>
+   </p>
+  </td>
+
+  <td class="top" width="100%">
+      <p></p>
+      <h1> Mandelbrot Colouring Algorithms </h1>
+  </td>
+
+  <td>
+    <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-3534237235440125";
+      /* Small Square */
+      google_ad_slot = "0024655068";
+      google_ad_width = 200;
+      google_ad_height = 200;
+      //-->
+    </script>
+    <script type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </td>
+ </tr>
+</table>
+
+<div class="ad_align">
+
+<table class="layout">
+
+ <tr>
+
+<!-- Main content -->
+ 
+  <td class="left">
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+    <h2>Introduction</h2>
+
+    <p> This section describes the algorithms used to colour in the patterns. The colouring scheme is
+        selected using the second character of the 't' command, for instance &#8722;tBS will use the stars 
+        colouring scheme on a pattern drawn in the B plane.
+    </p>
+
+    <p>
+    There are six colouring algorithms (<a href = "classic">Standard</a>, <a href="#Stars">Stars</a>, <a href="#Bands">Bands</a>,
+    <a href="#Real">Real Bands</a>, <a href="#Imaginary">Imaginary
+    Bands</a>) and <a href="#quadrants">Quadrants</a>. Standard is the default, the others are selected by appending one of
+    the letters ('S', 'B', 'R', 'I' or 'Q') onto the &#8722;tM parameter.
+    </p>
+
+    </div></div>
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+    <h2> The Algorithms </h2>
+
+    <h3> '<a name="Classic">Classic</a>' Algorithm</h3>
+
+    <p>
+    This colours the pattern by counting the number of iterations we have to perform before |Z| becomes
+    greater then 2.
+    </p>
+     <table>
+      <tr>
+       <td>
+        <a href="images/mbex2_50.gif">
+         <img border="1" src="images/TN_mbex2_50.gif" alt="Mandelbrot"></a></td>
+       <td> A classic mandelbrot image </td>
+      </tr>
+     </table>
+          
+    <h3>'<a name="Stars">Stars</a>' Colouring Algorithm</h3>
+    <p>The stars colouring algorithm iterates the same equation as the standard scheme,
+    but it also records the values of |Z| during the iteration. The smallest
+    |Z| value encountered is used to decide the colour. This generates a pattern where the
+    mini-mandelbrots that are found throughout the set appear to be surrounded by
+    glowing halos as can be seen in the next image.</p>
+    <p><a href="stars.html"><img border="1" src="images/stars.gif" alt="Stars example"></a></p>
+
+    <p>Here are a couple of frames taken from an <a href="mbaindex.htm"> animation</a>.
+    The are separated by a zoom factor of 2<span class="superscript">6</span> 
+    (64) and have
+    'blob' factors of 0.001 and 0.0001.</p>
+
+    <p>
+     <a href="images/sf9.gif">
+      <img border="1" src="images/TN_sf9.gif" alt="Stars example">
+     </a>
+     &nbsp;
+     <a href="images/sf15.gif">
+      <img border="1" src="images/TN_sf15.gif" alt="Stars example">
+     </a>
+    </p><p>
+        There is a stars animation on the <a href="../python_patterns/mbaindex.htm">animations</a>
+        page. In some circumstances the stars algorithm is much better at highlighting
+        the structure as can be see in these next two images.
+        (The commands to generate them are displayed alongside.)
+    </p>
+
+    <table border="2" cellpadding="4" cellspacing="4">
+      <tr>
+        <td>
+         <a href="images/w21.gif">
+          <img border="1" src="images/TN_w21.gif" alt="Stars example">
+         </a>
+        </td>
+        <td>
+          <h4>Standard</h4>
+           <p class="code">
+             MandelbrotDriver.go ("&#x2011;tM &#x2011;i32000 &#x2011;c(0,0.26480,&minus;1.747586,0.00345198)
+                                                 &#x2011;s640x480 &#x2011;fw21xxx &#x2011;m120000 &#x2011;l16")
+           </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+         <a href="images/w21s.gif">
+            <img border="1" src="images/TN_w21s.gif" alt="Stars example">
+         </a>
+        </td>
+        <td>
+          <h4>Stars</h4>
+          <p class="code">
+            python mandelbrotdriver.py &#x2011;tMS &#x2011;i3200 &#x2011;c(0,0.26480,&minus;1.747586,0.00345198)
+                                  &#x2011;s640x480 &#x2011;fw21s &#x2011;m120000 &#x2011;b0.00005
+          </p>
+
+        </td>
+      </tr>
+    </table>
+
+    <h3>'<a name="Bands">Bands</a>' Colouring Algorithm</h3>
+    <p>
+        In the bands colouring algorithm, instead of calculating the smallest value
+        of |Z| encountered during the iteration we monitor the real and imaginary parts
+        independently, finding the smallest values of |r| and |i|. We then calculate a
+        colour based on the combination of the two. Palettes 4 and 5 arrange the colours
+        to emphasise the bands. The next image corresponds to the ones in the stars
+        section, the remaining two further illustrate the bands algorithm.
+    </p>
+
+    <table border="2" cellpadding="4" cellspacing="4">
+      <tr>
+        <td>
+         <a href="images/w21b.gif">
+          <img border="1" src="images/TN_w21b.gif" alt="Bands example">
+         </a>
+        </td>
+        <td>
+         <p class="code">
+              python mandelbrotdriver.py &#x2011;tMB &#x2011;i3200
+              &#x2011;c(0,0.26480,&minus;1.747586,0.00345198) &#x2011;s640x480
+              &#x2011;fw21b &#x2011;m120000 &#x2011;b0.00005
+           </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+         <a href="images/b2.gif">
+          <img border="1" src="images/TN_b2.gif" alt="Bands example"></a></td>
+        <td>
+          <p class="code">
+            python mandelbrotdriver.py &#x2011;tMB &#x2011;s1024x800 &#x2011;fb2
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+         <a href="images/b1.gif">
+          <img border="1" src="images/TN_b1.gif" alt="Bands example">
+         </a>
+        </td>
+        <td>
+          <p class="code">
+            python mandelbrotdriver.py &#x2011;tMB &#x2011;c(0,0,&minus;0.075,1.01) &#x2011;m10
+            &#x2011;s1024x800 &#x2011;fb1
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <h3> <a name="Imaginary"> Imaginary</a> and <a name="Real"> Real</a> Bands </h3>
+
+    <p>
+        The colouring scheme used to generate the bands pattern can be split into two separate components,
+        showing the contribution from the reall and the imaginary elements. "&#x2011;tMI" will draw the
+        imaginary part and "&#x2011;tMR" the real part ("&#x2011;tJI" and "&#x2011;tJR" for the Julia sets).
+        This separation can
+        be seen in the following three images, reproduced from the colour schemes table above.
+    </p>
+
+    <table border="2" cellpadding="4" cellspacing="4">
+      <tr>
+        <td>Bands (&#x2011;tMB)</td>
+        <td>Real Bands (&#x2011;tMR)</td>
+        <td>Imaginary (&#x2011;tMI)</td>
+      </tr>
+      <tr>
+        <td><img border="0" src="images/cs4b.gif" alt="Colour scheme B"></td>
+        <td><img border="0" src="images/cs4r.gif" alt="Colour scheme R"></td>
+        <td><img border="0" src="images/cs4i.gif" alt="Colour scheme I"></td>
+      </tr>
+    </table>
+
+    <h3> <a name="quadrants"> Quadrants Colouring Scheme </a> Bands </h3>
+
+    <table>
+     <tr>
+      <td>
+        <a href="images/Q013.png">
+         <img src="images/TN_Q013.gif"  alt="Quadrants example">
+        </a>
+        Click to enlarge.
+      </td>
+      <td>
+        I call this Quadrants as when I first thought of it I only had 4 colours, one for each quadrant ot the complex plane.
+        But since then I have expanded it to include 255 colours. In this scheme you keep iterating z until you reach
+        a point (x+iy) that has a modulus greater than 2
+        (x<span class="superscript">2</span>&nbsp;+&nbsp;y<span class="superscript">2</span>&nbsp;&gt;&nbsp; 4).
+        You then calculate the
+        arc tangent of y&nbsp;&#x2215;&nbsp;x and use that as an index into the colour map.
+                       The result is an image like the one on the left.
+      </td>
+
+     </tr>
+    </table>
+
+    </div></div>
+
+  </td>
+
+<!-- Right sidebar -->
+
+  <td class="right">
+
+   <div id="links"> &nbsp; </div> 
+
+  </td>
+ </tr>
+
+ <tr>
+  <td class="bottom" colspan="2">
+   <p class="small"> (c) John Whitehouse 2011 <p> </td>
+ </tr>
+</table>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>
+
+
+
+
+
+

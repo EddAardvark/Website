@@ -1,0 +1,174 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Patterns Animated GIF Bitmap">
+<title>JW's Circle Patterns Index page</title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+
+<script>
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        var links = MakeButtons ();
+        var item = document.getElementById("links_go_here");
+        item.innerHTML = links;
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+      <h1> Circle Patterns </h1>
+      <p> Updated December 2011 </p>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+<!-- Content -->
+
+   <div class="in2 box">
+
+         <p>
+          There are two flavours of the circle pattern, the original python based version and
+          the more recent interactive one, built using Google's native client plugin (You'll
+          probably need Chrome to run this.
+         <p>
+
+          <!-- Native Client Application -->
+
+          <button class="link" onclick="Show('../nc/ccl/index.html')">
+            <div style="width:200;">
+            <p> <strong> Native Client Application </strong>
+            <p>
+                <img src="images/nc_circles.png" width="160" ALT="a picture" title="Index to native client circles app">
+            <p>
+                This application will animate circle patters using the Google Native Client plugin.
+            </div>
+          </button>
+
+          <!-- The Original Python Patterns -->
+
+          <button class="link" onclick="Show('python_circles.html')">
+            <div style="width:200;">
+            <p> <strong> The Original Python Patterns </strong>
+            <p>
+                <img src="images/anticircle.gif" width="160" ALT="a picture" title="Index to native client circles app">
+            <p>
+                This page shows some similar images drawn using a Python script.
+            </div>
+          </button>
+
+      </div>
+
+   <div class="in2 box">
+
+         <h2><a name="circles">Examples</a></h2>
+
+         <p>This family of patterns is generated from plotting the calculating the z
+               = f(x,y) over a rectangular region and using the value of 'z' to colour in
+               the pixels. I call them circle patterns because the simplest interesting
+               example, generated from z&nbsp;=&nbsp;x<sup>2</sup>&nbsp;+ y<sup>2</sup>,
+               generates circles.
+         </p> <p>
+               The example code supplied with the module generates larger versions of the
+               following patterns. It can be downloaded from the <a href="source.html">source
+               code page</a>
+         </p> <p>
+          <div align="center">
+           <table border="0" cellpadding="4" cellspacing="0">
+            <tr>
+              <td>
+               <img border="1" src="images/TN_example1.gif">
+              </td> <td>
+               <img border="1" src="images/TN_example2.gif">
+              </td> <td>
+               <img border="1" src="images/TN_example3.gif">
+              </td>
+            </tr>
+            <tr>
+             <td>
+               <img border="1" src="images/TN_example4.gif">
+             </td> <td>
+               <img border="1" src="images/TN_example5.gif">
+             </td> <td>
+               <img border="1" src="images/TN_example6.gif">
+             </td>
+            </tr>
+           </table>
+          </p>
+          <p>
+            <img border="0" src="images/seq1.gif" alt="Animation">
+          </p>
+         </div>
+        <p>
+         There are more examples, including animations, and an explanation
+         of the source code on the <a href="python_circles.html">Circle Patterns</a>
+         page.
+        <p>
+       </div>
+
+
+<!-- Generic links -->
+
+   <div class="in2 box">
+      <h2> Other pages </h2>
+      <p><span id="links_go_here">&nbsp;</span></p>
+
+   </div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2010 - 2017 <p>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

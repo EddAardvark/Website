@@ -1,0 +1,262 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Notepad">
+<title> Spirograph Patterns </title>
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script>
+    Show = function (what) { window.location = what; }
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="ShowLinks()">
+
+<table>
+
+ <tr>
+  <td width="200" class="top">
+   <p> Home page
+   </p><p>
+   <a href="http://www.eddaardvark.co.uk"><img border="0" src="http://www.eddaardvark.co.uk/images/home.png"></a>
+   </p>
+  </td>
+
+  <td class="top" width="100%">
+      <h1> <br> Spirograph Patterns </h1>
+  </td>
+
+  <td>
+    <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-3534237235440125";
+      /* Small Square */
+      google_ad_slot = "0024655068";
+      google_ad_width = 200;
+      google_ad_height = 200;
+      //-->
+    </script>
+    <script type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </td>
+ </tr>
+</table>
+
+
+
+
+<table class="layout">
+
+ <tr>
+  <td class="left">
+
+   <div class="orangebox">
+
+     <h2> Introduction </h2>
+
+      <p>
+        <button class="link clickable" onclick="Show('http://www.eddaardvark.co.uk/v2/spirograph/spirograph2.html')">
+          <p class="btn"><strong> Spirograph Page </strong></p>
+            <div style="width:240;">
+              <p class="btn"><img border="0" src="http://www.eddaardvark.co.uk/v2/spirograph/images/overlay2.png" width="200">
+              <p class="btn"> The main spirograph page has moved, click here to visit the new page</p>
+            </div>
+        </button>
+
+      </p><p>
+
+       Some example images created using previous versions of the application.
+
+      </p><p>
+
+       <table cellpadding="6pt">
+        <tr>
+         <td><a href="images/coloured1.png"><img border="1pt" src="images/coloured_tn1.png"
+           alt="Spirograph" title="Click to enlarge"></a>
+         </td>
+         <td><a href="images/coloured2.png"><img border="1pt" src="images/coloured_tn2.png"
+           alt="Spirograph" title="Click to enlarge"></a>
+         </td>
+         <td><a href="images/coloured3.png"><img border="1pt" src="images/coloured_tn3.png"
+           alt="Spirograph" title="Click to enlarge"></a>
+         </td>
+         <td><a href="images/coloured4.png"><img border="1pt" src="images/coloured_tn4.png"
+           alt="Spirograph" title="Click to enlarge"></a>
+         </td>
+         <td><a href="images/coloured5.png"><img border="1pt" src="images/coloured_tn5.png"
+           alt="Spirograph" title="Click to enlarge"></a>
+         </td>
+        </tr>
+       </table>
+
+
+   </div>
+
+<!-- Equations -->
+
+   <div class="orangebox">
+
+     <h2> Equations </h2>
+     <p> The parametric equation for a circle is </p>
+      <div class="code">
+       <pre class="code">
+  x = R.cos (&theta;)
+  y = R.sin (&theta;) </pre>
+      </div>
+     <p>
+      As '&theta;' varies from 0 to 2&pi; this will trace one lap around the circle ('R' is the radius).
+      This is our basic wheel. If we multiply &theta; by a positive integer this will
+      be equivalent to making the wheel rotate faster. A negative integer will make
+      the wheel rotate in the opposite direction.
+      To create the spirograph patterns we combine two wheels rotating at
+      different speeds, say n<span class="subscript">1</span> and n<span class="subscript">2</span>.
+
+     </p>
+      <div class="code">
+       <pre class="code">
+  x = R<span class="subscript">1</span>.cos (n<span class="subscript">1</span>&theta;) + R<span class="subscript">2</span>.cos (n<span class="subscript">2</span>&theta;)
+  y = R<span class="subscript">1</span>.sin (n<span class="subscript">1</span>&theta;) + R<span class="subscript">2</span>.sin (n<span class="subscript">2</span>&theta;) </pre>
+      </div>
+     <p>
+      Here the second wheel of radius R<span class="subscript">2</span> makes n<span class="subscript">2</span>
+      full turns as it travels n<span class="subscript">1</span> times around the inner wheel of
+      radius R<span class="subscript">1</span>.
+     </p><p>
+      These are idealised wheels, when using the toy, the radius of the
+      inner wheel would be R<span class="subscript">1</span>-R<span class="subscript">2</span>. The other way we differ
+      from the toy is that in the physical version the rates n<span class="subscript">1</span> and n<span class="subscript">2</span>
+      are determined by the number of teeth on the wheels, which are constrained by the
+      wheels' radii. We aren't limited in this way.
+     </p><p>
+      The starting positions of the wheels can be changed by adding in a phase component: &psi;;
+     </p>
+      <div class="code">
+       <pre class="code">
+  x = R<span class="subscript">1</span>.cos (n<span class="subscript">1</span>(&theta;+&psi;<span class="subscript">1</span>)) + R<span class="subscript">2</span>.cos (n<span class="subscript">2</span>(&theta;+&psi;<span class="subscript">2</span>))
+  y = R<span class="subscript">1</span>.sin (n<span class="subscript">1</span>(&theta;+&psi;<span class="subscript">1</span>)) + R<span class="subscript">2</span>.sin (n<span class="subscript">2</span>(&theta;+&psi;<span class="subscript">2</span>)) </pre>
+      </div>
+     <p>
+      Although it would be difficult with the plastic toy, mathematically
+      it's quite simple to add additional wheels, for instance, having a third
+      wheel rotating around the other two can be represented as </p>
+      <div class="code">
+       <pre class="code">
+  x = R<span class="subscript">1</span>.cos (n<span class="subscript">1</span>&theta;) + R<span class="subscript">2</span>.cos (n<span class="subscript">2</span>&theta;) + R<span class="subscript">3</span>.cos (n<span class="subscript">3</span>&theta;)
+  y = R<span class="subscript">1</span>.sin (n<span class="subscript">1</span>&theta;) + R<span class="subscript">2</span>.sin (n<span class="subscript">2</span>&theta;) + R<span class="subscript">3</span>.sin (n<span class="subscript">3</span>&theta;) </pre>
+      </div>
+   </div>
+
+<!-- Equations -->
+
+   <div class="orangebox">
+
+     <h2> Symmetry </h2>
+
+     <p>
+      For two wheels the symmetry is |n<span class="subscript">1</span>-n<span class="subscript">2</span>|
+      (assuming n<span class="subscript">1</span> and n<span class="subscript">2</span> have no common factors).
+      If they do have a common factor, say 'k', then the symmetry would be
+      |n<span class="subscript">1</span>-n<span class="subscript">2</span>|&nbsp;/&nbsp;k
+      and the algorithm will draw over the same pattern k times.
+     <p>
+      For more wheels the symmetry is the highest common factor of the set of
+      differences. With three wheels it will be</p>
+      <div class="code">
+       <pre class="code">
+    hcf (n<span class="subscript">1</span>-n<span class="subscript">2</span>, n<span class="subscript">1</span>-n<span class="subscript">3</span>, n<span class="subscript">2</span>-n<span class="subscript">3</span>) / k
+  = hcf (n<span class="subscript">1</span>-n<span class="subscript">2</span>, n<span class="subscript">2</span>-n<span class="subscript">3</span>) / k</pre>
+      </div>
+     <p>
+      Where 'k' is the largest common factor of n<span class="subscript">1</span>, n<span class="subscript">2</span>,
+      n<span class="subscript">3</span>.
+     </p>
+   </div>
+
+<!-- Animation -->
+
+   <div class="orangebox">
+    <div class="margins">
+     <h2> Animation </h2>
+
+       <p> This four wheel animation. The speeds are [3, -13, 11, 19]
+            and the sizes [3,3,2,1]. The differences in the rates are
+            all multiples of 8, so the pattern has 8-fold symetry. The animation
+            is created by changing the relative phases of the wheels.
+       </p><p>
+        <div align="center">
+         <img border="1" src="images/sanim.gif" alt="4 wheel animation"><br>
+        </div>
+       </p>
+    </div>
+   </div>
+
+
+<!-- More Examples -->
+
+   <div class="orangebox">
+
+     <h2> More Examples </h2>
+
+      <table cellpadding="6pt">
+       <tr>
+        <td><a href="images/spirograph00000.gif"><img border="1pt" src="images/TN_spirograph00000.gif"
+           alt="Spirograph" title="Click to enlarge"></a>
+        </td>
+        <td> <img src="images/TN_spirograph00001.gif" alt="Spirograph">
+        <td> <img src="images/TN_spirograph00002.gif" alt="Spirograph">
+        <td> <img src="images/TN_spirograph00003.gif" alt="Spirograph">
+       </tr>
+       <tr>
+        <td> <img src="images/TN_spirograph00004.gif" alt="Spirograph">
+        <td> <img src="images/TN_spirograph00005.gif" alt="Spirograph">
+        <td> <img src="images/TN_spirograph00006.gif" alt="Spirograph">
+        <td> <img src="images/TN_spirograph00007.gif" alt="Spirograph">
+       </tr>
+
+       <tr>
+        <td><a href="images/spirograph00008.gif"><img border="1pt" src="images/TN_spirograph00008.gif"
+           alt="Spirograph" title="Click to enlarge"></a>
+        </td>
+        <td><a href="images/spirograph00009.gif"><img border="1pt" src="images/TN_spirograph00009.gif"
+           alt="Spirograph" title="Click to enlarge"></a>
+        </td>
+        <td> <img src="images/TN_spirograph00010.gif" alt="Spirograph">
+        <td> <img src="images/TN_spirograph00011.gif" alt="Spirograph">
+       </tr>
+      </table>
+   </div>
+  </td>
+
+
+<!-- Right sidebar -->
+
+  <td class="right">
+
+   <div id="links"> &nbsp; </div>
+
+  </td>
+ </tr>
+
+ <tr>
+  <td class="bottom" colspan="2">
+   <p class="small"> (c) John Whitehouse 2012 <p> </td>
+ </tr>
+</table>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
