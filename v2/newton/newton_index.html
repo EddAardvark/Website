@@ -1,0 +1,382 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="GENERATOR" content="Notepad">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<title> Newton-Raphson Fractals </title>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+
+<script>
+
+    function OnLoad()
+    {
+    }
+
+</script>
+
+</head>
+
+<body onload="OnLoad()">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Newton-Raphson Fractal </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript">
+        <!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+        -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+    
+     <h2> Introduction </h2>
+
+      <p>
+       The "Newton-Raphson" method is an algorithm for finding the roots of
+       differentiable equations. See
+
+        <a href="http://mathworld.wolfram.com/NewtonsMethod.html"> Wolfram </a>
+        or
+        <a href="http://en.wikipedia.org/wiki/Newton_fractal"> Wikipedia </a>
+        
+      </p><p>
+
+       It can be used to generate fractal images like these:
+              
+      </p><p>
+       
+       <table cellpadding="6pt">
+        <tr>
+         <td><a href="images/newton1.png"><img border="1pt" src="images/newton1.png" width="128"
+           alt="Newton Example 1" title="Click to enlarge"></a>
+         </td>
+         <td><a href="images/newton2.png"><img border="1pt" src="images/newton2.png" width="128"
+           alt="Newton Example 2" title="Click to enlarge"></a>
+         </td>
+         <td><a href="images/newton3.png"><img border="1pt" src="images/newton3.png" width="128"
+           alt="Newton Example 3" title="Click to enlarge"></a>
+         </td>
+        </tr>
+       </table>
+      
+      </p><p>
+      
+        The interactive WebGL version is <a href="webgl.html">here</a>
+      </p>
+      <p>
+        If you only want to solve polynomials, rather than draw pictures, visit the <a href="polynomials.html">polynomials page</a>.
+      </p>
+    </div>
+
+<!-- Equations -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+    
+     <h2> The Patterns </h2>
+
+      <p> The images in this section were drawn using the python script (no longer available).
+
+      </p>
+
+      <table>
+
+<!-- Cyclic Example -->
+
+       <tr>
+        <td>
+          <a href="images/newton_cycle_example.png">
+           <img border="1pt" src="images/newton_cycle_example.png"  title="Click for larger version" alt="Example" width="128" >
+          </a>
+        </td>
+        <td>
+         <p> This image shows a situation where the iterations converge on a cycle of 2 points.
+             We are looking at the polynomial
+             "x<span class="superscript">3</span>-2.55x<span class="superscript">2</span>-1&nbsp;=&nbsp;0 around the
+             point (0.866,0). The attractors are:</p>
+             <ul>
+               <li> Root at (-0.0691821081964128 - 0.605959771012239i) </li>
+               <li> Root at 2.68836421639283 </li>
+               <li> Root at (-0.0691821081964128 + 0.605959771012239i) </li>
+               <li> 2-Cycle: 0.889861407221087 and -0.180352088426774 </li>
+             </ul>
+        </td>
+       </tr>
+
+<!-- Alpha version -->
+
+       <tr>
+        <td>
+          <a href="images/simple_alpha.png">
+           <img border="1pt" src="images/simple_alpha.png" title="Click for larger version" alt="Alpha example" width="128">
+          </a>
+        </td>
+        <td>
+         <p> The basic Newton Raphson equation can be modified by adding in a sort of damping factor, called 'a',
+             see the "Generalisation" section on the <a href="http://en.wikipedia.org/wiki/Newton_fractal">
+             Wikipedia page</a>. In my code I call this "alpha". If you perform the calculations keeping the
+             seed point constant and varying 'a' you can get patterns like the one on the left, showing the behaviour of the
+             simple cubic x<span class="superscript">3</span>&nbsp;=&nbsp;1 with the seed value (0.1,0).
+         </p>
+         <p>
+         This calculation only converges when 'a' is in the circular region of radius 1 centred on the point
+         (1,0). In the image the area outside this region is shaded grey. The white region inside this circle is
+         the region where the calculations didn't converge. See the next image for more on this.
+         </p>
+
+        </td>
+       </tr>
+
+<!-- Alpha version 2-->
+
+       <tr>
+        <td>
+          <a href="images/alpha_infill.png">
+           <img border="1pt" src="images/alpha_infill.png" title="Click for larger version" alt="Alpha example" width="128">
+          </a>
+        </td>
+        <td>
+         <p> The image on the left is the same calculation as in the previous image
+             (x<span class="superscript">3</span>&nbsp;=&nbsp;1)
+              but this time these non-convergent
+              points have been assigned colours according to the size of the loops they converge on. These colours
+              as assigned at random, so I can't identify which colour corresponds to which loop size.
+         </p><p>
+             It's possible the points in the purple region would converge if the calculation was given more time.
+         </p>
+
+        </td>
+       </tr>
+
+<!-- Alpha version zoom -->
+
+       <tr>
+        <td>
+          <a href="images/alpha_zoom.png">
+           <img border="1pt" src="images/alpha_zoom.png" title="Click for larger version" alt="Alpha example" width="128">
+          </a>
+        </td>
+        <td>
+         <p> This next image zooms in on the region towards the top right of the previous image, it is centered on the
+             point 'a'&nbsp;=&nbsp;(1.81,-0.39). I've included this because I like it, especially as you can see some
+             interesting structure in the "cyclic" region to the right of the image.
+         </p><p>
+             The application parameters are "e1,0,0,-1 s1280x1024 i60000  b120 fpic1 l20 z0.1,0 m40 tA c1.81,-0.39 xI".
+         </p><p>
+             The cyclic colours are assigned randomly so you probably won't get exactly the same image.
+         </p>
+        </td>
+       </tr>
+
+
+<!-- Mandelbrot Example -->
+
+
+       <tr>
+        <td>
+          <a href="images/newton_mandelbrot.png">
+           <img border="1pt" src="images/newton_mandelbrot.png" title="Click for larger version" alt="Newton Mandelbrot" width="128">
+          </a>
+        </td>
+        <td>
+         <p> In this "Alpha-map" version, if you choose as you seed point a value that doesn't converge on
+             a root in the standard version, then you can find non convergent regions that look like the
+             Mandelbrot set.
+         </p><p> This one was generated using the same polynomial as in the first image:
+                 "x<span class="superscript">3</span>-2.55x<span class="superscript">2</span>-1&nbsp;=&nbsp;0, with
+             the seed point (0.866,0) and is centred around 'a' = (1,0).
+         </p><p> Note that the Mandelbrot isn't perfect, the amount of distortion depending on the value of the seed point.
+             There is probably a value that produces a perfect image but I haven't worked out what it is.
+         </p>
+        </td>
+       </tr>
+      </table>
+      
+      </p>
+      
+    </div>
+
+<!-- Bestiary -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+     <h2> Bestiary </h2>
+
+        <p>
+        This section catalogs some of the common patterns. There are two columns, the first shows the standard iteration
+        performed over different seed values, the second shows a example of the corresponding "alpha-map", formed
+        by varying the '&alpha;' parameter in the iteration
+
+        Z<span class="subscript">n+1</span>&nbsp;=&nbsp;Z<span class="subscript">n</span>&minus;&nbsp;&alpha;F(Z<span class="subscript">n</span>)&nbsp;&#x2044;&nbsp;F'(Z<span class="subscript">n</span>)
+
+        while keeping the seed point constant.
+        
+        </p><p>
+
+         <table>
+          <tr>
+           <th>Description</th><th>Standard</th><th>Alpha</th>
+          </tr>
+
+          <tr>
+           <td><h3>Two Real Roots</h3>
+                <p> (z&minus;1).(z&minus;2) </p></td>
+           <td><img src="images\two_real_normal.png" title="Picture"></td>
+           <td><img src="images\two_real_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>Three Real Roots</h3>
+                <p> (z&plus;2).(z&minus;1).(z&minus;2) </p></td>
+           <td><img src="images\three_real_normal.png" title="Picture"></td>
+           <td><img src="images\three_real_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>Four Real Roots</h3>
+                <p> (z&plus;2).z.(z&minus;1).(z&minus;2) </p></td>
+           <td><img src="images\four_real_normal.png" title="Picture"></td>
+           <td><img src="images\four_real_alpha.png" title="Picture"></td>
+          </tr>
+
+
+          <tr>
+           <td><h3>Five Real Roots</h3>
+                <p> (z&plus;2).(z&plus;1).z.(z&minus;1).(z&minus;2) </p></td>
+           <td><img src="images\five_real_normal.png" title="Picture"></td>
+           <td><img src="images\five_real_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>Five Real Roots (2)</h3>
+                <p> (z&plus;2).(z&plus;1).(z&minus;1).(z&minus;2).(z&minus;100) </p></td>
+           <td><img src="images\five_real_normal_2.png" title="Picture"></td>
+           <td><img src="images\five_real_alpha_2.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>Two repeated Real Roots</h3>
+                <p>(z&minus;1)<span class="superscript">2</span></p>
+                <p>Results are a bit random as algorithm finds two slightly different roots.</p>
+           <td><img src="images\two_repeated_normal.png" title="Picture"></td>
+           <td><img src="images\two_repeated_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>Two repeated Real Roots</h3>
+                <p>(z&minus;1)<span class="superscript">2</span>.(z&plus;1)</p>
+           <td><img src="images\two_repeated_cubic_normal.png" title="Picture"></td>
+           <td><img src="images\two_repeated_cubic_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>2&time;2 Repeated Real Roots</h3>
+                <p>(z&minus;1)<span class="superscript">2</span>.(z&plus;1)<span class="superscript">2</span></p>
+           <td><img src="images\two_by_two_repeated_normal.png" title="Picture"></td>
+           <td><img src="images\two_by_two_repeated_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>Three repeated Real Roots</h3>
+                <p>(z&plus;1)<span class="superscript">3</span></p>
+                <p>Algorithm fails completely.</p>
+           <td><img src="images\three_repeated_normal.png" title="Picture"></td>
+           <td>&nbsp;</td>
+          </tr>
+
+          <tr>
+           <td><h3>Three repeated Real Roots)</h3>
+                <p>z.(z&plus;1)<span class="superscript">3</span></p>
+                <p>Algorithm finds the single root but not the repeats.</p>
+           <td><img src="images\three_repeated_quartic_normal.png" title="Picture"></td>
+           <td>&nbsp;</td>
+          </tr>
+
+          <tr>
+           <td><h3>Two Imaginary</h3>
+                <p>(z<span class="superscript">2</span>&plus;1)</p>
+           <td><img src="images\two_imaginary_normal.png" title="Picture"></td>
+           <td><img src="images\two_imaginary_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>One Real, Two Imaginary</h3>
+                <p>(z<span class="superscript">2</span>&plus;1).(z-2)</p>
+           <td><img src="images\one_plus_two_normal.png" title="Picture"></td>
+           <td><img src="images\one_plus_two_alpha.png" title="Picture"></td>
+          </tr>
+
+          <tr>
+           <td><h3>Cyclic</h3>
+                <p> 900z<span class="superscript">3</span> &minus; 2595z<span class="superscript">2</span>
+                    &plus; 658z &minus; 902</p>
+                <p> The small white region near the centre of the alpha plot shows the range of alpha values
+                    where the seed point (0.9) doesn't converge on a solution. If you
+                    <a href="images/big_cyclic_alpha.png">zoom in</a> on this region
+                    you can see that it looks very similar to the Mandelbrot set.
+           <td><img src="images\cyclic_normal.png" title="Picture"></td>
+           <td><img src="images\cyclic_alpha.png" title="Picture"></td>
+          </tr>
+         </table>
+        
+        </p>
+        
+        
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2010 - 2021 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

@@ -91,7 +91,7 @@ var Links = [
 
     ["Pythagorean Triples",
          "http://www.eddaardvark.co.uk/images/triple_icon.png",
-         "http://www.eddaardvark.co.uk/python_patterns/rats.html"],
+         "http://www.eddaardvark.co.uk/v2/pythagoras/index.html"],
 
     ["Java Applets",
          "http://www.eddaardvark.co.uk/images/java_icon.png",
@@ -206,7 +206,7 @@ new_links.push (new LinkDefinition ("Doodles",
 
 new_links.push (new LinkDefinition ("Pythagorean Triples",
          "http://www.eddaardvark.co.uk/images/triple_icon.png",
-         "http://www.eddaardvark.co.uk/python_patterns/rats.html",
+         "http://www.eddaardvark.co.uk/v2/pythagoras/index.html",
          ""));
 
 new_links.push (new LinkDefinition ("Java Applets",

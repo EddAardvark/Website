@@ -6,10 +6,25 @@
 
 CanvasHelp = function (w, h)
 {
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = w;
-    this.canvas.height = h;
-    this.context = this.canvas.getContext("2d");
+    if (w && h)
+    {
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = w;
+        this.canvas.height = h;
+        this.context = this.canvas.getContext("2d");
+    }
+}
+
+CanvasHelp.FromImage = function (image)
+{
+    var ch = new CanvasHelp();
+    
+    ch.canvas = document.createElement("CANVAS");
+    ch.canvas.width = image.width;
+    ch.canvas.height = image.height;
+    ch.context = ch.canvas.getContext("2d");
+    
+    return ch;
 }
 //-------------------------------------------------------------------------------------------------
 // 0 is the rectangle in model space, 1 is where it appears on the canvas.
@@ -241,6 +256,21 @@ CanvasHelp.prototype.FillWithImage = function (image)
 {
     void this.context.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
 }
+// Get a pixel
+CanvasHelp.prototype.GetPixel = function (x, y)
+{
+    var d = this.context.getImageData(x, y, 1, 1);
+    return d.data;
+}
+// Get a pixel
+CanvasHelp.prototype.GetPixelBlock = function (x, y, w, h)
+{
+    var d = this.context.getImageData(x, y, w, h);
+    return d.data;
+}
+
+
+
 //------------------------------------------------------------------------------------------------------------------------------------
 CanvasHelp.prototype.toString = function ()
 {

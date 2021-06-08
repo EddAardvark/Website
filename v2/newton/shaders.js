@@ -7,7 +7,6 @@
 //-------------------------------------------------------------------------------------------------
 function ShaderManager ()
 {
-    this.ctx3 = null;
 }
 
 // Shaders are fussy about the difference between integer and fp constants.
@@ -38,6 +37,11 @@ function IntString (x)
     return Math.round (x).toString ();
 }
 
+// For notifications. If set should implement:
+//   OnShadersLoaded ()
+
+ShaderManager.Owner = null;
+
 // shader indeces
 
 ShaderManager.VS_VERTEX = 0;
@@ -61,7 +65,7 @@ function ShaderHolder (name, type)
     this.type = type;
     this.text = null;
     this.error = null;
-}
+}    
 
 // the shaders, indexed using the shader indeces. The shaders are contained in text files
 // which will be loaded on start-up
@@ -453,10 +457,15 @@ ShaderManager.OnLoad = function(request, idx)
         }
         ShaderManager.shaders_read = true;
 
-        ShaderManager.InitBuffers(this.ctx3);
+        ShaderManager.InitBuffers(ShaderManager.ctx3);
 
-        this.ctx3.clearColor(0.0, 0.0, 0.0, 1.0);
-        ShaderManager.DrawScene (this.ctx3);
+        ShaderManager.ctx3.clearColor(0.0, 0.0, 0.0, 1.0);
+        ShaderManager.DrawScene (ShaderManager.ctx3);
+        
+        if (ShaderManager.Owner)
+        {
+            ShaderManager.Owner.OnShadersLoaded();
+        }
     }
 }
 //-------------------------------------------------------------------------------------------------
@@ -464,7 +473,7 @@ ShaderManager.OnLoad = function(request, idx)
 //-------------------------------------------------------------------------------------------------
 ShaderManager.LoadShaders = function(ctx3)
 {
-    this.ctx3 = ctx3;
+    ShaderManager.ctx3 = ctx3;
     
     for (var idx = 0 ; idx < ShaderManager.NUM_SHADERS ; ++idx)
     {
@@ -506,25 +515,25 @@ ShaderManager.DrawScene = function ()
         ShaderManager.UpdateCode ();
     }
 
-    ShaderManager.PrepareProgramme(this.ctx3);
+    ShaderManager.PrepareProgramme(ShaderManager.ctx3);
 
-    this.ctx3.viewport(0, 0, this.ctx3.viewportWidth, this.ctx3.viewportHeight);
-    this.ctx3.clear(this.ctx3.COLOR_BUFFER_BIT | this.ctx3.DEPTH_BUFFER_BIT);
+    ShaderManager.ctx3.viewport(0, 0, ShaderManager.ctx3.canvas.width, ShaderManager.ctx3.canvas.height);
+    ShaderManager.ctx3.clear(ShaderManager.ctx3.COLOR_BUFFER_BIT | ShaderManager.ctx3.DEPTH_BUFFER_BIT);
 
-    var aVertexPosition = this.ctx3.getAttribLocation(shaderProgram, "aVertexPosition");
-    this.ctx3.enableVertexAttribArray(aVertexPosition);
+    var aVertexPosition = ShaderManager.ctx3.getAttribLocation(shaderProgram, "aVertexPosition");
+    ShaderManager.ctx3.enableVertexAttribArray(aVertexPosition);
 
-    var aPlotPosition = this.ctx3.getAttribLocation(shaderProgram, "aPlotPosition");
-    this.ctx3.enableVertexAttribArray(aPlotPosition);
+    var aPlotPosition = ShaderManager.ctx3.getAttribLocation(shaderProgram, "aPlotPosition");
+    ShaderManager.ctx3.enableVertexAttribArray(aPlotPosition);
 
-    this.ctx3.bindBuffer(this.ctx3.ARRAY_BUFFER, ShaderManager.vertexPositionBuffer);
-    this.ctx3.vertexAttribPointer(aVertexPosition, ShaderManager.VERTEX_SIZE, this.ctx3.FLOAT, false, 0, 0);
+    ShaderManager.ctx3.bindBuffer(ShaderManager.ctx3.ARRAY_BUFFER, ShaderManager.vertexPositionBuffer);
+    ShaderManager.ctx3.vertexAttribPointer(aVertexPosition, ShaderManager.VERTEX_SIZE, ShaderManager.ctx3.FLOAT, false, 0, 0);
 
     // Map the corners to the current zoom view
 
-    var plotPositionBuffer = this.ctx3.createBuffer();
+    var plotPositionBuffer = ShaderManager.ctx3.createBuffer();
 
-    this.ctx3.bindBuffer(this.ctx3.ARRAY_BUFFER, plotPositionBuffer);
+    ShaderManager.ctx3.bindBuffer(ShaderManager.ctx3.ARRAY_BUFFER, plotPositionBuffer);
 
     var idx;
     var corners = [];
@@ -537,14 +546,13 @@ ShaderManager.DrawScene = function ()
         corners.push(y);
     }
 
-    this.ctx3.bufferData(this.ctx3.ARRAY_BUFFER, new Float32Array(corners), this.ctx3.STATIC_DRAW);
-    this.ctx3.vertexAttribPointer(aPlotPosition, 2, this.ctx3.FLOAT, false, 0, 0);
+    ShaderManager.ctx3.bufferData(ShaderManager.ctx3.ARRAY_BUFFER, new Float32Array(corners), ShaderManager.ctx3.STATIC_DRAW);
+    ShaderManager.ctx3.vertexAttribPointer(aPlotPosition, 2, ShaderManager.ctx3.FLOAT, false, 0, 0);
 
     // draw it
 
-    this.ctx3.drawArrays(this.ctx3.TRIANGLE_STRIP, 0, 4);
-
-    this.ctx3.deleteBuffer(plotPositionBuffer)
+    ShaderManager.ctx3.drawArrays(ShaderManager.ctx3.TRIANGLE_STRIP, 0, 4);    
+    ShaderManager.ctx3.deleteBuffer(plotPositionBuffer);
 }
 //-------------------------------------------------------------------------------------------------
 // Set the polynomial

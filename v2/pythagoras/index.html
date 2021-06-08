@@ -1,0 +1,1016 @@
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<title>Pythagorean Triples</title>
+
+<style>
+
+.internal_borders TD { padding: 3px 6px; border: 1px solid black; }
+
+BUTTON.x {
+    margin:             12pt;
+    vertical-align:     text-top;
+    border:             2px solid black;
+    border-radius:      6pt;
+    padding:            0pt 24pt ;
+    margin:             6pt;
+    background-color:   aliceblue;
+    font-family:        Courier;
+    font-size:          medium;
+    text-align:         left;
+    }
+
+BUTTON.y {
+    margin:             12pt;
+    vertical-align:     text-top;
+    border:             2px solid black;
+    border-radius:      6pt;
+    padding:            0pt 24pt ;
+    margin:             6pt;
+    background-color:   transparent;
+    font-family:        Courier;
+    font-size:          medium;
+    text-align:         left;
+    width:              480px;
+    }
+
+button.x:focus { outline:0; }
+button.y:focus { outline:0; }
+
+</style>
+
+<script>
+    //-------------------------------------------------------------
+
+    function OnLoad()
+    {
+        section_links.innerHTML = MakeMiniLinks (mini_links);
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //--------------------------------------------- Other Pages ---------------------------------------------------
+    var mini_links = [];
+
+    mini_links.push (new LinkDefinition ("Introduction",
+        "",
+        "#Introduction",
+        ""));
+
+    mini_links.push (new LinkDefinition ("Algorithms",
+        "",
+        "#Algorithms",
+        ""));
+
+    mini_links.push (new LinkDefinition ("Images",
+        "",
+        "#Images",
+        ""));
+
+    mini_links.push (new LinkDefinition ("Complex Numbers",
+        "",
+        "#complex",
+        ""));
+    //------------------------------------------------------------------------------------------------
+    Triple = function (aa, bb, cc)
+    {
+        this.a = aa;
+        this.b = bb;
+        this.c = cc;
+    }
+    Triple.prototype.Test = function ()
+    {
+        if (this.c * this.c != this.a * this.a + this.b * this.b)
+        {
+            alert ("(" + [this.a, this.b, this.c] + ") is not a triple");
+            return false;
+        }
+        return true;
+    }
+    Triple.prototype.toString = function ()
+    {
+        var text = "";
+
+        text += this.a + "<span class=\"superscript\">2</span> + ";
+        text += this.b + "<span class=\"superscript\">2</span> = ";
+        text += this.c + "<span class=\"superscript\">2</span> (";
+        text += (this.a * this.a) + " + " + (this.b * this.b) + " = " + (this.c * this.c) + ").";
+
+        return text;
+    }
+    //------------------------------------------------------------------------------------------------
+    ShowResult1 = function ()
+    {
+        var k = parseInt (document.getElementById("k1").value);
+        var res = document.getElementById("result1");
+
+        var a = 2 * k + 1;
+        var b = 2 * k * (k + 1);
+        var c = 2 * k * (k + 1) + 1;
+
+        var t = new Triple (a,b,c);
+
+        res.innerHTML = t.toString ();
+    }
+    //------------------------------------------------------------------------------------------------
+    ShowResult2 = function ()
+    {
+        var k = parseInt (document.getElementById("k2").value);
+        var x = parseInt (document.getElementById("x2").value);
+        var y = parseInt (document.getElementById("y2").value);
+        var res = document.getElementById("result2");
+
+        var a = 2 * k * x * y;
+        var b = k * (y * y - x * x);
+        var c = k * (y * y + x * x);
+
+        var t = new Triple (a,b,c);
+
+        res.innerHTML = t.toString ();
+    }
+
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnLoad();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+       <h1> Pythagorean Triples </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+    <!-- Main content -->
+
+    <div class="in2 box">
+
+      <h1> Pythagorean Triples </h1>
+
+      <p>
+        This page is divided into the following sections:
+      </p><p>
+        <span id="section_links"/>
+      </p><p>
+        If you are looking for a way to generated triples there is a calculator in the "Algorithms" section.
+
+   </div>
+
+    <!-- Intro -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2><a name="Introduction">Introduction</a></h2>
+    <p>Pythagorean triples are sets of three integers (a,b,c) where a<span class="superscript">2</span>&nbsp;+&nbsp;b<span class="superscript">2</span>&nbsp;=&nbsp;c<span class="superscript">2</span>.
+    The simplest of these (where 'a', 'b' and 'c' are all greater than 0) is (3,4,5) as
+    9&nbsp;+&nbsp;16&nbsp;=&nbsp;25. There are clearly an unlimited number of these
+    triples as any multiple of (3,4,5), say (33,44,55), also meets the requirements:
+    (1089&nbsp;+&nbsp;1936&nbsp;=&nbsp;3025).</p>
+    <p>Ignoring these multiples, how many of these triples are there?</p>
+
+    <table border="0" cellpadding="4" cellspacing="4">
+      <tr>
+        <td><img border="0" src="images/ratcentre.gif" alt="Map"></td>
+        <td>
+          <p>
+           The image on the left is constructed by taking the first two terms (a
+           and b) an plotting them on squared paper. In this chart the 'c' value is
+           now the distance of the points from the origin (the centre).
+          </p><p>
+           Light blue points represent those values of 'a' and 'b' that have no common
+           factors. There are basically five of these - (3,4), (5,12), (7,24), (8,15)
+           and (20, 21) - with c values of (5,13,25,17 and 29). The 8 fold symmetry
+           and the other 35 light
+           blue points arise because if
+           a<span class="superscript">2</span>&nbsp;+&nbsp;b<span class="superscript">2</span>&nbsp;=&nbsp;c<span class="superscript">2</span>
+           is true for (a,b) it is also true for (b,a), (&minus;b,a), (&minus;a,&minus;b) etc.
+          </p><p>
+           The darker blue points represent the multiples of the basic points,
+           (6,8), (9,12), (10,24) etc.
+          </p><p>
+            Note: the images on this page omit the triple (0,0,0) and all the multiples and permutations
+            of (0,1,1).
+          </p>
+        </td>
+      </tr>
+    </table>
+    <p>I will call the triples where 'a' and 'b' have no common factors and
+    b&nbsp;&gt;&nbsp;a&nbsp;&gt;&nbsp;0
+    the prime triples. So how many prime triples are there? The next image shows all the
+    triples (prime or otherwise) out to (320,320).</p>
+    <p><img border="0" src="images/rat320.gif" alt="Map"></p>
+    <p>The prime ones are shown in light blue and their multiples darker. Each prime
+    triple generates a line of evenly spaced multiples, which are shown in darker
+    blue. The really obvious lines are generated by variations of (3,4). There are 57 prime
+    triples in this diagram, repeated 8 times through reflection and permutation. They are:</p>
+
+    <div class="margins">
+        <div  align="center">
+            <table cellpadding="4" cellspacing="0" class="whitebox">
+
+            <tr><td class="code"> (3, 4, 5) </td><td class="code"> (8, 15, 17) </td><td class="code"> (60, 221, 229) </td><td class="code"> (65,
+                72, 97) </td><td class="code"> (175, 288, 337) </td></tr>
+            <tr><td class="code"> (5, 12, 13) </td><td class="code"> (12, 35, 37) </td><td class="code"> (68, 285, 293) </td><td class="code"> (85,
+                132, 157) </td><td class="code"> (140, 171, 221) </td></tr>
+            <tr><td class="code"> (7, 24, 25) </td><td class="code"> (16, 63, 65) </td><td class="code"> (33, 56, 65) </td><td class="code"> (95,
+                168, 193) </td><td class="code"> (160, 231, 281) </td></tr>
+            <tr><td class="code"> (9, 40, 41) </td><td class="code"> (20, 99, 101) </td><td class="code"> (39, 80, 89) </td><td class="code"> (105,
+                208, 233) </td><td class="code"> (180, 299, 349) </td></tr>
+            <tr><td class="code"> (11, 60, 61) </td><td class="code"> (24, 143, 145) </td><td class="code"> (51, 140, 149) </td><td class="code"> (115,
+                252, 277) </td><td class="code"> (204, 253, 325) </td></tr>
+            <tr><td class="code"> (13, 84, 85) </td><td class="code"> (28, 195, 197) </td><td class="code"> (57, 176, 185) </td><td class="code"> (88,
+                105, 137) </td><td class="code"> (207, 224, 305) </td></tr>
+            <tr><td class="code"> (15, 112, 113) </td><td class="code"> (32, 255, 257) </td><td class="code"> (69, 260, 269) </td><td class="code"> (104,
+                153, 185) </td><td class="code"> (225, 272, 353) </td></tr>
+            <tr><td class="code"> (17, 144, 145) </td><td class="code"> (20, 21, 29) </td><td class="code"> (75, 308, 317) </td><td class="code"> (120,
+                209, 241) </td><td class="code"> (252, 275, 373) </td></tr>
+            <tr><td class="code"> (19, 180, 181) </td><td class="code"> (28, 45, 53) </td><td class="code"> (48, 55, 73) </td><td class="code"> (136,
+                273, 305) </td><td class="code"> (297, 304, 425) </td></tr>
+            <tr><td class="code"> (21, 220, 221) </td><td class="code"> (36, 77, 85) </td><td class="code"> (60, 91, 109) </td><td class="code"> (119,
+                120, 169) </td><td class="code"> &nbsp; </td></tr>
+            <tr><td class="code"> (23, 264, 265) </td><td class="code"> (44, 117, 125) </td><td class="code"> (84, 187, 205) </td><td class="code"> (133,
+                156, 205) </td><td class="code"> &nbsp; </td></tr>
+            <tr><td class="code"> (25, 312, 313) </td><td class="code"> (52, 165, 173) </td><td class="code"> (96, 247, 265) </td><td class="code"> (161,
+                240, 289) </td><td class="code"> &nbsp; </td></tr>
+            </table>
+            <p class="small"> Table 1. </p>
+         </div></div>
+
+    </div>
+
+<!-- Algorithms -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2><a name="Algorithms">Algorithms</a></h2>
+
+    <p>The simplest way to generate a sequence of triples is to notice that
+    difference between consecutive square numbers [1,4,9,16,...] generates the sequence of odd
+    numbers [3,5,7,9,...]. If the odd number is also a square [9,25,49,...] you have
+    a triple. And because two consecutive square numbers can't have any
+    common factors it must be prime. So we have already found a mechanism for generating an
+    unlimited number of prime triples.
+    The numbers in the first column of the table 1 (above) belong to
+    this sequence. We can create a generic formula for these triples as follows:</p>
+
+    <p>
+    <button class="x">
+        <pre class="code">
+  a<span class="superscript">2</span> + b<span class="superscript">2</span> = (b + 1)<span class="superscript">2</span><br>
+
+  => a<span class="superscript">2</span> + b<span class="superscript">2</span> = b<span class="superscript">2</span> + 2b + 1
+  => a<span class="superscript">2</span> = 2b + 1
+
+(substitute a = 2k + 1)
+
+  => (2k + 1)<span class="superscript">2</span> = 2b + 1
+  => 4 &times; k<span class="superscript">2</span> + 4 &times; k + 1 = 2b + 1
+  => 2 &times; k<span class="superscript">2</span> + 2 &times; k = b
+
+  a = 2 &times; k + 1
+  b = 2 &times; k &times; (k + 1)
+  c = 2 &times; k &times; (k + 1) + 1     </pre></button>
+
+    <button class="y clickable" onclick='ShowResult1();'>
+    <p>
+        Try it (Click to Calculate):
+    <p> K: <input type="text" size="10" value="1" id="k1"> </input>
+    <p><span id="result1"/>
+
+    </button>
+
+    <p> Although the above algorithm generates an unending sequence of prime triples it
+    doesn't generate them all. Of the 57 prime triples in table 1, only 12 follow this pattern.
+    </p>
+
+    <h3>A more general approach</h3>
+    <p> Starting with c = b + n, where n is a positive integer;
+
+    <p>
+
+    <button class="x">
+        <pre class="code">
+a<span class="superscript">2</span> + b<span class="superscript">2</span> = (b+n)<span class="superscript">2</span>
+
+=> a<span class="superscript">2</span> + b<span class="superscript">2</span> = b<span class="superscript">2</span> + 2nb + n<span class="superscript">2</span>
+=> a<span class="superscript">2</span> = 2nb + n<span class="superscript">2</span>
+=> a<span class="superscript">2</span> = n &times; (2b + n)     </pre></button>
+
+    <p>So n &times; (2b + n) must be a square number.</p>
+    <p> To find solutons to this equation we look at the prime factors of n and (2b + n), starting with n.
+     Some prime factors will appear an odd number of times and others an even number. We collect all the
+     even ones into one list and all the odd ones into another. If a prime factor appears an odd number
+     of times more than 2, then one goes into the odd list and the remainder into the even list.
+    </p>
+    <p>
+    The product off all the even factors will be a square number and the product off all the odd ones
+    will have no repeated prime factors. This is a rather long winded way of demonstrating that all integers
+    can be factorised into the product of a square and a term with no repeating factors, so long as we allow
+    the posibility that the square number is 1.
+    <p>
+
+    <button class="x">
+        <pre class="code">
+n = x<span class="superscript">2</span> * k    </pre> </button>
+
+    <p>
+    For n &times; (2b + n) to be a square number, (2b + n) must be the product of 'k' and another
+    square number (y<span class="superscript">2</span>). So
+    <p>
+
+    <button class="x">
+        <pre class="code">
+  a<span class="superscript">2</span> = n &times; (2b + n) = (x<span class="superscript">2</span> &times; k) &times; (k &times; y<span class="superscript">2</span>) = (x &times; k &times; y)<span class="superscript">2</span>
+
+Giving:
+
+  a = x &times; k &times; y
+  b = (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>) &times; (k/2)
+  c = b + n
+    = (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>) &times; (k/2) + x<span class="superscript">2</span> &times; k
+    = (y<span class="superscript">2</span> + x<span class="superscript">2</span>) &times; (k/2)     </pre> </button>
+
+    <p> Where 'x', 'y' and 'k' are all integers. When 'n' is even, another factorisation is possible:
+    <p>
+    <button class="x">
+        <pre class="code">
+  n = 2m
+  a<span class="superscript">2</span> = 2m &times; (2b + 2m) = 4m &times; (b + m)
+
+Set
+
+  m     = k &times; x<span class="superscript">2</span>
+  b + m = k &times; y<span class="superscript">2</span>
+
+Giving:
+
+  a = 2 &times; x &times; k &times; y
+  b = k &times; (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>)
+  c = k &times; (y<span class="superscript">2</span> + x<span class="superscript">2</span>)     </pre> </button>
+
+
+<!-- interactive -->
+
+    <button class="y clickable" onclick='ShowResult2();'>
+    <p>
+        Try it (Click to Calculate), works best when Y &gt; X:
+    <p> K: <input type="text" size="10" value="1" id="k2"> </input>
+    <p> X: <input type="text" size="10" value="1" id="x2"> </input>
+    <p> Y: <input type="text" size="10" value="1" id="y2"> </input>
+    <p><span id="result2"/>
+
+    </button>
+
+    <p>
+        In the interactive element above, if you set y&nbsp;=&nbsp;(1+&radic;2)x
+        (or as close as you can get), the 'a' and 'b' values will be similar.
+
+
+
+    <!-- Some examples -->
+
+    <h3> Some examples </h3>
+    <h4> n = 1 </h4>
+    <p> When 'n' is 1, 'x' is 1 and 'k' is 1. So
+
+    <p>
+
+    <button class="x">
+        <pre class="code">
+a = y
+b = (y<span class="superscript">2</span> - 1) / 2
+c = (y<span class="superscript">2</span> + 1) / 2    </pre> </button>
+
+    <p> For integer solutions y must be odd (1,3,5,...). This generates the triples [1,0,1], [3,4,5],
+    [5,12,13], etc. </p>
+
+    <h4> n = 2 </h4>
+    <p> When 'n' is 2 we use the second factorisation based on, n = 2m. So 'x' is 1 and 'k' is 1, giving;
+    <p>
+
+    <button class="x">
+        <pre class="code">
+a = 2 &times; x &times; k &times; y = 2 &times; y
+b = k &times; (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>) = (y<span class="superscript">2</span> &minus; 1)
+c = k &times; (y<span class="superscript">2</span> + x<span class="superscript">2</span>) = (y<span class="superscript">2</span> + 1)     </pre> </button>
+
+    <p> This generates the sequence
+    <p>
+    <button class="x">
+        <pre class="code">
+[ 2,  0,   2]
+[ 4,  3,   5] = [3, 4,  5]
+[ 6,  8,  10] = 2 &times; [3, 4, 5]
+[ 8, 15,  17]
+[10, 24,  26] = 2 &times; [5, 12, 13]
+[12, 35,  37]
+[14, 48,  50] = 2 &times; [7, 24, 25]
+[16, 63,  65]
+[18, 80,  82] = 2 &times; [9, 40, 41]
+[20, 99, 101]</pre></button>
+
+    <p> When 'y' is odd, y<span class="superscript">2</span>&plusmn;1 is even and all the terms can be divided by 2, so this formulation
+    only generates prime triples when 'y' is even, making 'a' is a multiple of 4. Eliminating the
+    permutation of (3,4,5), multiples of (0,1,1) and other multiples leaves the prime sequence:
+    <p>
+    <button class="x">
+        <pre class="code">
+[ 8, 15,  17]
+[12, 35,  37]
+[16, 63,  65]
+[20, 99, 101]
+...</pre></button>
+
+    <h4> n = 3 </h4>
+
+    <p> For n&nbsp;=&nbsp;3 we use the original formulation where k&nbsp;=&nbsp;3 and x&nbsp;=&nbsp;1.
+    <p>
+
+    <button class="x">
+        <pre class="code">
+a = x &times; k &times; y = 3 &times; y
+b = (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>) &times; (k/2) = (y<span class="superscript">2</span> &minus; 1) &times; (3/2)
+c = (y<span class="superscript">2</span> + 1) &times; (3/2) </pre></button>
+
+
+    <p>
+    'a', 'b' and 'c' are all divisible by 3 so all triples generated are multiples of those generated
+    by n&nbsp;=&nbsp;1. In general when k&nbsp;&gt;&nbsp;1 'a', 'b' and 'c' will have 'k' as a common factor so
+    the triple can't be prime.
+    </p>
+
+    <h3> <a name="xeq">Summary</a> </h3>
+
+    <p>Above we identified two sets of equations</p>
+
+    <p>
+    <button class="x">
+        <table>
+         <tr>
+           <td width="60pt"> a: </td>
+           <td width="200pt" class="code"> x &times; k &times; y </td>
+           <td width="200pt" class="code"> 2 &times; x &times; k &times; y </td>
+         </tr>
+
+         <tr>
+           <td width="60pt"> b: </td>
+           <td width="200pt" class="code"> (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>) &times; (k/2) </td>
+           <td width="200pt" class="code"> k &times; (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>) </td>
+         </tr>
+
+         <tr>
+           <td width="60pt"> c: </td>
+           <td width="200pt" class="code"> (y<span class="superscript">2</span> + x<span class="superscript">2</span>) &times; (k/2) </td>
+           <td width="200pt" class="code"> k &times; (y<span class="superscript">2</span> + x<span class="superscript">2</span>) </td>
+         </tr>
+
+        </table>
+    </button>
+
+    <p>
+        The equations in the second column are equivalent to the ones in the first column, when
+        k is even. For instance setting k&nbsp;=&nbsp;2 in the first column generates the same triple as
+        k&nbsp;=&nbsp;1 in the second. So we can generate all triples using just the first set of
+        equations. All the prime triples can generated using k values of 1 or 2. When k is odd
+        x<span class="superscript">2</span>&nbsp;&minus;&nbsp;y<span class="superscript">2</span>
+        must be even.
+    <p>
+
+    </div>
+
+    <!-- Images -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2><a name="Images">Images</a></h2>
+    <p>A plot of the prime triples out to (3200x3200). Each pixel represents a 10x10
+    cell. This is quite interesting as most of the points appear to lie on curves
+    and there are 'special' points where three of these curves appear to intersect.</p>
+    <div align="center">
+    <table border="4" cellpadding="0">
+      <tr>
+        <td><img border="0" src="images/p6400.gif" alt="Map"></td>
+      </tr>
+    </table>
+    </div>
+    <p>The same area with the non prime triples (red) included. The straight lines
+    are generated by multiples of the smaller triples like (3,4,5). </p>
+    <div align="center">
+    <table border="4" cellpadding="0">
+      <tr>
+        <td><img border="0" src="images/p6400i.gif" alt="Map"></td>
+      </tr>
+    </table>
+    </div>
+
+    <p>And finally the prime triples shown out to (32000,32000). Each pixel now
+    represents 100x100 points. </p>
+    <div align="center">
+    <table border="4" cellpadding="0">
+      <tr>
+        <td><img border="0" src="images/p64000.gif" alt="Map"></td>
+      </tr>
+    </table>
+
+    <p> &nbsp; </p>
+
+    </div>
+
+    </div>
+
+    <!-- Curves -->
+
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+     <h2><a name="curves">Curves</a></h2>
+      <p> The (a, b) values from the following set of triples appear to lie on a curve. They can be divided into
+          two sub sets bases on whether 'a' is odd or even:
+
+      <p class="in2">
+
+        <table style="border-collapse: collapse; border: 2px solid black;" class="internal_borders">
+            <tr>
+                <th style="Text-align: center; border:"> Even </th>
+                <th style="Text-align: center; border:">  Odd </th>
+                <th style="Text-align: center; border:">  Image </th>
+            </tr>
+
+            <tr>
+             <td>
+                &minus;616<span class="superscript">2</span> + 663<span class="superscript">2</span> =  905<span class="superscript">2</span> <br>
+                &minus;540<span class="superscript">2</span> + 629<span class="superscript">2</span> =  829<span class="superscript">2</span> <br>
+                &minus;468<span class="superscript">2</span> + 595<span class="superscript">2</span> =  757<span class="superscript">2</span> <br>
+                &minus;400<span class="superscript">2</span> + 561<span class="superscript">2</span> =  689<span class="superscript">2</span> <br>
+                &minus;336<span class="superscript">2</span> + 527<span class="superscript">2</span> =  625<span class="superscript">2</span> <br>
+                &minus;276<span class="superscript">2</span> + 493<span class="superscript">2</span> =  565<span class="superscript">2</span> <br>
+                &minus;220<span class="superscript">2</span> + 459<span class="superscript">2</span> =  509<span class="superscript">2</span> <br>
+                &minus;168<span class="superscript">2</span> + 425<span class="superscript">2</span> =  457<span class="superscript">2</span> <br>
+                &minus;120<span class="superscript">2</span> + 391<span class="superscript">2</span> =  409<span class="superscript">2</span> <br>
+                &minus;76<span class="superscript">2</span> + 357<span class="superscript">2</span> =  365<span class="superscript">2</span> <br>
+                &minus;36<span class="superscript">2</span> + 323<span class="superscript">2</span> =  325<span class="superscript">2</span> <br>
+                32<span class="superscript">2</span> + 255<span class="superscript">2</span> =  257<span class="superscript">2</span> <br>
+                60<span class="superscript">2</span> + 221<span class="superscript">2</span> =  229<span class="superscript">2</span> <br>
+                84<span class="superscript">2</span> + 187<span class="superscript">2</span> =  205<span class="superscript">2</span> <br>
+                104<span class="superscript">2</span> + 153<span class="superscript">2</span> =  185<span class="superscript">2</span> <br>
+                120<span class="superscript">2</span> + 119<span class="superscript">2</span> =  169<span class="superscript">2</span> <br>
+                132<span class="superscript">2</span> + 85<span class="superscript">2</span> =  157<span class="superscript">2</span> <br>
+                140<span class="superscript">2</span> + 51<span class="superscript">2</span> =  149<span class="superscript">2</span> <br>
+                144<span class="superscript">2</span> + 17<span class="superscript">2</span> =  145<span class="superscript">2</span> <br>
+            </td>
+             <td>
+                &minus;481<span class="superscript">2</span> + 600<span class="superscript">2</span> =  769<span class="superscript">2</span> <br>
+                &minus;385<span class="superscript">2</span> + 552<span class="superscript">2</span> =  673<span class="superscript">2</span> <br>
+                &minus;217<span class="superscript">2</span> + 456<span class="superscript">2</span> =  505<span class="superscript">2</span> <br>
+                &minus;145<span class="superscript">2</span> + 408<span class="superscript">2</span> =  433<span class="superscript">2</span> <br>
+                &minus;25<span class="superscript">2</span> + 312<span class="superscript">2</span> =  313<span class="superscript">2</span> <br>
+                23<span class="superscript">2</span> + 264<span class="superscript">2</span> =  265<span class="superscript">2</span> <br>
+                95<span class="superscript">2</span> + 168<span class="superscript">2</span> =  193<span class="superscript">2</span> <br>
+                119<span class="superscript">2</span> + 120<span class="superscript">2</span> =  169<span class="superscript">2</span> <br>
+                143<span class="superscript">2</span> + 24<span class="superscript">2</span> =  145<span class="superscript">2</span> <br>
+            </td>
+            <td style="border: 1px solid black;"> <img src="images/triple_curve.png" alt="Curves"> </td>
+           </tr>
+        </table>
+      <p>
+        </p><p>
+        These two lists actually define two parabolas that are almost coincident.
+        If we take two points from one of the lists, say
+
+        (a<span class="subscript">1</span>,&nbsp;b<span class="subscript">1</span>)
+
+        and
+
+        (a<span class="subscript">2</span>,&nbsp;b<span class="subscript">2</span>),
+
+        we can construct the equation:
+      <p>
+
+    <button class="x">
+        <pre class="code">
+  a = (A + B &times; b<span class="superscript">2</span>) / C,
+
+where;
+
+  B = (a<span class="subscript">1</span> &minus; a<span class="subscript">2</span>)
+  C = (b<span class="subscript">1</span><span class="superscript">2</span> &minus; b<span class="subscript">2</span><span class="superscript">2</span>)
+  A = (C &times; a<span class="subscript">1</span> &minus; B &times; b<span class="subscript">1</span><span class="superscript">2</span>)         </pre></button>
+
+    <p>
+        a neater formulation is
+    <p>
+
+    <button class="x">
+        <pre class="code">
+C(a &minus; a<span class="subscript">1</span>) = B(b<span class="superscript">2</span> &minus; b<span class="subscript">1</span><span class="superscript">2</span>)     </pre></button>
+    <p>
+        In the above example the points in the left column lie on the curve
+    <p>
+        b<span class="superscript">2</span> + 578a &minus; 83521 = 0
+    <p>
+        and those on the right
+    <p>
+        b<span class="superscript">2</span> + 576a &minus; 82944 = 0
+    <p>
+        These curves intersect the a-axis at 144.5 (17<span class="superscript">2</span>/2)
+        and 144 (12<span class="superscript">2</span>) respectively. The are nearly co-incident because 17/12
+        isn't a bad approximation for &radic;2.
+        They are examples of the general curves:
+    <p>
+        b<span class="superscript">2</span> + 2m<span class="superscript">2</span>a &minus; m<span class="superscript">4</span> = 0 and
+        b<span class="superscript">2</span> + 4m<span class="superscript">2</span>a &minus; 4m<span class="superscript">4</span> = 0
+    <p>
+        where 'm' is a positive integer. These can be derived from the generating equations:
+        a = x &times; k &times; y and b = (y<span class="superscript">2</span> &minus; x<span class="superscript">2</span>) &times; (k/2).
+        Substituting x = a/ky into the second equation gives:
+        </p><p>
+                b = (y<span class="superscript">2</span> &minus; a<span class="superscript">2</span> / k<span class="superscript">2</span>y<span class="superscript">2</span>) &times; (k/2).
+        </p><p>
+                which can be aranged to give
+        </p><p>
+            a<span class="superscript">2</span> + (2ky<span class="superscript">2</span>)b &minus;
+            k<span class="superscript">2</span>y<span class="superscript">4</span> = 0.
+        </p><p>
+                The 2 equations above correspond to the cases where k = 1 and 2, and m = y (a and b have been swapped).
+                There are actually 4 sets of parabolas, the other three are generated through the transformations:
+                    (a,b)&nbsp;&#x21D4;&nbsp;(a,&minus;b),
+                    (a,b)&nbsp;&#x21D4;&nbsp;(b,a) and
+                    (a,b)&nbsp;&#x21D4;&nbsp;(b,&minus;a),
+                representing reflections in the lines a&nbsp;=&nbsp;0, a&nbsp;=&nbsp;b and a&nbsp;=&nbsp;&minus;b.
+
+    </p><p>
+      This image:
+    </p><p>
+          <img src="images/west_parabolas.png" alt="West Parabolas">
+    </p><p>
+     Shows the set of parabolas for k&nbsp;=&nbsp;1 with the prime triples superimposed. I've called these the
+     'West' parabolas as they extend infinitely to the left. This shows that about half the
+     prime triples fall on these lines. If we add in the k&nbsp;=&nbsp;2 
+     parabolas we see that now all the primes are accounted for.
+    </p><p>
+          <img src="images/west_12_parabolas.png" alt="East and West Parabolas">
+    </p><p>
+
+     If we add in the "East" parabolas (generated by the transformation (a,b)&nbsp;&#x21D4;&nbsp;(a,&minus;b))
+     we get the following image,
+     which shows that all the prime triples lie on the intersection of an East and a West parabola with the same
+     'k' value (1 or 2).
+    </p><p>
+          <img src="images/east_west_parabolas.png" alt="East and West Parabolas">
+    </p><p>
+        Interestingly, if we add in the other two sets of parabolas, North and South
+        (generated from (b,a) and (b,&minus;a)) we now see that
+        the triples that were the intersection of 2 East/West parameters are also at the intersection of
+        two North/South parabolas of the opposite k value (1&nbsp;&#x21D4;&nbsp;2).
+    </p><p>
+          <img src="images/nsew_12_parabolas.png" alt="NSEW Parabolas">
+    </p><p>
+        So we can locate all the prime triples using just one set of parabolas. The intersections that don't have
+        prime triples do have non prime triples.
+    </p>
+    </div>
+
+    <!-- Complex numbers -->
+
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2><a name="complex">Complex Numbers</a></h2>
+    <p>If we take two complex numbers (a<span class="subscript">1</span>,b<span class="subscript">1</span>)
+        and (a<span class="subscript">2</span>,b<span class="subscript">2</span>)
+    and multiply them together
+    we get a third complex number (a<span class="subscript">3</span>,b<span class="subscript">3</span>). If these numbers are interpreted as
+    vectors then the lengths (l) of the three vectors are related as
+    l<span class="subscript">3</span>&nbsp;=&nbsp;l<span class="subscript">1</span>&nbsp;x&nbsp;l<span class="subscript">2</span>.
+    So if (a<span class="subscript">1</span>,b<span class="subscript">1</span>,l<span class="subscript">1</span>) and (a<span class="subscript">2</span>,b<span class="subscript">2</span>,l<span class="subscript">2</span>)
+    are Pythagorean triples so is (a<span class="subscript">3</span>,b<span class="subscript">3</span>,l<span class="subscript">3</span>).</p>
+    <p> When multiplying complex numbers;
+    <p>
+
+    <button class="x">
+        <pre class="code">
+a<span class="subscript">3</span> = a<span class="subscript">1</span> &times; a<span class="subscript">2</span> &minus; b<span class="subscript">1</span> &times; b<span class="subscript">2</span>
+b<span class="subscript">3</span> = a<span class="subscript">1</span> &times; b<span class="subscript">2</span> + b<span class="subscript">1</span> &times; a<span class="subscript">2</span>    </pre>  </button>
+
+    <p>
+    We can use this as another way of generating
+    unlimited series of triples, for instance the powers of (3,4) are;
+    <p>
+
+    <table style="border-collapse: collapse; border: 2px solid black;" class="internal_borders whitebox in2">
+      <tr>
+        <td align="center" colspan="2">(3 + 4i)<span class="superscript">n</span> =</td>
+        <td align="center">a</td>
+        <td align="center">b</td>
+        <td align="center">c</td>
+        <td align="center">x</td>
+        <td align="center">y</td>
+        <td align="center">k</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">1</span></td>
+        <td align="center" class="code">(3 + 4i)</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">3</td>
+        <td align="right" bgcolor="#AADDDD" class="code">4</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">5</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">3</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">2</span></td>
+        <td align="center" class="code">(-7 + 24i)</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">7</td>
+        <td align="right" bgcolor="#AADDDD" class="code">24</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">25</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">7</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">3</span></td>
+        <td align="center" class="code">(-117 + 44i)</td>
+        <td align="right" bgcolor="#AADDDD" class="code">44</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">117</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">125</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+        <td align="right" bgcolor="#DDAADD" class="code">11</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">4</span></td>
+        <td align="center" class="code">(-527 - 336i)</td>
+        <td align="right" bgcolor="#AADDDD" class="code">336</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">527</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">625</td>
+        <td align="right" bgcolor="#DDAADD" class="code">7</td>
+        <td align="right" bgcolor="#DDAADD" class="code">24</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">5</span></td>
+        <td align="center" class="code">(-237 - 3116i)</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">237</td>
+        <td align="right" bgcolor="#AADDDD" class="code">3,116</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">3,125</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">3</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">79</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">6</span></td>
+        <td align="center" class="code">(11753 - 10296i)</td>
+        <td align="right" bgcolor="#AADDDD" class="code">10,296</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">11,753</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">15,625</td>
+        <td align="right" bgcolor="#DDAADD" class="code">44</td>
+        <td align="right" bgcolor="#DDAADD" class="code">117</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">7</span></td>
+        <td align="center" class="code">(76443 + 16124i)</td>
+        <td align="right" bgcolor="#AADDDD" class="code">16,124</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">76,443</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">78,125</td>
+        <td align="right" bgcolor="#DDAADD" class="code">29</td>
+        <td align="right" bgcolor="#DDAADD" class="code">278</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">8</span></td>
+        <td align="center" class="code">(164833 + 354144i)</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">164,833</td>
+        <td align="right" bgcolor="#AADDDD" class="code">354,144</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">390,625</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">191</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">863</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">9</span></td>
+        <td align="center" class="code">(-922077 + 1721764i)</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">922,077</td>
+        <td align="right" bgcolor="#AADDDD" class="code">1,721,764</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">1,953,125</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">481</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1917</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td>(3 + 4i)<span class="superscript">10</span></td>
+        <td align="center" class="code">(-9653287 + 1476984i)</td>
+        <td align="right" bgcolor="#AADDDD" class="code">1,476,984</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">9,653,287</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">9,765,625</td>
+        <td align="right" bgcolor="#DDAADD" class="code">237</td>
+        <td align="right" bgcolor="#DDAADD" class="code">3116</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+    </table>
+
+    <p>Although this series is unlimited the examples it generates are rather far
+    apart, only the first six appear in our diagrams above.
+
+    The 'x', 'y' and 'k' columns shows the values used to generate this triple, using
+    the <a href="#xeq">first set of equations</a>.
+
+    Notice that all the 'k' values are 1 or 2, so all these triples are prime, according to
+    our original definition. An alternative definition of primeness based on this complex
+    number mutiplication would render all but (3,4,5) composite.
+    </p><p>
+    The series generated by (5,12)
+    shoots out of sight even more rapidly.</p>
+
+    <p>
+    <table style="border-collapse: collapse; border: 2px solid black;" class="internal_borders whitebox in2">
+      <tr>
+        <td align="center" height="22">a</td>
+        <td align="center" height="22">b</td>
+        <td align="center" height="22">c</td>
+        <td align="center">x</td>
+        <td align="center">y</td>
+        <td align="center">k</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#CCFFFF" class="code">5</td>
+        <td align="right" bgcolor="#AADDDD" class="code"> 12</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">5</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#CCFFFF" class="code">119</td>
+        <td align="right" bgcolor="#AADDDD" class="code"> 120</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">2</span></td>
+        <td align="right" bgcolor="#FFCCFF" class="code">7</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">17</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#AADDDD" class="code">828</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">2,035</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">3</span></td>
+        <td align="right" bgcolor="#DDAADD" class="code">3</td>
+        <td align="right" bgcolor="#DDAADD" class="code">138</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#CCFFFF" class="code">239</td>
+        <td align="right" bgcolor="#AADDDD" class="code">28,560</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">4</span></td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">239</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#AADDDD" class="code">145,668</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">341,525</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">5</span></td>
+        <td align="right" bgcolor="#DDAADD" class="code">122</td>
+        <td align="right" bgcolor="#DDAADD" class="code">1194</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#AADDDD" class="code">3,369,960</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">3,455,641</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">6</span></td>
+        <td align="right" bgcolor="#DDAADD" class="code">828</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2035</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#CCFFFF" class="code">23,161,315</td>
+        <td align="right" bgcolor="#AADDDD" class="code">58,317,492</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">7</span></td>
+        <td align="right" bgcolor="#FFCCFF" class="code">2105</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">11003</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#AADDDD" class="code">13,651,680</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">815,616,479</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">8</span></td>
+        <td align="right" bgcolor="#DDAADD" class="code">239</td>
+        <td align="right" bgcolor="#DDAADD" class="code">28560</td>
+        <td align="right" bgcolor="#DDAADD" class="code">2</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#CCFFFF" class="code">4,241,902,555</td>
+        <td align="right" bgcolor="#AADDDD" class="code">9,719,139,348</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">9</span></td>
+        <td align="right" bgcolor="#FFCCFF" class="code">29755</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">142561</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+      <tr>
+        <td align="right" bgcolor="#CCFFFF" class="code">95,420,159,401</td>
+        <td align="right" bgcolor="#AADDDD" class="code">99,498,527,400</td>
+        <td align="right" bgcolor="#CCFFFF" class="code">13<span class="superscript">10</span></td>
+        <td align="right" bgcolor="#FFCCFF" class="code">195857</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">487193</td>
+        <td align="right" bgcolor="#FFCCFF" class="code">1</td>
+      </tr>
+    </table>
+
+    <p>When multiplying two different triples together there are two possible result
+    sets, for instance multiplying the 64 permutations of (3,4,5) and (5,12,13)
+    generates two sets of 32 values based on (16, 63, 65) and (33, 56, 65). For instance;
+    <p>
+
+    <button class="x">
+        <pre class="code">
+(3 + 4j) x ( 5 + 12j) = (-33 + 56j)
+(3 + 4j) x (12 +  5j) = ( 16 + 63j)
+(4 + 3j) x (12 +  5j) = ( 33 + 56j)
+(4 + 3j) x ( 5 + 12j) = (-16 + 63j)
+
+=> 65<span class="superscript">2</span> = 16<span class="superscript">2</span> + 63<span class="superscript">2</span> = 33<span class="superscript">2</span> + 56<span class="superscript">2</span>    </pre></button>
+
+    <p>
+    Generally, if 'c<span class="subscript">1</span>' and 'c<span class="subscript">2</span>'
+    are the largest values in different triples,
+    then c<span class="subscript">1</span>&nbsp;&times;&nbsp;c<span class="subscript">2</span>
+    will be the largest value in two different
+    triples. This rule doesn't work when c<span class="subscript">1</span>&nbsp;=&nbsp;c<span class="subscript">2</span> as one of the triples
+    turns out to be (0,c,c).
+    </p>
+
+    </div>
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2012 - 2021 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

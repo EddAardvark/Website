@@ -1,0 +1,592 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Mandelbrots Julia Sets">
+<title>Mandelbrots and Julia Sets</title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+                          
+</head>
+
+<!-- Title -->
+
+<body onload="ShowLinks()">
+
+<table>
+
+ <tr>
+  <td width="200" class="top">
+   <p> Home page
+   </p><p>
+   <a href="http://www.eddaardvark.co.uk">
+      <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+   </a>
+   </p>
+  </td>
+
+  <td class="top" width="100%">
+      <p></p>
+      <h1> Mandelbrots and Julia Sets </h1>
+  </td>
+
+  <td>
+    <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-3534237235440125";
+      /* Small Square */
+      google_ad_slot = "0024655068";
+      google_ad_width = 200;
+      google_ad_height = 200;
+      //-->
+    </script>
+    <script type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </td>
+ </tr>
+</table>
+
+<div class="ad_align">
+
+<table class="layout">
+
+ <tr>
+
+<!-- Main content -->
+ 
+  <td class="left">
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+    <h2>Contents</h2>
+
+    <ul class="in3">
+      <li><a href="#Description">Introduction</a></li>
+      <li><a href="#Algorithm">The Algorithm</a></li>
+      <li><a href="#The Code">Using the Python Source Code</a></li>
+      <li><a href="#Finding Interesting Locations">Finding Interesting Locations</a></li>
+      <li><a href="#julia">Julia Sets</a></li>
+      <li><a href="mbaindex.htm">Animations</a></li>
+      <li><a href="../images.html"> More Mandelbrot Images</a>.</li>
+      <li><a href="index.html">Python Patterns Home Page</a></li>
+    </ul>
+
+    </div></div>
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+    <h2><a name="Description">Introduction</a></h2>
+    <p>
+    You can read all about the <a href="http://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot Set</a>
+    on <a href="http://www.wikipedia.org/">Wikipedia</a>.
+
+    </p>
+
+    <p>
+    This section describes the python scripts I have created to generate Mandelbrot and related images.
+    </p>
+    <p>
+    In the most recent version of the script I've done away with the distinction between
+    Mandelbrot and Julia sets. The new code is generically four dimensional, and allows you to view 2D slices of
+    the combined 4D Mandelbrot+Julia Set obect at any point in 4 space. These slices can be in any of
+    the 6 planes defined by the centre point and two of the vectors (1,0,0,0), (0,1,0,0), (0,0,1,0) and (0,0,0,1).
+    This actually makes the code simpler as we no longer need separate algorithms to generate the Mandelbrot and
+    Julia sets.
+    </p>
+
+      <h3> Top level view of the 4D object </h3>
+       <table>
+        <tr>
+         <td>
+          <a href="geometry.html">
+           <img src="4dimages\m_plane.gif" alt="M Plane" title="Click Me">
+          </a>
+         </td>
+         <td>
+          <a href="geometry.html">This page</a> shows
+          a top level view of the 4D object showing the six orthogonal planes that pass through
+          (0,&#8722;1,0,0). Two of these are the familiar Mandelbrot
+          set and the Julia set at c&nbsp;=&nbsp;(&minus;1,0).
+          This page also attempts to explain the 4D geometry that relates these 6 views.
+        </td>
+       </tr>
+      </table>
+
+      <h3> Some 4D examples </h3>
+       <table>
+        <tr>
+         <td>
+          <a href="4dpatterns.html">
+           <img src="4dimages\4dindex.gif" alt="Example" title="Click Me">
+          </a>
+         <td>
+          <a href="4dpatterns.html">This page</a> shows images generated as we zoom into the
+            six orthogonal planes.
+         </td>
+       </tr>
+      </table>
+
+    </div></div>
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+    <h2><a name="Algorithm">The Algorithm</a></h2>
+    <p>
+    The equation to iterate remains
+    </p>
+
+          <div class="code">
+          <div class="margins">
+    Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + c
+          </div></div>
+    <p>
+    which is iterated until it is obvious that the value of |Z| is approaching
+    infinity (&gt;2 will do) or until we reach the maximum number
+    of iterations we are prepared to try.
+    </p>
+    <p>
+    In the original code we would set Z<sub>0</sub>
+    to (0,0) and vary (cx and cy) to generate a Mandelbrot set, or fix the 'c' value
+    and vary Z<sub>0</sub> to generate a Julia set.
+    </p>
+
+    <p>
+    The new code does away with this distinction; all 4 co-ordinates are considered equally
+    and we can fix any 2 and vary the other 2. The Julia and Mandelbrot sets are just
+    specific examples from a larger set of possibilities.
+    </p>
+    <p>
+    Now you choose a point in 4-space (zx,zy,cx,cy) and which of the 6 orthoganal planes
+    you wish to display.
+    </p>
+    <p>
+    All the colouring schemes and palettes of the previous version are still supported.
+    </p>
+
+
+
+    </div></div>
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+    <h2><a name="The Code">The Code</a></h2>
+    <p>
+      The Mandelbrot source code consists of two files, <a href="code/Mandelbrot.py">Mandelbrot.py</a>
+      and <a href="code/MandelbrotDriver.py">MandelbrotDriver.py</a>. (These were last Updated on the 11th October 2008.)
+    </p>
+
+    <p> <b><font color="#008080">Mandelbrot.py</font></b> contains the code for drawing the patterns,
+    <b><font color="#008080">MandelbrotDriver.py</font></b> provides a
+    user interface for setting the values.&nbsp; This can be driven from a command
+    window by typing it directly in (or as I prefer through a batch file) or from the Python IDE.
+
+    You will also need the Bitmap code in <a href="code/WindowsBMP.py">WindowsBMP.py</a></p>
+
+    <p>Assuming you have you paths set up correctly you can run the driver from the command line, the syntax being</p>
+    <div class="code">
+    <div class="margins">
+    python MandelbrotDriver.py &lt;parameters&gt;
+    </div></div>
+
+    <p>Or from within a python environment as</p>
+    <div class="code">
+    <div class="margins">
+    import MandelbrotDriver <br>
+    MandelbrotDriver.go ("&lt;parameters&gt;")
+    </div></div>
+
+    <p>or by using a list, eg.</p>
+    <div class="code">
+    <div class="margins">
+      import MandelbrotDriver<br>
+      args = ['-s1280x1024', '-fbig']<br>
+      MandelbrotDriver.go(args)
+    </div></div>
+
+    <p>Parameters should be separated by spaces and the text in
+    &lt;brackets&gt; should be replaced by actual values. Other characters must
+    appear as shown and there should be no spaces inside parameters. So, for
+    example;</p>
+
+    <div class="code">
+    <div class="margins">
+    python MandelbrotDriver.py -s1280x1024 -fbig
+    </div></div>
+    <p>or</p>
+    <div class="code">
+    <div class="margins">
+      import MandelbrotDriver<br>
+      MandelbrotDriver.go('-s1280x1024 -fbig')
+    </div></div>
+
+    <p>will draw an image of the whole Mandelbrot set (up to 600 iterations) in a
+    1280x1024 bitmap called 'big.bmp', saved in the current directory.</p>
+
+    <p>The parameters are;</p>
+
+    <div class="whitebox">
+
+    <table cellpadding="4">
+      <tr>
+        <td>  &#8722;b&lt;number&gt;</td>
+        <td>The 'blob factor' that controls the
+          level of detail when using the 'stars' or 'bands' <a href="schemes.html">colouring algorithm</a>
+          Typical values are quite small, say 0.001.
+          </td>
+      </tr>
+      <tr>
+        <td>  &#8722;c(&lt;zx&gt;,&lt;zy&gt;,&lt;cx&gt;,&lt;cy&gt;)</td>
+        <td> The centre of the image. zx, zy, cx and cy are floating point numbers. For instance
+             around the point &#8722;c(0,&#8722;.875,&#8722;0.075,0.669) you can find images like this.
+        </td>
+      </tr>
+
+      <tr>
+        <td>  &nbsp; </td>
+        <td> <div align="center"> <img src="4dimages/d7.gif" alt="Example"> </div> </td>
+      </tr>
+
+      <tr>
+        <td>  &#8722;d&lt;number&gt;</td>
+        <td>Chooses a the drawing <a href="colour_schemes.html">colour scheme</a> (1-8).</td>
+      </tr>
+
+      <tr>
+        <td>  &#8722;f&lt;name></td>
+        <td>The output file name, without path or extension,
+          eg 'outfile'. Default value is 'mandelbrot'</td>
+      </tr>
+      <tr>
+        <td>  &#8722;h</td>
+        <td>Shows some help on the parameters.</td>
+      </tr>
+      <tr>
+        <td>  &#8722;i&lt;number></td>
+        <td> Sets the maximum number of iterations. The default value is 600.
+             <a href="iterations.html">More on iterations</a>.
+        </td>
+      </tr>
+      <tr>
+        <td>  &#8722;l&lt;number&gt;</td>
+        <td>Ouputs a message after every 'number' rows, allowing you to monitor the progress. Reassuring if you
+            are drawing a very big/deep image.</td>
+      </tr>
+      <tr>
+        <td>  &#8722;m&lt;number&gt;</td>
+        <td>Sets the Magnification. '1' is the whole
+          image, values greater than one zoom in for greater detail. Default value is '1'.</td>
+      </tr>
+      <tr>
+        <td>  &#8722;n</td>
+        <td>&quot;No Draw&quot;. If this parameter is
+          specified then the parameter values will be displayed but the image won't
+          be drawn.</td>
+      </tr>
+      <tr>
+        <td>  &#8722;p&lt;path&gt;</td>
+        <td>Sets the path of the output image. Defaults to the current directory.</td>
+      </tr>
+      <tr>
+        <td>  &#8722;s&lt;w&gt;x&lt;h&gt;</td>
+        <td> Sets the image size. Default is 160 by 120, &#8722;s1280x1024 will create an image 1280 across
+             and 1024 pixels down.</td>
+      </tr>
+      <tr>
+        <td> &#8722;t&lt;plane&gt;&lt;scheme&gt;</td>
+        <td> The <a href="geometry.html">plane of the pattern</a>
+             and the <a href="schemes.html">colouring algorithm</a> to use. The 'plane' used to be the 'type', so
+             for backwards compatibility I have retained 'M' for planes parallel to the Mandelbrot plane
+             and 'J' for the planes containing the Julia sets. The other planes are identified using the
+             letters A - D. They are:
+
+             <div class="whitebox">
+                <table border="0" cellpadding="4" cellspacing="0">
+                  <tr>
+                    <td>
+                       <h4>Types</h4>
+                       <div style="font-family: Courier; font-size: small;">
+                       A - Fix (zx, cx), vary (zy, cy)<br>
+                       B - Fix (zx, cy), vary (zy, cx)<br>
+                       C - Fix (zy, cx), vary (zx, cy)<br>
+                       D - Fix (zy, cy), vary (zx, cx)<br>
+                       M - Fix (zx, zy), vary (cx, cy) - Set (zx,zy) to (0,0) for the Mandelbrot set.<br>
+                       J - Fix (cx, cy), vary (zx, zy) - Julia sets.<br>
+                      </div>
+                    </td>
+                   </tr>
+                 </table>
+         </div>
+             The colouring schemes can be chosen from the following list
+
+             <div class="whitebox">
+                <table border="0" cellpadding="4" cellspacing="0">
+                  <tr>
+                    <td>
+                       <h4>Schemes</h4>
+                       <div style="font-family: Courier; font-size: small;">
+                       none - <a href="schemes.html#classic">classic</a> colouring algorithm.<br>
+                       S - <a href="schemes.html#Stars">stars</a> algorithm<br>
+                       B - <a href="schemes.html#Bands">bands</a> algorithm<br>
+                       R - <a href="schemes.html#Real">real bands</a> algorithm<br>
+                       I - <a href="schemes.html#Imaginary">imaginary bands</a> algorithm<br>
+                       Q - <a href="schemes.html#quadrants">direction of escape</a> algorithm
+                      </div>
+                    </td>
+                   </tr>
+                 </table>
+         </div>
+
+         </td>
+       </tr>
+
+      <tr>
+        <td>  &#8722;w(x,y)</td>
+        <td>Returns the position of the pixel at (x,y).
+          The image isn't drawn. This will be a 'c' value for Mandelbrots and a 'Z'
+          value for Julia sets. It can be used when deciding where to zoom in on a
+          previously generated image.</td>
+      </tr>
+    </table>
+    </div>
+
+    </div></div>
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+
+    <h2><a name="Finding Interesting Locations">Finding Interesting Locations</a></h2>
+    <p>
+      The following sequence of images shows progresive zooms as we search for an
+      interesting location to display. The search images are only 160x120 so they can
+      be generated quite quickly. The MandelbrotDriver '&#8722;w(&lt;x&gt;,&lt;y&gt;)' option can be used to
+      locate the coordinates of an interesting point in an image.
+      This can then be fed into the next iteration with a larger magnification, and the process repeated,
+      producing a sequence like the one below.
+    </p>
+
+    <table border="0" cellpadding="4" cellspacing="0">
+      <tr>
+        <td><img border="0" src="images/j10m.gif" alt="Zoom"></td>
+        <td><img border="0" src="images/j11m.gif" alt="Zoom"></td>
+        <td><img border="0" src="images/j11m2.gif" alt="Zoom"></td>
+        <td><img border="0" src="images/j11m3.gif" alt="Zoom"></td>
+      </tr>
+      <tr>
+        <td><img border="0" src="images/j11m4.gif" alt="Zoom"></td>
+        <td><img border="0" src="images/j11m5.gif" alt="Zoom"></td>
+        <td><img border="0" src="images/j11m6.gif" alt="Zoom"></td>
+        <td><a href="images/j11m8.gif">
+             <img border="1" src="images/j11m7.gif" alt="Zoom" title="Click to view">
+            </a>
+        </td>
+      </tr>
+    </table>
+    <p>
+      When we have found an interesting location, like the last image in the sequence, we can then create a
+      <a href="images/j11m8.gif">higher resolution version</a>.</p>
+
+    <p>
+       These two images from the Mandelbrot plane centred around &#8722;c(0, 0, 0.27322626, 0.595153338)
+       are from one of the AVIs on the <a href="mbaindex.htm">animations page</a>.
+    </p>
+
+    <table border="0" cellpadding="4" cellspacing="0">
+      <tr>
+        <td><a href="images/mbex2_30.gif">
+               <img border="1" src="images/TN_mbex2_30.gif" alt="Example" title="Click">
+            </a>
+        </td>
+        <td><a href="images/mbex2_50.gif">
+               <img border="1" src="images/TN_mbex2_50.gif" alt="Example" title="Click">
+            </a>
+        </td>
+      </tr>
+    </table>
+
+    </div></div>
+
+    <div class="box" style="background-image: url('images/mbback.gif')">
+    <div class="margins">
+
+
+    <h2><a name="julia">Julia Sets</a></h2>
+    <p>
+
+      The <a href="http://en.wikipedia.org/wiki/Julia_set">Julia Sets</a>
+      reside on the planes doubly perpendicular to to the Mandelbrot plane. Doubly
+      perpendicular as they only share one point in common. They can be drawn using the 
+      MandelbrotDriver '&#8722;tJ' option. The
+      Julia set for a given 'c' value looks similar to the Mandelbrot around the same
+      value of 'c' (at high zoom). This can be seen in these images for the 'c' value of
+      (&#8722;0.3006818, 0.6600910).
+      Settings:
+    </p>
+    <p>
+       &#8722;tM &#8722;c(0,0,0.3006818, 0.6600910) <br>
+       &#8722;tJ &#8722;c(&lt;x&gt;,&lt;y&gt;,0.3006818, 0.6600910).
+    </p>
+    <p>
+    Where &lt;x&gt; and &lt;y&gt; represent the co-ordinates of the image centre.
+    The first two are of the Mandelbrot set, the 3rd and 4th details of the
+    corresponding Julia set. In both cases the pattern is built up from strands of
+    detail radiating from 11 pointed intersections. Click on the images for more detail.</p>
+
+    <table border="0" cellpadding="4" cellspacing="0">
+      <tr>
+        <td>
+          <a href="images/mbex0_29.gif">
+            <img border="1" src="images/TN_mbex0_29.gif" alt="Example" title="Click">
+          </a>
+        </td>
+
+        <td>
+          <a href="images/mbex0_57.gif">
+            <img border="1" src="images/TN_mbex0_57.gif" alt="Example" title="Click">
+          </a>
+        </td>
+
+        <td>
+          <a href="images/j1b.gif">
+            <img border="1" src="images/TN_j1b.gif" alt="Example" title="Click">
+          </a>
+        </td>
+
+        <td>
+          <a href="images/j1c.gif">
+            <img border="1" src="images/TN_j1c.gif" alt="Example" title="Click">
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p>Below are some more Julia images for various 'c' values. </p>
+
+    <table border="0" cellpadding="4" cellspacing="0">
+      <tr>
+        <td>
+          <a href="images/j7.gif"><img border="1" src="images/TN_j7.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j7x100.gif"><img border="1" src="images/TN_j7x100.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j7x10000.gif"><img border="1" src="images/TN_j7x10000.gif" alt="Example" title="Click"></a>
+        </td>
+        <td>
+          <a href="images/j7x10.gif"><img border="1" src="images/TN_j7x10.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j7x1000.gif"><img border="1" src="images/TN_j7x1000.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j7x100000.gif"><img border="1" src="images/TN_j7x100000.gif" alt="Example" title="Click"></a>
+        </td>
+        <td><p>This first sequence shows the results of
+          zooming in by a factor of 10, 5 times for the Julia set where 'c' is
+          (0.997837, &#8722;0.503156, &#8722;0.3006818, 0.6600910). All are 640x480 pixels with an iteration cutoff
+          of 600. </p>
+          <p>In the final image you can see that the two halves aren't connected.
+          This indicates that 'c' isn't actually inside the Mandelbrot set, so the
+          Julia set will contain an infinite number of distinct points, each of zero
+          size. No amount of zooming will ever find one, though you can see
+          roughly where they are.
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          &nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <a href="images/j8.gif"><img border="1" src="images/TN_j8.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j8x100.gif"><img border="1" src="images/TN_j8x100.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j8x1000b.gif"><img border="1" src="images/TN_j8x1000b.gif" alt="Example" title="Click"></a>
+        </td>
+        <td>
+          <a href="images/j8x10.gif"><img border="1" src="images/TN_j8x10.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j8x1000.gif"><img border="1" src="images/TN_j8x1000.gif" alt="Example" title="Click"></a><br><br>
+          <a href="images/j8x10000b.gif"><img border="1" src="images/TN_j8x10000b.gif" alt="Example" title="Click"></a>
+        </td>
+        <td>
+          <p>This sequence is for 'c' =
+          (0, 0, &#8722;0.55113284371278159, 0.62783963563277212) and progressively zooms in by factors of 10.</p>
+          <p>Notice, now that the strands meet in 5 way junctions. </p>
+          <p>Again we start of with a cutoff of 600 
+          iterations but by the time we have zoomed in a thousand fold we are
+          getting large black regions (4th image). The sequence restarts at x1000
+          (5th image), but now with
+          the maximum iteration count at 2400 (and the image size increased from
+          600x480 to 1024x800).
+          <p>Again, when we zoom in we can see that the pattern becomes disconnected. </p>
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      The following two Julia images (center and right) correspond to a point near the centre of the black circle
+      at the centre of the Mandelbrot image (left), c = (0, 0, &#8722;0.505, 0.570).</p>
+          
+    <p>
+      <img border="0" src="images/j10m.gif" alt="Example" title="Click">
+      <a href="images/j10.gif"><img border="1" src="images/TN_j10.gif" alt="Example" title="Click"></a>
+      <a href="images/j10x10.gif"><img border="1" src="images/TN_j10x10.gif" alt="Example" title="Click"></a>
+      </p>
+
+    <p>
+      Here the black sections are real, not the consequence
+      of too few iterations. The next set of images is generated round the 'c' value
+    (0, 0, &#8722;0.502875, 0.518925). The image on the left is the Mandelbrot, the 2<sup>nd</sup>
+    and 3<sup>rd</sup> the corresponding Julia images. You can click on the Julia images for more
+    detail.
+    </p>
+    <p>
+    This final set of images is an example of how you can find regions of the set that are too
+    complicated to render clearly on a screen. The spiral pattern has 47 spokes radiating from
+    a point. By choosing points in the "Seahorse Vallies", places on the Mandelbrot set where two black circles appear to meet, you can find
+    spirals with any (odd) number of spokes you like.</p>
+          
+    <p>
+    <img border="0" src="images/pt5.gif" alt="Example" title="Click">&nbsp;
+    <a href="images/jpt5.gif">
+     <img border="1" src="images/TN_jpt5.gif" alt="Example" title="Click">
+     </a>&nbsp;
+    <a href="images/jpt5b.gif">
+     <img border="1" src="images/TN_jpt5b.gif" alt="Example" title="Click">
+     </a>
+    </p>
+
+    </div></div>
+
+
+
+  </td>
+
+<!-- Right sidebar -->
+
+  <td class="right">
+
+   <div id="links"> &nbsp; </div> 
+
+  </td>
+ </tr>
+
+ <tr>
+  <td class="bottom" colspan="2">
+   <p class="small"> (c) John Whitehouse 2011 <p> </td>
+ </tr>
+</table>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Patterns Animated GIF Bitmap">
+<title>Complete Graphs 3-29</title>
+<link rel="StyleSheet" href="../jw.css" type="text/css" media="screen">
+</head>
+
+<body>
+
+<div class="orangebox">
+ <h1 class="title"> Complete Graphs 3-29 </h1>
+
+ <p>
+  This page is obsolete, please visit <a href="index.html"> the python patterns page</a>.
+ </p>
+</div>
+
+
+<div class="box" style="background-image: url('back.gif')">
+
+<div align="center">
+<p><img border="0" src="images/graphs.gif" width="400" height="400"></p>
+</div>
+
+<p>The bitmap images are generated with the script</p>
+
+
+<div class="code">
+<div class="margins">
+import LinePattern<br>
+<br>
+for i in range (3,30):<br>
+&nbsp;&nbsp;&nbsp; LinePattern.example (i)
+</div></div>
+
+<p>Once converted to GIFs the animation is created with the script</p>
+<div class="code">
+<div class="margins">
+import GIFAnimator<br>
+import MakeFileList<br>
+<br>
+path = 'c:\\python22\\work\\example\\'<br>
+flist = MakeFileList.MakeFileList(path, 'graph', 'gif', 3, 27)<br>
+gif = GIFAnimator.buildFromFiles(flist)<br>
+<br>
+gif.setDelay(50)<br>
+gif.writeToFile('c:\\python22\\work\\example\\graphs.gif')<br>
+</div></div>
+
+</div>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>

@@ -80,10 +80,7 @@ WebGLController.prototype.initGL = function(canvas)
             alert("WebGL is not supported");
             return;
         }
-
-        this.ctx3.viewportWidth = canvas.width;
-        this.ctx3.viewportHeight = canvas.height;
-        
+        ShaderManager.Owner = this;
         ShaderManager.LoadShaders (this.ctx3);
     }
     catch(e)
@@ -136,7 +133,20 @@ WebGLController.prototype.Draw = function ()
     
     ShaderManager.UpdateView ();
     ShaderManager.DrawScene ();
+            
+    this.TransferToImage (image);
     this.UpdateStatus ();
+}
+//-------------------------------------------------------------------------------------------------
+WebGLController.prototype.OnShadersLoaded = function ()
+{
+    this.TransferToImage (image);
+    this.UpdateStatus ();
+}
+//-------------------------------------------------------------------------------------------------
+WebGLController.prototype.TransferToImage = function (img)
+{
+    img.src = canvas.toDataURL('image/png');
 }
 //-------------------------------------------------------------------------------------------------
 WebGLController.prototype.UpdateStatus = function ()
@@ -330,24 +340,21 @@ WebGLController.prototype.ResetContours = function (f)
     this.Draw ();
 }
 //-------------------------------------------------------------------------------------------------
-WebGLController.prototype.ShowHighResView = function (w, h)
+// This allows us to have the canvas render images at higher resolution that those displayed on
+// the screen which can be saved for hi-res printing.
+//-------------------------------------------------------------------------------------------------
+WebGLController.prototype.SetImageSize = function ()
 {
-    if (w == 0 || h == 0)
-    {
-        w = input_w.value;
-        h = input_h.value;
-    }
-
-    if (w <= 0 || h <= 0)
-    {
-        alert ("Invalid size: " + w + " x " + h);
-        return;
-    }
-    canvas.width = w;
-    canvas.height = h;
-
-    this.ctx3.viewportWidth = canvas.width;
-    this.ctx3.viewportHeight = canvas.height;
+    var size = image_size.options [image_size.selectedIndex].value;
+    var mul = parseInt(canvas_size_mul.options [canvas_size_mul.selectedIndex].value);
+    var bits = size.split(",");
+    var w = parseInt(bits[0]);
+    var h = parseInt(bits[1]);
+    
+    image.width=w;
+    image.height=h;
+    canvas.width=w * mul;
+    canvas.height=h * mul;
     this.Draw ();
 }
 //-------------------------------------------------------------------------------------------------
@@ -432,20 +439,16 @@ WebGLController.prototype.ApplySettings = function ()
 //-------------------------------------------------------------------------------------------------
 WebGLController.prototype.SaveToStart = function ()
 {
-    this.ApplySettings();
     this.anim_start.Copy (this.current);
     this.anim_start.DisplayText (WebGLController.start_ids, this.zidx);
-    
-    show_step.innerHTML = this.animation_step;
 }
 //-------------------------------------------------------------------------------------------------
 WebGLController.prototype.SaveToEnd = function ()
 {
-    this.ApplySettings();
     this.anim_end.Copy (this.current);
     this.anim_end.DisplayText (WebGLController.end_ids, this.zidx);
-    this.animation_step = this.max_animation;
 }
+//-------------------------------------------------------------------------------------------------
 WebGLController.prototype.SwapAnimationEndpoints = function ()
 {
     var temp = this.anim_end;
@@ -528,6 +531,9 @@ WebGLController.prototype.ResumeAnimation = function (rate)
     
     this.max_animation = Math.max (n,5);
     this.animation_speed = (rate) ? rate : 1;
+    
+    canvas_size_mul.value = "1";
+    this.SetImageSize ();
     
     WebGLController.animation_target = this;
 }

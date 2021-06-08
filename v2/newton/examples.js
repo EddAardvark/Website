@@ -25,13 +25,17 @@ NewtonExamples.FillList = function ()
 
     var j5 = '{"z9":0,"z8":0,"z7":0,"z6":1,"z5":-5.1,"z4":6.5025,"z3":-2,"z2":5.1,"z1":0,"z0":[1,1.5],"zoom":[0.5,1.5],"steps":[100,500],"alpha":{"x":1,"y":0},"seed":{"x":1,"y":0},"colour":{"x":0,"y":0}}';
     var t5 = '(z^3 - 2.55z^2 - 1)^2';
-
+    
+    var j6 = '{"z9":0,"z8":0,"z7":0,"z6":0,"z5":0,"z4":1,"z3":-0.45,"z2":-2.55,"z1":0,"z0":-1,"zoom":[1.5,2],"steps":[1001,500],"alpha":{"x":1.28,"y":0},"seed":{"x":0,"y":0},"colour":{"x":1.4,"y":0.28}}';
+    var t6 = 'z^4 - 0.45z^3 - 2.55z^2 - 1';
+    
     
     NewtonExamples.list ["A"] = {"text":t1, "json":j1};
     NewtonExamples.list ["B"] = {"text":t2, "json":j2};
     NewtonExamples.list ["C"] = {"text":t3, "json":j3};
     NewtonExamples.list ["D"] = {"text":t4, "json":j4};
     NewtonExamples.list ["E"] = {"text":t5, "json":j5};
+    NewtonExamples.list ["F"] = {"text":t6, "json":j6};
 }
 
 //-------------------------------------------------------------------------------------------------

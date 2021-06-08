@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Patterns Animated GIF Bitmap">
+<title>JW's Python Patterns Source Code</title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+                          
+</head>
+
+<!-- Title -->
+
+<body onload="ShowLinks()">
+
+<table>
+
+ <tr>
+  <td width="200" class="top">
+   <p> Home page
+   </p><p>
+   <a href="http://www.eddaardvark.co.uk">
+      <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+   </a>
+   </p>
+  </td>
+
+  <td class="top" width="100%">
+      <p></p>
+      <h1> Source Code </h1>
+      <p class="align_left">
+        This is all published as ASCII text files. You will need to download a python
+        environment to use it. I use the PythonWin IDE from
+        <a href="http://www.activestate.com/Products/ActivePython/">ActiveState</a>.
+        It should be free and comes with lots of documentation. Python is an interpreted
+        language, so it isn't lightening fast. For better performance you could always
+        translate these algorithms into faster languages, such as 'C'.
+      </p>
+  
+  </td>
+
+  <td>
+    <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-3534237235440125";
+      /* Small Square */
+      google_ad_slot = "0024655068";
+      google_ad_width = 200;
+      google_ad_height = 200;
+      //-->
+    </script>
+    <script type="text/javascript"
+      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </td>
+ </tr>
+</table>
+
+<div class="ad_align">
+
+<table class="layout">
+
+ <tr>
+
+<!-- Main content -->
+ 
+  <td class="left">
+
+    <div class="box" style="background-image: url('back.gif')">
+    <div class="margins">
+
+        <h2>Contents</h2>
+
+        <ul class="in3">
+          <li><a href="#File Handling">File Handling</a></li>
+          <li><a href="#Utilities">Utilities</a></li>
+          <li><a href="#The Patterns">The Patterns</a></li>
+        </ul>
+
+    </div></div>
+
+    <div class="box" style="background-image: url('back.gif')">
+    <div class="margins">
+
+        <h2><a name="File Handling">File Handling</a></h2>
+        <p>These files contain source code for handling various graphics file formats.</p>
+
+        <table border="1" cellpadding="8" cellspacing="1">
+          <tr>
+            <td><a href="code/WindowsBMP.py">WindowsBMP.py</a></td>
+            <td>This file handles windows bitmap files. It supports loading and saving
+              plus a few simple transformations. It also has methods to set pixel
+              colours and is used by all the pattern drawing applications.<br>
+              <br>
+              Currently only 24 bit encoding is supported completely.</td>
+          </tr>
+          <tr>
+            <td><a href="code/GIFFile.py">GIFFile.py</a><br>
+              <a href="code/GIFHeader.py">GIFHeader.py</a><br>
+              <a href="code/GIFGraphicControlExtension.py">GIFGraphicControlExtension.py</a><br>
+              <a href="code/GIFImage.py">GIFImage.py</a><br>
+              <a href="code/GIFApplicationExtension.py">GIFApplicationExtension.py</a><br>
+              <a href="code/GIFCommentExtension.py">GIFCommentExtension.py</a><br>
+              <a href="code/GIFDataSubBlock.py">GIFDataSubBlock.py</a></td>
+            <td>These files are used for reading and writing GIF files. These is no
+              support for compressing or decompressing the image data.<br>
+              <br>
+              They do let you peek inside the files and you can add remove or edit the
+              comment records. You can aslo alter the speed and repeat counts for
+              animated GIFs.</td>
+          </tr>
+          <tr>
+            <td><a href="code/GIFAnimator.py">GIFAnimator.py</a></td>
+            <td>This file enables you to convert a set of GIF files into an
+                animated GIF. It currently only supports series of files that all have the
+                same colour map and are the same size, like those that are output by some of the
+                examples included in the pattern code.</td>
+          </tr>
+        </table>
+    </div></div>
+
+    <div class="box" style="background-image: url('back.gif')">
+    <div class="margins">
+
+        <h2><a name="Utilities">Utilities</a></h2>
+        <p>These files contain functions used in the patterns, but don't draw patterns
+        themselves.</p>
+
+        <table border="1" cellpadding="8" cellspacing="1">
+          <tr>
+            <td><a href="code/MakeFileList.py">MakeFileList.py</a></td>
+            <td>This creates a list of files with incremental names. These are useful
+              for generating animations. For instance the script<br>
+              <br>
+              MakeFileList.MakeFileList ('c:\\', 'pic', 'gif', 1, 4)<br>
+              <br>
+              Generates the file names<br>
+              <br>
+              c:\pic00001.gif<br>
+              c:\pic00002.gif<br>
+              c:\pic00003.gif<br>
+              c:\pic00004.gif</td>
+          </tr>
+          <tr>
+            <td><a href="code/ColourMap.py">ColourMap.py</a></td>
+            <td>This is used to generate ranges of colours. It also defines a few. It is
+              used a lot in the CirclePatterns module, eg<br>
+              <br>
+              colour_map = ColourMap.createLinear (ColourMap.green, ColourMap.blue, 4)<br>
+              <br>
+              creates a list of four colours spread evenly between blue and green.
+              Colours are encoded as three character strings so the above map looks like<br>
+              <br>
+              ['\x00\xff\x00', 'U\xaa\x00', '\xaaU\x00', '\xff\x00\x00']</td>
+          </tr>
+          <tr>
+            <td><a href="code/LineDrawer.py">LineDrawer.py</a></td>
+            <td>This Constructs the set of pixels to draw a line between<br>
+              two points. It is used by various patterns to draw straight lines.<br>
+              <br>
+              The line following algorithm basically calculates the value of<br>
+              <br>
+              Z = Ax + By + C<br>
+              <br>
+              for candidate points along the line and chooses the next point to be the candidate
+              where Z is closest to zero. Because we start at a point on the line (where Z = 0) and
+              calculate the candidate values by adding the derivatives (dz/dx and dz/dy) we don't need
+              to know the value of C.</td>
+          </tr>
+        </table>
+
+    </div></div>
+    
+    <div class="box" style="background-image: url('back.gif')">
+    <div class="margins">
+
+        <h2><a name="The Patterns">The Patterns</a></h2>
+
+        <table border="1" cellpadding="8" cellspacing="1">
+          <tr>
+            <td><a href="code/CirclePattern.py">CirclePattern.py</a></td>
+            <td>Draws the &quot;Circle Pattern&quot; family of patterns.</td>
+          </tr>
+          <tr>
+            <td><a href="code/LinePattern.py">LinePattern.py</a></td>
+            <td>Draws the &quot;Line Pattern&quot; family of patterns.</td>
+          </tr>
+          <tr>
+            <td><a href="code/SpirographDriver.py">SpirographDriver.py</a> <a href="code/Spirograph.py">Spirograph.py</a></td>
+            <td>Draws Spirographs and related patterns.</td>
+          </tr>
+        </table>
+    </div></div>
+
+  </td>
+
+<!-- Right sidebar -->
+
+  <td class="right">
+
+   <div id="links"> &nbsp; </div> 
+
+  </td>
+ </tr>
+
+ <tr>
+  <td class="bottom" colspan="2">
+   <p class="small"> (c) John Whitehouse 2011 <p> </td>
+ </tr>
+</table>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
