@@ -1,0 +1,34 @@
+
+TH.left { text-align: left; }
+
+UL.box {    list-style-type:    none;
+            padding:            0px;
+            margin-left:        6px;
+            margin-right:       6px;
+            margin-top:         6px;
+            margin-bottom:      6px;
+      }
+
+LI.box {    display:            inline-block;
+            border:             1px dashed #808080;
+            margin-left:        6px;
+            margin-right:       6px;
+            margin-top:         6px;
+            margin-bottom:      6px;
+      }
+
+TABLE.grid { border: 2px;
+             border-collapse:collapse;
+             border-style: solid;
+             border-color: #000000;
+      }
+TD.grid { border: 1px;
+          border-collapse:collapse;
+          border-style: solid;
+          border-color: #808080;
+      }
+TH.grid { border: 1px;
+          border-collapse:collapse;
+          border-style: solid;
+          border-color: #808080;
+      }

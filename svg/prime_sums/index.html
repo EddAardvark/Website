@@ -1,0 +1,684 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Prime Sums">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="../../v2/js_library/colours.js"> </script>
+<script type="text/javascript" src="../../v2/js_library/svg_helpers.js"> </script>
+
+<style>
+
+TD.heading { border: 1px solid darkslategrey; text-align:right; }
+TD.divisor { border: 1px solid darkslategrey; background-color: #ccddee; text-align:right; }
+TD.unitcell { border: 1px solid darkslategrey; background-color: #FFFF80; text-align:right; }
+TD.normal { border: 1px solid darkslategrey; text-align:right; }
+TABLE.sums { border: 1px solid darkslategrey; border-collapse: collapse; border-spacing: 0; }
+
+P.eq {
+	font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	margin-left: 60pt;
+}
+
+</style>
+
+<script>
+
+    var primes = [2,3,5,7,9,11,13,17,19,23,29,31,37,41,43,47];
+    var pmax = 47;
+    var maxint = Math.pow(2, 53) - 1;
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        CalculatePrimes ();
+        DrawTable (2, 3, 5, "table1", [16,10]);
+        CalculatePrimes ();
+
+        pmax = primes [primes.length-1];
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //-------------------------------------------------------------
+    ShowInNew = function (what)
+    {
+       window.open(what, '_blank');
+    }
+
+
+    //-------------------------------------------------------------
+    CalculatePrimes = function ()
+    {
+        var n1 = 53;
+        var n2 = 55;
+        for (i = 0 ; i < 200 ; ++i)
+        {
+            TryAddPrime (n1);
+            TryAddPrime (n2);
+            n1 += 6;
+            n2 += 6;
+        }
+    }
+    //-------------------------------------------------------------
+    TryAddPrime = function (p)
+    {
+        var limit = Math.sqrt (p);
+
+        for (var i in primes)
+        {
+            if (i > limit)
+            {
+                break;
+            }
+            if (p % primes [i] == 0)
+            {
+                return;
+            }
+        }
+        primes.push (p);
+    }
+    //-------------------------------------------------------------
+    TestPrime = function (p)
+    {
+        if (p >= pmax * pmax)
+        {
+            alert (p + " is too large");
+            return false;
+        }
+
+        if (primes.indexOf (p) >= 0)
+        {
+            return true;
+        }
+
+        if (p < pmax)
+        {
+            alert (p + " is not prime");
+            return false;
+        }
+
+        var limit = Math.sqrt (p);
+
+        for (var i in primes)
+        {
+            if (i > limit)
+            {
+                return true;
+            }
+            if (p % primes [i] == 0)
+            {
+                alert (p + " is not prime");
+                return false;
+            }
+        }
+        alert ("Not sure");
+        return false;
+    }
+    //-------------------------------------------------------------
+    // Calls a function that uses 2 primes
+    //  p1_element - element containing the first prime
+    //  p2_element - element containing the second prime
+    //  where      - element to display the result
+    //  fun        - function to call
+    //  extras     - function specific parameters
+    //-------------------------------------------------------------
+    UseTwoPrimes = function (p1_element, p2_element, where, fun, extras)
+    {
+        var new_p1 = document.getElementById(p1_element);
+        var new_p2 = document.getElementById(p2_element);
+        var p1 = parseInt (new_p1.value);
+        var p2 = parseInt (new_p2.value);
+
+        if (TestPrime (p1) && TestPrime (p2))
+        {
+            fun (p1, p2, where, extras);
+        }
+    }
+    //-------------------------------------------------------------
+    // Calls a function that uses 3 primes
+    //  p1_element - element containing the first prime
+    //  p2_element - element containing the second prime
+    //  p3_element - element containing the third prime
+    //  where      - element to display the result
+    //  fun        - function to call
+    //  extras     - function specific parameters
+    //-------------------------------------------------------------
+    UseThreePrimes = function (p1_element, p2_element, p3_element, where, fun, extras)
+    {
+        var new_p1 = document.getElementById(p1_element);
+        var new_p2 = document.getElementById(p2_element);
+        var new_p3 = document.getElementById(p3_element);
+        var p1 = parseInt (new_p1.value);
+        var p2 = parseInt (new_p2.value);
+        var p3 = parseInt (new_p3.value);
+
+        if (TestPrime (p1) && TestPrime (p2) && TestPrime (p3))
+        {
+            fun (p1, p2, p3, where, extras);
+        }
+    }
+    //-------------------------------------------------------------
+    DoShowModuli = function (p1, p2, where)
+    {
+        var element = document.getElementById(where);
+        var sequence = GetModuli (p1, p2);
+
+        var text = "" + sequence;
+        text = text.replace (/,/g, ", ");
+
+        element.innerHTML = "[" + text + "], contains " + (sequence.length - 1) + " members.";
+    }
+    //-------------------------------------------------------------
+    DrawClock = function (p1, p2, where)
+    {
+        var rads = 2 * Math.PI / p2;
+        var values = GetModuli (p1, p2);
+
+        // Physical size
+
+        var text = SVGHelp.Start (640, 640, -1.02, -1.02, 1.02, 1.02);
+
+        // Circle
+
+        text += SVGHelp.Circle (0, 0, 1, "yellow", "black");
+
+        // Draw Points
+
+        text += SVGHelp.Circle (0, -1, 0.02, "white", "black");
+
+        for (var i = 1 ; i < p2 ; ++i)
+        {
+            var a = rads * i;
+            var x = Math.sin (a);
+            var y = - Math.cos (a);
+
+            text += SVGHelp.Circle (x, y, 0.01, "black", "black");
+        }
+
+        // Draw Lines
+
+        a = rads * values [0];
+        x = Math.sin (a);
+        y = - Math.cos (a);
+
+        for (var i = 1 ; i < values.length ; ++i)
+        {
+            a = rads * values [i];
+            var x2 = Math.sin (a);
+            var y2 = - Math.cos (a);
+
+            text += SVGHelp.Line ([x,y], [x2,y2], "blue");
+
+            x = x2;
+            y = y2;
+        }
+
+        text += SVGHelp.End ();
+
+        var element = document.getElementById(where);
+        element.innerHTML = text;
+    }
+    //-------------------------------------------------------------
+    GetModuli = function (p1, p2)
+    {
+        var n = 1;
+        var ret = [1];
+
+        for (var i = 0 ; i < p2 ; ++i)
+        {
+            n = (n * p1) % p2;
+            ret.push (n);
+
+            if (n == 1)
+            {
+                break;
+            }
+        }
+        return ret;
+    }
+    //-------------------------------------------------------------
+    HideElement = function (element)
+    {
+        var element = document.getElementById(element);
+        element.innerHTML = "&nbsp;";
+    }
+    //-------------------------------------------------------------
+    DrawTable = function (p1, p2, p3, where, extras)
+    {
+        var rows = extras [0];
+        var cols = extras [1];
+        var caption = "Showing " + p1 + "<span class=\"superscript\">n</span>";
+
+        caption += " + " + p2 + "<span class=\"superscript\">m</span>";
+        caption += ", divisible by " + p3;
+
+        text = "<table class=\"sums\">";
+        text += "<caption>" + caption + "</caption>";
+        text += "<thead><tr><td>&nbsp;</td>";
+
+        // Headings
+
+        for (var col=0; col<cols ; ++col)
+        {
+            text += "<td class=\"heading\">" + col + "</td>";
+        }
+        text += "</thead></tr>";
+
+        // Rows
+
+        for (var row=0 ; row < rows ; ++row)
+        {
+            text += "<tr><td class=\"heading\">" + row + "</td>";
+
+            for (var col=0; col<cols ; ++col)
+            {
+                var n = Math.pow (p1,row) + Math.pow (p2,col);
+
+                if (n <= maxint)
+                {
+                    var td = (n % p3 == 0) ? "<td class=\"divisor\">" : "<td class=\"normal\">" ;
+                    text += td + n + "</td>";
+                }
+                else
+                {
+                    text +="<td class=\"normal\"> ? </td>";
+                }
+            }
+            text += "</tr>";
+        }
+
+        text += "</table>";
+
+        var element = document.getElementById(where);
+        element.innerHTML = text;
+    }
+    //-------------------------------------------------------------
+    DrawModuliTable = function (p1, p2, p3, where, extras)
+    {
+        var rows = extras [0];
+        var cols = extras [1];
+        var caption = "Showing " + p1 + "<span class=\"superscript\">n</span> mod " + p3;
+
+        caption += " + " + p2 + "<span class=\"superscript\">m</span> mod " + p3;
+        caption += ", divisible by " + p3;
+
+        text = "<table class=\"sums\">";
+        text += "<caption>" + caption + "</caption>";
+        text += "<thead><tr><td>&nbsp;</td>";
+
+        // Headings
+
+        for (var col=0; col<cols ; ++col)
+        {
+            text += "<td class=\"heading\">" + col + "</td>";
+        }
+        text += "</thead></tr>";
+
+        // Rows
+
+        var p1_values = GetModuli (p1, p3);
+        var p2_values = GetModuli (p2, p3);
+        var n1 = p1_values.length - 1;
+        var n2 = p2_values.length - 1;
+
+        for (var row=0 ; row < rows ; ++row)
+        {
+            text += "<tr><td class=\"heading\">" + row + "</td>";
+
+            for (var col=0; col<cols ; ++col)
+            {
+                var n = p1_values [row % n1] + p2_values [col % n2];
+                var style = "normal";
+
+                if (n % p3 == 0)
+                {
+                    style = "divisor";
+                }
+                else if (col < n2 && row < n1)
+                {
+                    style = "unitcell";
+                }
+
+                var td = (n % p3 == 0) ? "<td class=\"divisor\">" : "<td class=\"normal\">" ;
+                text += "<td class=\"" + style + "\">" + n + "</td>";
+            }
+            text += "</tr>";
+        }
+
+        text += "</table>";
+
+        var element = document.getElementById(where);
+        element.innerHTML = text;
+    }
+    //-------------------------------------------------------------
+    DrawSVGTable = function (p1, p2, p3, where, extras)
+    {
+        var bGrid = extras === true;
+        var bSingle = bGrid || (extras == null);
+
+        var text = "Showing " + p1 + "<span class=\"superscript\">n</span> mod " + p3;
+
+        text += " + " + p2 + "<span class=\"superscript\">m</span> mod " + p3;
+        text += ", divisible by " + p3 + "<p>";
+
+        var p1_values = GetModuli (p1, p3);
+        var p2_values = GetModuli (p2, p3);
+        var n1 = p1_values.length - 1;
+        var n2 = p2_values.length - 1;
+
+        if (bSingle)
+        {
+            var rows = n1;
+            var cols = n2;
+            var width = (n2 >= n1) ? 640 : 640 * n2 / n1;
+            var height = (n1 >= n2) ? 640 : 640 * n1 / n2;
+        }
+        else
+        {
+            var rows = extras [0];
+            var cols = extras [1];
+            var width = 640;
+            var height = 640;
+        }
+
+        // Physical size
+
+        text += SVGHelp.Start (width, height, 0, 0, cols, rows);
+
+        // Box
+
+        text += SVGHelp.Rect (0, 0, cols, rows, "none", "black");
+        text += SVGHelp.Rect (0, 0, n2, n1, "goldenrod", "black");
+
+        // Grid
+
+        if (bGrid)
+        {
+            for (var row = 1 ; row < rows ; ++row)
+            {
+                text += SVGHelp.Line ([0,row], [cols,row], "white");
+            }
+            for (var col = 1; col<cols ; ++col)
+            {
+                text += SVGHelp.Line ([col,0], [col,rows], "white");
+            }
+        }
+
+        // Cells
+
+        for (var row=0 ; row < rows ; ++row)
+        {
+            for (var col=0; col<cols ; ++col)
+            {
+                var n = p1_values [row % n1] + p2_values [col % n2];
+
+                if (n % p3 == 0)
+                {
+                    text += SVGHelp.Rect (col, row, 1, 1, "red", "black");
+                }
+            }
+            text += "</tr>";
+        }
+
+        text += SVGHelp.End ();
+        var element = document.getElementById(where);
+        element.innerHTML = text;
+    }
+
+
+</script>
+
+<title> Prime sums</title>
+</head>
+
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Sums of prime powers </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+       <h2> Introduction</h2>
+
+          <p> This page expores patterns in the equation
+          (P<span class="subscript">1</span><span class="superscript">n</span>
+          + P<span class="subscript">2</span><span class="superscript">m</span>)
+          modulo P<span class="subscript">3</span>, where
+          P<span class="subscript">1</span>, P<span class="subscript">2</span> and
+          P<span class="subscript">3</span> are prime numbers.
+
+          <p>
+
+          For an example we can look at P<span class="subscript">1</span> = 2, P<span class="subscript">2</span> = 3 and P<span class="subscript">3</span> = 5.
+
+          <p id="table1"> &nbsp;
+
+          <p>
+
+          Note that the cells that are divisible by 5 form a pattern.
+          <h2> Explore </h2>
+          <p>
+          You can use the following form to create tables
+          for other combinations of primes (or other numbers). (Note. The table algorithm uses javascript's
+          built-in integers which, at the time of writing, are limited to 9007199254740991
+          (2<span class="superscript">53</span> - 1)).
+
+          <p>
+          P<span class="subscript">1</span> : <input type="text" size="3" value="2" id="new_p1"> </input>
+          P<span class="subscript">2</span> : <input type="text" size="3" value="3" id="new_p2"> </input>
+          P<span class="subscript">3</span> : <input type="text" size="3" value="5" id="new_p3"> </input>
+
+          <button onclick='UseThreePrimes("new_p1","new_p2","new_p3","table2",DrawTable,[12,12]);'> Table </button>
+          <button onclick='HideElement("table2");'> Hide </button>
+
+          <p id="table2"> &nbsp;
+
+          <h2> Explore Further</h2>
+
+          <p> We can explore further by working with moduli rather than the values. For powers of a single prime, 'p',
+          when calculating p<span class="superscript">n</span> mod p<span class="subscript">2</span> we see that
+
+          <p class="eq">
+
+            p<span class="superscript">n</span> mod p<span class="subscript">2</span> = ((p<span class="superscript">n-1</span> mod p<span class="subscript">2</span>) x p) mod p<span class="subscript">2</span>.
+
+          <p>
+
+          and
+
+          <p class="eq">
+
+            p<span class="superscript">0</span> mod p<span class="subscript">2</span> = 1.
+
+          <p>
+
+          We can use this to generate a sequence of moduli for a given pair of primes, for instance
+          3<span class="superscript">n</span> mod 31 gives:
+
+          <p class="in4">
+
+            [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28, 22, 4, 12, 5, 15, 14, 11, 2, 6, 18, 23, 7, 21, 1]
+
+          <p>
+
+          Which has 30 members. So
+
+            3<span class="superscript">n</span> mod 31
+            =
+            3<span class="superscript">(n mod 30)</span> mod 31.
+
+          <p>
+
+        <p>
+          Calculate your own sequence:
+          P<span class="subscript">1</span> : <input type="text" size="3" value="2" id="moduli_p1"> </input>
+          P<span class="subscript">2</span> : <input type="text" size="3" value="3" id="moduli_p2"> </input>
+          <button onclick='UseTwoPrimes("moduli_p1","moduli_p2","sequence", DoShowModuli);'> Go</button>
+          <button onclick='UseTwoPrimes("moduli_p1","moduli_p2","sequence", DrawClock);'> Clock </button>
+          <button onclick='HideElement("sequence")'> Hide </button>
+
+          <p class="eq">
+            <span id="sequence"> &nbsp; </span>
+          <p>
+
+          If you experiment with this custom sequence generator you will discover that
+          the number of members in the sequence is always a factor of
+          (P<span class="subscript">2</span>&nbsp;&minus;&nbsp;1). Which leads to the equation
+
+        <p class="in4">
+
+            p<span class="subscript">1</span><span class="superscript">(p<span class="subscript">2</span>-1)</span>
+            mod p<span class="subscript">2</span> = 1.
+
+        <p>
+
+        An equation which is very useful in proving that big numbers aren't prime. Unfortunately it can't be used
+        to prove that big numbers are prime as there are some false positives.
+
+        If you tried the table generator above you will have noticed that it overflows quite quickly if
+        you choose numbers over 25. Instead we can explore the patterns using these moduli instead.
+
+
+          <p>
+          P<span class="subscript">1</span> : <input type="text" size="3" value="2" id="new_p1b"> </input>
+          P<span class="subscript">2</span> : <input type="text" size="3" value="3" id="new_p2b"> </input>
+          P<span class="subscript">3</span> : <input type="text" size="3" value="5" id="new_p3b"> </input>
+          <button onclick='UseThreePrimes("new_p1b","new_p2b","new_p3b","table3",DrawModuliTable,[32,32]);'> Table </button>
+          <button onclick='UseThreePrimes("new_p1b","new_p2b","new_p3b","table3",DrawSVGTable,[256,256]);'> SVG </button>
+          <button onclick='UseThreePrimes("new_p1b","new_p2b","new_p3b","table3",DrawSVGTable,true);'> Unit-cell </button>
+          <button onclick='HideElement("table3")'> Hide </button>
+
+          <p id="table3"> &nbsp;
+
+          <h2> Unit cells </h2>
+
+          <p>
+          The unit cell is determined by the number of entries in the two remainder series. There are three
+          main possibilities:
+          <ol>
+           <li>
+            Both remainder series have the full complement of (p<span class="subscript">3</span>&minus;1)
+            members.
+            In this case for every member of the P<span class="subscript">1</span> series,
+            [P<span class="subscript">1</span>],
+            there must be a matching
+            member of [P<span class="subscript">2</span>] such that
+            [P<span class="subscript">1</span>]<span class="subscript">i</span> &plus;
+            [P<span class="subscript">2</span>]<span class="subscript">j</span> &equals;
+            P<span class="subscript">3</span>.
+            <button onclick='DrawSVGTable(7,11,17,"table5",true);'> Click </button> to see an example.
+
+           <li>
+
+            If one remainder series, say [P<span class="subscript">2</span>] has the full complement,
+            but the other, [P<span class="subscript">1</span>],
+            only has a sub-set, then each member of the smaller set, [P<span class="subscript">1</span>]
+            will have a partner in [P<span class="subscript">2</span>], but not vice versa.
+            <button onclick='DrawSVGTable(2,5,23,"table5");'> View </button>.
+
+            <li>
+            If both remainder series are short of the full complement then there are no easy predictions.
+            Some, for instance 3 and 5 mod 11 produce no matches. 3<span class="superscript">n</span>
+            mod 11 gives [1, 3, 9, 5, 4] and 5<span class="superscript">n</span> gives [1, 5, 3, 4, 9].
+            No pairs of numbers, one from each set add up to a multiple of 11, so there are no solutions to
+
+            3<span class="superscript">n</span>&nbsp;&plus;&nbsp;5<span class="superscript">m</span>&nbsp;mod&nbsp;11&nbsp;&equals;&nbsp;0.
+            <br><br>
+            Interestingly, this also shows there are no solutions to
+            3<span class="superscript">n</span>&nbsp;&plus;&nbsp;3<span class="superscript">m</span>&nbsp;mod&nbsp;11&nbsp;&equals;&nbsp;0
+            or
+            5<span class="superscript">n</span>&nbsp;&plus;&nbsp;5<span class="superscript">m</span>&nbsp;mod&nbsp;11&nbsp;&equals;&nbsp;0.
+            <br><br>
+            Another case, 5 and 17 mod 29
+            produces the sets [1, 5, 25, 9, 16, 22, 23, 28, 24, 4, 20, 13, 7, 6] and [1, 17, 28, 12],
+            giving a unit cell of 14&nbsp;&times;&nbsp;4&nbsp;
+            but with only two matches, 1&nbsp;&plus;&nbsp;28 and 28&nbsp;&plus;&nbsp;1.
+            <button onclick='DrawSVGTable(17,5,29,"table5",null);'> View </button>.
+            67<span class="superscript">n</span>&nbsp;&plus;&nbsp;101<span class="superscript">m</span>&nbsp;mod&nbsp;17 is an interesting case:
+            <button onclick='DrawSVGTable(67,101,17,"table5",null);'> Show </button>.
+
+          </ol>
+
+          <p id="table5"> &nbsp;
+          <p>
+          <button onclick='HideElement("table5")'> Hide </button>
+
+    </div>
+    
+    
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2014 - 2021 <p>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

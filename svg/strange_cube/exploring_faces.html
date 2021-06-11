@@ -1,0 +1,201 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Stange Rubik-like Cube Puzzle">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="strange.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<script src="../../v2/js_library/colours.js"> </script>
+<script src="../../v2/js_library/svg_helpers.js"> </script>
+
+<title>Strange Cube: Explore Possible Faces</title>
+
+<script src="coloured_piece.js"> </script>
+<script src="face_details.js"> </script>
+<script src="cube_face.js"> </script>
+<script src="cube.js"> </script>
+
+<script>
+
+// globals
+
+    var face_possibilities;
+
+// Controls
+
+    var input_1;
+    var picture_item;
+    var splits_item;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        CubeFace.Init ();
+
+        input_1 = document.getElementById("input_1");
+        input_1.value = "12121212";
+
+        picture_item = document.getElementById("picture");
+        splits_item = document.getElementById("splits");
+
+        Go ();
+    }
+    //-------------------------------------------------------------
+    Go = function ()
+    {
+        Draw ();
+        ShowSplits ();
+    }
+    //-------------------------------------------------------------
+    Draw = function ()
+    {
+        var face = CubeFace.FromString (input_1.value, "white");
+
+        if (face != null)
+        {
+            picture_item.innerHTML = face.Draw (400);
+        }
+    }
+    //-------------------------------------------------------------
+    ShowSplits = function ()
+    {
+        var face = CubeFace.FromString (input_1.value, "white");
+
+        if (face != null)
+        {
+            var splits = face.GetSplits ();
+            var text = "<ul class=\"box\">";
+            var keys = Object.getOwnPropertyNames (splits);
+
+            for (var kidx in keys)
+            {
+                var k = keys [kidx];
+
+                var pos1 = splits [k][0];
+                var pos2 = (pos1 + 6) % 12;
+                var types1 = [];
+                var types2 = [];
+                splits [k][1].forEach(function(x) {types1.push(x.type);});
+                splits [k][2].forEach(function(x) {types2.push(x.type);});
+
+                text += "<li class=\"box\">";
+                text += "<table><tr><th class=\"left\">" + k + ":</th><th>[" + types1 + "]</th><th>[" + types2 + "]</tr>";
+                text += "<td\><td>" + CubeFace.DrawPieces (pos1, splits [k][1], 100) + "</td>";
+                text += "<td>" + CubeFace.DrawPieces (pos2, splits [k][2], 100) + "</td>";
+                text += "</tr></table></li>";
+            }
+            text += "</ul>";
+            splits_item.innerHTML = text;
+        }
+    }
+
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('index.html')">
+        <p> <img border="0" src="cube1.jpg" width="120"></a>
+        </p><p> <strong>Strange Cube Index</strong>   
+     </button>
+
+     <button class="banner">
+        <h1> Strange Cube: Explore Possible Faces </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript">
+        <!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+        -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+    
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+      <h2> Draw a face</h2>
+
+        <p>
+            This page will allow you to construct a face from a set of triangles and kites.
+            Enter a '1' for a triangle and a '2' for a kite.
+            To constuct a complete face the '1's and '2's must add up to 12. You can't have more than 8 '1's so there must be at least two '2's.
+        </p><p>
+            When you have entered the values click "Draw" and the page will show you the face your input defines and
+            the number of ways it can be split into 2 parts along a diagonal. On other pages you can see how these parts
+            combine to generate other face shapes.
+        </p><p>
+            <input type="text" id="input_1">
+            <button onclick="Go();"> Draw </button> &nbsp;
+        </p><p>
+            <table>
+                <tr>
+                    <th> Full Face </th>
+                    <th> Possible Splits </th>
+                </tr>
+                <tr>
+                    <td> <span id="picture"> &nbsp; </span> </td>
+                    <td> <span id="splits"> &nbsp; </span> </td>
+                </tr>
+            </table>
+        </p>
+    </div>
+      
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2017 - 2021 </p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

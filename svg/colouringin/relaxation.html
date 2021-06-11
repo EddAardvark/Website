@@ -1,0 +1,200 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Colouring Patterns algorithm">
+<title> Colouring-in: Relaxation </title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script>
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        document.getElementById("mini_links").innerHTML = MakeMiniLinks (mini_links);
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //--------------------------------------------- Other Pages ---------------------------------------------------
+    var mini_links = [];
+
+    mini_links.push (new LinkDefinition ("Relaxation",
+        "",
+        "#relaxation",
+        ""));
+
+    mini_links.push (new LinkDefinition ("Spontaneous Symmetry Breaking",
+        "",
+        "#symmetry",
+        ""));
+
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+      <h1> Colouring-in: Relaxation </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- MAIN CONTENT -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Contents </h2>
+
+    <p> <span id="mini_links"> &nbsp; </span>
+
+    </p><p>
+      <table cellpadding="4" cellspacing="0">
+      <tr>
+        <td><img src="../colouringin/gg3_rel.gif" alt="Relaxation Illustration"></td>
+        <td>
+
+        <h2> <a name="relaxation"> Relaxation </a> </h2>
+        <p>
+        For the relaxation operation we start by making the assumption that a pattern where all the lines
+        are the same length would be the most relaxed.
+        </p>
+        <p>
+        There are other options like trying to make all the polygons
+        regular, or all the angles at a point equal, but the line length option is the easiest to calculate.
+        </p>
+        <p>
+        The image on the left is the result of applying this relaxation transformation to the image on the
+        <a href="index.html">opening page</a>.
+        </td>
+       </tr>
+      </table>
+
+    </p><p>
+        First we imagine the pattern to be a collection of balls (the points) joined
+        together by springs (the lines). We then calculate the average line length and assume that this is
+        the optimum. Now we can start calculating the forces on the balls.
+    </p><p>
+        If the line is longer than the average then there will be a force pulling the two balls together. This will be
+        proportional to the line length minus the average length. This relation still holds if the line is shorter than the
+        average, but now, because the difference is negative, the force will be pushing the balls appart.
+    </p><p>
+        The total force on a ball will be the sum of the individual forces, contributed by the springs the ball is
+        connected to. (Note: this is the vector sum as the forces act along the lines).
+    </p><p>
+        Given the forces we can calculate the acceleration on each ball and then use these accelerations
+        to adjust the velocities of the balls (they are assumed to start off stationary).
+    </p><p>
+        We then add the velocities to the current positions to calculate the next positions. This is only an approximate
+        algorithm, to calculate the real motion we'd have to solve lots of simultaneous differential equations. As long as
+        we keep the distance moved each iteration small compared to the line lengths it will be accurate enough for our
+        purposes.
+    </p><p>
+        The image below left shows the result of one application of the Edge Replacement algorithm on a pentagon with spokes.
+        On the right is an animation showing how the pattern evolves under the relaxation algorithm described above.
+    </p><p>
+
+        <table cellspacing="12pt">
+         <tr>
+          <td> <img border="1" src="relax0.png" alt="Relaxation Illustration"> </td>
+          <td> <img border="1"  src="relax_undamped.gif" alt="Relaxation Animation"> </td>
+         </tr>
+        </table>
+    </p><p>
+        This is an interesting animation but it doesn't quite meet our purpose of optimising the line lengths,
+        as once you set the springs in motion they never stop. To get the iterations to converge on a relaxed configuration
+        we need to introduce "drag". Now in each iteration, as well as adding the acceleration to the current velocity
+        we also introduce a drag term, which reduces the previous velocity by a configurable ammount.
+        The next animation shows the effect of reducing the velocity by 20% each iteration. Notice that the pattern
+        settles down quite quickly to a stable arrangement. This will be a minimum energy arrangement given the
+        assumptions at the start of this section.
+    </p><p>
+        <table cellspacing="12pt">
+         <tr>
+          <td> <img border="1"  src="relax0.png" alt="Relaxation Illustration"> </td>
+          <td> <img border="1"  src="relax_damped.gif" alt="Relaxation Animation"> </td>
+         </tr>
+        </table>
+    </p>
+</div>
+    
+<!-- Spontaneous Symmetry Breaking -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> <a name="symmetry"> Spontaneous Symmetry Breaking </a> </h2>
+
+    <p>
+    This picture is the result of a 1000 iteration relaxation. Note that it has lost the five planes of reflective symmetry.
+    This shouldn't be possible because the original state was symmetrical. It must have happened because the floating
+    point maths used to calculate the next configuration introduces small errors which eventually allow the symmetry to break.
+    It is based on a spoked pentagon with three edge replacements.
+    </p><p>
+
+    <img src="symmetry.gif" alt="Symmetry example">
+
+    </p>
+</div>
+    
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2011 - 2020 <p>
+
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

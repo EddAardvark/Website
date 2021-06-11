@@ -1,0 +1,176 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Stange Rubik-like Cube Puzzle">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="strange.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<script src="../../v2/js_library/colours.js"> </script>
+<script src="../../v2/js_library/svg_helpers.js"> </script>
+
+<title>Strange Cube: List of Potential Cubes</title>
+
+<script src="coloured_piece.js"> </script>
+<script src="face_details.js"> </script>
+<script src="cube_face.js"> </script>
+<script src="cube.js"> </script>
+
+<script>
+
+    var cube_list_item;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        CubeFace.Init ();
+
+        cube_list_item = document.getElementById("cube_list");
+
+        DrawCubes ();
+    }
+    //-------------------------------------------------------------
+    DrawCubes = function ()
+    {
+        var keyidxs = Object.getOwnPropertyNames (CubeFace.unique_faces);
+        var cubes = [];
+
+        for (var idx1 in keyidxs)
+        {
+            var face_def_1 = CubeFace.unique_faces [keyidxs[idx1]];
+
+            for (var idx2 in keyidxs)
+            {
+                var face_def_2 = CubeFace.unique_faces [keyidxs[idx2]];
+
+                if (face_def_1.key >= face_def_2.key)
+                {
+                    nt = face_def_1.num_triangles + face_def_2.num_triangles;
+                    nk = face_def_1.num_kites + face_def_2.num_kites;
+
+                    if (nt == 8 && nk == 8)
+                    {
+                        cubes.push ([face_def_1, face_def_2]);
+                    }
+                }
+            }
+        }
+
+        var text = " There are " + cubes.length + " possibilities.<p><ul class=\"box\">";
+
+        for (idx in cubes)
+        {
+            var defs = cubes [idx];
+            var cube = Cube.FromDefinitions (defs[0], defs[1]);
+            text += "<li class=\"box\"><table><tr><th>";
+            text += "Keys: " + defs [0].key + " &plus; " + defs [1].key;
+            text += "</th></tr>";
+            text += "<tr><td>";
+            text += cube.top_face.Draw (100);
+            text += " ";
+            text += cube.bottom_face.Draw (100);
+            text += "</td></tr></table></li>";
+        }
+
+        text += "</ul>";
+        cube_list_item.innerHTML = text;
+    }
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('index.html')">
+        <p> <img border="0" src="cube1.jpg" width="120"></a>
+        </p><p> <strong>Strange Cube Index</strong>   
+     </button>
+
+     <button class="banner">
+       <h1> Strange Cube: List of Potential Cubes </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+       <h2> List of possible "Cubes"</h2>
+
+        <p>
+            Once you have made a few rotations the "cube" is unlikely to remain cubic, but for want of a better name I'm going
+            to refer to them as cubes anyway. A cube will always have 8 triangles and 8 kites, so we can use the previous
+            <a href="unique_faces.html">list of faces</a> to generate the set of potential cubes.
+        </p><p>
+            Whether all of the cubes can actually be realised will be explored on the <a href="transformations.html">
+            transformations page</a>.
+        </p><p>
+            To identify the cubes I have labelled them with the keys that define the faces. As turning the cube upside down
+            isn't really a transformation I've only shown those cubes where the top face's key is greater than or equal to the
+            botom one's.
+
+        </p><p>
+            <span id="cube_list"> &nbsp; </span>
+        </p>
+    </div>
+      
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2017 - 2021 </p>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

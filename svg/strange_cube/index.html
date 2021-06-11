@@ -1,0 +1,235 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Stange Rubik-like Cube Puzzle">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="strange.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../../v2/js_library/colours.js"> </script>
+<script src="../../v2/js_library/svg_helpers.js"> </script>
+<script src="coloured_piece.js"> </script>
+<script src="face_details.js"> </script>
+<script src="cube_face.js"> </script>
+<script src="cube.js"> </script>
+
+<title>Exploring the Possibilities of a Strange Cube</title>
+
+<script>
+
+// Controls
+
+    var the_cube_item;
+    var adjacent_cubes = [];
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        CubeFace.Init ();
+
+        the_cube_item = document.getElementById("the_cube");
+
+        var cube = Cube.Start ();
+
+        DrawPossibilities (cube);
+    }
+    //-------------------------------------------------------------
+    NextCube = function (index)
+    {
+        DrawPossibilities (adjacent_cubes [index]);
+    }
+    //-------------------------------------------------------------
+    DrawPossibilities = function (cube)
+    {
+        adjacent_cubes = cube.GetAllNeighbours ();
+
+        var text = "</table>";
+
+        text += "<p><table class=\"grid\"><tr><th class=\"grid\">Starting Cube</th><th class=\"grid\">Neighbouring Cubes</th></tr>";
+        text += "<tr><td class=\"grid\"><ul class=\"box\">" + CubeAsListItem (cube) + "</ul></td>";
+        text += "<td class=\"grid\"><ul class=\"box\">";
+
+        for (var ajix in adjacent_cubes)
+        {
+            var cube = adjacent_cubes[ajix];
+
+            text += CubeAsButton (cube, ajix);
+        }
+        text += "</ul></td></tr>";
+        text += "</table>";
+
+        the_cube_item.innerHTML = text;
+    }
+    //-------------------------------------------------------------
+    CubeAsListItem = function (cube)
+    {
+        var text = "<li class=\"box\">";
+        text += DrawCube(cube);
+        text += "</li>";
+        return text;
+    }
+    //-------------------------------------------------------------
+    CubeAsButton = function (cube, index)
+    {
+        var text = "<button class=\"link\" onclick=\"NextCube(" + index + ");\">";
+        text += DrawCube(cube);
+        text += "</button>";
+
+        return text
+    }
+    //-------------------------------------------------------------
+    DrawCube = function (cube)
+    {
+        var text = cube.top_face.DrawInColour (100);
+        text += " ";
+        text += cube.bottom_face.DrawInColour (100);
+        text += "<br>" + cube.key;
+
+        return text
+    }
+
+</script>
+
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Explore Shape Space for Cube Puzzle </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript">
+        <!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+        -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+
+       <h2> Explore Shape Space for Cube Puzzle</h2>
+        <p>
+            Max brought me this strange cube for Christmas.
+        </p><p>
+            <a href="cube1.jpg" title="Click to expand" target="_blank"><img src="cube1.jpg" width="256"></a>
+            <a href="cube2.jpg" title="Click to expand" target="_blank"><img src="cube2.jpg" width="256"></a>
+        </p><p>
+            The top and bottom faces are formed of two types of shape, an isosceles triangle with a central angle of 30 degrees
+            and a kite with an angle of 60. The angles on each face must add to 360 degrees.
+            The puzzle starts out with 4 kites and 4 triangles on both faces.
+        </p><p>
+            The only transformation that can be performed swaps half the top face with half the bottom face
+            by lining up a diameter on each face with the split on the middle row.
+            The possible faces and the ways they can be split are shown on the
+            <a href="unique_faces.html">unique faces</a> page.
+        </p><p>
+            After a few operations the faces are unlikely to remain square.
+        </p><p>
+            <a href="cube3.jpg" title="Click to expand" target="_blank"><img src="cube3.jpg" width="256"></a>
+        </p><p>
+            This page allows you to explore the transformations interactively, more detail about the possible shapes
+            and moves is shown in the associated pages, see the <a href="#s1">contents</a>.
+        </p>
+        
+    </div>
+    
+
+<!-- Interactive Cube -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+    <h2>Interactive Cube</h2>
+        <p>
+            The image on the left shows a top and bottom view of the cube in its current state. This starts out in the untransformed configuration. On the right
+            are images of all the possible new states you can get to by making one rotation. Click on an image to make that transformation. The left image will then be
+            replaced by the new configuration and the right hand area will contain the new possible moves.
+            The numbers are explained in the <a href="#s1">linked pages</a>.
+        </p><p>
+            <span id="the_cube"> &nbsp; </span>
+        </p>
+
+    </div>
+    
+
+<!-- Additional content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2><a name="s1"/>Contents</h2>
+        <ul>
+            <li>
+                <a href="exploring_faces.html">See how a list of shapes generates a face</a>
+            </li><li>
+                <a href="unique_faces.html">See all the possible faces that can be constructed from the shapes</a>
+            </li><li>
+                <a href="unique_cubes.html">See all the possible arrangements of a cube</a>
+            </li><li>
+                <a href="transformations.html">Shows how a single move tranforms a cube</a>
+            </li>
+        </ul>
+
+      </div>
+      
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2017 - 2021 </p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

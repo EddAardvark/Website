@@ -1,0 +1,310 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<meta name="KeyWords" content="Colouring Patterns Python Script free download">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<title> Python Scrips and Instructions </title>
+
+
+
+<script>
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+    }
+</script>
+
+</head>
+
+<!-- The body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+
+      <h1> Python Script </h1>
+
+      <p style="max-width: 420px;" >
+        This page allows you to download the python script to generate pictures of
+        you own. The script itself is rather complicated so I'm not going to try and
+        explain how it works. Using it, though, is quite simple.
+      </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- MAIN CONTENT -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+    <h2>The Script</h2>
+
+    <p>
+        You will need to download the following files and save them in your
+        python path. The first 5 are for calculating the patterns, the last three
+        render them to bitmaps.</p>
+    </p><p>
+        <ul>
+          <li> <a href="../python_patterns/code/SPoint.py"> SPoint.py</a></li>
+          <li> <a href="../python_patterns/code/SLine.py"> SLine.py</a></li>
+          <li> <a href="../python_patterns/code/Shape.py"> Shape.py</a></li>
+          <li> <a href="../python_patterns/code/SPattern.py"> SPattern.py</a> - <span style="font-size:small;">updated 5 August 2009</span></li>
+          <li> <a href="../python_patterns/code/SRect.py"> SRect.py</a> - <span style="font-size:small;">updated 5 August 2009</span></li>
+          <li> <a href="../python_patterns/code/WindowsBMP.py"> WindowsBMP.py</a></li>
+          <li> <a href="../python_patterns/code/LineDrawer.py"> LineDrawer.py</a></li>
+          <li> <a href="../python_patterns/code/ColourMap.py"> ColourMap.py</a></li>
+        </ul>
+    </p>
+
+</div>
+
+
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2>Instructions</h2>
+    <p>The following code snippet shows how to start off a pattern. The layout is
+    taken from the ActiveState Python IDE, see
+      <a href="http://www.activestate.com/Products/ActivePython/">http://www.activestate.com/Products/ActivePython/</a>.
+    I use version 2.3, I've not tested this on more recent versions.</p>
+    <p>
+        <div class="in2 code">
+        >>> import SPattern<br>
+        >>> pattern = SPattern.SPattern()<br>
+        >>> pattern.start(13,1)<br>
+        >>> pattern.draw(160,'spokes13')<br>
+        </div>
+
+    <p>
+        <span class="code">&quot;import Spattern&quot;</span> <br/><br/>
+        loads all the modules into the environment.</p>
+    <p>
+        <span class="code">&quot;pattern=SPattern.SPattern()&quot;</span>  <br/><br/>
+        creates a pattern object called
+        &quot;pattern&quot;. You only need to do the first two statements once per
+        session, you can reuse the pattern object.</p>
+    <p>
+        <span class="code">&quot;pattern.start (13,1)&quot;</span> <br/><br/>
+        initialises the pattern to a 13 sided
+        polygon with radial spokes. (13,0) would create a polygon without the
+        spokes.</p>
+    <p>
+        <span class="code">&quot;pattern.draw(160,'spokes13')&quot;</span> <br/><br/> draws
+        the pattern to a bitmap called 'spokes13.bmp'. The module &quot;Spattern.py&quot;
+        contains a statement like <br>
+        <br>
+        <span class="code">def_path = 'c:/python23/work/shapes/'</span> <br/><br/>
+
+        which identifies where the patterns are saved. To save them somewhere else
+        you need to edit the file and change this before importing the &quot;Spattern&quot;
+        module into
+        the environment. &quot;160&quot; defines the size of the bitmap. The
+        result looks like this.</p>
+    <p>
+        <img src="spokes13.gif" width="160" height="160"></p>
+    <p>
+        To create the next pattern in the sequence use the &quot;nextPattern&quot;
+        function. This replaces the current pattern with the next one in the
+        sequence.</p>
+    <p>
+        <div class="in2 code">
+            >>> pattern.nextPattern()<br>
+            >>> pattern.draw(320,'spokes13b')<br>
+        </div>
+    <p>Which looks like this.</p>
+    <p><img src="spokes13b.gif" width="320" height="320"></p>
+    <p>Note: You don't have to draw the pattern after every iteration.</p>
+
+    <h3> Advanced Users </h3>
+     <p> If you aren't interested in printing out the intermediate steps you can you use the short-cut
+
+    <p>
+        <div class="in2 code">
+            >>> import SPattern<br>
+            >>> pattern = SPattern.makePattern (13,1,1) <br/>
+            >>> pattern.draw(320,'spokes13b') <br/>
+        </div>
+
+    <p>
+     which combines the above operations into a single function call: makePattern. The first parameter
+     is the symettry value, '13'. The second is whether or not we want spokes, '1' is yes. The third
+     parameter is the number of times to apply the nextPattern algorithm. The above sequence will recreate
+     the 'spokes13b' pattern described above.
+
+    <h3> The Dual Function </h3>
+
+    <p>
+        The &quot;getDual&quot; function can be used to obtain the dual of the
+        current pattern. Note that this creates a new object (called
+        &quot;dual&quot; in this example), the original pattern, called
+        &quot;pattern&quot;, still exists.</p>
+
+    <p>
+        <div class="in2 code">
+            >>> dual=pattern.getDual()<br>
+            >>> dual.draw(320,'spokes13bd')<br>
+        </div>
+
+    <p>The dual looks like this.</p>
+    <p><img src="spokes13bd.gif" width="320" height="320"></p>
+    <p>You can now continue iterating with the dual or the original pattern, for
+    instance</p>
+
+    <p>
+        <div class="in2 code">
+            >>> pattern.nextPattern()<br>
+            >>> dual.nextPattern()<br>
+            >>> pattern.draw(320,'spokes13c')<br>
+            >>> dual.draw(320,'spokes13bd2')<br>
+    </div>
+    <p>Produces these two images</p>
+    <table cellpadding="4" cellspacing="0">
+      <tr>
+        <td><img src="spokes13c.gif" width="320" height="320"></td>
+        <td><img src="spokes13bd2.gif" width="320" height="320"></td>
+      </tr>
+    </table>
+    <p>We can go mad and take duals again</p>
+
+    <p>
+        <div class="in2 code">
+            >>> d2=pattern.getDual()<br>
+            >>> d3=dual.getDual()<br>
+            >>> d2.draw(320,'spokes13cd')<br>
+            >>> d3.draw(320,'spokes13bd2d')<br>
+        </div>
+
+    <table cellpadding="4" cellspacing="0">
+      <tr>
+        <td><img src="spokes13cd.gif" width="320" height="320"></td>
+        <td><img src="spokes13bd2d.gif" width="320" height="320"></td>
+      </tr>
+    </table>
+    <p>or we can start again.</p>
+
+    <p>
+        <div class="in2 code">
+            >>> pattern = SPattern.makePattern(6,0,0)<br/>
+            >>> pattern.draw(160,'nospokes6')<br/>
+        </div>
+
+    <p><img src="nospokes6.gif"></p>
+
+    <h3>Instructions</h3>
+    <p> There is a new starting method, startGrid, which allows you to start with a square array of squares.
+    It is used in place of "start" as shown in this example.
+    </p>
+
+    <p>
+        <div class="in2 code">
+            >>> import SPattern<br>
+            >>> pattern = SPattern.SPattern()<br>
+            >>> pattern.startGrid(4)<br>
+            >>> pattern.draw(160,'grid4')<br>
+        </div>
+
+    <p> This example creates the starting pattern</p>
+    <p>
+    <img src="grid4.gif">
+    </p>
+    <p> Which can then be manipulated in the same was as the other starting patterns. See the
+        <a href="patterns.html"> Colouring in page</a> for an example.
+    </p>
+
+    <h3> The Relaxation algorithm. </h3>
+
+    <p>
+    The relaxation algorithm has been used to generate the animations on the
+    <a href="animations_index.html">animations pages</a>, for instance,
+    on <a href="a1.html">this page</a>, we have the code
+    </p>
+
+    <div class="in2 code">
+        >>> dual.relax(300,0,100,True,300) <br/>
+    </div>
+
+    <p>
+    The parameters are:
+     <div class="margins">
+      <ol>
+       <li> The number of iterations (300 in this example). </li>
+       <li> The damping (zero is no damping so the pattern will continue oscillating for ever, 1 is 100% damping,
+            the animation will proceed as if it was embedded in treacle. Values outside this range will
+            accelerate the oscillations.</li>
+       <li> A scaling factor. Used to ensure that the individual steps in the calculations are small compared to
+            the average line length. 100 means that the steps will be about 1% of the line length. 50 will be 2%. </li>
+       <li> The fourth parameter (True above) indicates whether or not the intermediate patterns are drawn to
+            files. Set this to True if you want to create an animation, False if you are only interested
+            in the end product. The files will be called "relax&lt;n&gt;.bmp", with &lt;n&gt; starting at 0.</li>
+       <li> The size of the images drawn, if the 4th parameter is True. </li>
+      </ol>
+     </div>
+    </p>
+
+</div>
+
+
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2009 - 2020 <p>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+
+</html>
+
+

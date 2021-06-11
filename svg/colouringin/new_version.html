@@ -1,0 +1,505 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Colouring-in pattern generator">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../../v2/js_library/colours.js"> </script>
+<script src="../../v2/js_library/svg_helpers.js"> </script>
+<script src="spoint.js"> </script>
+<script src="sline.js"> </script>
+<script src="srect.js"> </script>
+<script src="shape.js"> </script>
+<script src="spattern.js"> </script>
+
+<style>
+
+    TH.left { text-align: left; }
+
+</style>
+
+<script>
+
+// globals
+
+    var timer;
+    var pattern;
+
+// Controls
+
+    var grid_combo;
+    var sides_combo;
+    var start_mode_combo;
+    var expand_checkbox;
+    var picture_control;
+    var num_shapes_display;
+    var num_lines_display;
+    var num_points_display;
+    var pattern_key_display;
+    var dual_button;
+    var stop_button;
+    var relax_button;
+    var from_key;
+
+    // Printing
+
+    var print_size;
+    var print_size_value = 1024;
+
+    // Animation
+
+    var update_interval;
+    var update_interval_value = 100;
+
+    // Relaxation parameters
+
+    var relax_steps;
+    var relax_drag;
+    var relax_scale;
+    var relax_steps_value = 100;
+    var relax_drag_value = 1;
+    var relax_scale_value = 200;
+
+    // History
+
+    var pattern_key = "";
+    var from_key_value = "S31:N";
+
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        grid_combo = document.getElementById("grid");
+        start_mode_combo = document.getElementById("start_mode");
+        sides_combo = document.getElementById("sides");
+        expand_checkbox = document.getElementById("expand_out");
+        picture_control = document.getElementById("picture");
+        num_shapes_display = document.getElementById("num_shapes");
+        num_lines_display = document.getElementById("num_lines");
+        num_points_display = document.getElementById("num_points");
+        pattern_key_display = document.getElementById("pattern_key");
+        relax_steps = document.getElementById("relax_steps");
+        relax_drag = document.getElementById("relax_drag");
+        relax_scale = document.getElementById("relax_scale");
+        print_size = document.getElementById("print_size");
+        update_interval = document.getElementById("update_interval");
+        dual_button = document.getElementById("dual_button");
+        stop_button = document.getElementById("stop_button");
+        relax_button = document.getElementById("relax_button");
+        from_key = document.getElementById("from_key");
+
+        relax_steps.value = relax_steps_value;
+        relax_drag.value = relax_drag_value;
+        relax_scale.value = relax_scale_value;
+        print_size.value = print_size_value;
+        update_interval.value = update_interval_value;
+        from_key.value = from_key_value;
+
+        Go ();
+    }
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    Go = function ()
+    {
+        pattern = new SPattern ();
+
+        var mode = start_mode_combo.value;
+        var num = (mode == GRID) ? grid_combo.value : sides_combo.value;
+        var n = parseInt (num);
+
+        switch (mode)
+        {
+            case GRID:
+                pattern.startGrid (n);
+                break;
+
+            case POLYGON:
+                pattern.start (n, false);
+                break;
+
+            case WHEEL:
+                pattern.start (n, true);
+                break;
+
+            case PRISM:
+                pattern.startPrism (n);
+                break;
+
+            case ANTIPRISM:
+                pattern.startAntiPrism (n);
+                break;
+        }
+
+        pattern_key = mode + n + ":";
+
+        Draw ();
+        ShowStats();
+
+        dual_button.disabled = true;
+    }
+    //-------------------------------------------------------------
+    FromKey = function ()
+    {
+        from_key_value = from_key.value;
+        pattern_key = from_key_value;
+
+        try
+        {
+            pattern = SPattern.fromKey(pattern, from_key_value);
+        }
+        catch (err)
+        {
+            alert (err);
+            Go ();
+            return;
+        }
+        Draw ();
+        ShowStats();
+        dual_button.disabled = false;
+    }
+    //-------------------------------------------------------------
+    // Iterate
+    //-------------------------------------------------------------
+    Next = function ()
+    {
+        if (pattern != null)
+        {
+            var expand_out = expand_checkbox.checked;
+
+            pattern_key += NEXT_KEY;
+            pattern.nextPattern (expand_out);
+            Draw ();
+            ShowStats();
+
+            dual_button.disabled = false;
+        }
+    }
+    //-------------------------------------------------------------
+    // Calculate the dual
+    //-------------------------------------------------------------
+    Dual = function ()
+    {
+        if (pattern != null)
+        {
+            pattern_key += DUAL_KEY;
+            pattern = pattern.getDual();
+            Draw ();
+            ShowStats();
+        }
+    }
+    //-------------------------------------------------------------
+    // Relax the pattern
+    //-------------------------------------------------------------
+    Relax = function ()
+    {
+        relax_steps_value = parseInt (relax_steps.value);
+        relax_drag_value = parseFloat (relax_drag.value);
+        relax_scale_value = parseInt (relax_scale.value);
+        update_interval_value = parseInt (update_interval.value);
+
+        if (relax_drag_value < 0 || relax_drag_value > 1)
+        {
+            alert ("Drag must be in the range 0 - 1");
+            return;
+        }
+        if (relax_steps_value < 1)
+        {
+            alert ("Steps must be at least 1");
+            return;
+        }
+
+        if (update_interval_value < 40) // 25 fps
+        {
+            alert ("Update interval must be at least 40 ms");
+            return;
+        }
+
+        StartAnimation ();
+    }
+    //-------------------------------------------------------------
+    AnimatePattern = function ()
+    {
+        if (pattern != null)
+        {
+            pattern.relax(relax_steps_value, relax_drag_value, relax_scale_value);
+            Draw ();
+        }
+    }
+    //-------------------------------------------------------------
+    // Draw
+    //-------------------------------------------------------------
+    Draw = function ()
+    {
+        var svg = pattern.draw();
+
+        picture_control.innerHTML = svg;
+    }
+    //-------------------------------------------------------------
+    MakePrintable = function ()
+    {
+        print_size_value = parseInt (print_size.value);
+
+        if (print_size_value < 64)
+        {
+            alert ("Minimim print size is 64");
+            return;
+        }
+
+        var svg = pattern.draw(print_size_value);
+        var opened = window.open("");
+
+        var text = "<html><head><title>"
+
+        text += "Colouring-in by Edd Aardvark (www.eddaardvark.co.uk)";
+        text += "</title></head><body>";
+        text += svg;
+        text += "</body></html>";
+
+        opened.document.write(text);
+    }
+    //-------------------------------------------------------------
+    // Show the statistics
+    //-------------------------------------------------------------
+    ShowStats = function ()
+    {
+         num_shapes_display.innerHTML = pattern.shapes.length;
+         num_lines_display.innerHTML = pattern.lines.length;
+         num_points_display.innerHTML = pattern.points.length;
+         pattern_key_display.innerHTML = pattern_key;
+    }
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    StartAnimation = function ()
+    {
+        StopAnimation ();
+        timer = setInterval(AnimatePattern, update_interval_value);
+
+        stop_button.disabled = false;
+        relax_button.disabled = true;
+    }
+    //-------------------------------------------------------------
+    // Stop (pause)
+    //-------------------------------------------------------------
+    StopAnimation = function ()
+    {
+        clearInterval(timer);
+        timer = null;
+
+        stop_button.disabled = true;
+        relax_button.disabled = false;
+    }
+    //-------------------------------------------------------------
+    // Resume
+    //-------------------------------------------------------------
+    ResumeAnimation = function ()
+    {
+        if (timer == null)
+        {
+            timer = setInterval(AnimatePattern, update_interval_value);
+        }
+    }
+
+</script>
+
+<title>Colouring-in Pattern Generator</title>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+       <h1> <br> Colouring-in</h1>
+       <p> Interactive Version </p>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>   
+    
+<!-- MAIN CONTENT -->
+
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+   <h2> Colouring-in pattern generator</h2>
+    <p>
+        This page implements an interactive version of the colouring-in pattern generator I
+        created a few years ago using python running on the google appspot. Google don't support
+        appspot any more and it wasn't easy to use anyway. This page recreates the app using Javascript
+        and is much more interactive. Use the "Start" button to initialise your pattern and then the "Next"
+        and "Dual" buttons to advange it.
+    </p><p>
+        How this works is described on the <a href="../../colouringin/index.html">original page</a>.
+    </p>
+
+   <h2> Controls</h2>
+
+    <p>
+        Starting mode:
+        <select id="start_mode">
+            <option value="S">Polygon</option>
+            <option value="W">Wheel</option>
+            <option value="P">Prism</option>
+            <option value="A">Anti-prism</option>
+            <option value="G">Grid</option>
+        </select>,
+
+        Num Sides:
+        <select id="sides">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+        </select>,
+
+        Grid:
+        <select id="grid">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>,
+
+        <input type="checkbox" id="expand_out"/> Expand outwards,
+
+        Key:
+        <input type="text" id="from_key" value="S31:N">
+
+    </p><p>
+        <button onclick="Go();"> Start </button> &nbsp;
+        <button onclick="Next();"> Next </button> &nbsp;
+        <button onclick="Dual();" disabled id="dual_button"> Dual </button> &nbsp;
+        <button onclick="Relax();" id="relax_button"> Relax </button> &nbsp;
+        <button onclick="StopAnimation();" disabled id="stop_button"> Stop </button> &nbsp;
+        <button onclick="FromKey();"> From Key</button> &nbsp;
+        <button onclick="MakePrintable();"> Make Printable </button> &nbsp;
+    </p>
+    
+    <h2> Pattern </h2>
+          <p> <span id="picture"> &nbsp; </span></p>
+    <h2> Statistics </h2>
+    <p>
+        <table>
+            <tr><th class="left">Shapes:</th><td><span id="num_shapes">&nbsp;</span></td></tr>
+            <tr><th class="left">Lines:</th><td><span id="num_lines">&nbsp;</span></td></tr>
+            <tr><th class="left">Points:</th><td><span id="num_points">&nbsp;</span></td></tr>
+            <tr><th class="left">Pattern key:</th><td><span id="pattern_key">&nbsp;</span></td></tr>
+        </table>
+    </p>
+    <h2> Parameters </h2>
+        <p>
+        <table>
+
+            <tr>
+                <td> <input type="text" id="relax_steps" size="6"> </td>
+                <td> The number of relaxation steps between drawing images </td>
+            </tr>
+
+            <tr>
+                <td> <input type="text" id="relax_scale" size="6"> </td>
+                <td> The size of a step in the animation. This is a reciprocal, larger values will create a
+                      smoother animation.
+                </td>
+            </tr>
+
+            <tr>
+                <td> <input type="text" id="relax_drag" maxlength="8" size="6"> </td>
+                <td> The drag in the relaxation calculations, a value of 0 means that no momentum is disipated,
+                     a value of 1 means that no momentum is carried forward between iterations.
+                </td>
+            </tr>
+
+
+            <tr>
+                <td> <input type="text" id="update_interval" maxlength="6" size="6"> </td>
+                <td> The time in miliseconds between animation frames.
+                </td>
+            </tr>
+
+            <tr>
+                <td> <input type="text" id="print_size" maxlength="5" size="6"> </td>
+                <td> The print size. The size of the images created for printing.
+                </td>
+            </tr>
+
+        </table>
+
+  </div>
+  
+  
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2014 - 2020 <p>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

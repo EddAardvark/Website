@@ -1,0 +1,351 @@
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="Author" content="John Whitehouse">
+    <meta name="KeyWords" content="Interactive Cube Solver">
+    <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+    <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+    <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+    <script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+    <script src="cube_solver.js"> </script>
+    <script src="text_equation.js"> </script>
+
+    <style>
+        .picturebox {
+            margin: 3pt;
+            padding: 3pt;
+            float: left;
+            width: 560;
+            height: 560;
+        }
+
+        .fixed_width {
+            float: left;
+            width: 48pt;
+        }
+
+        .floater {
+            margin: 3pt;
+            padding: 3pt;
+            float: left;
+        }
+
+        .tight {
+            margin-bottom: 0pt;
+            margin-top: 0pt;
+        }
+
+        .svgtext {
+            stroke: black;
+            font-size: 8pt;
+        }
+
+        p:focus {
+            outline: 0;
+        }
+
+        li {
+            margin-bottom: 12pt;
+        }
+    </style>
+
+    <script>
+
+        //-------------------------------------------------------------
+        // Start
+        //-------------------------------------------------------------
+        function OnStart() {
+        
+            var element = document.getElementById("drawing");
+            CubeSolver.Initialise();
+            CubeSolver.DrawCube(element);
+            document.getElementById("picturediv").addEventListener('keydown', OnKey, false);
+            GetFocus();
+        }
+        //-------------------------------------------------------------
+        // Keyboard handler
+        //-------------------------------------------------------------
+        function OnKey(event) {
+            if (CubeSolver.DoKey(event)) {
+                var element = document.getElementById("drawing");
+                event.preventDefault();
+                CubeSolver.DrawCube(element);
+            }
+        }
+        //---------------------------------------------------------------------------------------------------
+        // Get's the text from a html element
+        //---------------------------------------------------------------------------------------------------
+        function GetEquationText() {
+            return document.getElementById("equation").value;
+        }
+        //-------------------------------------------------------------
+        // Start
+        //-------------------------------------------------------------
+        function OnApply() {
+            var element = document.getElementById("drawing");
+            var text = GetEquationText();
+            var pos = text.indexOf("=");
+            if (pos >= 0) {
+                var id = text.substring(0, pos);
+                var eq = text.substring(pos + 1);
+                CubeSolver.SaveEquation(id, eq);
+                var userkeys = document.getElementById("user_keys");
+                userkeys.innerHTML = CubeSolver.GetEquationText();
+                return;
+            }
+
+            CubeSolver.ApplyEquation(text);
+            CubeSolver.DrawCube(element);
+        }
+        //-------------------------------------------------------------
+        // Start
+        //-------------------------------------------------------------
+        function OnDemo(text) {
+            var element = document.getElementById("drawing");
+            window.location.href = '#picture';
+            CubeSolver.Reset();
+            CubeSolver.ApplyEquation(text);
+            CubeSolver.DrawCube(element);
+        }
+        //-------------------------------------------------------------
+        // Start
+        //-------------------------------------------------------------
+        function GetFocus() {
+            document.getElementById("drawing").focus();
+        }
+
+    </script>
+
+    <title>Cube Solver</title>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart ()">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Javascript Cube Solver </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript">
+        <!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+        -->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+        <h2>Explanation</h2>
+            <p>
+              This page simulates the top half (3 faces) of a cube like the one in this picture:
+            </p><p>
+              <a href="cube.jpg"><img src="cube_tn.jpg" alt="Link to picture of the cube" title="Click Me"></a>
+            </p>You can rotate the image to see the other faces using the controls described below.<p>
+            </p><p>
+              It is one of the more infuriating puzzles in my collection, as I haven't as yet found any way of systematically
+              solving it. My usual approach is to search for combinations of moves that move a few facets whilst leaving
+              most of the puzzle unchanged. In this cube short sequences that move only a few pieces seem very ellusive,
+              especially then trying to position the diagonal elements. I wrote this tool to help me search more efficiently.
+            </p><p>
+              I have recently updated the colours to emphasise that the two sets of diagonal pieces are totally independent.
+              No combination of operations will swap a light diagonal piece with a dark one.
+            </p><p>
+              To operate press the keys described below (you may need to click on the picture to give it the input focus).
+              The number display is a debugging feature to help understand the javascript behind this page.
+            </p>
+    </div>
+
+    <!-- The display -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+      <div class="picturebox" onclick="GetFocus()" id="picturediv">
+        <a name="picture"><p tabindex="0" id="drawing"><span> Picture goes here. </span></p></a>
+      </div>
+    </div>
+    
+    <!-- Explanation -->
+    
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+        <h2> Equations </h2>
+        <p>
+          Use this section to enter equations and assign them to keys.
+        </p><p>
+          Equation:  <input type="text" id="equation" maxlength="240" />
+          &nbsp; <button onclick="OnApply ()"> Apply </button>
+          &nbsp; <button onclick="window.location.href = '#instructions'"> ? </button>
+        </p>
+    </div>
+    
+    <!-- Keys -->
+    
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+        <h2> Keys </h2>
+    
+        <p class="tight"> <span class="fixed_width"> a / A </span> rotate corner A clockwise / anti-clockwise.</p>
+        <p class="tight"> <span class="fixed_width"> b / B </span> rotate corner B clockwise / anti-clockwise.</p>
+        <p class="tight"> <span class="fixed_width"> c / C </span> rotate corner C clockwise / anti-clockwise.</p>
+        <p class="tight"> <span class="fixed_width"> d / D </span> rotate corner D clockwise / anti-clockwise.</p>
+        <p class="tight"> <span class="fixed_width"> x / X </span> rotate the whole cube about the North-South axis.</p>
+        <p class="tight"> <span class="fixed_width"> y / Y </span> rotate the whole cube about the East-West axis.</p>
+        <p class="tight"> <span class="fixed_width"> z / Z </span> rotate the whole cube clockwise / anti-clockwise.</p>
+        <p class="tight"> <span class="fixed_width"> z / Z </span> rotate the whole cube clockwise / anti-clockwise.</p>
+        <p class="tight"> <span class="fixed_width"> ALT-A </span> focus on all elements.</p>
+        <p class="tight"> <span class="fixed_width"> ALT-D </span> focus just on the diagonal elements.</p>
+        <p class="tight"> <span class="fixed_width"> ALT-E </span> focus just on the edge elements.</p>
+        <p class="tight"> <span class="fixed_width"> ALT-N </span> toggle number display.</p>
+        <p class="tight"> <span class="fixed_width"> ALT-P </span> toggle "plan" view.</p>
+        <p class="tight"> <span class="fixed_width"> ALT-R </span> reset.</p>
+
+        <h3> User defined keys </h3>
+        <p id="user_keys"> these will appear here </p>
+
+    </div>
+    
+    
+    <!-- Keys -->
+    
+    <div class="float w9 in2 box" style="overflow: auto;">
+        
+        <h2><a name="instructions"> Equations explained </h2>
+
+            <p>
+              In this application operations on the cube are mapped to letters, so for instance pressing
+              'A' rotates one of the corners through 120 degrees. This is fine for short sequences but if you
+              would like to generate longer sequences by repeating shorter sequences you can use the equations
+              feature. Type the equation you wish to apply into the edit box and press the "Apply" button.
+            </p><p>
+              There are 4 syntactical elements to equations.
+              <ol>
+                <li>
+                  A sequence of letters forms the basic atomic element, for instance "ABCD" will perform operation
+                  'A' followed by 'B' followed by 'C' followed by 'D'.
+                </li>
+                <li>
+                  The exponentiation operator '^' will repeat the previous sequence a number of times, so, for instance
+                  "ABCD^4" will repeat the sequence "ABCD" four times. Note the operator binds to the complete sequence,
+                  not just the 'D'.
+                </li>
+                <li>
+                  The multiplication operator, '.' combines two sequences, so "AB.CD" will perform "AB" followed by
+                  "CD", which is the same as "ABCD". It is more useful when the sequences being combined contain operators
+                  of their own. For instance "ABC^3.cba^3" will perform "ABC" three times, then "cba" three times. This actually
+                  does nothing as "cba" is the inverse of "ABC". If in the exponentiation section you really wanted "ABCDDDD"
+                  you could have entered "ABC.D^4".
+                </li>
+                <li>
+                  Brackets: These are used to combine a number of other operations into an atomic element that can then be
+                  combined with other elements using the operators above. For instance "(ABC^3.cba^3)^12" will repeat
+                  "ABC^3.cba^3" twelve times.
+                </li>
+              </ol>
+            </p>
+            
+        <h4> Saving an equation </h4>
+
+            <p>
+              To save an equation enter text in the format "&lt;letter&gt;=&lt;equation&gt;". This will asign the equation to the letter.
+              You can then type that letter to apply the equation, or use that letter in other equations. For instance
+              typing "f=abAB" will assign the equation "abAB" to the letter 'f'. Then typing "f^4" will be the same as "abAB^4".
+            </p>
+
+            <h4> Some examples </h4>
+            <p>
+              I wrote this application to help me find combinations of moves that have simple results that I can combine
+              into a solution. Here are a few I have found, click on the "&gt;" button to try them out.
+            <div class="margins">
+                </p><p>
+                  <button onclick="OnDemo('abcd^5')">&gt;</button><span style="font-weight:bold" ;> abcd^5 </span>
+                </p><p>
+                  Rotates three of the edges around the top face, inverting 2 of them in the process.
+
+                </p><p>
+                  <button onclick="OnDemo('BADC^5.abcd^5')">&gt;</button><span style="font-weight:bold" ;> BADC^5.abcd^5 </span>
+                </p><p>
+                  "BADC^5" is the mirror image of "abcd^5". Combining the two results in a swapping and flipping
+                  of two pairs of the top 4 edges.
+
+                </p><p>
+                  <button onclick="OnDemo('AB^35')">&gt;</button><span style="font-weight:bold" ;> AB^35 </span>
+                  <button onclick="OnDemo('ab^35')">&gt;</button><span style="font-weight:bold" ;> ab^35 </span>
+                </p><p>
+                  Move centre squares around the cube.
+
+                </p><p>
+                  <button onclick="OnDemo('ACac')">&gt;</button><span style="font-weight:bold" ;> ACac </span>
+                  <button onclick="OnDemo('AC^3')">&gt;</button><span style="font-weight:bold" ;> AC^3 </span>
+                  <button onclick="OnDemo('(AC^3.rr)^2')">&gt;</button><span style="font-weight:bold" ;> (AC^3.rr)^2 </span>
+                  <button onclick="OnDemo('(AC^3.rr)^3')">&gt;</button><span style="font-weight:bold" ;> (AC^3.rr)^3 </span>
+                  <button onclick="OnDemo('(acAc)^3')">&gt;</button><span style="font-weight:bold" ;> (acAc)^3 </span>
+                </p><p>
+                  Operate on the set of three elements forming the diagonal of a face as if they were a single piece.
+
+                </p><p>
+                  <button onclick="OnDemo('(BADC^5.a.abcd^5)^5')">&gt;</button><span style="font-weight:bold" ;> (BADC^5.a.abcd^5)^5 </span>
+                  <button onclick="OnDemo('(AC^3.r)^6')">&gt;</button><span style="font-weight:bold" ;> (AC^3.r)^6 </span>
+                  <button onclick="OnDemo('(acAc)^3.(DBdB)^3')">&gt;</button><span style="font-weight:bold" ;> (acAc)^3.(DBdB)^3 </span>
+
+                </p><p>
+                  Not much use in solving the puzzle but produce interesting patterns.
+                </p>
+            </div>
+    </div>
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2014 - 2021 <p>
+
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+
+    <script type="text/javascript">
+        var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+    </script>
+
+</body>
+</html>

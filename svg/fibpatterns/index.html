@@ -1,0 +1,379 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Fibonacci pattern generator">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../../v2/js_library/colours.js"> </script>
+<script src="../../v2/js_library/svg_helpers.js"> </script>
+<script src="fibpattern.js"> </script>
+
+<style>
+
+    TH.left { text-align: left; }
+
+</style>
+
+<script>
+
+
+// Pattern modes
+
+    var SINGLE = "S";
+    var ROW = "R";
+    var COLUMN = "C";
+    var ALL = "A"
+    var DIAGONAL = "D"
+
+// globals
+
+    var timer;
+    var pattern;
+    var drawing = false;
+    var pattern_size = 17;
+    var update_interval = 250;
+    var draw_row = 1;
+    var draw_col = 1;
+
+// Controls
+
+    var picture;
+    var size_input;
+    var draw_row_input;
+    var draw_col_input;
+    var stop_button;
+    var start_button;
+    var next_button;
+    var pattern_size_input;
+    var print_size_input;
+    var update_interval_input;
+    var start_mode_combo;
+    var stats;
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        pattern_size_input = document.getElementById("pattern_size");
+        draw_row_input = document.getElementById("draw_row");
+        draw_col_input = document.getElementById("draw_col");
+
+        print_size_input = document.getElementById("print_size");
+        update_interval_input = document.getElementById("update_interval");
+
+        stop_button = document.getElementById("stop_button");
+        start_button = document.getElementById("start_button");
+        next_button = document.getElementById("next_button");
+
+        start_mode_combo  = document.getElementById("start_mode");
+
+        pattern_size_input.value = pattern_size;
+        draw_row_input.value = draw_row;
+        draw_col_input.value = draw_col;
+        update_interval_input.value = update_interval;
+
+        picture = document.getElementById("picture");
+        stats = document.getElementById("stats");
+
+        Go ();
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    Go = function ()
+    {
+        var mode = start_mode_combo.value;
+        var bCanAnimate = false;
+
+        StopAnimation ();
+
+        pattern_size = parseInt (pattern_size_input.value);
+        draw_row = parseInt (draw_row_input.value);
+        draw_col = parseInt (draw_col_input.value);
+
+        pattern_size_input.value = pattern_size;
+        draw_row_input.value = draw_row;
+        draw_col_input.value = draw_col;
+
+        switch (mode)
+        {
+            default:
+            case SINGLE:
+                pattern = new FibPattern (FibPattern.SINGLE, pattern_size);
+                bCanAnimate = true;
+                break;
+
+            case ROW:
+                pattern = new FibPattern (FibPattern.ROW, pattern_size);
+                bCanAnimate = true;
+                break;
+
+            case COLUMN:
+                pattern = new FibPattern (FibPattern.COLUMN, pattern_size);
+                bCanAnimate = true;
+                break;
+
+            case ALL:
+                pattern = new FibPattern (FibPattern.ALL, pattern_size);
+                break;
+
+            case DIAGONAL:
+                pattern = new FibPattern (FibPattern.DIAGONAL, pattern_size);
+                break;
+        }
+        pattern.draw_row = draw_row;
+        pattern.draw_col = draw_col;
+
+        start_button.disabled = ! bCanAnimate;
+        next_button.disabled = ! bCanAnimate;
+
+        Draw ();
+        ShowStats();
+    }
+    //-------------------------------------------------------------
+    // Draw
+    //-------------------------------------------------------------
+    Draw = function ()
+    {
+        if (drawing)
+        {
+            return;
+        }
+
+        drawing = true;
+        pattern.Calculate ();
+        var svg = pattern.Draw();
+
+        picture.innerHTML = svg;
+        draw_row_input.value = pattern.draw_row;
+        draw_col_input.value = pattern.draw_col;
+
+        drawing = false;
+    }
+    //-------------------------------------------------------------
+    NextPattern = function ()
+    {
+        if (pattern != null)
+        {
+            pattern.Next ();
+            Draw ();
+            ShowStats();
+        }
+    }
+    //-------------------------------------------------------------
+    MakePrintable = function ()
+    {
+        var size = parseInt (print_size_input.value);
+
+        if (size < 64)
+        {
+            alert ("Minimim print size is 64");
+            return;
+        }
+        var svg = pattern.Draw(size);
+        var opened = window.open("");
+
+        var text = "<html><head><title>"
+
+        text += "Fibonacci Patterns by Edd Aardvark (www.eddaardvark.co.uk)";
+        text += "</title></head><body>";
+        text += svg;
+        text += "</body></html>";
+
+        opened.document.write(text);
+    }
+    //-------------------------------------------------------------
+    // Show the statistics
+    //-------------------------------------------------------------
+    ShowStats = function ()
+    {
+        stats.innerHTML = pattern.Stats();
+    }
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    StartAnimation = function ()
+    {
+        StopAnimation ();
+
+        update_interval = update_interval_input.value;
+        timer = setInterval(AnimatePattern, update_interval);
+
+        stop_button.disabled = false;
+        start_button.disabled = true;
+        next_button.disabled = true;
+    }
+    //-------------------------------------------------------------
+    // Stop (pause)
+    //-------------------------------------------------------------
+    StopAnimation = function ()
+    {
+        clearInterval(timer);
+        timer = null;
+
+        stop_button.disabled = true;
+        start_button.disabled = false;
+        next_button.disabled = false;
+    }
+    //-------------------------------------------------------------
+    AnimatePattern = function ()
+    {
+        NextPattern ();
+    }
+    //-------------------------------------------------------------
+    // Resume
+    //-------------------------------------------------------------
+    ResumeAnimation = function ()
+    {
+        if (timer == null)
+        {
+            update_interval = update_interval_input.value;
+            timer = setInterval(AnimatePattern, update_interval);
+        }
+    }
+
+</script>
+
+<title>Colouring-in Pattern Generator</title>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Fibonacci Patterns </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- MAIN CONTENT -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+   <h2> Fibonacci pattern generator</h2>
+      <p>
+        This page implements an interactive pattern generator based on the algorithms described on
+        my original <a href="fpindex.html" target="_blank">Fibonacci</a> page.
+      </p>
+    
+      <p> <span id="picture"> &nbsp; </span></p>
+    </div>
+</div>
+
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+   <h2> Controls</h2>
+
+    <p>
+        Starting mode:
+        <select id="start_mode">
+            <option value="S">Single</option>
+            <option value="R">Row</option>
+            <option value="C">Column</option>
+            <option value="D">Diagonal</option>
+            <option value="A">All</option>
+        </select>,
+
+        Pattern Size: <input type="text" id="pattern_size" size="6">
+        Row: <input type="text" id="draw_row" size="6">
+        Column: <input type="text" id="draw_col" size="6">
+
+    </p><p>
+        <button onclick="Go();"> Draw </button> &nbsp;
+        <button onclick="NextPattern();" disabled id="next_button"> Next </button> &nbsp;
+        <button onclick="StartAnimation();" id="start_button"> Animate </button> &nbsp;
+        <button onclick="StopAnimation();" disabled id="stop_button"> Stop </button> &nbsp;
+        <button onclick="MakePrintable();"> Make Printable </button> &nbsp;
+
+    </p><p>
+    
+    <table>
+        <tr>
+            <td> <input type="text" id="update_interval" maxlength="6" size="6"> </td>
+            <td> The time in miliseconds between animation frames.
+            </td>
+        </tr>
+
+        <tr>
+            <td> <input type="text" id="print_size" maxlength="5" size="6" value="1024"> </td>
+            <td> The print size. The size of the images created for printing.
+            </td>
+        </tr>
+    </table>
+    </p>
+</div>
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+<h2> Statistics </h2>
+    <p id="stats"></p>
+</div>
+
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2016 - 2020 <p>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
