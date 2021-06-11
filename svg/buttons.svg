@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+
+<!-- A down arrow, render using viewport "0,0,6,6" -->
+
+    <g id="down_arrow">
+     <polygon points="3,5 5,1 3,2 1,1" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- An up arrow, render using viewport "0,0,6,6" -->
+
+    <g id="up_arrow">
+     <polygon points="3,1 5,5 3,4 1,5" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- A left arrow, render using viewport "0,0,6,6" -->
+
+    <g id="left_arrow">
+     <polygon points="1,3 5,5 4,3 5,1" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- A right arrow, render using viewport "0,0,6,6" -->
+
+    <g id="right_arrow">
+     <polygon points="5,3 1,5 2,3 1,1" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- A double left arrow, render using viewport "0,0,12,12" -->
+
+    <g id="double_left_arrow">
+     <polygon points="5,1 1,6, 5,11" style="fill:black; stroke:black; stroke-width:1"/>
+     <polygon points="11,1 7,6, 11,11" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- A double right arrow, render using viewport "0,0,12,12" -->
+
+    <g id="double_right_arrow">
+     <polygon points="1,1 5,6, 1,11" style="fill:black; stroke:black; stroke-width:1"/>
+     <polygon points="7,1 11,6, 7,11" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- A triple right arrow, render using viewport "0,0,18,12" -->
+
+    <g id="triple_right_arrow">
+     <polygon points="1,1 5,6, 1,11" style="fill:black; stroke:black; stroke-width:1"/>
+     <polygon points="7,1 11,6, 7,11" style="fill:black; stroke:black; stroke-width:1"/>
+     <polygon points="13,1 17,6, 13,11" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- A triple left arrow, render using viewport "0,0,18,12" -->
+
+    <g id="triple_left_arrow">
+     <polygon points="5,1 1,6, 5,11" style="fill:black; stroke:black; stroke-width:1"/>
+     <polygon points="11,1 7,6, 11,11" style="fill:black; stroke:black; stroke-width:1"/>
+     <polygon points="17,1 13,6, 17,11" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Hollow circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="hollow_circle">
+      <circle cx="0" cy="0" r="8" style="fill:none; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Red circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="red_circle">
+      <circle cx="0" cy="0" r="8" style="fill:red; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Blue circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="blue_circle">
+      <circle cx="0" cy="0" r="8" style="fill:blue; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Green circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="green_circle">
+      <circle cx="0" cy="0" r="8" style="fill:green; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Yellow circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="yellow_circle">
+      <circle cx="0" cy="0" r="8" style="fill:yellow; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Cyan circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="cyan_circle">
+      <circle cx="0" cy="0" r="8" style="fill:cyan; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- White circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="white_circle">
+      <circle cx="0" cy="0" r="8" style="fill:white; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Black circle, render using viewport "-10,-10,20,20" -->
+
+    <g id="black_circle">
+      <circle cx="0" cy="0" r="8" style="fill:black; stroke:black; stroke-width:1"/>
+    </g>
+
+<!-- Solid star, render using viewport "0,0,30,30" -->
+
+    <g id="solid_star">
+     <polygon points="6,2 26,17 2,17 22,2 14,26" style="fill:black; stroke:black; stroke-width:1; fill-rule:nonzero;"/>
+    </g>
+
+<!-- Filled star, render using viewport "0,0,30,30" -->
+
+    <g id="filled_star">
+     <polygon points="6,2 26,17 2,17 22,2 14,26" style="fill:black; stroke:black; stroke-width:1; fill-rule:evenodd;"/>
+    </g>
+
+
+  </defs>
+</svg>
+

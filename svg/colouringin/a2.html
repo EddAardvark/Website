@@ -1,0 +1,122 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Colouring Patterns Python Script free download">
+<title> Colouring-in Animation 2 </title>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script>
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+    }
+</script>
+</head>
+
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable"  onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+       <h1> Colouring-in Animation 2 </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+    
+<!-- MAIN CONTENT -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+  <p>
+    A 100 frame animation with drag based on the dual of the second iteration spoked triangle.
+    Note: the in the final configuration some of the lines overlap, which isn't the effect I was hoping for.
+    I may need to improve the relaxation algorithm to discourage this.
+  </p>
+  <p>
+       <img src="t300start.gif" alt="Animiation 1">
+       &nbsp;&nbsp;&nbsp;
+       <img src="t100r.gif" border="1" alt="Animiation 1">
+  </p>
+
+  <p> Script </p>
+
+    <p>
+    This was the original python script, written in version 2.6 a long time ago.
+    </p>
+    <div class="whitebox margins">
+
+    <p class="code">
+        import SPattern <br>
+        pat = SPattern.makePattern (4,1,2) <br>
+        dual = pat.getDual() <br/>
+        dual.relax(100,0.2,50,True,300)
+    </p>
+
+
+    </div>
+</div>
+
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2011 - 2020 <p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

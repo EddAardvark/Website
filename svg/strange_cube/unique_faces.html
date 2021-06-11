@@ -1,0 +1,161 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Stange Rubik-like Cube Puzzle">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="strange.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<script src="../../v2/js_library/colours.js"> </script>
+<script src="../../v2/js_library/svg_helpers.js"> </script>
+
+<title>Strange Cube: List of Unique Faces</title>
+
+<script src="coloured_piece.js"> </script>
+<script src="face_details.js"> </script>
+<script src="cube_face.js"> </script>
+<script src="cube.js"> </script>
+
+<script>
+
+    var face_list_item;
+
+    //-------------------------------------------------------------
+    // Start
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        CubeFace.Init ();
+
+        face_list_item = document.getElementById("face_list");
+
+        DrawFaces ();
+    }
+    //-------------------------------------------------------------
+    DrawFaces = function ()
+    {
+        var keys = Object.getOwnPropertyNames (CubeFace.unique_faces);
+        var text = " There are " + keys.length + " possibilities.<p>";
+
+        text += "<ul class=\"box\">";
+
+        for (var kidx in keys)
+        {
+            var k = keys [kidx];
+            var face_def = CubeFace.unique_faces [k];
+            var face = new CubeFace.FromPieces (face_def.pieces);
+
+            text += "<li class=\"box\"><table>";
+            text += "<tr><th class=\"left\">Key:</th><td>" + k + "</td><td rowspan=\"3\">" + face.Draw (100) + "</td></tr>";
+            text += "<tr><th class=\"left\">Pieces:</th><td>" + face_def.GetPieceTypes() + "</td></tr>";
+            text += "<tr><th class=\"left\">Breakdown:</th><td>" + face_def.num_triangles + ", " + face_def.num_kites + "</td></tr>";
+            text += "</table></li>";
+        }
+
+        text += "</ul>";
+
+        face_list_item.innerHTML = text;
+    }
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('index.html')">
+        <p> <img border="0" src="cube1.jpg" width="120"></a>
+        </p><p> <strong>Strange Cube Index</strong>   
+     </button>
+
+     <button class="banner">
+       <h1> Strange Cube: List of Unique Faces </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+       <h2> <a name="s2">List of possible faces</h2>
+
+        <p>
+            The possible faces will have between 6 and 10 pieces, with a maximum of 6 kites and 8 triangles,
+            and the constraint
+            2&nbsp;&times;&nbsp;N<span class="subscript">K</span>&nbsp;&plus;&nbsp;N<span class="subscript">T</span>&nbsp;=&nbsp;12,
+            N<span class="subscript">K</span>&nbsp;=&nbsp;(12&nbsp;&minus;&nbsp;N<span class="subscript">T</span>)&nbsp;/&nbsp;2.
+        </p><p>
+            I will identify unique faces by converting the triangles and kites to binary (kites being '1' and the triangles '0')
+            and using this to generate a key. As rotating a face doesn't really change it, I will find the
+            rotation that generates the largest key.
+            In the following images the keys are this binary number and the pieces are represented by ones and twos,
+            so that the sum is always 12.
+
+        </p><p>
+            The list below shows all the possible arrangements of the pieces, there is no guarantee that all of these
+            can be reached using the possible transformations of the cube, but the
+            <a href="transformations.html">transformations</a> page suggests that they can.
+        </p><p>
+            <span id="face_list"> &nbsp; </span>
+        <p>
+
+      </div>
+      
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2017 - 2021 </p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,236 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Stange Rubik-like Cube Puzzle">
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jwlist.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="strange.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<script src="../../v2/js_library/colours.js"> </script>
+<script src="../../v2/js_library/svg_helpers.js"> </script>
+
+<title>Strange Cube: List of Transformations</title>
+
+<script src="coloured_piece.js"> </script>
+<script src="face_details.js"> </script>
+<script src="cube_face.js"> </script>
+<script src="cube.js"> </script>
+
+<script>
+
+    var transform_list_item;
+    var depths;
+
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+        CubeFace.Init ();
+
+        transform_list_item = document.getElementById("transform_list");
+        DrawTransforms ();
+    }
+    //-------------------------------------------------------------
+    DrawTransforms = function ()
+    {
+        var cube = Cube.FromKey (170170);
+
+        cube.SetColours ("white", "yellow");
+
+        var list = [{depth:0,cube:cube}];
+        var done = [170170];
+        var pos = 0;
+        var text = "";
+
+        depths = {};
+        depths [170170] = 0;
+
+        while (pos < list.length)
+        {
+            var depth = list[pos].depth;
+
+            cube = list[pos].cube;
+
+            var adjacent = cube.GetNeighbours ();
+
+            list[pos].adjacent = adjacent;
+
+            // Make a note of the cubes we haven't seen before
+
+            for (var idx in adjacent)
+            {
+                var cube_key = adjacent [idx].key;
+
+                if (done.indexOf (cube_key) < 0)
+                {
+                    var next = {};
+                    next.depth = depth + 1;
+                    next.cube = adjacent [idx];
+                    list.push (next);
+                    done.push(cube_key);
+                    depths [cube_key] = depth + 1;
+                }
+            }
+            ++pos;
+        }
+
+        var current_depth = -1;
+        var in_table = false;
+
+        text += "<p>We have found " + list.length + " accessible cubes.</p>";
+
+        for (var idx in list)
+        {
+            if (list[idx].depth != current_depth)
+            {
+                if (in_table)
+                {
+                    text += "</table>";
+                }
+                current_depth = list[idx].depth;
+
+                text += "<h2> Cubes " + current_depth + " steps away from the start.</h2>";
+                text += "<p><table class=\"grid\"><tr><th class=\"grid\">Starting Cube</th><th class=\"grid\">Neighbouring Cubes</th></tr>";
+                in_table = true;
+            }
+
+            var cube = list[idx].cube;
+
+            text += "<tr><td class=\"grid\"><ul class=\"box\">" + CubeAsListItem (cube) + "</ul></td>";
+            text += "<td class=\"grid\"><ul class=\"box\">";
+
+            for (var ajix in list[idx].adjacent)
+            {
+                var cube = list[idx].adjacent[ajix];
+
+                text += CubeAsListItem (cube);
+            }
+            text += "</ul></td></tr>";
+        }
+
+        text += "</table>";
+
+        transform_list_item.innerHTML = text;
+    }
+    //-------------------------------------------------------------
+    CubeAsListItem = function (cube)
+    {
+        var text = "<li class=\"box\">";
+        text += DrawCube(cube);
+        text += "</li>";
+        return text;
+    }
+    //-------------------------------------------------------------
+    DrawCube = function (cube)
+    {
+        var text = cube.top_face.Draw (100);
+        text += " ";
+        text += cube.bottom_face.Draw (100);
+        text += "<br>" + cube.key;
+        text += " (depth " + depths [cube.key] + ")";
+
+        return text
+    }
+
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('index.html')">
+        <p> <img border="0" src="cube1.jpg" width="120"></a>
+        </p><p> <strong>Strange Cube Index</strong>   
+     </button>
+
+     <button class="banner">
+       <h1> Strange Cube: List of Transformations </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+       <h1> List of Transformations</h1>
+
+        <!-- Transformations -->
+
+        <p>
+           This section shows how one cube can be transformed into another by a single move, swapping half the tope face
+           with half the bottom. The transformation sequence is started from the regular cube (170+170). Each entry shows
+           a starting cube and the set of possible next cubes.
+        </p><p>
+            Only cubes that can actually be reached are shown in this list.
+        </p><p>
+            You could use this page to help you navigate back from a jumbled cube to a proper cubic one. Find your cube
+            in the left column and look for one in the right column that has lower depth. Repeating this process will
+            get you back to the two squares in at most 7 moves.
+        </p><p>
+            But it might leave the middle row in a mess, but this is easy to resolve.
+        </p><p>
+            Unfortunately this page only deals with the shapes, the real puzzle also involves getting the coloured edge pieces
+            into the correct positions.
+
+        </p>
+        
+        <span id="transform_list"> &nbsp; </span>
+
+      </div>
+      
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2017 - 2021 </p>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>

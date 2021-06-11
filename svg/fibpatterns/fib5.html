@@ -1,0 +1,187 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Patterns Animated GIF Bitmap">
+<TITLE>Modulo 5 Fibonacci Pattern </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+        
+<script>
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+    }
+</script>
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable"  onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+      <h1> Modulo 5 Fibonacci Pattern </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- Main content -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+<H2><a name=contents>Contents</a></H2>
+ <p>
+    <UL>
+       <LI>
+          <A HREF="#unit">The Unit cell</A>.
+       </LI>
+       <LI>
+          <A HREF="#pattern">The Pattern</A>.
+       </LI>
+       <LI>
+          <A HREF="#numbers">The Numbers</A>.
+       </LI>
+    </UL>
+  </p>
+  
+<h2><A name="unit">The Unit Cell</a></h2>
+    <p>
+    <img src="images/mini5.gif">
+    </p>
+
+<h2><A name="pattern">The Pattern</a></h2>
+
+    <p>
+    A number of unit cells are tiled to show the overall pattern.
+    </p><p>
+    <img src="images/big5.gif">
+    </p>
+
+<h2><A name="numbers">The Numbers</a></h2>
+    <p>
+    The points are generated using an <a href="algorithm.html">algorithm</a>
+    where the only input is the number of cells
+    across the pattern. The resulting series for N=5 are shown below.
+    </p><p>
+
+    <table border=5 cellpadding=15>
+       <tr>
+          <th>
+             Seed
+          </th>
+          <th>
+             Sequence
+          </th>
+          <th>
+             No.
+          </th>
+       </tr>
+
+       <tr>
+          <td>
+             (0,0)
+          </td>
+          <td>
+             [0], [0], [0], [0], ...
+          </td>
+          <td>
+             1
+          </td>
+       </tr>
+
+       <tr>
+          <td>
+             (1,1)
+          </td>
+          <td>
+             [1, 1, 2, 3, 0, 3, 3, 1, 4, 0, 4, 4, 3, 2, 0, 2, 2, 4, 1, 0], [1, 1, 2, 3, ...
+          </td>
+          <td>
+             20
+          </td>
+       </tr>
+
+       <tr>
+          <td>
+             (2,1)
+          </td>
+          <td>
+             [2, 1, 3, 4], [2, 1, 3, 4], ...
+          </td>
+          <td>
+             4
+          </td>
+       </tr>
+
+       <tr>
+          <td colspan=2>
+             Total
+          </td>
+          <td>
+             25
+          </td>
+       </tr>
+
+
+    </table>
+    </p>
+</div>
+
+
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2011 - 2020 <p>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>
+

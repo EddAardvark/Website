@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="95 40 550 180" preserveAspectRatio="xMidYMid meet">
+
+    <defs>
+
+
+        <!--                    ABBBA
+        -->
+
+        <g id="pent1">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-40" y1="0" x2="-20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="0" x2="0" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="0" x2="20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="0" x2="40" y2="0"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-40" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="0" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="0" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="0" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="41" cy="0" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    ABBC
+                                A
+        -->
+
+        <g id="pent2">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-30" y1="-10" x2="-10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="-10" x2="10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="-10" x2="30" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="30" y1="-10" x2="30" y2="10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-30" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="30" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="30" cy="10" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    CBBA
+                                A
+        -->
+
+        <g id="pent3">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-30" y1="-10" x2="-10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-30" y1="-10" x2="-30" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="-10" x2="10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="-10" x2="30" y2="-10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-30" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="30" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-30" cy="10" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    ABDA
+                                  A
+        -->
+
+        <g id="pent4">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-30" y1="0" x2="-10" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="0" x2="10" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="0" x2="30" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="0" x2="10" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-30" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="0" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="0" r="8" fill="red"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="30" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    ADBA
+                                 A
+        -->
+
+        <g id="pent5">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-30" y1="-10" x2="-10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="-10" x2="10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="-10" x2="30" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="-10" x2="-10" y2="10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-30" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="-10" r="8" fill="red"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="30" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="10" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    CDA
+                                CC
+        -->
+
+        <g id="pent6">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="-10" x2="0" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="-10" x2="20" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="-10" x2="0" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="10" x2="-20" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="10" x2="-20" y2="-10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="-10" r="8" fill="red"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="10" r="8" fill="cyan"/>
+
+        </g>
+
+        <!--                    ADC
+                                 CC
+        -->
+
+        <g id="pent7">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="-10" x2="0" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="-10" x2="20" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="-10" x2="20" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="10" x2="0" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="10" x2="0" y2="-10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="-10" r="8" fill="red"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="10" r="8" fill="cyan"/>
+
+        </g>
+
+        <!--                    CBC
+                                A A
+        -->
+
+        <g id="pent8">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="-10" x2="0" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="-10" x2="20" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="-10" x2="20" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="-10" x2="-20" y2="10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="10" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    A
+                                DBA
+                                A
+        -->
+
+        <g id="pent9">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-15" y1="-20" x2="-15" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-15" y1="0" x2="5" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="5" y1="0" x2="25" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-15" y1="0" x2="-15" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-15" cy="-20" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-15" cy="0" r="8" fill="red"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="5" cy="0" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="25" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-15" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                     A
+                                BDA
+                                A
+        -->
+
+        <g id="pent10">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="-20" x2="0" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="0" x2="0" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="0" x2="20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="0" x2="-20" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="-20" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="0" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="0" r="8" fill="red"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+
+        <!--                     A
+                                ADB
+                                  A
+        -->
+
+        <g id="pent11">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="-20" x2="0" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="0" x2="0" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="0" x2="20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="0" x2="20" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="-20" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="0" r="8" fill="red"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="0" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    A
+                                CBC
+                                  A
+        -->
+
+        <g id="pent12">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="-20" x2="-20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="0" x2="0" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="0" x2="20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="0" x2="20" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="-20" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="0" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="0" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="0" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                     A
+                                AEA
+                                 A
+        -->
+
+        <g id="pent13">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="00" y1="00" x2="00" y2="-20"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="00" y1="00" x2="-20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="00" y1="00" x2="20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="00" y1="00" x2="0" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="-20" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="0" r="8" fill="blue"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="0" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+        <!--                    AC
+                                 CC
+                                  A
+        -->
+
+        <g id="pent14">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="-20" x2="-20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="0" x2="0" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="0" x2="0" y2="20"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="0" y1="20" x2="20" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="-20" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="0" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="0" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="20" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+
+        <!--                    ABC
+                                  CA
+        -->
+
+        <g id="pent15">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-30" y1="-10" x2="-10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="-10" x2="10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="-10" x2="10" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="10" x2="30" y2="10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-30" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="30" cy="10" r="8" fill="yellow"/>
+
+        </g>
+
+
+        <!--                    ABC
+                                  CA
+        -->
+
+        <g id="pent16">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="-10" x2="10" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="10" y1="-10" x2="30" y2="-10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="-10" x2="-10" y2="10"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-10" y1="10" x2="-30" y2="10"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="-10" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="10" cy="-10" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="30" cy="-10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-30" cy="10" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-10" cy="10" r="8" fill="cyan"/>
+
+        </g>
+
+
+        <!--                    ABC
+                                  B
+                                  A
+        -->
+
+        <g id="pent17">
+
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="-20" y1="-20" x2="0" y2="-20"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="00" y1="-20" x2="20" y2="-20"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="-20" x2="20" y2="0"/>
+            <line stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" x1="20" y1="-20" x2="20" y2="20"/>
+
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="-20" cy="-20" r="8" fill="yellow"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="0" cy="-20" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="-20" r="8" fill="cyan"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="0" r="8" fill="green"/>
+            <circle stroke="black" vector-effect="non-scaling-stroke" stroke-width="1" cx="20" cy="20" r="8" fill="yellow"/>
+
+        </g>
+
+
+
+    </defs>
+
+</svg>
+
+

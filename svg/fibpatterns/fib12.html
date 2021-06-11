@@ -1,0 +1,401 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Patterns Animated GIF Bitmap">
+<TITLE> Modulo 12 Fibonacci Pattern </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+                              
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+        
+<script>
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+    }
+</script>                  
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable"  onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+      <h1> Modulo 12 Fibonacci Pattern </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- Main content -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+<H2><a name=contents>Contents</a></H2>
+  <p>
+    <UL>
+       <LI>
+          <A HREF="#unit">The Unit cell</A>.
+       </LI>
+       <LI>
+          <A HREF="#pattern">The Pattern</A>.
+       </LI>
+       <LI>
+          <A HREF="#numbers">The Numbers</A>.
+       </LI>
+    </UL>
+  </p>
+  
+<h2><A name="unit">The Unit Cell</a></h2>
+    <p>
+    The base 12 pattern includes those of order 2, 3, 4 and 6.
+    </p><p>
+
+    <table bgcolor="#000000" border=2 cellpadding=5>
+       <tr>
+          <th width=120 bgcolor="#ffc0c0"> N = 2 </th>
+          <th width=120 bgcolor="#c0ffff"> N = 3 </th>
+          <th width=120 bgcolor="#ffffc0"> N = 4 </th>
+          <th width=120 bgcolor="#ffc0ff"> N = 6 </th>
+       </tr>
+
+       <tr>
+          <td align="center" bgcolor="#ffc0c0"><img src="images/mini2.gif"></td>
+          <td align="center" bgcolor="#c0ffff"><img src="images/mini3.gif"></td>
+          <td align="center" bgcolor="#ffffc0"><img src="images/mini4.gif"></td>
+          <td align="center" bgcolor="#ffc0ff"><img src="images/mini6.gif"></td>
+       </tr>
+    </table>
+
+    </p><p>
+
+    The illustration on the left shows the cells derived from earlier patterns, the one on
+    the right, those that are new to 12. Notice the rotated 'T' shape 
+    next to the origin in the new pattern (and in the base 4 pattern above).
+    This appears in every pattern (after 2)
+    because the sequence starting (1,&nbsp;1) always includes
+    (0,&nbsp;1), (1,&nbsp;0) and (1,&nbsp;2). It is also in the base 3 and 6 patterns,
+    above, but is obscured by adjacent cells of the same colour.
+
+    </p><p>
+
+    <table border=2 cellpadding=15 bgcolor="#000000">
+       <tr>
+          <th width=120> <span class="white"> From 2, 3, 4 & 6 </span></th>
+          <th width=120> <span class="white"> New to 12 </span> </th>
+          <th width=120> <span class="white"> Combined </span>  </th>
+       </tr>
+
+       <tr>
+          <td align="center"> <img src="images/mini12a.gif"></td>
+          <td align="center"> <img src="images/mini12b.gif"></td>
+          <td align="center"> <img src="images/mini12.gif"></td>
+       </tr>
+    </table>
+
+    </p><p>
+
+    The next two patterns show the whole divided between <span class="bold">Diagonal</span> and <span class="bold">Off Diagonal</span>.
+    The <span class="bold">Diagonal</span> pattern is build from all the sequences that include a diagonal cell
+    - (0,&nbsp;0), (1,&nbsp;1), etc. - the <span class="bold">Off Diagonal</span> being the left overs. Notice
+    that the left hand edge and botom row always contain the same colour sequence as the
+    diagonal and are therefore always included entirely in the <span class="bold">Diagonal</span> pattern.
+
+    </p><p>
+
+    <table border=2 cellpadding=15 bgcolor="#000000">
+       <tr>
+          <th width=120> <span class="white"> Diagonal Terms </span> </th>
+          <th width=120> <span class="white"> Off Diagonal Terms </span> </th>
+       </tr>
+
+       <tr>
+          <td align="center"> <img src="images/sdiag12.gif"></td>
+          <td align="center"> <img src="images/sodiag12.gif"></td>
+       </tr>
+
+    </table>
+
+    </p>
+
+<h2><A name="pattern">The Pattern</a></h2>
+
+    <p>
+    A number of unit cells are tiled to show the overall pattern.
+
+    </p><p>
+
+    <table border=2 cellpadding=15 bgcolor="#000000">
+       <tr><td> <img src="images/big12.gif" width="385" height="385"> </td></tr>
+    </table>
+
+    </p><p>
+
+    The following pattern is generated by tessellating the <span class="bold">Off Diagonal</span> pattern
+    without the first column and row.
+
+    </p><p>
+
+    <table border=2 cellpadding=15 bgcolor="#000000">
+       <tr><td> <img src="images/lodiag12.gif" width="529" height="529"> </td></tr>
+    </table>
+
+    </p>
+
+    <!-- The Numbers -->
+
+<h2><A name="numbers">The Numbers</a></h2>
+    <p>
+    The points are generated using an <a href="algorithm.html">algorithm</a>
+    where the only input is the number of cells across the pattern.
+    The resulting series for N=12 are shown below.
+
+    </p><p>
+
+    <table border="1" cellpadding="15" bgcolor="#000000" width="90%">
+       <tr>
+          <th>
+             Seed
+          </th>
+          <th>
+             Sequence
+          </th>
+          <th>
+             No.
+          </th>
+       </tr>
+
+       <tr bgcolor="#c0c0c0">
+          <td>
+             (0,0)
+          </td>
+          <td>
+             [0], [0], [0], [0],&nbsp; ...
+          </td>
+          <td>
+             1
+          </td>
+       </tr>
+
+    <!-- (1, 1) --->
+
+       <tr bgcolor="#ffffff">
+          <td>
+             (1,1)
+          </td>
+          <td>
+             [1, 1, 2, 3, 5, 8, 1, 9, 10, 7, 5, 0,
+                             5, 5, 10, 3, 1, 4, 5, 9, 2, 11, 1, 0], [1, 1, 2, 3, ...
+          </td>
+          <td>
+             24
+          </td>
+       </tr>
+
+    <!-- (2, 2) --->
+
+       <tr bgcolor="#ffc0ff">
+          <td>
+             (2,2)
+          </td>
+          <td>
+             [2, 2, 4, 6, 10, 4, 2, 6, 8, 2, 10, 0,
+                             10, 10, 8, 6, 2, 8, 10, 6, 4, 10, 2, 0], [2, 2, 4, 6, ...
+             <p>
+             Twice the base 6 pattern [1, 1, 2, 3, 5, 2, 1, 3, 4, 1, 5, 0,
+                                        5, 5, 4, 3, 1, 4, 5, 3, 2, 5, 1, 0], ...
+          </td>
+          <td>
+             24
+          </td>
+       </tr>
+
+    <!-- (3, 3) -->
+
+       <tr bgcolor="#ffffc0">
+          <td>
+             (3,3)
+          </td>
+          <td>
+             [3, 3, 6, 9, 3, 0], [3, 3, 6, 9, 3, 0], ...
+             <p>
+             Three times the base 4 pattern [1, 1, 2, 3, 1, 0], ...
+          </td>
+          <td>
+             6
+          </td>
+       </tr>
+
+    <!-- (4, 4) -->
+
+       <tr bgcolor="#c0ffff">
+          <td>
+             (4,4)
+          </td>
+          <td>
+             [4, 4, 8, 0, 8, 8, 4, 0], [4, 4, 8, 0, 8, 8, 4, 0],&nbsp; ...
+             <p>
+             Four times the base 3 pattern [1, 1, 2, 0, 2, 2, 1, 0], ...
+          </td>
+          <td>
+             8
+          </td>
+       </tr>
+
+    <!-- (6, 6) -->
+
+       <tr bgcolor="#ffc0c0">
+          <td>
+             (6,6)
+          </td>
+          <td>
+             [6, 6, 0], [6, 6, 0], [6, 6, 0], [
+             6, 6, 0], ...
+             <p>
+             Six times the base 2 pattern [1, 1, 0], ...
+          </td>
+          <td>
+             3
+          </td>
+       </tr>
+
+    <!-- 7, 7 -->
+
+       <tr bgcolor="#ffffff">
+          <td>
+             (7,7)
+          </td>
+          <td>
+             [7, 7, 2, 9, 11, 8, 7, 3, 10, 1, 11, 0,
+                             11, 11, 10, 9, 7, 4, 11, 3, 2, 5, 7, 0], [7, 7, 3, 10, ...
+          </td>
+          <td>
+             24
+          </td>
+       </tr>
+
+    <!-- 9, 9 -->
+
+       <tr  bgcolor="#ffffc0">
+          <td>
+             (9,9)
+          </td>
+          <td>
+             [9, 9, 6, 3, 9, 0], [9, 9, 6, 3, 9, 0], ...
+             <p>
+             Three times the base 4 pattern [3, 3, 2, 1, 3, 0], ...
+          </td>
+          <td>
+             6
+          </td>
+       </tr>
+
+    <!-- 2, 1 -->
+
+       <tr  bgcolor="#ffffff">
+          <td>
+             (2,1)
+          </td>
+          <td>
+             [2, 1, 3, 4, 7, 11, 6, 5, 11, 4, 3, 7, 10, 5, 3, 8, 11, 7,
+                             6, 1, 7, 8, 3, 11], [2, 1, 3, 4, ...
+          </td>
+          <td>
+             24
+          </td>
+       </tr>
+
+    <!-- 4, 1 -->
+
+       <tr  bgcolor="#ffffff">
+          <td>
+             (4,1)
+          </td>
+          <td>
+             [4, 1, 5, 6, 11, 5, 4, 9, 1, 10, 11, 9, 8, 5,
+                             1, 6, 7, 1, 8, 9, 5, 2, 7, 9],
+
+               4, 1, 5, 6, ...
+          </td>
+          <td>
+             24
+          </td>
+       </tr>
+
+
+    <!-- Total -->
+
+       <tr bgcolor="#ffffff">
+          <td colspan=2>
+             Total
+          </td>
+          <td>
+             144
+          </td>
+       </tr>
+
+    </table>
+
+    </p>
+                                                         
+</div>
+
+
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2011 - 2020 <p>
+
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>

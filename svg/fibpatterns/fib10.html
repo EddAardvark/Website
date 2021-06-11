@@ -1,0 +1,277 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+
+<meta name="KeyWords" content="Python Patterns Animated GIF Bitmap">
+<TITLE> Modulo 10 Fibonacci Pattern </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+         
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+        
+<script>
+    //-------------------------------------------------------------
+    OnStart = function ()
+    {
+    }
+</script>                  
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable"  onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+      <h1> Modulo 10 Fibonacci Pattern </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+    
+<!-- Main content -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+<H2><a name=contents>Contents</a></H2>
+  <p>
+    <UL>
+       <LI>
+          <A HREF="#unit">The Unit cell</A>.
+       </LI>
+       <LI>
+          <A HREF="#pattern">The Pattern</A>.
+       </LI>
+       <LI>
+          <A HREF="#numbers">The Numbers</A>.
+       </LI>
+       <LI>
+          <A HREF="#reduced">The Reduced Pattern</A>.
+       </LI>
+    </UL>
+  </p>
+  
+<h2><A name="unit">The Unit Cell</a></h2>
+  <p>
+    <table cellpadding = 4 border = 1>
+       <tr>
+          <td>
+             <img src="images/mini10.gif" width="161" height="161">
+          </td>
+          <td align="center">
+             <img src="images/mini10b.gif" width="161" height="161">
+          </td>
+          <td align="center">
+             <img src="images/mini10c.gif">
+          </td>
+       </tr>
+
+       <tr>
+          <td>
+             The unit cell in the main pattern.
+          </td>
+          <td>
+             Cells derived from the prime factors (2 and 5). See the number section for
+             details. Although these derived cells contribute 4 of the 6 colours to the pattern
+             they only occupy 28% of the squares.
+          </td>
+          <td>
+             Cells not related to the prime factors. These fall into two series, the one
+             based on (1,1) contributing 60 squares to the pattern and the one based
+             on (2,1) contributing twelve.
+          </td>
+       </tr>
+    </table>
+  </p>
+
+<h2><A name="pattern">The Pattern</a></h2>
+
+    <p>A number of unit cells are tiled to show the overall pattern.</p>
+    <p><img src="images/big10.jpg"></p>
+
+    <!-- The Numbers -->
+
+<h2><A name="numbers">The Numbers</a></h2>
+    <p>
+    The points are generated using an <a href="algorithm.html">algorithm</a>
+     where the only input is the number of cells
+    across the pattern. The resulting series for N=10 are shown below.
+    </p><p>
+    These can be divided into two groups. Those starting with (0,&nbsp;0), (2,&nbsp;2), (4,&nbsp;2) and
+    (5,&nbsp;5) are multiplied copies of series in the base 2 and base 5 patterns.
+    (1,&nbsp;1) and (2,&nbsp;1) are new to this pattern. Base 2 series in orange,
+    base 5 in blue. (0,&nbsp;0) is in both.
+
+    </p><p>
+
+    <table border=5 cellpadding=15>
+       <tr>
+          <th>
+             Seed
+          </th>
+          <th>
+             Sequence
+          </th>
+          <th>
+             No.
+          </th>
+       </tr>
+
+       <tr bgcolor="#cccccc">
+          <td>
+             (0,0)
+          </td>
+          <td>
+             [0], [0], [0], [0], ...
+          </td>
+          <td>
+             1
+          </td>
+       </tr>
+
+       <tr>
+          <td>
+             (1,1)
+          </td>
+          <td>
+             
+                  [1, 1, 2, 3, 5, 8, 3, 1, 4, 5, 9, 4, 3, 7, 0,
+                  7, 7, 4, 1, 5, 6, 1, 7, 8, 5, 3, 8, 1, 9, 0,
+                  9, 9, 8, 7, 5, 2, 7, 9, 6, 5, 1, 6, 7, 3, 0,
+                  3, 3, 6, 9, 5, 4, 9, 3, 2, 5, 7, 2, 9, 1, 0], [1, 1, 2, 3, ...
+          </td>
+          <td>
+             60
+          </td>
+       </tr>
+
+       <tr bgcolor="#bbccff">
+          <td>
+             (2,2)
+          </td>
+          <td>
+             
+                   [2, 2, 4, 6, 0,
+                   6, 6, 2, 8, 0,
+                   8, 8, 6, 4, 0,
+                   4, 4, 8, 2, 0], [2, 2, 4, 6, ...
+          </td>
+          <td>
+             20
+          </td>
+       </tr>
+
+       <tr bgcolor="#ffccbb">
+          <td>
+             (5,5)
+          </td>
+          <td>
+             [5, 5, 0], [5, 5, 0], [5, ...
+          </td>
+          <td>
+             3
+          </td>
+       </tr>
+
+       <tr>
+          <td>
+             (2,1)
+          </td>
+          <td>
+             [2, 1, 3, 4, 7, 1, 8, 9, 7, 6, 3, 9], [2, 1, 3, 4, ...
+          </td>
+          <td>
+             12
+          </td>
+       </tr>
+
+       <tr bgcolor="#bbccff">
+          <td>
+             (4,2)
+          </td>
+          <td>
+             [4, 2, 6, 8], [4, 2, 6, 8], ...
+          </td>
+          <td>
+             4
+          </td>
+       </tr>
+
+       <tr>
+          <td colspan=2>
+             Total
+          </td>
+          <td>
+             100
+          </td>
+       </tr>
+
+    </table>
+    </p>
+
+<h2><A name="reduced">The Reduced Pattern</a></h2>
+    <p>
+    This shows the pattern after the base two and base 5 cells have been de-emphasised.
+    </p><p>
+    <img src="images/big10b.gif">
+    </p>
+
+</div>
+    
+
+<!-- Generic links -->
+
+<div class="float w9 in2 box" style="overflow: auto;">
+
+    <h2> Other pages </h2>
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2011 - 2020 <p>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script> 
+
+</body>
+</html>
+

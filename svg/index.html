@@ -1,0 +1,181 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="SVG Explorations Drawings">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script type="text/javascript" src="spirograph_object.js"> </script>
+<title> JW's SVG Index page</title>
+
+<script>
+    var spirograph;
+    var timer;
+
+    //-------------------------------------------------------------
+    // Start the phase animations
+    //-------------------------------------------------------------
+    function OnStart ()
+    {
+        spirograph = new Spirograph ();
+        spirograph.size = 160;
+        spirograph.num_wheels = 3;
+        spirograph.Randomise ();
+        spirograph.Draw ('spirograph_link');
+        spirograph.RandomisePhaseDeltas ();
+        timer = setInterval(AnimateWheels, 50);
+    }
+    //-------------------------------------------------------------
+    // Increment the phase of one of the wheels
+    //-------------------------------------------------------------
+    function AnimateWheels ()
+    {
+        spirograph.Animate ();
+        spirograph.Draw ('spirograph_link');
+    }
+    //-------------------------------------------------------------
+    Show = function (what)
+    {
+        window.location = what;
+    }
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart ();">
+
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+       <h1> SVG Drawing Contents Page </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+
+<!-- Main content -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+       <h2> SVG Drawing Contents Page </h2>
+
+       <p> This section documents my experiments with SVG, Javascript and the &lt;canvas&gt; element
+            to create interactive graphics. Click on one of the images below to visit the corresponding section.
+
+       </p><p>
+       
+       <table>
+       
+       <!-- Spirograph page -->
+       
+        <tr>
+          <td> <a href="spirograph2.html"><img border="0" src="spirograph.jpg" width="160"></a> </td>
+          <td> This page uses javascript create spirograph patterns which can also be animated. </td>
+        </tr>
+        
+       <!-- Evolving Spirographs -->
+       
+        <tr>
+          <td> <a href="spirograph3.html"><img border="0" src="evolution.png" width="160"></a> </td>
+          <td> Spirograph Evolution: Allows you to use directed evolution to explore spirograph space and focus in
+                on the patterns you like. </td>
+        </tr>
+       
+       <!-- Octahedral cube -->
+       
+        <tr>
+          <td> <a href="cube_solver/cube_solver.html"><img border="0" src="cube_solver/cube.jpg" width="160"></a> </td>
+          <td> This puzzle looks like a cube but the operations on it are more in line with those of an octahedron.</td>
+        </tr>
+       
+       <!-- Strange cube -->
+       
+        <tr>
+          <td> <a href="strange_cube/index.html"><img border="0" src="strange_cube/cube1.jpg" width="160"></a> </td>
+          <td> This "cube" starts of cubical but doesn't stay that way for long. The operations available change
+                with the shape.</td>
+        </tr>
+
+       <!-- Forest fire -->
+       
+        <tr>
+          <td> <a href="../v2/automata/forest.html"><img border="0" src="fire.png" width="160"></a> </td>
+          <td> Forest Fire: Uses Javascript to implement a cellular automaton that simulates a forest fire,
+                rendered using the canvas element. The fire propagation parameters can be changed interactively. </td>
+        </tr>
+
+        <!-- Prime number patterns -->
+
+        <tr>
+          <td> <a href="prime_sums/index.html"><img border="0" src="prime_patterns.png" width="160"></a> </td>
+          <td> This page shows patterns in the sequences of the remainders when dividing powers of one
+                prime number by another or the sum of two prime powers by a third. </td>
+        </tr>
+
+        <!-- Polygon page -->
+
+        <tr>
+          <td> <a href="polygon.html"><img border="0" src="star.png" width="160"></a> </td>
+          <td> My first attempt at combining SVG and javascipt, so it is rather basic.
+                    It allows you to interactively draw polygons and stars. </td>
+        </tr>
+        
+      </table>
+    </p>
+
+    </div>
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+   <p class="small"> (c) John Whitehouse 2013 - 2021 </p>
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
