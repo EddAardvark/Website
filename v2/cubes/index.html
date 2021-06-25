@@ -6,42 +6,136 @@
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
 
-<script src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script src="../js_library/misc.js"> </script>
-<script src="../js_library/canvas_helpers.js"> </script>
-<script src="../js_library/animation.js"> </script>
-<script src="../js_library/event_parser.js"> </script>
-<script src="../js_library/colours.js"> </script>
-<script src="../js_library/ui_value.js"> </script>
-<script src="../js_library/vlint.js"> </script>
-<script src="big_cube.js"> </script>
-<script src="cube_walker.js"> </script>
-<script src="cube_root.js"> </script>
-<script src="fractional_coverage.js"> </script>
-<script src="cubes.js"> </script>
+<style>
 
-<title> Cube Sums </title>
+TD {padding: 3pt; border: 1px solid brown;}
+TH {padding: 3pt; border: 1px solid brown; background: orange;}
+
+</style>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/primes.js"> </script>
+<script src="sum_finder.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<title> Searching for Cube Sums </title>
 
 
 <script>
 
-    var controller;
-    var event_handler;
 
     //------------------------------------------------------------------------------------------------------------------------------------
     // Auto-Start
     //------------------------------------------------------------------------------------------------------------------------------------
-    OnStart = function ()
+    OnLoad = function ()
     {
-        CubeRoot.Initialise ();
-        VLInt.Initialise ();
-        FractionalCoverage.Initialise (inter_depth);
-        
-        links_go_here.innerHTML = MakeButtons ();
+        var all = document.getElementsByClassName("expr");
 
-        controller = new CubeController ();
-        controller.Initialise();
-        controller.Show();
+        for (var i=0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+        
+        Primes.CacheUpTo (2000);
+        
+        var x = Primes.GetFactorsLessThan (288, 8);
+    }
+    
+    GetValues = function (unique)
+    {
+        var n = parseInt (nval.value);
+        
+        if (n%9 == 4 || n%9 == 5)
+        {
+            result.innerHTML = "No possible solutions";
+            return;
+        }
+        
+        var limit = parseInt (maxz.value);
+        var sums = new CubeSunFinder (n, limit);
+        
+        if (sums.result.length == 0)
+        {
+            result.innerHTML = "No solutions found";
+            return;
+        }
+        
+        var res = unique ? sums.getUnique () : sums.result;
+       
+        var text = "";
+       
+        for (var i in res)
+        {
+            if (unique) res[i].normalise();
+            text += Misc.expand_expression(res[i].getText ()) + "<br>";
+        }        
+        result.innerHTML = text;        
+    }
+    
+    ShowValues = function()
+    {
+        var n = parseInt (nval.value);
+        var limit = parseInt (maxz.value);
+        var text = "";
+        var eq =  Misc.expand_expression("3x^2-3dx+d^2");
+
+        
+        for (var z = 1 ; z <= limit ; ++z)
+        {
+            var t = n+z*z*z;
+            
+            if (t < 0) continue;
+            
+            var max_d = Math.floor (Math.pow (4*t,1/3));
+            var dvals = Primes.GetFactorsLessThan (t, max_d+1);
+            
+            text += eq + " = " + t + "/d, factors = [" + dvals + "], max d = " + max_d + "<br>";
+                        
+            for (var j in dvals)
+            {
+                var d = dvals[j];
+                var a = 3;
+                var b = -3 * d;
+                var c = (d*d-t/d);
+                var op_b = (b > 0) ? ('+' + b) : b;
+                var op_c = (c > 0) ? ('+' + c) : c;
+                var b2 = b*b-4*a*c;
+                var b2t = (b2 > 0) ? b2 : '&minus;' + -b2;
+                var line = "=>" + a + "x^2" + op_b + "x" + op_c + "=0, b^2-4ac=" + b2t;
+                
+                var sr = Math.round(Math.sqrt(b2));
+              
+                text += Misc.expand_expression(line) + "<br>";
+                
+                if (sr * sr == b2)
+                {
+                    var x1 = (-b + sr);
+                    var x2 = (-b - sr);
+                                        
+                    text += "&nbsp;&nbsp;" + "Result: " + b2 + " is a square, x1 = " + x1 + "/6, x2 = " + x2 + "/6<br>";
+                    
+                    if (x1 % 6 == 0)
+                    {
+                        x1 /= 6;
+                        var y1 = d - x1;
+                        var s1 = x1*x1*x1 + y1*y1*y1 - z*z*z;
+                        
+                        text += "&nbsp;&nbsp;&nbsp;&nbsp;S1: " + Misc.expand_expression(x1 + "^3+" + y1 + "^3-" + z + "^3=") + n + "(" + s1 + ")" + ",<br>";
+                    }
+
+                    if (x2 % 6 == 0)
+                    {
+                        x2 /= 6;
+                        var y2 = d - x2;
+                        var s2 = x2*x2*x2 + y2*y2*y2 - z*z*z;
+
+                        text += "&nbsp;&nbsp;&nbsp;&nbsp;S2: " + Misc.expand_expression(x2 + "^3+" + y2 + "^3-" + z + "^3=") + n + "(" + s2 + ")" + "<br>";
+                    }
+                }
+            }
+        }
+        
+        result.innerHTML = text;
+        
     }
 
 
@@ -51,23 +145,38 @@
 
 <!-- Body -->
 
-<body onload="OnStart();">
+<body onload="OnLoad();">
 
 <!-- Banner -->
 
-	<div style="margin: auto; widtd: 1024px;">
-		<button style="widtd: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
-			<p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
-			<p> <strong>Home page</strong>
-		</button>
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
 
-		<button class="banner">
-			<h1> Cubes</h1>
-		</button>
+     <button class="banner">
+        <h1> Sums of cubes </h1>
+     </button>
 
-		 <!-- Ads -->
+     <!-- Ads -->
 
-	</div>
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
 	
     <!--
     ==============================================================================================================
@@ -75,202 +184,200 @@
     ==============================================================================================================
     -->
 
-    <div class="in2 box w10">
-    
     <!-- Shows the vicinity as a 3D projection (sort of) -->
     
-        <div class="float" style="overflow: auto;">
+        <div class="float in2 box w10" style="overflow: auto;">
 
-            <h1> Cubes </h1>
+            <h1> Search for specific values </h1>
+            
+            <p> There is a <a href="https://youtu.be/ASoz_NuIvP0" target="_blank">numberphile video on youtube</a> which talks about how they solved the problem of identifying 
+            integer solutions to equations like<span class="expr">x^3+y^3+z^3=42</span>. I found this quite interesting, but the video didn't go into the details of
+            how they actually implemented the algorithm, so I thought I'd give it a go and see how it pans out. The simplification they
+            made was that rather than search for any small sum they'd pick a single value and focus on that. At the time 42 was the smallest
+            unsolved value. To get a small value like 42 using cubes greater than 3 at least one of x, y and z must be negative.   
+
+            </p><p>
+            So we start by looking for solutions of 
+            <span class="expr">x^3+y^3-z^3=n</span>. We could also search for solutions of <span class="expr">x^3+y^3-z^3=-n</span> (as this rearranges to
+            <span class="expr">z^3-x^3-y^3=n</span>), but when I experimented using the tester below it always seemed to find both cases at the same time.
+                        
+            </p><p>
+            
+            This rearranges to <span class="expr">(x+y)(x^2-xy+y^2)=n+z^3</span>.
+                     
+            </p><p>
+            
+            We can set <span class="expr">x+y=d</span>, giving
+            </p><p>
+            <span class="expr">x^2-xy+y^2=(n+z^3)/d</span>, or:
+            </p><p>
+
+            <span class="expr">x^2-dx+d^2=(n+z^3)/d</span>.
+
+            </p><p>
+            The video argued that this is essentially a one-dimensional search (for z) as there are only a few plausible 'd' values. This wasn't justified in the video so I thought
+            I'd start by verifying that.
+            
+            </p><p>
+            
+            The first thing you'd notice is that, as we are looking for integers, 'd' must divide <span class="expr">n+z^3</span>, but <span class="expr">n+z^3</span> could be
+            a very large number with a large number of factors, and finding factors gets harder as the numbers get bigger. However, let's continue. For 'd' values that do divide
+            <span class="expr">n+z^3</span> we have to solve the quadratic equation:
+
+            </p><p>
+            <span class="expr">3x^2-3dx+d^2-(n+z^3)/d=0</span> for x.
+
+            </p><p>
+            Which is equvalent to the traditional quadratic equation 
+            <span class="expr">ax^2+bx+c=0</span> with <br>
+            <span class="expr">a=3</span>, <br>
+            <span class="expr">b=&minus;3d</span> and <br>
+            <span class="expr">c=d^2-(n+z^3)/d</span>.
+            </p><p>
+            For this to have integer roots the expression <span class="expr">b^2-4ac</span> must be a square number, which means that at least it must be positive, so :
+            
+            </p><p>
+            
+            <span class="expr">b^2-4ac=9d^2-12(d^2-(n+z^3)/d)>=0</span><br>
+            <span class="expr">=>&minus;3d^2+12(n+z^3)/d>=0</span><br>
+            <span class="expr">=>&minus;3d^3+12(n+z^3)>=0</span> (as 'd' is positive)<br>
+            <span class="expr">=>12(n+z^3)>=3d^3</span><br>
+            <span class="expr">=>4(n+z^3)>=d^3</span><br>
+            <span class="expr">=>d<=(4(n+z^3))^[1/3]~=1.6z</span> (for small n)
+
+            </p><p>
+            To be an integer <span class="expr">3d^3</span> must be a multiple of 4, so 'd' must be even. There are some other optimisations that can be applied, see the
+            <a href="#notes">Notes</a> section below, but these aren't used in the code associated with this page.
+            </p>
+            <h2>Interactive Section</h2>
             <p>
-            Cubes in the vicinity of <span id="current_location"> &nbsp; </span>
+            Let's see how this works in reality. Note: This section is just to show you how the algorithm works, you won't be able to find any new solutions.
+            In the accompanying video you'll see that the components that add up to 42 have 16 digits. This isn't really reachable using the built in numbers of javascript
+            as the algorithm has a <span class="expr">z^3</span> term, which will overflow for 'z' values around 1 million. Also searching <span class="expr">10^17</span>
+            potential values will probably take longer than the lifetime of your computer.
+            </p><p>
+            in the controls below "Target" is the 'n' value you are looking for (42 in the video) and "Max Z" is the largest potential 'z' value that will be tested.
+            The "Verbose" button will generate output showing the workings described above, and will generate a lot of output. The "Solve" will just show the solutions
+            found, and "Unique" will eliminate duplicate solutions by arranging x, y and z so that <span class="expr">x>y>z</span>.
+            </p><p>
+            720 is an interesting target, also try comparing the results for n and &minus;n.
+            
+            </p><p>
+              Target: <input type="text" size="12" value="72" id="nval">
+              Max Z: <input type="text" size="12" value="11" id="maxz">
+            
+              <button onclick="ShowValues();"> Verbose Solve </button> 
+              <button onclick="GetValues(false);"> Solve </button> 
+              <button onclick="GetValues(true);"> Unique </button> 
+
+            </p><p>
+            <span id="result">result</span>
             </p>
             
-            <p id="location_table">&nbsp;</p>
-            </p>
-        </div>
-	
-    <!-- Shows the vicinity as a list of coordinates and values -->
-    
-        <div class="float" style="overflow: auto;">
-
-            <h1> List </h1>
-            
-            <p id="neighbour_list">&nbsp;</p>
-            </p>
-        </div>
-	
-    <!-- Shows the vicinity as a list of coordinates and values -->
-    
-        <div class="float" style="overflow: auto;">
-
-            <h1> Controls </h1>
-            <p>
-            <table>
-              <tr>
-                  <td><button type="button" onclick="controller.DecrementX ();" title="increment X"> &#x25c1; </button></td>
-                  <td> X </td>
-                  <td><button type="button" onclick="controller.IncrementX ();" title="decrement X"> &#x25b7; </button></td>
-              </tr>
-              <tr>
-                  <td><button type="button" onclick="controller.DecrementY ();" title="increment Y"> &#x25c1; </button></td>
-                  <td> Y </td>
-                  <td><button type="button" onclick="controller.IncrementY ();" title="decrement Y"> &#x25b7; </button></td>
-              </tr>
-              <tr>
-                  <td><button type="button" onclick="controller.DecrementZ ();" title="increment Z"> &#x25c1; </button></td>
-                  <td> Z </td>
-                  <td><button type="button" onclick="controller.IncrementZ ();" title="decrement Z"> &#x25b7; </button></td>
-              </tr>
-            </table>
-            </p>
         </div>
         
-	<!-- Cube roots -->
-    
-        <div class="float" style="overflow: auto;">
-
-            <h1> Cube roots </h1>
-            <p>
-            This section finds integer approximations to cube roots.
-            <p>
-            <table>
-              <tr><td> Target: </td><td> <input type="text" maxlengtd="12" id="cr_target" size="12"></td><tr>
-              <tr><td> Guess: </td><td> <input type="text" maxlengtd="12" id="cr_a" size="12"> / <input type="text" maxlengtd="12" id="cr_b" size="12"></td><tr>
-              <tr><td> Iterations: </td><td> <input type="text" maxlengtd="12" id="cr_it" size="12"> </td><tr>
-              <tr><td> <button type="button" class="clickable" onclick="controller.CalculateCubeRoot();" title="Calculate"> Calculate </button></td><td>&nbsp;</td><tr>
-            </table>
-            
-            <div class="scroll">
-                <p id="cube_roots">&nbsp;</p>
-            </div>
-            </p>
-        </div>
-
-	<!-- fractional coverage -->
-    
-        <div class="float" style="overflow: auto;">
-
-            <h1> Fractional Interpolation </h1>
-          
-            <p>
-            If we can find two points (p1 and p2) on opposite sides of the surface
-            w&nbsp;&equals;&nbsp;x<span class="superscript">3</span>&nbsp;&plus;&nbsp;y<span class="superscript">3</span>&nbsp;&minus;&nbsp;z<span class="superscript">3</span>&nbsp;&equals;&nbsp;0
-            we can look for intermediate points in the interval that provide better solutions. If we assume that the function is linear
-            along the vector p1&rarr;p2 then the solution for w = 0 will be at 
-            p1&nbsp;&plus;&nbsp;w1&nbsp;&times;&nbsp;p2&nbsp;/&nbsp;(w2&minus;w1).
-            If w really was linear over this range then this would be an exact solution for 
-            w&nbsp;&equals;&nbsp;0, which, from Fermat's theorum we know is impossible.
-            <p>
-            If a&nbsp;/&nbsp;b is a good approximation for w1&nbsp;/&nbsp;(w2&minus;w1) then (bx,&nbsp;by,&nbsp;bz) could be a good candidate for a low integer value of w.
-            It seems that to a first approximation we need
-            <p class="code">
-            |a / b &minus; w1 &times; p2 / (w2&minus;w1)| &lt; 1 / b<span class="superscript">3</span>.
-            </p><p>
-            For b&nbsp;&equals;&nbsp;2 we get the range 1/2&nbsp;&plusmn;&nbsp;1/16 (0.4375&nbsp;&rarr;&nbsp;0.5625). For b&nbsp;&equals;&nbsp;3 there are two intervals:
-            0.3148&nbsp;&rarr;&nbsp;0.3519 and 0.6481&nbsp;&rarr;&nbsp;0.6852).
-            
-            The sums for each b value are (b&minus;1)/b<span class="superscript">3</span> so the total is
-            <pre>
-            <p class="code">
-total = &Sigma;(b&minus;1)/b<span class="superscript">3</span>
-      = &Sigma;1/b<span class="superscript">2</span> &minus; &Sigma;1/b<span class="superscript">3</span>
-      = &pi;<span class="superscript">2</span>/6 &minus; 1.2021&hellip;
-      &cong; 0.4428
-            </p></pre><p>
-            about 0.4428. So naively, if we have two good 
-            values we have a 44% chance of being able to find a better one.
-            You can use the controls below to generate a table showing all the intervals up to a given depth. Click on "Full table".
-            </p><p>
-            Depth: <input type="text" maxlength="12" id="inter_depth" size="12">
-                          <button type="button" class="clickable" onclick="FractionalCoverage.DrawFullTable (inter_depth, inter_table);" title="Calculate"> Full table </button>
-                          <button type="button" class="clickable" onclick="FractionalCoverage.DrawReducedTable (inter_depth, inter_table);" title="Calculate"> Reduced table </button>
-                          <button type="button" class="clickable" onclick="FractionalCoverage.DrawOverlaps (inter_depth, overlap_map, overlap_map.width, overlap_map.height);" title="Calculate"> Overlaps </button>
-            
-            <div class="scroll">
-            
-                <p id="inter_table">&nbsp;</p>               
-            
-            </div>
-            <p> Unfortunately a lot of these ranges overlap, for instance the range generated by 2/4 is entirely inside the range generated by 1/2. If we run the previous calculation
-            removing fractions a/b that can be reduced we get a much smaller set. Click on the "Reduced table" to see the result. After 64 levels the reduced total is running
-            about 0.07 behind the full value. It is never going to make up this defecit so the final total will probably be around 37%.
-            
-            </p><p>
-            In addition there is the possibility that some of the intervals for different 'b' values will overlap, you can see this in
-            the diagram below. Choose a depth setting and click on the "Overlaps" button to show where the ranges rall
-            fall within the interval 0-1. The orange bars are ranges where a and b in a/b have a factor in common. They will fall entirely
-            within the range of the reduced fraction which will appear in yellow higher up the diagram.
-            </p><p>
-            You will also be able to see that some of the yellow bars also overlap the ranges defined by bars higher up the chart, so the
-            total coverage will be less than the 37% we estimated earlier.
-            
-            </p><p>
-            <img id="overlap_map" width="1000" height="300" />
-        </div>
-
-        
-	<!-- Vector search -->
-    
-        <div class="float" style="overflow: auto;">
-
-            <h1> Follow Vector </h1>
-          
-            <p>
-            <table>
-              <tr><td> Vector: </td><td> <input type="text" maxlength="12" id="vec_x" size="12"> / <input type="text" maxlength="12" id="vec_y" size="12"></td><tr>
-              <tr><td> Depth: </td><td> <input type="text" maxlength="12" id="follow_depth" size="12"></td><tr>
-              <tr><td> <button type="button" class="clickable" onclick="controller.CalculateFollowVector(vector_text);" title="Calculate"> Calculate </button></td><td>&nbsp;</td><tr>
-            </table>
-            
-            <div class="scroll">
-            
-            
-                <p id="location_table_2">&nbsp;</p>
-                <p id="vector_text">&nbsp;</p>
-                
-            
-            </div>
-            </p>
-        </div>
-	
-    
-		<div class="endfloat"> &nbsp; </div>
-	</div>
+        <!-- Notes -->
 	    
-		
-	<!-- 
-    ==============================================================================================================
-    Popup to show help
-    ==============================================================================================================
-    -->		
-			  
-		<div id="show_help" class="float w6 popup">
-		
-			<h2> Instructions </h2>
-			<p>
-                
+        <div class="float in2 box w10" style="overflow: auto;">
+
+            <h1> Notes </h1>
+          <p>
+            If you calculate the sequence <span class="expr">z^3</span> modulo 9 you get [1,8,0,1,8,0,1,8,0,...]. This repeats indefinitely. You can show this
+            by considering the expression <span class="expr">(3n+k)^3</span> mod 9, where <span class="expr">0<=k<=2</span>. This expands to:
+          </p><p>
+            <span class="expr">(3n)^3+3.(3n)^2k+3.(3n)k^2+k^3</span> mod 9.
+          </p><p>
+            The first three terms are all multiples of 9, so the remainder will be <span class="expr">k^3</span> mod 9 which is [1,8,0] as we showed above.
+            The possible remainders when <span class="expr">x^3+y^3+z^3</span> is divided by 9 can be obtained by adding 
+            all the permutations of three numbers taken from this list, which are:
+            [0,1,2,3,8,9,10,16,17,24], which modulo 9 become [0,1,2,3,8,0,1,7,8,6]. 
+          </p><p>
+            If you expand these sums into a table:
+          </p><p>
+            <table>
+             <tr>
+              <th>k1,k2,k3</th><th>0,0</th><th>0,1</th><th>0,8</th><th>1,0</th><th>1,1</th><th>1,8</th><th>8,0</th><th>8,1</th><th>8,8</th>
+             </tr>
             
-            </p>
-            <p style="text-align:right;">
-                <button type="button" class="clickable" onclick="controller.HideHelp();" title="hide tdis section"> close </button>
-            </p>
-		</div>
-		
+             <tr>
+              <th>0</th><td>0</td><td>1</td><td>8</td><td>1</td><td>2</td><td>0</td><td>8</td><td>0</td><td>7</td>
+             </tr>
+
+             <tr>
+              <th>1</th><td>1</td><td>2</td><td>0</td><td>2</td><td>3</td><td>1</td><td>0</td><td>1</td><td>8</td>
+             </tr>
+
+             <tr>
+              <th>8</th><td>8</td><td>0</td><td>7</td><td>0</td><td>1</td><td>8</td><td>7</td><td>8</td><td>6</td>
+             </tr>
+           </table>
+          </p><p>
+            And arrange them according to the total we can infer some additional constraints on 'z'.
+          </p><p>
+           <table>
+             <tr>
+              <th>Total</th><th>Combinations</th><th>Count</th><th>Constraints on 'z'</th>
+             </tr>
+            
+             <tr>
+              <th>0</th><td>(0,0,0), (0,1,8)</td><td>7</td><td>none</td>
+             </tr>
+
+             <tr>
+              <th>1</th><td>(0,0,1), (1,1,8)</td><td>6</td><td>none</td>
+             </tr>
+
+             <tr>
+              <th>2</th><td>(0,1,1)</td><td>3</td><td>z mod 3 can't be 2</td>
+             </tr>
+
+             <tr>
+              <th>3</th><td>(1,1,1)</td><td>1</td><td>z mod 3 must be 1</td>
+             </tr>
+
+             <tr>
+              <th>4</th><td></td><td>0</td><td>impossible</td>
+             </tr>
+
+             <tr>
+              <th>5</th><td></td><td>0</td><td>impossible</td>
+             </tr>
+
+             <tr>
+              <th>6</th><td>(8,8,8)</td><td>1</td><td>z mod 3 must be 2</td>
+             </tr>
+
+             <tr>
+              <th>7</th><td>(0,8,8)</td><td>3</td><td>z mod 3 can't be 1</td>
+             </tr>
+
+             <tr>
+              <th>8</th><td>(0,0,8), (1,8,8)</td><td>6</td><td>none</td>
+             </tr>
+           </table>
+        </div>
         
+        
+		<div class="endfloat"> &nbsp; </div>
+	    
+    
+<!-- Generic links -->
 
-	<!-- Other pages -->
+    <div class="float w9 in2 box" style="overflow: auto;">
 
-	<div class="in2 box w10">
-	    <h2> Other pages </h2>
-		    <p><span id="links_go_here">&nbsp;</span></p>
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
     </div>
 
 <!-- Copyright -->
 
-    <p class="small"> (c) John Whitehouse 2019 <p>
+<div class="endfloat"/>
 
-			  
+<p class="small"> (c) John Whitehouse 2021 <p>
+
 
 </body>
 </html>

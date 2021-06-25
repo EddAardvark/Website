@@ -1,0 +1,475 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Self-organising simulation">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<style>
+
+TD {padding: 3pt; border: 1px solid brown;}
+TH {padding: 3pt; border: 1px solid brown; background: orange;}
+
+</style>
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="molecule_template.js"> </script>
+<script src="molecule.js"> </script>
+<script src="bath.js"> </script>
+
+<title> A 2-Dimensional self-organising system </title>
+
+
+<script>
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    
+    var templates = [];
+    var edge_templates =
+    [
+        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
+        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
+        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
+        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
+    ];
+    var colours = ["yellow", "green", "cyan", "magenta"];
+    var images;
+    var x_shapes;
+    var y_shapes;
+    var bath;
+    
+    OnLoad = function ()
+    {
+        SVGColours.AddColours (colour1);
+        SVGColours.AddColours (colour2);
+        SVGColours.AddColours (colour3);
+        SVGColours.AddColours (colour4);
+        
+        colour1.value = colours [0];
+        colour2.value = colours [1];
+        colour3.value = colours [2];
+        colour4.value = colours [3];
+
+        bath = new Bath (10,10, 2, 5, 5);
+    
+        images = [shape1, shape2, shape3, shape4];
+        
+        x_shapes = [x1,x2,x3,x4];
+        y_shapes = [y1,y2,y3,y4];
+        
+        for (var i = 0 ; i < 4 ; ++i)
+        {
+            templates [i] = MoleculeTemplate.CreateFromEdges (edge_templates[i]);
+            templates [i].set_colour (colours [i]);
+        }
+        DrawTemplates ();
+        DrawSimulation ();
+    }
+
+    DrawTemplates = function ()
+    {
+        for (var i = 0 ; i < 4 ; ++i)
+        {
+            DrawTemplate (i);
+        }
+    }
+    
+    DrawTemplate = function (n)
+    {
+        var b = new Bath (1, 1, 5, 12, 12);
+        
+        b.add_molecule (0, 0, templates[n]);
+        b.draw (images[n]);
+        
+        
+        var b2 = new Bath (1, 1, 2, 5, 5);
+        
+        b2.add_molecule (0, 0, templates[n]);        
+        b2.draw (x_shapes[n]);
+        b2.draw (y_shapes[n]);
+    }
+    
+    update_shape = function (shape,edge,select)
+    {   
+        n = parseInt(select.value);
+        edge_templates[shape][edge] = n;
+        templates [shape].update_edges (edge_templates[shape]);
+        DrawTemplate(shape);
+        bath.reset ();   
+        DrawSimulation ();    
+    }
+    
+    change_colour=function(shape, id)
+    {
+        colours [shape] = id.value;
+        templates [shape].set_colour (colours [shape]);
+        DrawTemplate(shape);
+        DrawSimulation ();        
+    }
+    
+    UpdateEnergy = function(idx)
+    {
+        var controls = [energy1, energy2, energy3, energy4];
+        var energy = parseFloat (controls[idx].value);
+        controls[idx].value = Misc.FloatToText (energy,6);
+        templates[idx].energy = energy;
+    }
+    
+    DrawSimulation = function ()
+    {
+        bath.draw (the_simulation);
+    }
+    
+    AddRandom = function ()
+    {
+        var type = Misc.RandomInteger (templates.length);
+        var x = Misc.RandomInteger (bath.num_x);
+        var y = Misc.RandomInteger (bath.num_y);
+        bath.add_molecule (x, y, templates[type]);
+        DrawSimulation();
+    }
+    
+    RotateRandom = function ()
+    {
+        bath.rotate_molecule ();
+        DrawSimulation();
+    }
+    
+    FlipRandom = function ()
+    {
+        bath.flip_molecule ();
+        DrawSimulation();
+    }
+    
+    MoveRandom = function ()
+    {
+        bath.move_molecule ();
+        DrawSimulation();
+    }
+    
+    RemoveRandom = function ()
+    {
+        bath.remove_molecule ();
+        DrawSimulation();
+    }
+    
+    Reset = function ()
+    {
+        bath.reset ();
+        DrawSimulation();
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnLoad();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> 2D Self-Organisation </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->
+
+    <!-- Stuff -->
+    
+        <div class="float in2 box w10" style="overflow: auto;">
+
+          <h1> The view </h1>
+          <p>
+            <img id="the_simulation">
+          </p><p>
+            <button onclick="Reset()"> Reset </button>       
+            <button onclick="AddRandom()"> Add Random </button>         
+            <button onclick="RotateRandom()"> Rotate Random </button>            
+            <button onclick="FlipRandom()"> Flip Random </button>            
+            <button onclick="MoveRandom()"> Move Random </button>              
+            <button onclick="RemoveRandom()"> Remove Random </button>              
+          </p>
+        </div>
+        
+        <!-- Settings -->
+	    
+        <div class="float in2 box w10" style="overflow: auto;">
+
+            <h1> Settings </h1>
+            <h2> Shapes</h2>
+
+             <p>
+             The energies relate to the energy of existence of the individual molecules. Negative energies will increase the concentration of a
+             molecule type, positive ones will reduce it.
+             </p><p>
+              <table>
+               <tr><th>Shape</th><th>Bottom</th><th>Left</th><th>Top</th><th>Right</th><th>Colour</th><th>Energy</th></tr>
+               
+               <tr>
+                <td><img id="shape1"></td>
+                <td>
+                 <select id="top1" onchange="update_shape(0,0,top1)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="right1" onchange="update_shape(0,1,right1)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="bottom1" onchange="update_shape(0,2,bottom1)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="left1" onchange="update_shape(0,3,left1)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="colour1" onchange="change_colour(0,colour1)">
+                </td>
+                <td>
+                 <input type="text" maxlength="12" id="energy1" size="12" value="0">
+                 <button onclick="UpdateEnergy (0)">&#x25B6;</button>
+                </td>
+               </tr>
+               
+               <tr>
+                <td><img id="shape2"></td>
+                <td>
+                 <select id="top2" onchange="update_shape(1,0,top2)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="right2" onchange="update_shape(1,1,right2)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="bottom2" onchange="update_shape(1,2,bottom2)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="left2" onchange="update_shape(1,3,left2)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="colour2" onchange="change_colour(1,colour2)">
+                </td>
+                <td>
+                 <input type="text" maxlength="12" id="energy2" size="12" value="0">
+                 <button onclick="UpdateEnergy (1)">&#x25B6;</button>
+                </td>
+               </tr>
+                
+                
+               <tr>
+                <td><img id="shape3"></td>
+                <td>
+                 <select id="top3" onchange="update_shape(2,0,top3)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="right3" onchange="update_shape(2,1,right3)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="bottom3" onchange="update_shape(2,2,bottom3)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="left3" onchange="update_shape(2,3,left3)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="colour3" onchange="change_colour(2,colour3)">
+                </td>
+                <td>
+                 <input type="text" maxlength="12" id="energy3" size="12" value="0">
+                 <button onclick="UpdateEnergy (2)">&#x25B6;</button>
+                </td>
+               </tr>
+                
+                
+               <tr>
+                <td><img id="shape4"></td>
+                <td>
+                 <select id="top4" onchange="update_shape(3,0,top4)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="right4" onchange="update_shape(3,1,right4)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="bottom4" onchange="update_shape(3,2,bottom4)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="left4" onchange="update_shape(3,3,left4)">
+                  <option value="0"> Flat </option>
+                  <option value="1"> Out </option>
+                  <option value="2"> In </option>
+                 </select>
+                </td>
+                <td>
+                 <select id="colour4" onchange="change_colour(3,colour4)">
+                </td>
+                <td>
+                 <input type="text" maxlength="12" id="energy4" size="12" value="0">
+                 <button onclick="UpdateEnergy (3)">&#x25B6;</button>
+                </td>
+               </tr>
+                
+              </table>
+             </p>
+            <h2> Colour interactions</h2>
+             <p>
+             Enter the interaction energies for adjecent shapes for the various colour combinations. The relationship are symmetrical so only one value per pair is required.
+             Negative energies are attractive, positive ones repulsive.
+             </p><p>
+              <table>
+               <tr><td>&nbsp;</td><td><img id="x1"></td><td><img id="x2"></td><td><img id="x3"></td><td><img id="x4"></td></tr>
+
+               <tr>
+                 <td><img id="y1"></td>
+                 <td><input type="text" maxlength="12" id="energy1x1" size="12" value="0"></td>
+                 <td><input type="text" maxlength="12" id="energy2x1" size="12" value="0"></td>
+                 <td><input type="text" maxlength="12" id="energy3x1" size="12" value="0"></td>
+                 <td><input type="text" maxlength="12" id="energy4x1" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img id="y2"></td>
+                 <td>&nbsp;</td>
+                 <td><input type="text" maxlength="12" id="energy2x2" size="12" value="0"></td>
+                 <td><input type="text" maxlength="12" id="energy3x2" size="12" value="0"></td>
+                 <td><input type="text" maxlength="12" id="energy4x2" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img id="y3"></td>
+                 <td>&nbsp;</td>
+                 <td>&nbsp;</td>
+                 <td><input type="text" maxlength="12" id="energy3x3" size="12" value="0"></td>
+                 <td><input type="text" maxlength="12" id="energy4x3" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img id="y4"></td>
+                 <td>&nbsp;</td>
+                 <td>&nbsp;</td>
+                 <td>&nbsp;</td>
+                 <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
+               </tr>
+              </table>
+             </p>
+             
+        </div>
+        
+        
+		<div class="endfloat"> &nbsp; </div>
+	    
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2021 <p>
+
+
+</body>
+</html>
+
+
+
+

@@ -14,6 +14,8 @@
                                source code">
 
 <script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="./v2/js_library/misc.js"> </script>
+
 <title> JW's Home page </title>
 
 <script>
@@ -22,6 +24,12 @@
     //-------------------------------------------------------------
     OnStart = function ()
     {
+        var all = document.getElementsByClassName("expr");
+
+        for (var i=0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
     }
 </script>
 
@@ -103,53 +111,51 @@
 
      <h2> News </h2>
         <p>
-            <strong> February 2020: </strong> I've redone the
+            <strong> June 2021: </strong> I recently stumbled across a <a href="https://youtu.be/ASoz_NuIvP0" target="_blank">YoutTube video </a> by 
+            <a href="https://www.youtube.com/channel/UCoxcjq-8xIDTYp3uz647V5A" target="_blank">Numberphile</a>, which discussed finding integer solutions
+            for the expression <span class="expr">x^3+y^3-z^3=k</span>, where <span class="expr">k=42</span>. The solution found has x, y and z values 
+            with 16 digits. Currently the only known way to find solutions to equations like this is to search all the possibilities
+            looking for matches, and testing <span class="expr">10^[48]</span> values isn't currently feasible. The search can be reduced to order 
+            <span class="expr">n^2</span> (a still impractical <span class="expr">10^[32]</span> values) by noticing that for small 'k' and large 'x', 'y' and 'z', 
+            <span class="expr">z~=&minus;(x^3+y^3)^[1/3]</span>. What made the video interesting is that they had an algorithm that they claimed was
+            order 'n', provided you focused on a specific 'z'. The video didn't go into details of how this was implemented so I thought I'd have a 
+            go myself. The results can be found on my <a href="http://www.eddaardvark.co.uk/v2/cubes/index.html" target="_blank">Searching for Cube Sums</a> page.
+            
+        </p><p>
+            A few things to note:
+            <ul>
+             <li>My page only describes how the algorithm works, in includes demonstrations written in Javascript, which will allow you to search for some numbers,
+             <span class="expr">k=72</span> and <span class="expr">k=83</span> work quite well, but as the algorithm involves calculating 
+             <span class="expr">z^3</span> you won't be able to go beyond <span class="expr">z=2^[18]</span> (the cube root of the maximum safe integer).
+             <li>
+             I could rewrite it using unlimited length integers (I have a Javascript class that does that), but then you have to consider that the Numberphile
+             people ran their calculation for days on a rack of computers with 512 cores, probably using something that runs faster than Javascript in a browser.
+             </li>
+             <li>
+             My implementation involves finding the prime factors of <span class="expr">z^3-k</span>. This isn't linear in 'n' so the whole calculation
+             isn't quite of order 'n',
+             The video didn't discus this, maybe they have a clever way around it.
+             </li>
+             <li>
+             As 42 modulo 9 is 6, the solution can only include 'x', 'y' and 'z' values that are '2' modulo '3', eliminating 2/3 of the possibilities for 'z'.
+             This is explained on <a href="file:///D:/Website/v2/cubes/index.html">the page</a>.
+             </li>
+            </ul>
+        
+        <p>
+            <strong> June 2021: </strong> I've recently given up full-time working so I'm hoping I'll have more time to maintain this site.
+        </p><p>
+        
+        <p>
+            <strong> May 2021: </strong> I've redone the
             <a href="http://www.eddaardvark.co.uk/v2/newton/webgl.html" alt="Newton Fractal Link" title="Click here to visit the interactive Newton Fractal page">
             Newton Fractal</a> page, hopefully making the user interface easier to use, especially when creating animations.
         </p><p>
-            <strong> January 2020: </strong> I've started a
-            <a href="http://www.eddaardvark.co.uk/ytvideos.html" alt="Videos link" title="Click here to visit the videos page">
-            videos</a>
-            page showing animations created by some of the pages
-            on this site. So far I have animations for 
-            <a href="http://www.eddaardvark.co.uk/v2/spirograph/spirograph2.html#pic" alt="Spirograph link" title="Visit the Spirograph page">Spirographs</a>,
-            <a href="http://www.eddaardvark.co.uk/v2/affine/index.html" alt="Affine transformations link" title="Visit the Affine transformations page">Affine transformations</a>,
-            <a href="http://www.eddaardvark.co.uk/mandelbrot/complexity.html" alt="Mandelbrot Complexity link" title="Visit the Mandelbrot Complexity page">Mandelbrot Complexity</a>,
-            <a href="http://www.eddaardvark.co.uk/v2/circles/index.html" alt="Circular Interference link" title="Visit the Circular Interference page">Circular Interference</a>
-            and the 
-            <a href="http://www.eddaardvark.co.uk/v2/newton/webgl.html" alt="Newton Fractal link" title="Visit the Newton Fractal page">Newton Fractal</a>,
-            
-        </p>
         
         <p>
             <strong> October 2019: </strong> I've redone the affine transformation pages using javascript, making them interactive. You can find the new page
             <a href="http://www.eddaardvark.co.uk/v2/affine/index.html"> here</a>.
         </p>
-        <p>
-            <strong> 2019: </strong> I'm working on a page called "<a href="http://www.eddaardvark.co.uk/v2/sculpture_garden/sculpture_garden.html">Sculpture Garden"</a>.
-            Rather than have pages of images I created earlier linked by html if will present a sort of 3D environment
-            that you can explore. It is work in progress and will probably remain that way for some time, but I do have a few galleries (like in the image below) and outside there is a garden with
-            mazes and a few sculptures. Check back often as I will be adding more content.</a>.
-        </p>
-        
-        <div>
-            <div class="float in2">
-                <a href="v2/sculpture_garden/images/sg1.png"><img src="v2/sculpture_garden/images/sg1.png" width="160" title="Click Me" alt="sculpture garden image"/></a><br>
-                    A gallery
-            </div>
-            
-            <div class="float in2">
-                <a href="v2/sculpture_garden/images/sg2.png"><img src="v2/sculpture_garden/images/sg2.png" width="160" title="Click Me" alt="sculpture garden image"/></a><br>
-                    The boundary fence
-            </div>
-            
-            <div class="float in2">
-                <a href="v2/sculpture_garden/images/sg3.png"><img src="v2/sculpture_garden/images/sg3.png" width="160" title="Click Me" alt="sculpture garden image"/></a><br>
-                    A garden map
-            </div>
-            <div class="endfloat"> &nbsp; </div>
-
-        </div>
             
         <p><p>
             <strong> June 2016: </strong>
