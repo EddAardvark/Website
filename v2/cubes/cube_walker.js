@@ -256,6 +256,21 @@ CubeWalker.TABLE_MAP =
     [ 0,  1,  2, -1, -1],
 ];
 
+
+//--------------------------------------------------------------------------------------------
+CubeWalker.TABLE_MAP_2 =
+[
+    [-1, -1, 24, 25, 26, -1, -1, -1, -1, -1, -1],
+    [-1, 21, 22, 23, -1, -1, -1, -1, -1, -1, -1],
+    [18, 19, 20, -1, -1, 15, 16, 17, -1, -1, -1],
+    [-1, -1, -1, -1, 12, 13, 14, -1, -1, -1, -1],
+    [-1, -1, -1,  9, 10, 11, -1, -1,  6,  7,  8],
+    [-1, -1, -1, -1, -1, -1, -1,  3,  4,  5, -1],
+    [-1, -1, -1, -1, -1, -1,  0,  1,  2, -1, -1],    
+];
+
+
+
 //--------------------------------------------------------------------------------------------
 CubeWalker.FLAT_TABLE =
 [
@@ -279,7 +294,7 @@ CubeWalker.prototype.ToFlatTable = function (element_id)
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.GetTableText = function ()
 {
-    return this.MakeNeighboursTable (CubeWalker.TABLE_MAP);
+    return this.MakeNeighboursTable (CubeWalker.TABLE_MAP_2);
 }
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.GetFlatTableText = function ()
@@ -318,6 +333,39 @@ CubeWalker.prototype.MakeNeighboursTable = function (map)
     text += "</table>";
     return text;
 }
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.MakeNeighboursTable_Old = function (map)
+{   
+    var neighbours = this.Neighbours ();
+    
+    var text = "<table>";
+    
+    for (var row_idx in map)
+    {
+        var row = map [row_idx];
+        text += "<tr>";
+        
+        for (var col_idx in row)
+        {
+            var cell = row [col_idx];
+
+            if (cell < 0)
+            {
+                text += "<td>&nbsp;</td>";
+            }
+            else
+            {
+                var val = neighbours [cell][3];
+                var style = (cell == CubeWalker.TABLE_CENTRE) ? "centre" : (val.positive ? "positive" : "negative");
+                text += "<td class = \"" + style + "\">" + val.toString() + "</td>";
+            }
+        }
+        text += "</tr>";
+    }
+    text += "</table>";
+    return text;
+}
+
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.ToList = function (element_id)
 {
