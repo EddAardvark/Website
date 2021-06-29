@@ -18,6 +18,19 @@ Bath = function (num_x, num_y, s, mx, my)
     this.width = this.num_x * this.grid_size + 2 * this.x_margin;
     this.height = this.num_y * this.grid_size + 2 * this.y_margin;
 }
+Bath.MAX_TYPES = 5;
+Bath.type_energy = [0,0,0,0,0];
+Bath.edge_energy = [[0, null, 0],[null, null, 0],[0, 0, 0]] // straight = 0, out = 1, in = 2
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.set_edge_energy = function (edge1, edge2, energy)
+{
+    if (edge1 == MoleculeTemplate.STRAIGHT && edge2 == MoleculeTemplate.STRAIGHT) throw "Can't set energy for flat-flat";
+    if (edge1 == MoleculeTemplate.OUT && edge2 != MoleculeTemplate.IN) throw "Out must be matched with in";
+    if (edge2 == MoleculeTemplate.OUT && edge1 != MoleculeTemplate.IN) throw "Out must be matched with in";
+    
+    Bath.edge_energy [edge1][edge2] = energy;
+    Bath.edge_energy [edge2][edge1] = energy;
+}
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.reset = function (molecule, pts)
 {
@@ -60,6 +73,28 @@ Bath.prototype.add_molecule = function (x, y, template)
     this.grid [pos] = mol;
     this.molecules.push (mol);
     return true;
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.replace_molecule = function (x, y, template)
+{
+    var pos = y * this.num_x + x;
+    var prev_mol = this.grid [pos];
+    var mol = new Molecule (template, this);
+
+    mol.place (x,y);
+    this.grid [pos] = mol;
+    
+    if (prev_mol != null)
+    {
+        var idx = this.molecules.indexOf (prev_mol);
+        if (idx >= 0)
+        {
+            this.molecules [idx] = mol;
+            return;
+        }
+    }
+        
+    this.molecules.push (mol);
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.random_molecule = function ()

@@ -13,7 +13,7 @@
 MoleculeTemplate = function ()
 {
     this.colour="yellow";
-    this.energy = 0;
+    this.id = -1;
 }
 
 // bottom, right, top, left
@@ -68,7 +68,7 @@ MoleculeTemplate.Create = function ()
 MoleculeTemplate.CreateFromEdges = function (edges)
 {
     var m = new MoleculeTemplate;
-    m.edges = edges;
+    m.edges = [...edges];
     return m;
 }
 //------------------------------------------------------------------------------------------------------------

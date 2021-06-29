@@ -31,6 +31,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     //------------------------------------------------------------------------------------------------------------------------------------
     
     var templates = [];
+    var square_templates = [];
     var edge_templates =
     [
         [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
@@ -38,10 +39,9 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
         [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
     ];
+
     var colours = ["yellow", "green", "cyan", "magenta"];
     var images;
-    var x_shapes;
-    var y_shapes;
     var bath;
     
     OnLoad = function ()
@@ -56,19 +56,23 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         colour3.value = colours [2];
         colour4.value = colours [3];
 
-        bath = new Bath (10,10, 2, 5, 5);
+        bath = new Bath (10,10, 2, 0, 0);
     
         images = [shape1, shape2, shape3, shape4];
         
-        x_shapes = [x1,x2,x3,x4];
-        y_shapes = [y1,y2,y3,y4];
+        pair_shapes = [x1y1,x1y2,x1y3,x1y4,x2y2,x2y3,x2y4,x3y3,x3y4,x4y4];
         
         for (var i = 0 ; i < 4 ; ++i)
         {
             templates [i] = MoleculeTemplate.CreateFromEdges (edge_templates[i]);
             templates [i].set_colour (colours [i]);
+            templates [i].id = i;
+            square_templates [i] = MoleculeTemplate.CreateFromEdges (edge_templates[i]);
+            square_templates [i].set_colour (colours [i]);
         }
         DrawTemplates ();
+        DrawPairs ();
+        DrawEdgeInteractions ();
         DrawSimulation ();
     }
 
@@ -86,13 +90,58 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         
         b.add_molecule (0, 0, templates[n]);
         b.draw (images[n]);
+    }
         
+    DrawPairs = function ()
+    {
+        var b2 = new Bath (2, 1, 2, 0, 0);
+        var shape = 0;
         
-        var b2 = new Bath (1, 1, 2, 5, 5);
+        for (var i = 0 ; i < 4 ; ++i)
+        {
+            b2.replace_molecule (0, 0, square_templates[i]);   
+
+            for (var j = i ; j < 4 ; ++j)
+            {     
+                b2.replace_molecule (1, 0, square_templates[j]);        
+                b2.draw (pair_shapes[shape++]);
+            }
+        }
+    }
+    
+    
+    DrawEdgeInteractions = function ()
+    {
+        var spike_left =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.OUT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT]);
+        var spike_right =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.OUT]);
+        var hole_left =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.IN,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT]);
+        var hole_right =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.IN]);
+        var flat =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT]);
+        var to_draw =
+        [
+            [edge_edge, flat, flat],
+            [edge_hole, flat, hole_left],
+            [edge_spike, flat, spike_left],
+            [hole_hole, hole_right, hole_left],
+            [hole_spike, hole_right, spike_left],
+            [spike_spike, spike_right, spike_left],
+        ];
         
-        b2.add_molecule (0, 0, templates[n]);        
-        b2.draw (x_shapes[n]);
-        b2.draw (y_shapes[n]);
+        spike_left.set_colour ("orange");
+        spike_right.set_colour ("orange");
+        hole_left.set_colour ("crimson");
+        hole_right.set_colour ("crimson");
+    
+        var b2 = new Bath (3, 1, 2, 0, 0);
+                
+        for (var i in to_draw)
+        {
+            var row = to_draw [i];
+            
+            b2.replace_molecule (0, 0, row [1]);   
+            b2.replace_molecule (2, 0, row [2]);   
+            b2.draw (row[0]);
+        }
     }
     
     update_shape = function (shape,edge,select)
@@ -109,6 +158,8 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     {
         colours [shape] = id.value;
         templates [shape].set_colour (colours [shape]);
+        square_templates [shape].set_colour (colours [shape]);
+        DrawPairs();
         DrawTemplate(shape);
         DrawSimulation ();        
     }
@@ -119,6 +170,38 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         var energy = parseFloat (controls[idx].value);
         controls[idx].value = Misc.FloatToText (energy,6);
         templates[idx].energy = energy;
+    }
+    
+    UpdateInteractions = function ()
+    {
+        var e11 = parseFloat (energy1x1.value);
+        var e12 = parseFloat (energy1x2.value);
+        var e13 = parseFloat (energy1x3.value);
+        var e14 = parseFloat (energy1x4.value);
+        var e22 = parseFloat (energy2x2.value);
+        var e23 = parseFloat (energy2x3.value);
+        var e24 = parseFloat (energy2x4.value);
+        var e33 = parseFloat (energy3x3.value);
+        var e34 = parseFloat (energy3x4.value);
+        var e44 = parseFloat (energy4x4.value);
+
+        var eeh = parseFloat (energy_eh.value);
+        var ehh = parseFloat (energy_hh.value);
+        var ehs = parseFloat (energy_hs.value);
+
+        var temp = parseFloat (temperature.value);                 
+        
+        try
+        {
+            bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, eeh);
+            bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, ehh);
+            bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, ehs);
+        }
+        catch (e)
+        {
+            Misc.Alert (e);
+        }
+        
     }
     
     DrawSimulation = function ()
@@ -177,7 +260,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
 
   <div style="margin: auto; width: 1024px;">
      <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
-        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <img class="noborder"  border="0" src="http://www.eddaardvark.co.uk/images/home.png">
         <p> <strong>Home page</strong>
      </button>
 
@@ -242,7 +325,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
                <tr><th>Shape</th><th>Bottom</th><th>Left</th><th>Top</th><th>Right</th><th>Colour</th><th>Energy</th></tr>
                
                <tr>
-                <td><img id="shape1"></td>
+                <td><img class="noborder" id="shape1"></td>
                 <td>
                  <select id="top1" onchange="update_shape(0,0,top1)">
                   <option value="0"> Flat </option>
@@ -281,7 +364,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
                </tr>
                
                <tr>
-                <td><img id="shape2"></td>
+                <td><img class="noborder" id="shape2"></td>
                 <td>
                  <select id="top2" onchange="update_shape(1,0,top2)">
                   <option value="0"> Flat </option>
@@ -321,7 +404,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
                 
                 
                <tr>
-                <td><img id="shape3"></td>
+                <td><img class="noborder" id="shape3"></td>
                 <td>
                  <select id="top3" onchange="update_shape(2,0,top3)">
                   <option value="0"> Flat </option>
@@ -361,7 +444,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
                 
                 
                <tr>
-                <td><img id="shape4"></td>
+                <td><img class="noborder" id="shape4"></td>
                 <td>
                  <select id="top4" onchange="update_shape(3,0,top4)">
                   <option value="0"> Flat </option>
@@ -401,45 +484,85 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
                 
               </table>
              </p>
-            <h2> Colour interactions</h2>
+            <h2> Two-body Interactions</h2>
              <p>
-             Enter the interaction energies for adjecent shapes for the various colour combinations. The relationship are symmetrical so only one value per pair is required.
-             Negative energies are attractive, positive ones repulsive.
+             Enter the interaction energies for adjacent shapes for the various colour and edge combinations. The relationship are symmetrical so only one value per pair is required.
+             Negative energies are attractive, positive ones repulsive. Interactions where a spike abuts another spike or flat edge aren't allowed. Two flat edges in contact
+             contribute no energy.
              </p><p>
               <table>
-               <tr><td>&nbsp;</td><td><img id="x1"></td><td><img id="x2"></td><td><img id="x3"></td><td><img id="x4"></td></tr>
+               <tr><th>Adjacent Pair</th><th>Energy</th><th>Adjacent edges</th><th>Energy</th></tr>
 
                <tr>
-                 <td><img id="y1"></td>
+                 <td><img class="noborder" id="x1y1"></td>
                  <td><input type="text" maxlength="12" id="energy1x1" size="12" value="0"></td>
-                 <td><input type="text" maxlength="12" id="energy2x1" size="12" value="0"></td>
-                 <td><input type="text" maxlength="12" id="energy3x1" size="12" value="0"></td>
-                 <td><input type="text" maxlength="12" id="energy4x1" size="12" value="0"></td>
+                 <td><img class="noborder" id="edge_edge"></td>
+                 <td>0</td>
                </tr>
                
                <tr>
-                 <td><img id="y2"></td>
-                 <td>&nbsp;</td>
+                 <td><img class="noborder" id="x1y2"></td>
+                 <td><input type="text" maxlength="12" id="energy1x2" size="12" value="0"></td>
+                 <td><img class="noborder" id="edge_hole"></td>
+                 <td><input type="text" maxlength="12" id="energy_eh" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x1y3"></td>
+                 <td><input type="text" maxlength="12" id="energy1x3" size="12" value="0"></td>
+                 <td><img class="noborder" id="edge_spike"></td>
+                 <td>infinite</td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x1y4"></td>
+                 <td><input type="text" maxlength="12" id="energy1x4" size="12" value="0"></td>
+                 <td><img class="noborder" id="hole_hole"></td>
+                 <td><input type="text" maxlength="12" id="energy_hh" size="12" value="0"></td>
+             </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x2y2"></td>
                  <td><input type="text" maxlength="12" id="energy2x2" size="12" value="0"></td>
-                 <td><input type="text" maxlength="12" id="energy3x2" size="12" value="0"></td>
-                 <td><input type="text" maxlength="12" id="energy4x2" size="12" value="0"></td>
+                 <td><img class="noborder" id="hole_spike"></td>
+                 <td><input type="text" maxlength="12" id="energy_hs" size="12" value="0"></td>
                </tr>
                
                <tr>
-                 <td><img id="y3"></td>
+                 <td><img class="noborder" id="x2y3"></td>
+                 <td><input type="text" maxlength="12" id="energy2x3" size="12" value="0"></td>
+                 <td><img class="noborder" id="spike_spike"></td>
+                 <td>infinite</td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x2y4"></td>
+                 <td><input type="text" maxlength="12" id="energy2x4" size="12" value="0"></td>
                  <td>&nbsp;</td>
                  <td>&nbsp;</td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x3y3"></td>
                  <td><input type="text" maxlength="12" id="energy3x3" size="12" value="0"></td>
-                 <td><input type="text" maxlength="12" id="energy4x3" size="12" value="0"></td>
+                 <th>Temperature</th>
+                 <td><input type="text" maxlength="12" id="temperature" size="12" value="0"></td>
                </tr>
                
                <tr>
-                 <td><img id="y4"></td>
+                 <td><img class="noborder" id="x3y4"></td>
+                 <td><input type="text" maxlength="12" id="energy3x4" size="12" value="0"></td>
                  <td>&nbsp;</td>
                  <td>&nbsp;</td>
-                 <td>&nbsp;</td>
-                 <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
                </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x4y4"></td>
+                 <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
+                 <td>&nbsp;</td>
+                 <td><button onclick="UpdateInteractions ()">Apply</button></td>
+               </tr>
+               
               </table>
              </p>
              
