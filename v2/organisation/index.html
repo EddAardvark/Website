@@ -10,12 +10,28 @@
 TD {padding: 3pt; border: 1px solid brown;}
 TH {padding: 3pt; border: 1px solid brown; background: orange;}
 
+DIV.popup {
+        visibility:     hidden;
+        position:       fixed;
+        height:         440px;
+        left:           64px;
+        top:            32px;
+        z-index:        1000;
+        background:     SandyBrown;
+        border-bottom:  3pt solid black;
+        border-top:     1pt solid black;
+        border-left:    1pt solid black;
+        border-right:   2pt solid black;
+        text-align:     left;
+    }
+
 </style>
 
 <script src="http://www.eddaardvark.co.uk/john.js"> </script>
 <script src="../js_library/misc.js"> </script>
 <script src="../js_library/canvas_helpers.js"> </script>
 <script src="../js_library/colours.js"> </script>
+<script src="../js_library/popup.js"> </script>
 <script src="molecule_template.js"> </script>
 <script src="molecule.js"> </script>
 <script src="bath.js"> </script>
@@ -45,9 +61,38 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     var energies;
     var images;
     var bath;
+    var shape_choices;
+    var timer;
+    var popup;
+    var active_shape;
     
+    config_shape = function (n)
+    {
+        active_shape = n;
+        moltype.innerHTML = (n+1);
+        
+        var element = document.getElementById("shapes");
+        popup.Show (element.innerHTML, HidePopup);
+    }
+    choose_shape = function (n)
+    {
+        popup.Hide ();
+        edge_templates[active_shape] = shape_choices [n][2];
+        templates [active_shape].update_edges (edge_templates[active_shape]);
+        DrawTemplate(active_shape);
+        bath.reset ();   
+        DrawSimulation ();    
+    }
+    HidePopup = function ()
+    {
+        popup.Hide();
+    }
     OnLoad = function ()
     {
+        document.addEventListener('keydown', OnKey);
+        popup = new Popup("popup");
+        timer = setInterval(DoAnimate, 200);
+        
         SVGColours.AddColours (colour1);
         SVGColours.AddColours (colour2);
         SVGColours.AddColours (colour3);
@@ -72,6 +117,31 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
             square_templates [i] = MoleculeTemplate.CreateFromEdges (edge_templates[i]);
             square_templates [i].set_colour (colours [i]);
         }
+
+        shape_choices =
+        [
+            [s0000, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT]],
+            [s0010, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT]],
+            [s0020, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT]],
+            [s0011, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.OUT]],
+            [s1010, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT]],
+            [s0022, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.IN]],
+            [s2020, "yellow", [MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT]],
+            [s0021, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.OUT]],
+            [s1020, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT]],
+            [s0111, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT]],
+            [s0112, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
+            [s0121, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.OUT]],
+            [s0122, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.IN]],
+            [s0212, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
+            [s0222, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN]],
+            [s1111, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT]],
+            [s1112, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
+            [s1122, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.IN]],
+            [s1212, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
+            [s1222, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN]],
+            [s2222, "yellow", [MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN]],
+        ];
         
         InitEnergies ();            
         ShowEnergies();
@@ -79,7 +149,23 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         DrawTemplates ();
         DrawPairs ();
         DrawEdgeInteractions ();
+        DrawShapeSelection ();
         DrawSimulation ();
+    }
+    
+    OnKey = function (event)
+    {
+        var key = event.keyCode;
+
+        if (popup.HandleKey (key))
+        {
+            event.preventDefault();
+            return;
+        }
+    }
+    
+    DoAnimate = function ()
+    {
     }
 
     DrawTemplates = function ()
@@ -97,6 +183,19 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         b.simple_add_molecule (0, 0, templates[n]);
         b.draw (images[n]);
     }
+        
+    DrawShapeSelection = function ()
+    {
+        var b = new Bath (1, 1, 2, 4, 4);
+        
+        for (var i in shape_choices)
+        {
+            var template = MoleculeTemplate.CreateFromEdges (shape_choices[i][2]);
+            template.set_colour (shape_choices[i][1]);
+            b.simple_replace_molecule (0, 0, template);
+            b.draw (shape_choices[i][0]);
+        }
+    }        
         
     DrawPairs = function ()
     {
@@ -147,16 +246,6 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
             b2.simple_replace_molecule (2, 0, row [2]);   
             b2.draw (row[0]);
         }
-    }
-    
-    update_shape = function (shape,edge,select)
-    {   
-        var n = parseInt(select.value);
-        edge_templates[shape][edge] = n;
-        templates [shape].update_edges (edge_templates[shape]);
-        DrawTemplate(shape);
-        bath.reset ();   
-        DrawSimulation ();    
     }
     
     change_colour=function(shape, id)
@@ -410,6 +499,10 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
           </p>
         </div>
         
+        <!-- popup dialog box -->
+
+        <div class="popup" id="popup"> &nbsp; </div>
+        
         <!-- Settings -->
 	    
         <div class="float in2 box w9" style="overflow: auto;">
@@ -422,164 +515,65 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
              molecule type, positive ones will reduce it.
              </p><p>
               <table>
-               <tr><th>Shape</th><th>Bottom</th><th>Left</th><th>Top</th><th>Right</th><th>Colour</th><th>Energy</th></tr>
+               <tr><th>Molecule</th><th>Colour</th><th>Energy</th><th>Shape</th></tr>
                
                <tr>
                 <td><img class="noborder" id="shape1"></td>
                 <td>
-                 <select id="top1" onchange="update_shape(0,MoleculeTemplate.BOTTOM,top1)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <select id="colour1" onchange="change_colour(0,colour1)">
                 </td>
                 <td>
-                 <select id="right1" onchange="update_shape(0,MoleculeTemplate.LEFT,right1)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <input type="text" maxlength="12" id="energy1" size="12" value="0">
+                    <button onclick="UpdateEnergy (0)">&#x25B6;</button>
                 </td>
-                <td>
-                 <select id="bottom1" onchange="update_shape(0,MoleculeTemplate.TOP,bottom1)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                <td> 
+                    <button onclick="config_shape(0)"> Set </button>
                 </td>
-                <td>
-                 <select id="left1" onchange="update_shape(0,MoleculeTemplate.RIGHT,left1)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
-                </td>
-                <td>
-                 <select id="colour1" onchange="change_colour(0,colour1)">
-                </td>
-                <td>
-                 <input type="text" maxlength="12" id="energy1" size="12" value="0">
-                 <button onclick="UpdateEnergy (0)">&#x25B6;</button>
-                </td>
+                
                </tr>
                
                <tr>
                 <td><img class="noborder" id="shape2"></td>
                 <td>
-                 <select id="top2" onchange="update_shape(1,MoleculeTemplate.BOTTOM,top2)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <select id="colour2" onchange="change_colour(1,colour2)">
                 </td>
                 <td>
-                 <select id="right2" onchange="update_shape(1,MoleculeTemplate.LEFT,right2)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <input type="text" maxlength="12" id="energy2" size="12" value="0">
+                    <button onclick="UpdateEnergy (1)">&#x25B6;</button>
                 </td>
-                <td>
-                 <select id="bottom2" onchange="update_shape(1,MoleculeTemplate.TOP,bottom2)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
-                </td>
-                <td>
-                 <select id="left2" onchange="update_shape(1,MoleculeTemplate.RIGHT,left2)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
-                </td>
-                <td>
-                 <select id="colour2" onchange="change_colour(1,colour2)">
-                </td>
-                <td>
-                 <input type="text" maxlength="12" id="energy2" size="12" value="0">
-                 <button onclick="UpdateEnergy (1)">&#x25B6;</button>
-                </td>
+                <td> 
+                    <button onclick="config_shape(1)"> Set </button>
+                </td>                
                </tr>
                 
                 
                <tr>
                 <td><img class="noborder" id="shape3"></td>
                 <td>
-                 <select id="top3" onchange="update_shape(2,MoleculeTemplate.BOTTOM,top3)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <select id="colour3" onchange="change_colour(2,colour3)">
                 </td>
                 <td>
-                 <select id="right3" onchange="update_shape(2,MoleculeTemplate.LEFT,right3)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <input type="text" maxlength="12" id="energy3" size="12" value="0">
+                    <button onclick="UpdateEnergy (2)">&#x25B6;</button>
                 </td>
-                <td>
-                 <select id="bottom3" onchange="update_shape(2,MoleculeTemplate.TOP,bottom3)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
-                </td>
-                <td>
-                 <select id="left3" onchange="update_shape(2,MoleculeTemplate.RIGHT,left3)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
-                </td>
-                <td>
-                 <select id="colour3" onchange="change_colour(2,colour3)">
-                </td>
-                <td>
-                 <input type="text" maxlength="12" id="energy3" size="12" value="0">
-                 <button onclick="UpdateEnergy (2)">&#x25B6;</button>
-                </td>
+                <td> 
+                    <button onclick="config_shape(2)"> Set </button>
+                </td>                
                </tr>
                 
                 
                <tr>
                 <td><img class="noborder" id="shape4"></td>
                 <td>
-                 <select id="top4" onchange="update_shape(3,MoleculeTemplate.BOTTOM,top4)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <select id="colour4" onchange="change_colour(3,colour4)">
                 </td>
                 <td>
-                 <select id="right4" onchange="update_shape(3,MoleculeTemplate.LEFT,right4)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
+                    <input type="text" maxlength="12" id="energy4" size="12" value="0">
+                    <button onclick="UpdateEnergy (3)">&#x25B6;</button>
                 </td>
-                <td>
-                 <select id="bottom4" onchange="update_shape(3,MoleculeTemplate.TOP,bottom4)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
-                </td>
-                <td>
-                 <select id="left4" onchange="update_shape(3,MoleculeTemplate.RIGHT,left4)">
-                  <option value="0"> Flat </option>
-                  <option value="1"> Out </option>
-                  <option value="2"> In </option>
-                 </select>
-                </td>
-                <td>
-                 <select id="colour4" onchange="change_colour(3,colour4)">
-                </td>
-                <td>
-                 <input type="text" maxlength="12" id="energy4" size="12" value="0">
-                 <button onclick="UpdateEnergy (3)">&#x25B6;</button>
-                </td>
+                <td> 
+                    <button onclick="config_shape(3)"> Set </button>
+                </td>                
                </tr>
                 
               </table>
@@ -667,7 +661,53 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
              </p>
              
         </div>
-        
+            
+            
+    <!-- Popups: Shape chooser -->
+
+    <div id="shapes" style="visibility:hidden">
+        <p>
+        Choose a shape for molecule <span id="moltype">x</span>
+        </p><P>
+          <table>
+            <tr>
+                <td><img class="noborder" id="s0000" onclick="choose_shape(0)"></td>
+                <td><img class="noborder" id="s0021" onclick="choose_shape(7)"></td>
+                <td><img class="noborder" id="s0222" onclick="choose_shape(14)"></td>
+            </tr>
+            <tr>
+                <td><img class="noborder" id="s0010" onclick="choose_shape(1)"></td>
+                <td><img class="noborder" id="s1020" onclick="choose_shape(8)"></td>
+                <td><img class="noborder" id="s1111" onclick="choose_shape(15)"></td>
+            </tr>
+            <tr>
+                <td><img class="noborder" id="s0020" onclick="choose_shape(2)"></td>
+                <td><img class="noborder" id="s0111" onclick="choose_shape(9)"></td>
+                <td><img class="noborder" id="s1112" onclick="choose_shape(16)"></td>
+            </tr>
+            <tr>
+                <td><img class="noborder" id="s0011" onclick="choose_shape(3)"></td>
+                <td><img class="noborder" id="s0112" onclick="choose_shape(10)"></td>
+                <td><img class="noborder" id="s1122" onclick="choose_shape(17)"></td>
+            </tr>
+            <tr>
+                <td><img class="noborder" id="s1010" onclick="choose_shape(4)"></td>
+                <td><img class="noborder" id="s0121" onclick="choose_shape(11)"></td>
+                <td><img class="noborder" id="s1212" onclick="choose_shape(18)"></td>
+            </tr>
+            <tr>
+                <td><img class="noborder" id="s0022" onclick="choose_shape(5)"></td>
+                <td><img class="noborder" id="s0122" onclick="choose_shape(12)"></td>
+                <td><img class="noborder" id="s1222" onclick="choose_shape(19)"></td>
+            </tr>
+            <tr>
+                <td><img class="noborder" id="s2020" onclick="choose_shape(6)"></td>
+                <td><img class="noborder" id="s0212" onclick="choose_shape(13)"></td>
+                <td><img class="noborder" id="s2222" onclick="choose_shape(20)"></td>
+            </tr>
+          </table>
+      </p>
+    </div>
         
 		<div class="endfloat"> &nbsp; </div>
 	    

@@ -65,6 +65,13 @@ MoleculeTemplate.IN = 2;
 
 MoleculeTemplate.edge_names = ["Flat", "Spike", "Socket"];
 
+MoleculeTemplate.allowed_edges =
+[
+    [true,  false, true],
+    [false, false, true],
+    [true,  true,  true],
+];
+
 MoleculeTemplate.sides = [];
 MoleculeTemplate.sides [MoleculeTemplate.LEFT] = MoleculeTemplate.left_side;
 MoleculeTemplate.sides [MoleculeTemplate.RIGHT] = MoleculeTemplate.right_side;
@@ -75,6 +82,12 @@ MoleculeTemplate.Size = 10;     // Size of the pattern in pixels
 
 MoleculeTemplate.GetEdgeName = function (edge) { return MoleculeTemplate.edge_names [edge]; }
 MoleculeTemplate.GetFaceName = function (face) { return MoleculeTemplate.face_names [face]; }
+
+//-------------------------------------------------------------------------------------------------
+MoleculeTemplate.allowed = function (edge1, edge2)
+{
+    return MoleculeTemplate.allowed_edges [edge1, edge2];
+}
 
 //------------------------------------------------------------------------------------------------------------
 MoleculeTemplate.Create = function ()

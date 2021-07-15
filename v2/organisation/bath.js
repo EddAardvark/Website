@@ -296,7 +296,11 @@ Bath.prototype.get_total_energy = function (mol, neighbours)
         var neighbours = this.get_neighbours (mol);
         
         inate_energy += this.get_inate_energy (mol);
-        interaction_energy += this.get_interaction_energy (mol, neighbours);
+        var ie = this.get_interaction_energy (mol, neighbours);
+        
+        if (ie === null) throw "invalid configuration";
+                    
+        interaction_energy += ie;
     }    
     
     return inate_energy + interaction_energy / 2;    
@@ -304,10 +308,13 @@ Bath.prototype.get_total_energy = function (mol, neighbours)
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.get_molecule_energy = function (mol)
 {
-    var inate_energy = this.get_inate_energy (mol);
-    var interaction_energy = 0;    
     var neighbours = this.get_neighbours (mol);
     var interaction_energy = this.get_interaction_energy (mol, neighbours);
+    
+    if (interaction_energy === null) return null;
+    
+    var inate_energy = this.get_inate_energy (mol);
+    var interaction_energy = 0;    
     
     return inate_energy + interaction_energy;   
 }
@@ -343,10 +350,18 @@ Bath.prototype.get_interaction_energy = function (mol, neighbours)
             var dir = MoleculeTemplate.opposite_edge [i];
             var edge1 = mol.get_edge(i);
             var edge2 = neighbours [i].get_edge(dir);
-            Misc.Log ("Sides = {0} and {1}, edges = {2} and {3}", MoleculeTemplate.GetFaceName(i), MoleculeTemplate.GetFaceName(dir),
-            MoleculeTemplate.GetEdgeName(edge1), MoleculeTemplate.GetEdgeName(edge2));
+            var edge_energy = null;
+            if (MoleculeTemplate.allowed (edge1, edge2))
+            {
+                edge_energy = this.edge_energy[edge1][edge2];                
+            }
+            Misc.Log ("Sides = {0} and {1}, edges = {2} and {3}, energy = {4}", MoleculeTemplate.GetFaceName(i), MoleculeTemplate.GetFaceName(dir),
+            MoleculeTemplate.GetEdgeName(edge1), MoleculeTemplate.GetEdgeName(edge2), edge_energy);
+            if (edge_energy === null) return null;
+            energy += edge_energy;
         }
     }
     return energy;
 }
+
         
