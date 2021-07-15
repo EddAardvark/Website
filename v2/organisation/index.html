@@ -32,6 +32,7 @@ DIV.popup {
 <script src="../js_library/canvas_helpers.js"> </script>
 <script src="../js_library/colours.js"> </script>
 <script src="../js_library/popup.js"> </script>
+<script src="controller.js"> </script>
 <script src="molecule_template.js"> </script>
 <script src="molecule.js"> </script>
 <script src="bath.js"> </script>
@@ -41,393 +42,12 @@ DIV.popup {
 
 <script>
 
+var controller;
 
-    //------------------------------------------------------------------------------------------------------------------------------------
-    // Auto-Start
-    //------------------------------------------------------------------------------------------------------------------------------------
-    
-    var templates = [];
-    var square_templates = [];
-    var tracked_energy = 0;
-    var edge_templates =
-    [
-        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
-        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
-        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
-        [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
-    ];
-
-    var colours = ["yellow", "green", "cyan", "magenta"];
-    var energies;
-    var images;
-    var bath;
-    var shape_choices;
-    var timer;
-    var popup;
-    var active_shape;
-    
-    config_shape = function (n)
-    {
-        active_shape = n;
-        moltype.innerHTML = (n+1);
-        
-        var element = document.getElementById("shapes");
-        popup.Show (element.innerHTML, HidePopup);
-    }
-    choose_shape = function (n)
-    {
-        popup.Hide ();
-        edge_templates[active_shape] = shape_choices [n][2];
-        templates [active_shape].update_edges (edge_templates[active_shape]);
-        DrawTemplate(active_shape);
-        bath.reset ();   
-        DrawSimulation ();    
-    }
-    HidePopup = function ()
-    {
-        popup.Hide();
-    }
-    OnLoad = function ()
-    {
-        document.addEventListener('keydown', OnKey);
-        popup = new Popup("popup");
-        timer = setInterval(DoAnimate, 200);
-        
-        SVGColours.AddColours (colour1);
-        SVGColours.AddColours (colour2);
-        SVGColours.AddColours (colour3);
-        SVGColours.AddColours (colour4);
-        
-        colour1.value = colours [0];
-        colour2.value = colours [1];
-        colour3.value = colours [2];
-        colour4.value = colours [3];
-
-        bath = new Bath (4,4, 2, 0, 0);
-    
-        images = [shape1, shape2, shape3, shape4];
-        energies = [energy1, energy2, energy3, energy4];         
-        pair_shapes = [x1y1,x1y2,x1y3,x1y4,x2y2,x2y3,x2y4,x3y3,x3y4,x4y4];
-        
-        for (var i = 0 ; i < 4 ; ++i)
-        {
-            templates [i] = MoleculeTemplate.CreateFromEdges (edge_templates[i]);
-            templates [i].set_colour (colours [i]);
-            templates [i].id = i;
-            square_templates [i] = MoleculeTemplate.CreateFromEdges (edge_templates[i]);
-            square_templates [i].set_colour (colours [i]);
-        }
-
-        shape_choices =
-        [
-            [s0000, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT]],
-            [s0010, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT]],
-            [s0020, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT]],
-            [s0011, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.OUT]],
-            [s1010, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT]],
-            [s0022, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.IN]],
-            [s2020, "yellow", [MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT]],
-            [s0021, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.OUT]],
-            [s1020, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.STRAIGHT]],
-            [s0111, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT]],
-            [s0112, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
-            [s0121, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.OUT]],
-            [s0122, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.IN]],
-            [s0212, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
-            [s0222, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN]],
-            [s1111, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT]],
-            [s1112, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
-            [s1122, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.IN]],
-            [s1212, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.OUT,      MoleculeTemplate.IN]],
-            [s1222, "yellow", [MoleculeTemplate.OUT,      MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN]],
-            [s2222, "yellow", [MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN]],
-        ];
-        
-        InitEnergies ();            
-        ShowEnergies();
-        
-        DrawTemplates ();
-        DrawPairs ();
-        DrawEdgeInteractions ();
-        DrawShapeSelection ();
-        DrawSimulation ();
-    }
-    
-    OnKey = function (event)
-    {
-        var key = event.keyCode;
-
-        if (popup.HandleKey (key))
-        {
-            event.preventDefault();
-            return;
-        }
-    }
-    
-    DoAnimate = function ()
-    {
-    }
-
-    DrawTemplates = function ()
-    {
-        for (var i = 0 ; i < 4 ; ++i)
-        {
-            DrawTemplate (i);
-        }
-    }
-    
-    DrawTemplate = function (n)
-    {
-        var b = new Bath (1, 1, 5, 12, 12);
-        
-        b.simple_add_molecule (0, 0, templates[n]);
-        b.draw (images[n]);
-    }
-        
-    DrawShapeSelection = function ()
-    {
-        var b = new Bath (1, 1, 2, 4, 4);
-        
-        for (var i in shape_choices)
-        {
-            var template = MoleculeTemplate.CreateFromEdges (shape_choices[i][2]);
-            template.set_colour (shape_choices[i][1]);
-            b.simple_replace_molecule (0, 0, template);
-            b.draw (shape_choices[i][0]);
-        }
-    }        
-        
-    DrawPairs = function ()
-    {
-        var b2 = new Bath (2, 1, 2, 0, 0);
-        var shape = 0;
-        
-        for (var i = 0 ; i < 4 ; ++i)
-        {
-            b2.simple_replace_molecule (0, 0, square_templates[i]);   
-
-            for (var j = i ; j < 4 ; ++j)
-            {     
-                b2.simple_replace_molecule (1, 0, square_templates[j]);        
-                b2.draw (pair_shapes[shape++]);
-            }
-        }
-    }
-    
-    DrawEdgeInteractions = function ()
-    {
-        var spike_left =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.OUT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT]);
-        var spike_right =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.OUT,MoleculeTemplate.STRAIGHT]);
-        var hole_left =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.IN,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT]);
-        var hole_right =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.IN,MoleculeTemplate.STRAIGHT]);
-        var flat =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT]);
-        var to_draw =
-        [
-            [edge_edge, flat, flat],
-            [edge_hole, flat, hole_left],
-            [edge_spike, flat, spike_left],
-            [hole_hole, hole_right, hole_left],
-            [hole_spike, hole_right, spike_left],
-            [spike_spike, spike_right, spike_left],
-        ];
-        
-        spike_left.set_colour ("orange");
-        spike_right.set_colour ("orange");
-        hole_left.set_colour ("crimson");
-        hole_right.set_colour ("crimson");
-    
-        var b2 = new Bath (3, 1, 2, 0, 0);
-                
-        for (var i in to_draw)
-        {
-            var row = to_draw [i];
-            
-            b2.simple_replace_molecule (0, 0, row [1]);   
-            b2.simple_replace_molecule (2, 0, row [2]);   
-            b2.draw (row[0]);
-        }
-    }
-    
-    change_colour=function(shape, id)
-    {
-        colours [shape] = id.value;
-        templates [shape].set_colour (colours [shape]);
-        square_templates [shape].set_colour (colours [shape]);
-        DrawPairs();
-        DrawTemplate(shape);
-        DrawSimulation ();        
-    }
-    
-    UpdateEnergy = function(idx)
-    {
-        var energy = parseFloat (energies[idx].value);
-        energies[idx].value = Misc.FloatToText (energy,6);
-        bath.set_type_energy (idx, energy);
-    }
-    
-    InitEnergies = function ()
-    {            
-        
-        try
-        {
-            bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, 0.1);
-            bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, 0.2);
-            bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, -0.5);
-            
-            bath.set_interaction_energy (0, 0, -0.2);
-            bath.set_interaction_energy (0, 1, 0.2);
-            bath.set_interaction_energy (0, 2, 0.3);
-            bath.set_interaction_energy (0, 3, 0.2);
-            bath.set_interaction_energy (1, 1, -0.3);
-            bath.set_interaction_energy (1, 2, 0.1);
-            bath.set_interaction_energy (1, 3, 0.1);
-            bath.set_interaction_energy (2, 2, -0.4);
-            bath.set_interaction_energy (2, 3, -0.2);
-            bath.set_interaction_energy (3, 3, -0.5);
-            
-            bath.set_temperature (1.0);
-        }
-        catch (e)
-        {
-            Misc.Alert (e);
-        }
-    }
-    
-    UpdateInteractions = function ()
-    {
-        var e11 = parseFloat (energy1x1.value);
-        var e12 = parseFloat (energy1x2.value);
-        var e13 = parseFloat (energy1x3.value);
-        var e14 = parseFloat (energy1x4.value);
-        var e22 = parseFloat (energy2x2.value);
-        var e23 = parseFloat (energy2x3.value);
-        var e24 = parseFloat (energy2x4.value);
-        var e33 = parseFloat (energy3x3.value);
-        var e34 = parseFloat (energy3x4.value);
-        var e44 = parseFloat (energy4x4.value);
-
-        var eeh = parseFloat (energy_eh.value);
-        var ehh = parseFloat (energy_hh.value);
-        var ehs = parseFloat (energy_hs.value);
-
-        var temp = parseFloat (temperature.value);                 
-        
-        try
-        {
-            bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, eeh);
-            bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, ehh);
-            bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, ehs);
-            
-            bath.set_interaction_energy (0, 0, e11);
-            bath.set_interaction_energy (0, 1, e12);
-            bath.set_interaction_energy (0, 2, e13);
-            bath.set_interaction_energy (0, 3, e14);
-            bath.set_interaction_energy (1, 1, e22);
-            bath.set_interaction_energy (1, 2, e23);
-            bath.set_interaction_energy (1, 3, e24);
-            bath.set_interaction_energy (2, 2, e33);
-            bath.set_interaction_energy (2, 3, e34);
-            bath.set_interaction_energy (3, 3, e44);
-            
-            bath.set_temperature (temp);
-        }
-        catch (e)
-        {
-            Misc.Alert (e);
-        }
-            
-        ShowEnergies();
-    }
-        
-    ShowEnergies = function ()
-    {    
-        energy1x1.value = Misc.FloatToText (bath.interaction_energy[0][0],6);
-        energy1x2.value = Misc.FloatToText (bath.interaction_energy[0][1],6);
-        energy1x3.value = Misc.FloatToText (bath.interaction_energy[0][2],6);
-        energy1x4.value = Misc.FloatToText (bath.interaction_energy[0][3],6);
-        energy2x2.value = Misc.FloatToText (bath.interaction_energy[1][1],6);
-        energy2x3.value = Misc.FloatToText (bath.interaction_energy[1][2],6);
-        energy2x4.value = Misc.FloatToText (bath.interaction_energy[1][3],6);
-        energy3x3.value = Misc.FloatToText (bath.interaction_energy[2][2],6);
-        energy3x4.value = Misc.FloatToText (bath.interaction_energy[2][3],6);
-        energy4x4.value = Misc.FloatToText (bath.interaction_energy[3][3],6);
-
-        energy_eh.value = Misc.FloatToText (bath.edge_energy[MoleculeTemplate.STRAIGHT][MoleculeTemplate.IN],6);
-        energy_hh.value = Misc.FloatToText (bath.edge_energy[MoleculeTemplate.IN][MoleculeTemplate.IN],6);
-        energy_hs.value = Misc.FloatToText (bath.edge_energy[MoleculeTemplate.IN][MoleculeTemplate.OUT],6);
-        
-        temperature.value = Misc.FloatToText (bath.temperature,6);
-        
-        for (var i = 0 ; i < 4 ; ++i)
-        {
-            energies[i].value = bath.type_energy [i];
-        }
-    }
-    
-    DrawSimulation = function ()
-    {
-        bath.draw (the_simulation);
-    }
-    
-    ShowTotalEnergy = function ()
-    {
-        total_energy.innerHTML = Misc.FloatToText (bath.get_total_energy (), 6);
-    }
-    ShowDelta = function (d)
-    {
-        delta_energy.innerHTML = Misc.FloatToText (d, 6);
-        tracked_energy += d;
-        calc_energy.innerHTML = Misc.FloatToText (tracked_energy, 6);
-    }
-
-    AddRandom = function ()
-    {
-        AddOne (Misc.RandomInteger (templates.length));
-    }
-    AddOne = function (type)
-    {
-        var x = Misc.RandomInteger (bath.num_x);
-        var y = Misc.RandomInteger (bath.num_y);
-        var delta = bath.add_molecule (x, y, templates[type]);
-        DrawSimulation();
-        ShowDelta (delta);
-    }
-    
-    RotateRandom = function ()
-    {
-        var delta = bath.rotate_molecule ();
-        DrawSimulation();
-        ShowDelta (delta);
-    }
-    
-    FlipRandom = function ()
-    {
-        delta = bath.flip_molecule ();
-        DrawSimulation();
-        ShowDelta (delta);
-    }
-    
-    MoveRandom = function ()
-    {
-        delta = bath.move_molecule ();
-        DrawSimulation();
-        ShowDelta (delta);
-    }
-    
-    RemoveRandom = function ()
-    {
-        delta = bath.remove_molecule ();
-        DrawSimulation();
-        ShowDelta (delta);
-    }
-    
-    Reset = function ()
-    {
-        bath.reset ();
-        DrawSimulation();
-        tracked_energy = 0;
-        ShowDelta (0);
-    }
+OnLoad = function ()
+{
+    OrgController.initialise ();
+}
 
 </script>
 
@@ -475,235 +95,234 @@ DIV.popup {
     -->
 
     <!-- Stuff -->
+
+    <div class="float in2 box w9" style="overflow: auto;">
+
+      <h1> The view </h1>
+      <p>
+        <img id="the_simulation">
+      </p><p>
+        <button onclick="OrgController.ResetSimulation()"> Reset </button>       
+        <button onclick="OrgController.AddRandomMolecule()"> Add Random </button>         
+        <button onclick="OrgController.AddMoleculeByType(0)"> Add 1 </button>         
+        <button onclick="OrgController.AddMoleculeByType(1)"> Add 2 </button>         
+        <button onclick="OrgController.AddMoleculeByType(2)"> Add 3 </button>         
+        <button onclick="OrgController.AddMoleculeByType(3)"> Add 4 </button>         
+        <button onclick="OrgController.RotateRandomMolecule()"> Rotate Random </button>            
+        <button onclick="OrgController.FlipRandomMolecule()"> Flip Random </button>            
+        <button onclick="OrgController.MoveRandomMolecule()"> Move Random </button>              
+        <button onclick="OrgController.RemoveRandomMolecule()"> Remove Random </button>              
+      </p><p>
+        Energy: <span id="total_energy"> &nbsp; </span>, <button onclick="OrgController.ShowTotalEnergy()">&#x25B6;</button>              
+        Delta: <span id="delta_energy"> &nbsp; </span>,
+        Tracked: <span id="calc_energy"> &nbsp; </span>.
+      </p>
+    </div>
     
-        <div class="float in2 box w9" style="overflow: auto;">
+    <!-- popup dialog box -->
 
-          <h1> The view </h1>
-          <p>
-            <img id="the_simulation">
-          </p><p>
-            <button onclick="Reset()"> Reset </button>       
-            <button onclick="AddRandom()"> Add Random </button>         
-            <button onclick="AddOne(0)"> Add 1 </button>         
-            <button onclick="AddOne(1)"> Add 2 </button>         
-            <button onclick="AddOne(2)"> Add 3 </button>         
-            <button onclick="AddOne(3)"> Add 4 </button>         
-            <button onclick="RotateRandom()"> Rotate Random </button>            
-            <button onclick="FlipRandom()"> Flip Random </button>            
-            <button onclick="MoveRandom()"> Move Random </button>              
-            <button onclick="RemoveRandom()"> Remove Random </button>              
-          </p><p>
-            Energy: <span id="total_energy"> &nbsp; </span>, <button onclick="ShowTotalEnergy()">&#x25B6;</button>              
-            Delta: <span id="delta_energy"> &nbsp; </span>,
-            Tracked: <span id="calc_energy"> &nbsp; </span>.
-          </p>
-        </div>
-        
-        <!-- popup dialog box -->
+    <div class="popup" id="popup"> &nbsp; </div>
+    
+    <!-- Settings -->
+    
+    <div class="float in2 box w9" style="overflow: auto;">
 
-        <div class="popup" id="popup"> &nbsp; </div>
-        
-        <!-- Settings -->
-	    
-        <div class="float in2 box w9" style="overflow: auto;">
+        <h1> Settings </h1>
+        <h2> Shapes</h2>
 
-            <h1> Settings </h1>
-            <h2> Shapes</h2>
-
-             <p>
-             The energies relate to the energy of existence of the individual molecules. Negative energies will increase the concentration of a
-             molecule type, positive ones will reduce it.
-             </p><p>
-              <table>
-               <tr><th>Molecule</th><th>Colour</th><th>Energy</th><th>Shape</th></tr>
-               
-               <tr>
-                <td><img class="noborder" id="shape1"></td>
-                <td>
-                    <select id="colour1" onchange="change_colour(0,colour1)">
-                </td>
-                <td>
-                    <input type="text" maxlength="12" id="energy1" size="12" value="0">
-                    <button onclick="UpdateEnergy (0)">&#x25B6;</button>
-                </td>
-                <td> 
-                    <button onclick="config_shape(0)"> Set </button>
-                </td>
-                
-               </tr>
-               
-               <tr>
-                <td><img class="noborder" id="shape2"></td>
-                <td>
-                    <select id="colour2" onchange="change_colour(1,colour2)">
-                </td>
-                <td>
-                    <input type="text" maxlength="12" id="energy2" size="12" value="0">
-                    <button onclick="UpdateEnergy (1)">&#x25B6;</button>
-                </td>
-                <td> 
-                    <button onclick="config_shape(1)"> Set </button>
-                </td>                
-               </tr>
-                
-                
-               <tr>
-                <td><img class="noborder" id="shape3"></td>
-                <td>
-                    <select id="colour3" onchange="change_colour(2,colour3)">
-                </td>
-                <td>
-                    <input type="text" maxlength="12" id="energy3" size="12" value="0">
-                    <button onclick="UpdateEnergy (2)">&#x25B6;</button>
-                </td>
-                <td> 
-                    <button onclick="config_shape(2)"> Set </button>
-                </td>                
-               </tr>
-                
-                
-               <tr>
-                <td><img class="noborder" id="shape4"></td>
-                <td>
-                    <select id="colour4" onchange="change_colour(3,colour4)">
-                </td>
-                <td>
-                    <input type="text" maxlength="12" id="energy4" size="12" value="0">
-                    <button onclick="UpdateEnergy (3)">&#x25B6;</button>
-                </td>
-                <td> 
-                    <button onclick="config_shape(3)"> Set </button>
-                </td>                
-               </tr>
-                
-              </table>
-             </p>
-            <h2> Two-body Interactions</h2>
-             <p>
-             Enter the interaction energies for adjacent shapes for the various colour and edge combinations. The relationship are symmetrical so only one value per pair is required.
-             Negative energies are attractive, positive ones repulsive. Interactions where a spike abuts another spike or flat edge aren't allowed. Two flat edges in contact
-             contribute no additional energy.
-             </p><p>
-              <table>
-               <tr><th>Adjacent Pair</th><th>Energy</th><th>Adjacent edges</th><th>Energy</th></tr>
-
-               <tr>
-                 <td><img class="noborder" id="x1y1"></td>
-                 <td><input type="text" maxlength="12" id="energy1x1" size="12" value="0"></td>
-                 <td><img class="noborder" id="edge_edge"></td>
-                 <td>0</td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x1y2"></td>
-                 <td><input type="text" maxlength="12" id="energy1x2" size="12" value="0"></td>
-                 <td><img class="noborder" id="edge_hole"></td>
-                 <td><input type="text" maxlength="12" id="energy_eh" size="12" value="0"></td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x1y3"></td>
-                 <td><input type="text" maxlength="12" id="energy1x3" size="12" value="0"></td>
-                 <td><img class="noborder" id="edge_spike"></td>
-                 <td>infinite</td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x1y4"></td>
-                 <td><input type="text" maxlength="12" id="energy1x4" size="12" value="0"></td>
-                 <td><img class="noborder" id="hole_hole"></td>
-                 <td><input type="text" maxlength="12" id="energy_hh" size="12" value="0"></td>
-             </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x2y2"></td>
-                 <td><input type="text" maxlength="12" id="energy2x2" size="12" value="0"></td>
-                 <td><img class="noborder" id="hole_spike"></td>
-                 <td><input type="text" maxlength="12" id="energy_hs" size="12" value="0"></td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x2y3"></td>
-                 <td><input type="text" maxlength="12" id="energy2x3" size="12" value="0"></td>
-                 <td><img class="noborder" id="spike_spike"></td>
-                 <td>infinite</td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x2y4"></td>
-                 <td><input type="text" maxlength="12" id="energy2x4" size="12" value="0"></td>
-                 <td>&nbsp;</td>
-                 <td>&nbsp;</td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x3y3"></td>
-                 <td><input type="text" maxlength="12" id="energy3x3" size="12" value="0"></td>
-                 <th>Temperature</th>
-                 <td><input type="text" maxlength="12" id="temperature" size="12" value="0"></td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x3y4"></td>
-                 <td><input type="text" maxlength="12" id="energy3x4" size="12" value="0"></td>
-                 <td>&nbsp;</td>
-                 <td>&nbsp;</td>
-               </tr>
-               
-               <tr>
-                 <td><img class="noborder" id="x4y4"></td>
-                 <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
-                 <td>&nbsp;</td>
-                 <td><button onclick="UpdateInteractions ()">Apply</button></td>
-               </tr>
-               
-              </table>
-             </p>
-             
-        </div>
+         <p>
+         The energies relate to the energy of existence of the individual molecules. Negative energies will increase the concentration of a
+         molecule type, positive ones will reduce it.
+         </p><p>
+          <table>
+           <tr><th>Molecule</th><th>Colour</th><th>Energy</th><th>Shape</th></tr>
+           
+           <tr>
+            <td><img class="noborder" id="shape1"></td>
+            <td>
+                <select id="colour1" onchange="OrgController.ChangeColour(0,colour1)">
+            </td>
+            <td>
+                <input type="text" maxlength="12" id="energy1" size="12" value="0">
+                <button onclick="OrgController.UpdateEnergy (0)">&#x25B6;</button>
+            </td>
+            <td> 
+                <button onclick="OrgController.ConfigShape(0)"> Set </button>
+            </td>
+            
+           </tr>
+           
+           <tr>
+            <td><img class="noborder" id="shape2"></td>
+            <td>
+                <select id="colour2" onchange="OrgController.ChangeColour(1,colour2)">
+            </td>
+            <td>
+                <input type="text" maxlength="12" id="energy2" size="12" value="0">
+                <button onclick="OrgController.UpdateEnergy (1)">&#x25B6;</button>
+            </td>
+            <td> 
+                <button onclick="OrgController.ConfigShape(1)"> Set </button>
+            </td>                
+           </tr>
             
             
-    <!-- Popups: Shape chooser -->
+           <tr>
+            <td><img class="noborder" id="shape3"></td>
+            <td>
+                <select id="colour3" onchange="OrgController.ChangeColour(2,colour3)">
+            </td>
+            <td>
+                <input type="text" maxlength="12" id="energy3" size="12" value="0">
+                <button onclick="OrgController.UpdateEnergy (2)">&#x25B6;</button>
+            </td>
+            <td> 
+                <button onclick="OrgController.ConfigShape(2)"> Set </button>
+            </td>                
+           </tr>
+            
+            
+           <tr>
+            <td><img class="noborder" id="shape4"></td>
+            <td>
+                <select id="colour4" onchange="OrgController.ChangeColour(3,colour4)">
+            </td>
+            <td>
+                <input type="text" maxlength="12" id="energy4" size="12" value="0">
+                <button onclick="OrgController.UpdateEnergy (3)">&#x25B6;</button>
+            </td>
+            <td> 
+                <button onclick="OrgController.ConfigShape(3)"> Set </button>
+            </td>                
+           </tr>
+            
+          </table>
+         </p>
+        <h2> Two-body Interactions</h2>
+         <p>
+         Enter the interaction energies for adjacent shapes for the various colour and edge combinations. The relationship are symmetrical so only one value per pair is required.
+         Negative energies are attractive, positive ones repulsive. Interactions where a spike abuts another spike or flat edge aren't allowed. Two flat edges in contact
+         contribute no additional energy.
+         </p><p>
+          <table>
+           <tr><th>Adjacent Pair</th><th>Energy</th><th>Adjacent edges</th><th>Energy</th></tr>
 
-    <div id="shapes" style="visibility:hidden">
+           <tr>
+             <td><img class="noborder" id="x1y1"></td>
+             <td><input type="text" maxlength="12" id="energy1x1" size="12" value="0"></td>
+             <td><img class="noborder" id="edge_edge"></td>
+             <td>0</td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x1y2"></td>
+             <td><input type="text" maxlength="12" id="energy1x2" size="12" value="0"></td>
+             <td><img class="noborder" id="edge_hole"></td>
+             <td><input type="text" maxlength="12" id="energy_eh" size="12" value="0"></td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x1y3"></td>
+             <td><input type="text" maxlength="12" id="energy1x3" size="12" value="0"></td>
+             <td><img class="noborder" id="edge_spike"></td>
+             <td>infinite</td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x1y4"></td>
+             <td><input type="text" maxlength="12" id="energy1x4" size="12" value="0"></td>
+             <td><img class="noborder" id="hole_hole"></td>
+             <td><input type="text" maxlength="12" id="energy_hh" size="12" value="0"></td>
+         </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x2y2"></td>
+             <td><input type="text" maxlength="12" id="energy2x2" size="12" value="0"></td>
+             <td><img class="noborder" id="hole_spike"></td>
+             <td><input type="text" maxlength="12" id="energy_hs" size="12" value="0"></td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x2y3"></td>
+             <td><input type="text" maxlength="12" id="energy2x3" size="12" value="0"></td>
+             <td><img class="noborder" id="spike_spike"></td>
+             <td>infinite</td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x2y4"></td>
+             <td><input type="text" maxlength="12" id="energy2x4" size="12" value="0"></td>
+             <td>&nbsp;</td>
+             <td>&nbsp;</td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x3y3"></td>
+             <td><input type="text" maxlength="12" id="energy3x3" size="12" value="0"></td>
+             <th>Temperature</th>
+             <td><input type="text" maxlength="12" id="temperature" size="12" value="0"></td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x3y4"></td>
+             <td><input type="text" maxlength="12" id="energy3x4" size="12" value="0"></td>
+             <td>&nbsp;</td>
+             <td>&nbsp;</td>
+           </tr>
+           
+           <tr>
+             <td><img class="noborder" id="x4y4"></td>
+             <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
+             <td>&nbsp;</td>
+             <td><button onclick="OrgController.UpdateInteractions ()">Apply</button></td>
+           </tr>
+           
+          </table>
+         </p>
+         
+    </div>
+        
+    <!-- Shape chooser -->
+
+    <div id="shapes" class="float" style="visibility:collapse">
         <p>
         Choose a shape for molecule <span id="moltype">x</span>
         </p><P>
           <table>
             <tr>
-                <td><img class="noborder" id="s0000" onclick="choose_shape(0)"></td>
-                <td><img class="noborder" id="s0021" onclick="choose_shape(7)"></td>
-                <td><img class="noborder" id="s0222" onclick="choose_shape(14)"></td>
+                <td><img class="noborder" id="s0000" onclick="OrgController.ChooseShape(0)"></td>
+                <td><img class="noborder" id="s0021" onclick="OrgController.ChooseShape(7)"></td>
+                <td><img class="noborder" id="s0222" onclick="OrgController.ChooseShape(14)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0010" onclick="choose_shape(1)"></td>
-                <td><img class="noborder" id="s1020" onclick="choose_shape(8)"></td>
-                <td><img class="noborder" id="s1111" onclick="choose_shape(15)"></td>
+                <td><img class="noborder" id="s0010" onclick="OrgController.ChooseShape(1)"></td>
+                <td><img class="noborder" id="s1020" onclick="OrgController.ChooseShape(8)"></td>
+                <td><img class="noborder" id="s1111" onclick="OrgController.ChooseShape(15)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0020" onclick="choose_shape(2)"></td>
-                <td><img class="noborder" id="s0111" onclick="choose_shape(9)"></td>
-                <td><img class="noborder" id="s1112" onclick="choose_shape(16)"></td>
+                <td><img class="noborder" id="s0020" onclick="OrgController.ChooseShape(2)"></td>
+                <td><img class="noborder" id="s0111" onclick="OrgController.ChooseShape(9)"></td>
+                <td><img class="noborder" id="s1112" onclick="OrgController.ChooseShape(16)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0011" onclick="choose_shape(3)"></td>
-                <td><img class="noborder" id="s0112" onclick="choose_shape(10)"></td>
-                <td><img class="noborder" id="s1122" onclick="choose_shape(17)"></td>
+                <td><img class="noborder" id="s0011" onclick="OrgController.ChooseShape(3)"></td>
+                <td><img class="noborder" id="s0112" onclick="OrgController.ChooseShape(10)"></td>
+                <td><img class="noborder" id="s1122" onclick="OrgController.ChooseShape(17)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s1010" onclick="choose_shape(4)"></td>
-                <td><img class="noborder" id="s0121" onclick="choose_shape(11)"></td>
-                <td><img class="noborder" id="s1212" onclick="choose_shape(18)"></td>
+                <td><img class="noborder" id="s1010" onclick="OrgController.ChooseShape(4)"></td>
+                <td><img class="noborder" id="s0121" onclick="OrgController.ChooseShape(11)"></td>
+                <td><img class="noborder" id="s1212" onclick="OrgController.ChooseShape(18)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0022" onclick="choose_shape(5)"></td>
-                <td><img class="noborder" id="s0122" onclick="choose_shape(12)"></td>
-                <td><img class="noborder" id="s1222" onclick="choose_shape(19)"></td>
+                <td><img class="noborder" id="s0022" onclick="OrgController.ChooseShape(5)"></td>
+                <td><img class="noborder" id="s0122" onclick="OrgController.ChooseShape(12)"></td>
+                <td><img class="noborder" id="s1222" onclick="OrgController.ChooseShape(19)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s2020" onclick="choose_shape(6)"></td>
-                <td><img class="noborder" id="s0212" onclick="choose_shape(13)"></td>
-                <td><img class="noborder" id="s2222" onclick="choose_shape(20)"></td>
+                <td><img class="noborder" id="s2020" onclick="OrgController.ChooseShape(6)"></td>
+                <td><img class="noborder" id="s0212" onclick="OrgController.ChooseShape(13)"></td>
+                <td><img class="noborder" id="s2222" onclick="OrgController.ChooseShape(20)"></td>
             </tr>
           </table>
       </p>
