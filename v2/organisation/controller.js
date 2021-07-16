@@ -1,35 +1,35 @@
-OrgController = function ()
+SimController = function ()
 {
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.HidePopup = function ()
+SimController.HidePopup = function ()
 {
-    OrgController.popup.Hide();
+    SimController.popup.Hide();
 }
 //------------------------------------------------------------------------------------------------------------------
 // This method relies on the owning web page having the necessary controls.
-OrgController.initialise = function ()
+SimController.initialise = function ()
 {
-    document.addEventListener('keydown', OrgController.OnKey);
-    OrgController.popup = new Popup("popup");
-    OrgController.timer = setInterval(OrgController.DoAnimate, 200);
-    OrgController.colours = ["yellow", "green", "cyan", "magenta"];
+    document.addEventListener('keydown', SimController.OnKey);
+    SimController.popup = new Popup("popup");
+    SimController.timer = setInterval(SimController.DoAnimate, 200);
+    SimController.colours = ["yellow", "green", "cyan", "magenta"];
     
     SVGColours.AddColours (colour1);
     SVGColours.AddColours (colour2);
     SVGColours.AddColours (colour3);
     SVGColours.AddColours (colour4);
     
-    colour1.value = OrgController.colours [0];
-    colour2.value = OrgController.colours [1];
-    colour3.value = OrgController.colours [2];
-    colour4.value = OrgController.colours [3];
+    colour1.value = SimController.colours [0];
+    colour2.value = SimController.colours [1];
+    colour3.value = SimController.colours [2];
+    colour4.value = SimController.colours [3];
 
-    OrgController.images = [shape1, shape2, shape3, shape4];
-    OrgController.energies = [energy1, energy2, energy3, energy4];         
-    OrgController.pair_shapes = [x1y1,x1y2,x1y3,x1y4,x2y2,x2y3,x2y4,x3y3,x3y4,x4y4];
+    SimController.images = [shape1, shape2, shape3, shape4];
+    SimController.energies = [energy1, energy2, energy3, energy4];         
+    SimController.pair_shapes = [x1y1,x1y2,x1y3,x1y4,x2y2,x2y3,x2y4,x3y3,x3y4,x4y4];
     
-    OrgController.shape_choices =
+    SimController.shape_choices =
     [
         [s0000, "yellow", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT]],
         [s0010, "orange", [MoleculeTemplate.STRAIGHT, MoleculeTemplate.STRAIGHT, MoleculeTemplate.OUT,      MoleculeTemplate.STRAIGHT]],
@@ -54,7 +54,7 @@ OrgController.initialise = function ()
         [s2222, "yellow", [MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN,       MoleculeTemplate.IN]],
     ];
     
-    OrgController.edge_templates =
+    SimController.edge_templates =
     [
         [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
         [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
@@ -62,103 +62,103 @@ OrgController.initialise = function ()
         [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
     ];
     
-    OrgController.templates = [];
-    OrgController.square_templates = [];
+    SimController.templates = [];
+    SimController.square_templates = [];
     
     for (var i = 0 ; i < 4 ; ++i)
     {
-        OrgController.templates [i] = MoleculeTemplate.CreateFromEdges (OrgController.edge_templates[i]);
-        OrgController.templates [i].set_colour (OrgController.colours [i]);
-        OrgController.templates [i].id = i;
+        SimController.templates [i] = MoleculeTemplate.CreateFromEdges (SimController.edge_templates[i]);
+        SimController.templates [i].set_colour (SimController.colours [i]);
+        SimController.templates [i].id = i;
         
-        OrgController.square_templates [i] = MoleculeTemplate.CreateFromEdges (OrgController.edge_templates[i]);
-        OrgController.square_templates [i].set_colour (OrgController.colours [i]);
+        SimController.square_templates [i] = MoleculeTemplate.CreateFromEdges (SimController.edge_templates[i]);
+        SimController.square_templates [i].set_colour (SimController.colours [i]);
     }
     
-    OrgController.bath = new Bath (4,4, 2, 0, 0);
+    SimController.bath = new Bath (4,4, 2, 0, 0);
     
-    OrgController.InitEnergies ();            
-    OrgController.ShowEnergies();
+    SimController.InitEnergies ();            
+    SimController.ShowEnergies();
     
-    OrgController.DrawTemplates ();
-    OrgController.DrawPairs ();
-    OrgController.DrawEdgeInteractions ();
-    OrgController.DrawShapeSelection ();    
+    SimController.DrawTemplates ();
+    SimController.DrawPairs ();
+    SimController.DrawEdgeInteractions ();
+    SimController.DrawShapeSelection ();    
 
-    OrgController.tracked_energy = 0;    
+    SimController.tracked_energy = 0;    
     
-    OrgController.DrawSimulation ();
+    SimController.DrawSimulation ();
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.ShowDelta = function (d)
+SimController.ShowDelta = function (d)
 {
     delta_energy.innerHTML = Misc.FloatToText (d, 6);
-    OrgController.tracked_energy += d;
-    calc_energy.innerHTML = Misc.FloatToText (OrgController.tracked_energy, 6);
+    SimController.tracked_energy += d;
+    SimController.ShowTrackedEnergy (d);
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.OnKey = function (event)
+SimController.OnKey = function (event)
 {
     var key = event.keyCode;
 
-    if (OrgController.popup.HandleKey (key))
+    if (SimController.popup.HandleKey (key))
     {
         event.preventDefault();
         return;
     }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.DoAnimate = function ()
+SimController.DoAnimate = function ()
 {
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.DrawTemplates = function ()
+SimController.DrawTemplates = function ()
 {
     for (var i = 0 ; i < 4 ; ++i)
     {
-        OrgController.DrawTemplate (i);
+        SimController.DrawTemplate (i);
     }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.DrawTemplate = function (n)
+SimController.DrawTemplate = function (n)
 {
     var b = new Bath (1, 1, 5, 12, 12);
     
-    b.simple_add_molecule (0, 0, OrgController.templates[n]);
-    b.draw (OrgController.images[n]);
+    b.simple_add_molecule (0, 0, SimController.templates[n]);
+    b.draw (SimController.images[n]);
 }
 //------------------------------------------------------------------------------------------------------------------    
-OrgController.DrawShapeSelection = function ()
+SimController.DrawShapeSelection = function ()
 {
     var b = new Bath (1, 1, 2, 4, 4);
     
-    for (var i in OrgController.shape_choices)
+    for (var i in SimController.shape_choices)
     {
-        var template = MoleculeTemplate.CreateFromEdges (OrgController.shape_choices[i][2]);
-        template.set_colour (OrgController.shape_choices[i][1]);
+        var template = MoleculeTemplate.CreateFromEdges (SimController.shape_choices[i][2]);
+        template.set_colour (SimController.shape_choices[i][1]);
         b.simple_replace_molecule (0, 0, template);
-        b.draw (OrgController.shape_choices[i][0]);
+        b.draw (SimController.shape_choices[i][0]);
     }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.DrawPairs = function ()
+SimController.DrawPairs = function ()
 {
     var b2 = new Bath (2, 1, 2, 0, 0);
     var shape = 0;
     
     for (var i = 0 ; i < 4 ; ++i)
     {
-        b2.simple_replace_molecule (0, 0, OrgController.square_templates[i]);   
+        b2.simple_replace_molecule (0, 0, SimController.square_templates[i]);   
 
         for (var j = i ; j < 4 ; ++j)
         {     
-            b2.simple_replace_molecule (1, 0, OrgController.square_templates[j]);        
-            b2.draw (OrgController.pair_shapes[shape++]);
+            b2.simple_replace_molecule (1, 0, SimController.square_templates[j]);        
+            b2.draw (SimController.pair_shapes[shape++]);
         }
     }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.DrawEdgeInteractions = function ()
+SimController.DrawEdgeInteractions = function ()
 {
     var spike_left =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.OUT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT]);
     var spike_right =  MoleculeTemplate.CreateFromEdges ([MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.OUT,MoleculeTemplate.STRAIGHT]);
@@ -192,62 +192,64 @@ OrgController.DrawEdgeInteractions = function ()
     }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.ConfigShape = function (n)
+SimController.ConfigShape = function (n)
 {
-    OrgController.active_shape = n;
+    SimController.active_shape = n;
     moltype.innerHTML = (n+1);
     
     var element = document.getElementById("shapes");
-    OrgController.popup.Show (element.innerHTML, OrgController.HidePopup);
+    SimController.popup.Show (element.innerHTML, SimController.HidePopup);
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.ChooseShape = function (n)
+SimController.ChooseShape = function (n)
 {
-    OrgController.popup.Hide ();
-    OrgController.edge_templates[OrgController.active_shape] = OrgController.shape_choices [n][2];
-    OrgController.templates [OrgController.active_shape].update_edges (OrgController.edge_templates[OrgController.active_shape]);
-    OrgController.DrawTemplate(OrgController.active_shape);
+    SimController.popup.Hide ();
+    SimController.edge_templates[SimController.active_shape] = SimController.shape_choices [n][2];
+    SimController.templates [SimController.active_shape].update_edges (SimController.edge_templates[SimController.active_shape]);
+    SimController.DrawTemplate(SimController.active_shape);
     
-    OrgController.ResetSimulation ();   
+    SimController.ResetSimulation ();
+    SimController.ResetTrackedEneryg ();
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.ChangeColour = function(shape, id)
+SimController.ChangeColour = function(shape, id)
 {
-    OrgController.colours [shape] = id.value;
-    OrgController.templates [shape].set_colour (OrgController.colours [shape]);
-    OrgController.square_templates [shape].set_colour (OrgController.colours [shape]);
-    OrgController.DrawPairs();
-    OrgController.DrawTemplate(shape);
-    OrgController.DrawSimulation ();        
+    SimController.colours [shape] = id.value;
+    SimController.templates [shape].set_colour (SimController.colours [shape]);
+    SimController.square_templates [shape].set_colour (SimController.colours [shape]);
+    SimController.DrawPairs();
+    SimController.DrawTemplate(shape);
+    SimController.DrawSimulation ();        
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.UpdateEnergy = function(idx)
+SimController.UpdateEnergy = function(idx)
 {
-    var energy = parseFloat (OrgController.energies[idx].value);
-    OrgController.energies[idx].value = Misc.FloatToText (energy,6);
-    OrgController.bath.set_type_energy (idx, energy);
+    var energy = parseFloat (SimController.energies[idx].value);
+    SimController.energies[idx].value = Misc.FloatToText (energy,6);
+    SimController.bath.set_type_energy (idx, energy);
+    SimController.ResetTrackedEneryg ();
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.InitEnergies = function ()
+SimController.InitEnergies = function ()
 {   
     try
     {
-        OrgController.bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, 0.1);
-        OrgController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, 0.2);
-        OrgController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, -0.5);
+        SimController.bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, 0.1);
+        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, 0.2);
+        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, -0.5);
 
-        OrgController.bath.set_interaction_energy (0, 0, -0.2);
-        OrgController.bath.set_interaction_energy (0, 1, 0.2);
-        OrgController.bath.set_interaction_energy (0, 2, 0.3);
-        OrgController.bath.set_interaction_energy (0, 3, 0.2);
-        OrgController.bath.set_interaction_energy (1, 1, -0.3);
-        OrgController.bath.set_interaction_energy (1, 2, 0.1);
-        OrgController.bath.set_interaction_energy (1, 3, 0.1);
-        OrgController.bath.set_interaction_energy (2, 2, -0.4);
-        OrgController.bath.set_interaction_energy (2, 3, -0.2);
-        OrgController.bath.set_interaction_energy (3, 3, -0.5);
+        SimController.bath.set_interaction_energy (0, 0, -0.2);
+        SimController.bath.set_interaction_energy (0, 1, 0.2);
+        SimController.bath.set_interaction_energy (0, 2, 0.3);
+        SimController.bath.set_interaction_energy (0, 3, 0.2);
+        SimController.bath.set_interaction_energy (1, 1, -0.3);
+        SimController.bath.set_interaction_energy (1, 2, 0.1);
+        SimController.bath.set_interaction_energy (1, 3, 0.1);
+        SimController.bath.set_interaction_energy (2, 2, -0.4);
+        SimController.bath.set_interaction_energy (2, 3, -0.2);
+        SimController.bath.set_interaction_energy (3, 3, -0.5);
 
-        OrgController.bath.set_temperature (1.0);
+        SimController.bath.set_temperature (1.0);
     }
     catch (e)
     {
@@ -255,7 +257,7 @@ OrgController.InitEnergies = function ()
     }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.UpdateInteractions = function ()
+SimController.UpdateInteractions = function ()
 {
     var e11 = parseFloat (energy1x1.value);
     var e12 = parseFloat (energy1x2.value);
@@ -276,112 +278,128 @@ OrgController.UpdateInteractions = function ()
     
     try
     {
-        OrgController.bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, eeh);
-        OrgController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, ehh);
-        OrgController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, ehs);
+        SimController.bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, eeh);
+        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, ehh);
+        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, ehs);
 
-        OrgController.bath.set_interaction_energy (0, 0, e11);
-        OrgController.bath.set_interaction_energy (0, 1, e12);
-        OrgController.bath.set_interaction_energy (0, 2, e13);
-        OrgController.bath.set_interaction_energy (0, 3, e14);
-        OrgController.bath.set_interaction_energy (1, 1, e22);
-        OrgController.bath.set_interaction_energy (1, 2, e23);
-        OrgController.bath.set_interaction_energy (1, 3, e24);
-        OrgController.bath.set_interaction_energy (2, 2, e33);
-        OrgController.bath.set_interaction_energy (2, 3, e34);
-        OrgController.bath.set_interaction_energy (3, 3, e44);
+        SimController.bath.set_interaction_energy (0, 0, e11);
+        SimController.bath.set_interaction_energy (0, 1, e12);
+        SimController.bath.set_interaction_energy (0, 2, e13);
+        SimController.bath.set_interaction_energy (0, 3, e14);
+        SimController.bath.set_interaction_energy (1, 1, e22);
+        SimController.bath.set_interaction_energy (1, 2, e23);
+        SimController.bath.set_interaction_energy (1, 3, e24);
+        SimController.bath.set_interaction_energy (2, 2, e33);
+        SimController.bath.set_interaction_energy (2, 3, e34);
+        SimController.bath.set_interaction_energy (3, 3, e44);
 
-        OrgController.bath.set_temperature (temp);
+        SimController.bath.set_temperature (temp);
+        SimController.ResetTrackedEneryg ();
     }
     catch (e)
     {
         Misc.Alert (e);
     }
         
-    OrgController.ShowEnergies();
+    SimController.ShowEnergies();
 }
 //------------------------------------------------------------------------------------------------------------------    
-OrgController.ShowEnergies = function ()
+SimController.ShowEnergies = function ()
 {    
-    energy1x1.value = Misc.FloatToText (OrgController.bath.interaction_energy[0][0],6);
-    energy1x2.value = Misc.FloatToText (OrgController.bath.interaction_energy[0][1],6);
-    energy1x3.value = Misc.FloatToText (OrgController.bath.interaction_energy[0][2],6);
-    energy1x4.value = Misc.FloatToText (OrgController.bath.interaction_energy[0][3],6);
-    energy2x2.value = Misc.FloatToText (OrgController.bath.interaction_energy[1][1],6);
-    energy2x3.value = Misc.FloatToText (OrgController.bath.interaction_energy[1][2],6);
-    energy2x4.value = Misc.FloatToText (OrgController.bath.interaction_energy[1][3],6);
-    energy3x3.value = Misc.FloatToText (OrgController.bath.interaction_energy[2][2],6);
-    energy3x4.value = Misc.FloatToText (OrgController.bath.interaction_energy[2][3],6);
-    energy4x4.value = Misc.FloatToText (OrgController.bath.interaction_energy[3][3],6);
+    energy1x1.value = Misc.FloatToText (SimController.bath.interaction_energy[0][0],6);
+    energy1x2.value = Misc.FloatToText (SimController.bath.interaction_energy[0][1],6);
+    energy1x3.value = Misc.FloatToText (SimController.bath.interaction_energy[0][2],6);
+    energy1x4.value = Misc.FloatToText (SimController.bath.interaction_energy[0][3],6);
+    energy2x2.value = Misc.FloatToText (SimController.bath.interaction_energy[1][1],6);
+    energy2x3.value = Misc.FloatToText (SimController.bath.interaction_energy[1][2],6);
+    energy2x4.value = Misc.FloatToText (SimController.bath.interaction_energy[1][3],6);
+    energy3x3.value = Misc.FloatToText (SimController.bath.interaction_energy[2][2],6);
+    energy3x4.value = Misc.FloatToText (SimController.bath.interaction_energy[2][3],6);
+    energy4x4.value = Misc.FloatToText (SimController.bath.interaction_energy[3][3],6);
 
-    energy_eh.value = Misc.FloatToText (OrgController.bath.edge_energy[MoleculeTemplate.STRAIGHT][MoleculeTemplate.IN],6);
-    energy_hh.value = Misc.FloatToText (OrgController.bath.edge_energy[MoleculeTemplate.IN][MoleculeTemplate.IN],6);
-    energy_hs.value = Misc.FloatToText (OrgController.bath.edge_energy[MoleculeTemplate.IN][MoleculeTemplate.OUT],6);
+    energy_eh.value = Misc.FloatToText (SimController.bath.edge_energy[MoleculeTemplate.STRAIGHT][MoleculeTemplate.IN],6);
+    energy_hh.value = Misc.FloatToText (SimController.bath.edge_energy[MoleculeTemplate.IN][MoleculeTemplate.IN],6);
+    energy_hs.value = Misc.FloatToText (SimController.bath.edge_energy[MoleculeTemplate.IN][MoleculeTemplate.OUT],6);
     
-    temperature.value = Misc.FloatToText (OrgController.bath.temperature, 6);
+    temperature.value = Misc.FloatToText (SimController.bath.temperature, 6);
     
     for (var i = 0 ; i < 4 ; ++i)
     {
-        OrgController.energies[i].value = OrgController.bath.type_energy [i];
+        SimController.energies[i].value = SimController.bath.type_energy [i];
     }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.DrawSimulation = function ()
+SimController.DrawSimulation = function ()
 {
-    OrgController.bath.draw (the_simulation);
+    SimController.bath.draw (the_simulation);
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.ShowTotalEnergy = function ()
+SimController.ResetTrackedEneryg = function ()
 {
-    total_energy.innerHTML = Misc.FloatToText (OrgController.bath.get_total_energy (), 6);
+    SimController.tracked_energy = SimController.bath.get_total_energy ();
+    SimController.ShowTrackedEnergy ();
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.AddRandomMolecule = function ()
+SimController.ShowTrackedEnergy = function ()
 {
-    OrgController.AddMoleculeByType (Misc.RandomInteger (OrgController.templates.length));
+    calc_energy.innerHTML = Misc.FloatToText (SimController.tracked_energy, 6);
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.AddMoleculeByType = function (type)
+SimController.ShowTotalEnergy = function ()
 {
-    var x = Misc.RandomInteger (OrgController.bath.num_x);
-    var y = Misc.RandomInteger (OrgController.bath.num_y);
-    var delta = OrgController.bath.add_molecule (x, y, OrgController.templates[type]);
-    OrgController.DrawSimulation();
-    OrgController.ShowDelta (delta);
+    total_energy.innerHTML = Misc.FloatToText (SimController.bath.get_total_energy (), 6);
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.RotateRandomMolecule = function ()
+SimController.AddRandomMolecule = function ()
 {
-    var delta = OrgController.bath.rotate_molecule ();
-    OrgController.DrawSimulation();
-    OrgController.ShowDelta (delta);
+    SimController.AddMoleculeByType (Misc.RandomInteger (SimController.templates.length));
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.FlipRandomMolecule = function ()
+SimController.AddMoleculeByType = function (type)
 {
-    delta = OrgController.bath.flip_molecule ();
-    OrgController.DrawSimulation();
-    OrgController.ShowDelta (delta);
+    var x = Misc.RandomInteger (SimController.bath.num_x);
+    var y = Misc.RandomInteger (SimController.bath.num_y);
+    var delta = SimController.bath.add_molecule (x, y, SimController.templates[type]);
+    
+    if (delta !== null)
+    {
+        SimController.DrawSimulation();
+        SimController.ShowDelta (delta);
+    }
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.MoveRandomMolecule = function ()
+SimController.RotateRandomMolecule = function ()
 {
-    delta = OrgController.bath.move_molecule ();
-    OrgController.DrawSimulation();
-    OrgController.ShowDelta (delta);
+    var delta = SimController.bath.rotate_molecule ();
+    SimController.DrawSimulation();
+    SimController.ShowDelta (delta);
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.RemoveRandomMolecule = function ()
+SimController.FlipRandomMolecule = function ()
 {
-    delta = OrgController.bath.remove_molecule ();
-    OrgController.DrawSimulation();
-    OrgController.ShowDelta (delta);
+    delta = SimController.bath.flip_molecule ();
+    SimController.DrawSimulation();
+    SimController.ShowDelta (delta);
 }
 //------------------------------------------------------------------------------------------------------------------
-OrgController.ResetSimulation = function ()
+SimController.MoveRandomMolecule = function ()
 {
-    OrgController.bath.reset ();
-    OrgController.DrawSimulation();
-    OrgController.tracked_energy = 0;
-    OrgController.ShowDelta (0);
+    delta = SimController.bath.move_molecule ();
+    SimController.DrawSimulation();
+    SimController.ShowDelta (delta);
+}
+//------------------------------------------------------------------------------------------------------------------
+SimController.RemoveRandomMolecule = function ()
+{
+    delta = SimController.bath.remove_molecule ();
+    SimController.DrawSimulation();
+    SimController.ShowDelta (delta);
+}
+//------------------------------------------------------------------------------------------------------------------
+SimController.ResetSimulation = function ()
+{
+    SimController.bath.reset ();
+    SimController.DrawSimulation();
+    SimController.tracked_energy = 0;
+    SimController.ShowDelta (0);
 }

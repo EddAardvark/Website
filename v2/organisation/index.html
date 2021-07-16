@@ -46,7 +46,7 @@ var controller;
 
 OnLoad = function ()
 {
-    OrgController.initialise ();
+    SimController.initialise ();
 }
 
 </script>
@@ -102,18 +102,18 @@ OnLoad = function ()
       <p>
         <img id="the_simulation">
       </p><p>
-        <button onclick="OrgController.ResetSimulation()"> Reset </button>       
-        <button onclick="OrgController.AddRandomMolecule()"> Add Random </button>         
-        <button onclick="OrgController.AddMoleculeByType(0)"> Add 1 </button>         
-        <button onclick="OrgController.AddMoleculeByType(1)"> Add 2 </button>         
-        <button onclick="OrgController.AddMoleculeByType(2)"> Add 3 </button>         
-        <button onclick="OrgController.AddMoleculeByType(3)"> Add 4 </button>         
-        <button onclick="OrgController.RotateRandomMolecule()"> Rotate Random </button>            
-        <button onclick="OrgController.FlipRandomMolecule()"> Flip Random </button>            
-        <button onclick="OrgController.MoveRandomMolecule()"> Move Random </button>              
-        <button onclick="OrgController.RemoveRandomMolecule()"> Remove Random </button>              
+        <button onclick="SimController.ResetSimulation()"> Reset </button>       
+        <button onclick="SimController.AddRandomMolecule()"> Add Random </button>         
+        <button onclick="SimController.AddMoleculeByType(0)"> Add 1 </button>         
+        <button onclick="SimController.AddMoleculeByType(1)"> Add 2 </button>         
+        <button onclick="SimController.AddMoleculeByType(2)"> Add 3 </button>         
+        <button onclick="SimController.AddMoleculeByType(3)"> Add 4 </button>         
+        <button onclick="SimController.RotateRandomMolecule()"> Rotate Random </button>            
+        <button onclick="SimController.FlipRandomMolecule()"> Flip Random </button>            
+        <button onclick="SimController.MoveRandomMolecule()"> Move Random </button>              
+        <button onclick="SimController.RemoveRandomMolecule()"> Remove Random </button>              
       </p><p>
-        Energy: <span id="total_energy"> &nbsp; </span>, <button onclick="OrgController.ShowTotalEnergy()">&#x25B6;</button>              
+        Energy: <span id="total_energy"> &nbsp; </span>, <button onclick="SimController.ShowTotalEnergy()">&#x25B6;</button>              
         Delta: <span id="delta_energy"> &nbsp; </span>,
         Tracked: <span id="calc_energy"> &nbsp; </span>.
       </p>
@@ -140,14 +140,14 @@ OnLoad = function ()
            <tr>
             <td><img class="noborder" id="shape1"></td>
             <td>
-                <select id="colour1" onchange="OrgController.ChangeColour(0,colour1)">
+                <select id="colour1" onchange="SimController.ChangeColour(0,colour1)">
             </td>
             <td>
                 <input type="text" maxlength="12" id="energy1" size="12" value="0">
-                <button onclick="OrgController.UpdateEnergy (0)">&#x25B6;</button>
+                <button onclick="SimController.UpdateEnergy (0)">&#x25B6;</button>
             </td>
             <td> 
-                <button onclick="OrgController.ConfigShape(0)"> Set </button>
+                <button onclick="SimController.ConfigShape(0)"> Set </button>
             </td>
             
            </tr>
@@ -155,14 +155,14 @@ OnLoad = function ()
            <tr>
             <td><img class="noborder" id="shape2"></td>
             <td>
-                <select id="colour2" onchange="OrgController.ChangeColour(1,colour2)">
+                <select id="colour2" onchange="SimController.ChangeColour(1,colour2)">
             </td>
             <td>
                 <input type="text" maxlength="12" id="energy2" size="12" value="0">
-                <button onclick="OrgController.UpdateEnergy (1)">&#x25B6;</button>
+                <button onclick="SimController.UpdateEnergy (1)">&#x25B6;</button>
             </td>
             <td> 
-                <button onclick="OrgController.ConfigShape(1)"> Set </button>
+                <button onclick="SimController.ConfigShape(1)"> Set </button>
             </td>                
            </tr>
             
@@ -170,14 +170,14 @@ OnLoad = function ()
            <tr>
             <td><img class="noborder" id="shape3"></td>
             <td>
-                <select id="colour3" onchange="OrgController.ChangeColour(2,colour3)">
+                <select id="colour3" onchange="SimController.ChangeColour(2,colour3)">
             </td>
             <td>
                 <input type="text" maxlength="12" id="energy3" size="12" value="0">
-                <button onclick="OrgController.UpdateEnergy (2)">&#x25B6;</button>
+                <button onclick="SimController.UpdateEnergy (2)">&#x25B6;</button>
             </td>
             <td> 
-                <button onclick="OrgController.ConfigShape(2)"> Set </button>
+                <button onclick="SimController.ConfigShape(2)"> Set </button>
             </td>                
            </tr>
             
@@ -185,14 +185,14 @@ OnLoad = function ()
            <tr>
             <td><img class="noborder" id="shape4"></td>
             <td>
-                <select id="colour4" onchange="OrgController.ChangeColour(3,colour4)">
+                <select id="colour4" onchange="SimController.ChangeColour(3,colour4)">
             </td>
             <td>
                 <input type="text" maxlength="12" id="energy4" size="12" value="0">
-                <button onclick="OrgController.UpdateEnergy (3)">&#x25B6;</button>
+                <button onclick="SimController.UpdateEnergy (3)">&#x25B6;</button>
             </td>
             <td> 
-                <button onclick="OrgController.ConfigShape(3)"> Set </button>
+                <button onclick="SimController.ConfigShape(3)"> Set </button>
             </td>                
            </tr>
             
@@ -274,7 +274,7 @@ OnLoad = function ()
              <td><img class="noborder" id="x4y4"></td>
              <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
              <td>&nbsp;</td>
-             <td><button onclick="OrgController.UpdateInteractions ()">Apply</button></td>
+             <td><button onclick="SimController.UpdateInteractions ()">Apply</button></td>
            </tr>
            
           </table>
@@ -290,39 +290,39 @@ OnLoad = function ()
         </p><P>
           <table>
             <tr>
-                <td><img class="noborder" id="s0000" onclick="OrgController.ChooseShape(0)"></td>
-                <td><img class="noborder" id="s0021" onclick="OrgController.ChooseShape(7)"></td>
-                <td><img class="noborder" id="s0222" onclick="OrgController.ChooseShape(14)"></td>
+                <td><img class="noborder" id="s0000" onclick="SimController.ChooseShape(0)"></td>
+                <td><img class="noborder" id="s0021" onclick="SimController.ChooseShape(7)"></td>
+                <td><img class="noborder" id="s0222" onclick="SimController.ChooseShape(14)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0010" onclick="OrgController.ChooseShape(1)"></td>
-                <td><img class="noborder" id="s1020" onclick="OrgController.ChooseShape(8)"></td>
-                <td><img class="noborder" id="s1111" onclick="OrgController.ChooseShape(15)"></td>
+                <td><img class="noborder" id="s0010" onclick="SimController.ChooseShape(1)"></td>
+                <td><img class="noborder" id="s1020" onclick="SimController.ChooseShape(8)"></td>
+                <td><img class="noborder" id="s1111" onclick="SimController.ChooseShape(15)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0020" onclick="OrgController.ChooseShape(2)"></td>
-                <td><img class="noborder" id="s0111" onclick="OrgController.ChooseShape(9)"></td>
-                <td><img class="noborder" id="s1112" onclick="OrgController.ChooseShape(16)"></td>
+                <td><img class="noborder" id="s0020" onclick="SimController.ChooseShape(2)"></td>
+                <td><img class="noborder" id="s0111" onclick="SimController.ChooseShape(9)"></td>
+                <td><img class="noborder" id="s1112" onclick="SimController.ChooseShape(16)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0011" onclick="OrgController.ChooseShape(3)"></td>
-                <td><img class="noborder" id="s0112" onclick="OrgController.ChooseShape(10)"></td>
-                <td><img class="noborder" id="s1122" onclick="OrgController.ChooseShape(17)"></td>
+                <td><img class="noborder" id="s0011" onclick="SimController.ChooseShape(3)"></td>
+                <td><img class="noborder" id="s0112" onclick="SimController.ChooseShape(10)"></td>
+                <td><img class="noborder" id="s1122" onclick="SimController.ChooseShape(17)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s1010" onclick="OrgController.ChooseShape(4)"></td>
-                <td><img class="noborder" id="s0121" onclick="OrgController.ChooseShape(11)"></td>
-                <td><img class="noborder" id="s1212" onclick="OrgController.ChooseShape(18)"></td>
+                <td><img class="noborder" id="s1010" onclick="SimController.ChooseShape(4)"></td>
+                <td><img class="noborder" id="s0121" onclick="SimController.ChooseShape(11)"></td>
+                <td><img class="noborder" id="s1212" onclick="SimController.ChooseShape(18)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s0022" onclick="OrgController.ChooseShape(5)"></td>
-                <td><img class="noborder" id="s0122" onclick="OrgController.ChooseShape(12)"></td>
-                <td><img class="noborder" id="s1222" onclick="OrgController.ChooseShape(19)"></td>
+                <td><img class="noborder" id="s0022" onclick="SimController.ChooseShape(5)"></td>
+                <td><img class="noborder" id="s0122" onclick="SimController.ChooseShape(12)"></td>
+                <td><img class="noborder" id="s1222" onclick="SimController.ChooseShape(19)"></td>
             </tr>
             <tr>
-                <td><img class="noborder" id="s2020" onclick="OrgController.ChooseShape(6)"></td>
-                <td><img class="noborder" id="s0212" onclick="OrgController.ChooseShape(13)"></td>
-                <td><img class="noborder" id="s2222" onclick="OrgController.ChooseShape(20)"></td>
+                <td><img class="noborder" id="s2020" onclick="SimController.ChooseShape(6)"></td>
+                <td><img class="noborder" id="s0212" onclick="SimController.ChooseShape(13)"></td>
+                <td><img class="noborder" id="s2222" onclick="SimController.ChooseShape(20)"></td>
             </tr>
           </table>
       </p>

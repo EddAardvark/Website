@@ -42,8 +42,8 @@ Bath = function (num_x, num_y, s, mx, my)
             var ydown = (y + this.num_y - 1) % this.num_y;
             var pos = y * this.num_x + x;
             
-            this.up [pos] = yup * this.num_x + x;
-            this.down [pos] = ydown * this.num_x + x;
+            this.down [pos] = yup * this.num_x + x;
+            this.up [pos] = ydown * this.num_x + x;
             this.left [pos] = y * this.num_x + xleft;
             this.right [pos] = y * this.num_x + xright;
         }
@@ -102,16 +102,38 @@ Bath.prototype.place_molecule = function (molecule, pts)
     return mapped_points;
 }
 //-------------------------------------------------------------------------------------------------
+// This version looks at the energy implications and may reject the addition
 Bath.prototype.add_molecule = function (x, y, template)
 {
-    Misc.Log ("Add");
-    var mol = this.simple_add_molecule(x, y, template);
+    Misc.Log ("Simulation Add");
     
-    return (mol == null) ? 0 : this.get_molecule_energy (mol);
+    var pos = y * this.num_x + x;
+    
+    if (this.grid [pos] != null)
+    {
+        Misc.Log ("Failed, space occupied");
+        return null;
+    }
+    
+    var mol = new Molecule (template, this);    
+    var delta_e = this.get_molecule_energy (mol, pos);
+    
+    if (delta_e === null)
+    {
+        Misc.Log ("Invalid edge combination");
+        return null;
+    }
+    this.place (mol, pos);
+    this.grid [pos] = mol;
+    this.molecules.push (mol);
+    return delta_e;
 }
 //-------------------------------------------------------------------------------------------------
+// no checks on the addition
 Bath.prototype.simple_add_molecule = function (x, y, template)
 {
+    Misc.Log ("Simple Add");
+    
     var pos = y * this.num_x + x;
     
     if (this.grid [pos] != null)
@@ -146,8 +168,8 @@ Bath.prototype.simple_replace_molecule = function (x, y, template)
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.replace_at = function (pos, prev_mol, new_mol)
 {
-    var old_e = (prev_mol == null) ? 0 : this.get_molecule_energy (prev_mol);
-    var new_e = this.get_molecule_energy (new_mol);
+    var old_e = (prev_mol == null) ? 0 : this.get_molecule_energy (prev_mol, pos);
+    var new_e = this.get_molecule_energy (new_mol, pos);
     
     this.simple_replace_at (pos, prev_mol, new_mol);
     
@@ -192,7 +214,7 @@ Bath.prototype.remove_molecule = function ()
         {
             this.molecules.splice (idx,1);
         }
-        return - this.get_molecule_energy (mol);
+        return - this.get_molecule_energy (mol, pos);
     }
     return 0;
 }
@@ -203,10 +225,11 @@ Bath.prototype.rotate_molecule = function ()
     var mol = this.random_molecule ();
     if (mol != null)
     {
-        var old_e = this.get_molecule_energy (mol);
+        var pos = mol.y * this.num_x + mol.x;
+        var old_e = this.get_molecule_energy (mol, pos);
         mol.cache ();
         mol.rotate (Misc.RandomBool() ? 1 : 3);
-        var new_e = this.get_molecule_energy (mol);
+        var new_e = this.get_molecule_energy (mol, pos);
         return new_e - old_e;
     }
     return 0;
@@ -218,10 +241,10 @@ Bath.prototype.flip_molecule = function ()
     var mol = this.random_molecule ();
     if (mol != null)
     {
-        var old_e = this.get_molecule_energy (mol);
+        var old_e = this.get_molecule_energy (mol, pos);
         mol.cache ();
         mol.flip ();
-        var new_e = this.get_molecule_energy (mol);
+        var new_e = this.get_molecule_energy (mol, pos);
         return new_e - old_e;
     }
     return 0;
@@ -230,25 +253,38 @@ Bath.prototype.flip_molecule = function ()
 Bath.prototype.move_molecule = function ()
 {
     Misc.Log ("Move");
-    var dir = Misc.RandomInteger (4);
     var mol = this.random_molecule ();
-    var old_e = this.get_molecule_energy (mol);
     
-    if (mol != null)
+    if (mol == null)
     {
-        var old_pos = mol.y * this.num_x + mol.x;
-        var new_pos = this.move_map [dir][old_pos];
-        
-        if (this.grid [new_pos] == null)
-        {
-            this.grid [new_pos] = mol;
-            this.grid [old_pos] = null;            
-            this.place (mol, new_pos);
-            var new_e = this.get_molecule_energy (mol);
-            return new_e - old_e;
-        }
+        return null;
     }
-    return 0;
+
+    var old_pos = mol.y * this.num_x + mol.x;
+    var old_e = this.get_molecule_energy (mol, old_pos);
+    var dir = Misc.RandomInteger (4);
+    var new_pos = this.move_map [dir][old_pos];
+        
+    if (this.grid [new_pos] != null)
+    {
+        Misc.Log ("Move: Occupied");
+        return null;
+    }
+    
+    this.grid [new_pos] = mol;
+    this.grid [old_pos] = null;   
+    var new_e = this.get_molecule_energy (mol, new_pos);
+    
+    if (new_e === null)
+    {
+        Misc.Log ("Move: Invalid");
+        this.grid [old_pos] = mol;
+        this.grid [new_pos] = null;   
+        return null;
+    }
+
+    this.place (mol, new_pos);
+    return new_e - old_e;
 }
 //------------------------------------------------------------------------------------------------------------
 Bath.prototype.place = function (mol, pos)
@@ -272,10 +308,9 @@ Bath.prototype.draw = function (img_element)
     img_element.src = chelp.canvas.toDataURL('image/png');
 }
 //-------------------------------------------------------------------------------------------------
-Bath.prototype.get_neighbours = function (mol)
+Bath.prototype.get_neighbours = function (pos)
 {
-    var ret = [null, null, null, null];    
-    var pos = mol.y * this.num_x + mol.x;
+    var ret = [null, null, null, null];
     
     ret [MoleculeTemplate.TOP] = this.grid [this.up [pos]];
     ret [MoleculeTemplate.BOTTOM] = this.grid [this.down [pos]];
@@ -293,7 +328,8 @@ Bath.prototype.get_total_energy = function (mol, neighbours)
     for (var i in this.molecules)
     {
         var mol = this.molecules [i];
-        var neighbours = this.get_neighbours (mol);
+        var pos = mol.y * this.num_x + mol.x;
+        var neighbours = this.get_neighbours (pos);
         
         inate_energy += this.get_inate_energy (mol);
         var ie = this.get_interaction_energy (mol, neighbours);
@@ -306,15 +342,14 @@ Bath.prototype.get_total_energy = function (mol, neighbours)
     return inate_energy + interaction_energy / 2;    
 }
 //-------------------------------------------------------------------------------------------------
-Bath.prototype.get_molecule_energy = function (mol)
+Bath.prototype.get_molecule_energy = function (mol, pos)
 {
-    var neighbours = this.get_neighbours (mol);
+    var neighbours = this.get_neighbours (pos);
     var interaction_energy = this.get_interaction_energy (mol, neighbours);
     
     if (interaction_energy === null) return null;
     
     var inate_energy = this.get_inate_energy (mol);
-    var interaction_energy = 0;    
     
     return inate_energy + interaction_energy;   
 }
@@ -324,16 +359,40 @@ Bath.prototype.get_inate_energy = function (mol)
     return this.type_energy [mol.template.id];    
 }
 //-------------------------------------------------------------------------------------------------
+// returns null for invalid edge configurations
 Bath.prototype.get_interaction_energy = function (mol, neighbours)
-{
-        
-    Misc.Log ("Mol = {0}", mol);
+{        
+    Misc.Log ("get_interaction_energy: Mol = {0}", mol);
     var energy = 0;
     var count = 0;
+    var edge_energy = 0;
+    
+    // Eliminate invalid edge combinations 
+    
     for (var i in neighbours)
     {
         if (neighbours [i] != null)
         {
+            var dir = MoleculeTemplate.opposite_edge [i];
+            var edge1 = mol.get_edge(i);
+            var edge2 = neighbours [i].get_edge(dir);
+            
+            
+            Misc.Log ("Testing Edges: Sides = {0} and {1}, edges = {2} and {3}", MoleculeTemplate.GetFaceName(i), MoleculeTemplate.GetFaceName(dir),
+                                                                MoleculeTemplate.GetEdgeName(edge1), MoleculeTemplate.GetEdgeName(edge2));
+            
+            var allowed = MoleculeTemplate.allowed (edge1, edge2);
+            Misc.Log ("Testing Edges: Allowed = {0}", allowed);
+             
+            if (! MoleculeTemplate.allowed (edge1, edge2))
+            {
+                Misc.Log ("Testing Edges: Not allowed");
+                return null;
+            }
+            
+            Misc.Log ("Testing Edges: Energy = {0}", this.edge_energy[edge1][edge2]);
+
+            edge_energy += this.edge_energy[edge1][edge2];                
             count ++;
         }
     }
@@ -347,21 +406,12 @@ Bath.prototype.get_interaction_energy = function (mol, neighbours)
         if (neighbours [i] != null)
         {
             energy += this.interaction_energy [mol.template.id][neighbours [i].template.id];
-            var dir = MoleculeTemplate.opposite_edge [i];
-            var edge1 = mol.get_edge(i);
-            var edge2 = neighbours [i].get_edge(dir);
-            var edge_energy = null;
-            if (MoleculeTemplate.allowed (edge1, edge2))
-            {
-                edge_energy = this.edge_energy[edge1][edge2];                
-            }
             Misc.Log ("Sides = {0} and {1}, edges = {2} and {3}, energy = {4}", MoleculeTemplate.GetFaceName(i), MoleculeTemplate.GetFaceName(dir),
-            MoleculeTemplate.GetEdgeName(edge1), MoleculeTemplate.GetEdgeName(edge2), edge_energy);
-            if (edge_energy === null) return null;
-            energy += edge_energy;
+                                                                MoleculeTemplate.GetEdgeName(edge1), MoleculeTemplate.GetEdgeName(edge2),
+                                                                this.interaction_energy [mol.template.id][neighbours [i].template.id]);
         }
     }
-    return energy;
+    return energy + edge_energy;
 }
 
         

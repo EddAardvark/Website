@@ -86,7 +86,7 @@ MoleculeTemplate.GetFaceName = function (face) { return MoleculeTemplate.face_na
 //-------------------------------------------------------------------------------------------------
 MoleculeTemplate.allowed = function (edge1, edge2)
 {
-    return MoleculeTemplate.allowed_edges [edge1, edge2];
+    return MoleculeTemplate.allowed_edges [edge1][edge2];
 }
 
 //------------------------------------------------------------------------------------------------------------
