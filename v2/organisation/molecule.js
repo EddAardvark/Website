@@ -28,13 +28,11 @@ Molecule.prototype.rotate = function (n)
     {
         this.orientation += 4;
     }
-    this.set_points();
 }
 //------------------------------------------------------------------------------------------------------------
 Molecule.prototype.flip = function ()
 {
     this.parity = ! this.parity;
-    this.set_points();
 }
 //------------------------------------------------------------------------------------------------------------
 Molecule.prototype.draw = function (chelp, img_element)
@@ -52,7 +50,7 @@ Molecule.prototype.cache = function ()
 Molecule.prototype.uncache = function ()
 {
     this.orientation = this.cache_orientation;
-    this.cache = this.cache_parity;
+    this.parity = this.cache_parity;
 }
 //------------------------------------------------------------------------------------------------------------
 Molecule.prototype.set_points = function ()

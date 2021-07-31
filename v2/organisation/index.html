@@ -46,7 +46,7 @@ var controller;
 
 OnLoad = function ()
 {
-    SimController.initialise ();
+    SimController.initialise (32, 32);
 }
 
 </script>
@@ -102,20 +102,18 @@ OnLoad = function ()
       <p>
         <img id="the_simulation">
       </p><p>
-        <button onclick="SimController.ResetSimulation()"> Reset </button>       
-        <button onclick="SimController.AddRandomMolecule()"> Add Random </button>         
-        <button onclick="SimController.AddMoleculeByType(0)"> Add 1 </button>         
-        <button onclick="SimController.AddMoleculeByType(1)"> Add 2 </button>         
-        <button onclick="SimController.AddMoleculeByType(2)"> Add 3 </button>         
-        <button onclick="SimController.AddMoleculeByType(3)"> Add 4 </button>         
-        <button onclick="SimController.RotateRandomMolecule()"> Rotate Random </button>            
-        <button onclick="SimController.FlipRandomMolecule()"> Flip Random </button>            
-        <button onclick="SimController.MoveRandomMolecule()"> Move Random </button>              
-        <button onclick="SimController.RemoveRandomMolecule()"> Remove Random </button>              
+        <button onclick="SimController.ResetSimulation()"> Reset </button>   
+        <button onclick="SimController.StartSimulation()"> Simulate </button>              
+        <button onclick="SimController.StopSimulation()"> Stop </button>              
+        
       </p><p>
         Energy: <span id="total_energy"> &nbsp; </span>, <button onclick="SimController.ShowTotalEnergy()">&#x25B6;</button>              
         Delta: <span id="delta_energy"> &nbsp; </span>,
         Tracked: <span id="calc_energy"> &nbsp; </span>.
+      </p><p>
+        Draw every:  <input type="text" maxlength="12" id="simdraw" size="12" value="100">  
+      </p><p>
+        <span id="simulation_counts"> &nbsp; </span>
       </p>
     </div>
     
@@ -128,158 +126,151 @@ OnLoad = function ()
     <div class="float in2 box w9" style="overflow: auto;">
 
         <h1> Settings </h1>
-        <h2> Shapes</h2>
 
-         <p>
-         The energies relate to the energy of existence of the individual molecules. Negative energies will increase the concentration of a
-         molecule type, positive ones will reduce it.
-         </p><p>
-          <table>
-           <tr><th>Molecule</th><th>Colour</th><th>Energy</th><th>Shape</th></tr>
-           
-           <tr>
-            <td><img class="noborder" id="shape1"></td>
+        <table>
+         <tr> <th> Shapes </th> <th> Two-body Interactions </th> </tr>
+         <tr> 
             <td>
-                <select id="colour1" onchange="SimController.ChangeColour(0,colour1)">
-            </td>
+              <p> Choose the molecule shapes and colours. </p>
+            </td> 
             <td>
-                <input type="text" maxlength="12" id="energy1" size="12" value="0">
-                <button onclick="SimController.UpdateEnergy (0)">&#x25B6;</button>
-            </td>
-            <td> 
-                <button onclick="SimController.ConfigShape(0)"> Set </button>
-            </td>
-            
-           </tr>
-           
-           <tr>
-            <td><img class="noborder" id="shape2"></td>
-            <td>
-                <select id="colour2" onchange="SimController.ChangeColour(1,colour2)">
-            </td>
-            <td>
-                <input type="text" maxlength="12" id="energy2" size="12" value="0">
-                <button onclick="SimController.UpdateEnergy (1)">&#x25B6;</button>
-            </td>
-            <td> 
-                <button onclick="SimController.ConfigShape(1)"> Set </button>
-            </td>                
-           </tr>
-            
-            
-           <tr>
-            <td><img class="noborder" id="shape3"></td>
-            <td>
-                <select id="colour3" onchange="SimController.ChangeColour(2,colour3)">
-            </td>
-            <td>
-                <input type="text" maxlength="12" id="energy3" size="12" value="0">
-                <button onclick="SimController.UpdateEnergy (2)">&#x25B6;</button>
-            </td>
-            <td> 
-                <button onclick="SimController.ConfigShape(2)"> Set </button>
-            </td>                
-           </tr>
-            
-            
-           <tr>
-            <td><img class="noborder" id="shape4"></td>
-            <td>
-                <select id="colour4" onchange="SimController.ChangeColour(3,colour4)">
-            </td>
-            <td>
-                <input type="text" maxlength="12" id="energy4" size="12" value="0">
-                <button onclick="SimController.UpdateEnergy (3)">&#x25B6;</button>
-            </td>
-            <td> 
-                <button onclick="SimController.ConfigShape(3)"> Set </button>
-            </td>                
-           </tr>
-            
-          </table>
-         </p>
-        <h2> Two-body Interactions</h2>
-         <p>
-         Enter the interaction energies for adjacent shapes for the various colour and edge combinations. The relationship are symmetrical so only one value per pair is required.
-         Negative energies are attractive, positive ones repulsive. Interactions where a spike abuts another spike or flat edge aren't allowed. Two flat edges in contact
-         contribute no additional energy.
-         </p><p>
-          <table>
-           <tr><th>Adjacent Pair</th><th>Energy</th><th>Adjacent edges</th><th>Energy</th></tr>
-
-           <tr>
-             <td><img class="noborder" id="x1y1"></td>
-             <td><input type="text" maxlength="12" id="energy1x1" size="12" value="0"></td>
-             <td><img class="noborder" id="edge_edge"></td>
-             <td>0</td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x1y2"></td>
-             <td><input type="text" maxlength="12" id="energy1x2" size="12" value="0"></td>
-             <td><img class="noborder" id="edge_hole"></td>
-             <td><input type="text" maxlength="12" id="energy_eh" size="12" value="0"></td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x1y3"></td>
-             <td><input type="text" maxlength="12" id="energy1x3" size="12" value="0"></td>
-             <td><img class="noborder" id="edge_spike"></td>
-             <td>infinite</td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x1y4"></td>
-             <td><input type="text" maxlength="12" id="energy1x4" size="12" value="0"></td>
-             <td><img class="noborder" id="hole_hole"></td>
-             <td><input type="text" maxlength="12" id="energy_hh" size="12" value="0"></td>
+             <p>
+                 Enter the interaction energies for adjacent shapes for the various colour and edge combinations. The relationship are symmetrical so only one value per pair is required.
+                 Negative energies are attractive, positive ones repulsive. Interactions where a spike abuts another spike or flat edge aren't allowed. Two flat edges in contact
+                 contribute no additional energy.
+             </P>
+            </td> 
          </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x2y2"></td>
-             <td><input type="text" maxlength="12" id="energy2x2" size="12" value="0"></td>
-             <td><img class="noborder" id="hole_spike"></td>
-             <td><input type="text" maxlength="12" id="energy_hs" size="12" value="0"></td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x2y3"></td>
-             <td><input type="text" maxlength="12" id="energy2x3" size="12" value="0"></td>
-             <td><img class="noborder" id="spike_spike"></td>
-             <td>infinite</td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x2y4"></td>
-             <td><input type="text" maxlength="12" id="energy2x4" size="12" value="0"></td>
-             <td>&nbsp;</td>
-             <td>&nbsp;</td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x3y3"></td>
-             <td><input type="text" maxlength="12" id="energy3x3" size="12" value="0"></td>
-             <th>Temperature</th>
-             <td><input type="text" maxlength="12" id="temperature" size="12" value="0"></td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x3y4"></td>
-             <td><input type="text" maxlength="12" id="energy3x4" size="12" value="0"></td>
-             <td>&nbsp;</td>
-             <td>&nbsp;</td>
-           </tr>
-           
-           <tr>
-             <td><img class="noborder" id="x4y4"></td>
-             <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
-             <td>&nbsp;</td>
-             <td><button onclick="SimController.UpdateInteractions ()">Apply</button></td>
-           </tr>
-           
+
+         <tr>
+          <td>
+              <table>
+               <tr><th>Molecule</th><th>Colour</th><th>Shape</th></tr>
+               
+               <tr>
+                <td><img class="noborder" id="shape1"></td>
+                <td>
+                    <select id="colour1" onchange="SimController.ChangeColour(0,colour1)">
+                </td>
+                <td> 
+                    <button onclick="SimController.ConfigShape(0)"> Set </button>
+                </td>
+                
+               </tr>
+               
+               <tr>
+                <td><img class="noborder" id="shape2"></td>
+                <td>
+                    <select id="colour2" onchange="SimController.ChangeColour(1,colour2)">
+                </td>
+                <td> 
+                    <button onclick="SimController.ConfigShape(1)"> Set </button>
+                </td>                
+               </tr>
+                
+                
+               <tr>
+                <td><img class="noborder" id="shape3"></td>
+                <td>
+                    <select id="colour3" onchange="SimController.ChangeColour(2,colour3)">
+                </td>
+                <td> 
+                    <button onclick="SimController.ConfigShape(2)"> Set </button>
+                </td>                
+               </tr>
+                
+                
+               <tr>
+                <td><img class="noborder" id="shape4"></td>
+                <td>
+                    <select id="colour4" onchange="SimController.ChangeColour(3,colour4)">
+                </td>
+                <td> 
+                    <button onclick="SimController.ConfigShape(3)"> Set </button>
+                </td>                
+               </tr>                
+              </table>
+            </td>
+            
+            <td>
+              <table>
+               <tr><th>Adjacent Pair</th><th>Energy</th><th>Adjacent edges</th><th>Energy</th></tr>
+
+               <tr>
+                 <td><img class="noborder" id="x1y1"></td>
+                 <td><input type="text" maxlength="12" id="energy1x1" size="12" value="0"></td>
+                 <td><img class="noborder" id="edge_edge"></td>
+                 <td>0</td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x1y2"></td>
+                 <td><input type="text" maxlength="12" id="energy1x2" size="12" value="0"></td>
+                 <td><img class="noborder" id="edge_hole"></td>
+                 <td><input type="text" maxlength="12" id="energy_eh" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x1y3"></td>
+                 <td><input type="text" maxlength="12" id="energy1x3" size="12" value="0"></td>
+                 <td><img class="noborder" id="edge_spike"></td>
+                 <td>infinite</td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x1y4"></td>
+                 <td><input type="text" maxlength="12" id="energy1x4" size="12" value="0"></td>
+                 <td><img class="noborder" id="hole_hole"></td>
+                 <td><input type="text" maxlength="12" id="energy_hh" size="12" value="0"></td>
+             </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x2y2"></td>
+                 <td><input type="text" maxlength="12" id="energy2x2" size="12" value="0"></td>
+                 <td><img class="noborder" id="hole_spike"></td>
+                 <td><input type="text" maxlength="12" id="energy_hs" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x2y3"></td>
+                 <td><input type="text" maxlength="12" id="energy2x3" size="12" value="0"></td>
+                 <td><img class="noborder" id="spike_spike"></td>
+                 <td>infinite</td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x2y4"></td>
+                 <td><input type="text" maxlength="12" id="energy2x4" size="12" value="0"></td>
+                 <td>&nbsp;</td>
+                 <td>&nbsp;</td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x3y3"></td>
+                 <td><input type="text" maxlength="12" id="energy3x3" size="12" value="0"></td>
+                 <th>Temperature:</th>
+                 <td><input type="text" maxlength="12" id="temperature" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x3y4"></td>
+                 <td><input type="text" maxlength="12" id="energy3x4" size="12" value="0"></td>
+                 <th>Pressure:</th>
+                 <td><input type="text" maxlength="12" id="pressure" size="12" value="0"></td>
+               </tr>
+               
+               <tr>
+                 <td><img class="noborder" id="x4y4"></td>
+                 <td><input type="text" maxlength="12" id="energy4x4" size="12" value="0"></td>
+                 <td>&nbsp;</td>
+                 <td><button onclick="SimController.UpdateInteractions ()">Apply</button></td>
+               </tr>
+               
+              </table>
+             </p>
+            </td>
+           </tr> 
           </table>
-         </p>
-         
     </div>
         
     <!-- Shape chooser -->
@@ -327,6 +318,41 @@ OnLoad = function ()
           </table>
       </p>
     </div>
+    
+        
+    <!-- Transition Probabilities -->
+    
+    <div class="float in2 box w9" style="overflow: auto;">
+
+        <h2>Testing</h2>
+        <p>
+        <button onclick="SimController.AddRandomMolecule()"> Add Random </button>         
+        <button onclick="SimController.AddMoleculeByType(0)"> Add 1 </button>         
+        <button onclick="SimController.AddMoleculeByType(1)"> Add 2 </button>         
+        <button onclick="SimController.AddMoleculeByType(2)"> Add 3 </button>         
+        <button onclick="SimController.AddMoleculeByType(3)"> Add 4 </button>         
+        <button onclick="SimController.RotateRandomMolecule()"> Rotate Random </button>            
+        <button onclick="SimController.FlipRandomMolecule()"> Flip Random </button>            
+        <button onclick="SimController.MoveRandomMolecule()"> Move Random </button>              
+        <button onclick="SimController.RemoveRandomMolecule()"> Remove Random </button>
+        </p>
+        
+        <h2> Transition Probabilities </h2>
+        <p>
+        This section displays the probabilities for the different types of transition, for a range of energy changes at a given
+        pressure, volume and temperature. In this simulation volume is the number of cells in the simulation.
+        </p><P>
+        Temperature: <input type="text" maxlength="12" id="tp_temp" size="12" value="1">,
+        Pressure: <input type="text" maxlength="12" id="tp_press" size="12" value="1">,
+        Volume: <input type="text" maxlength="12" id="tp_vol" size="12" value="64">.
+        <button onclick="SimController.ShowProbabilities (tp_temp, tp_press, tp_vol, tp_result)">Apply</button></td>
+        </p><p>
+        <span id="tp_result">&nbsp;</span>
+      </p>
+    </div>
+    
+        
+    <!-- End of main content -->
         
 		<div class="endfloat"> &nbsp; </div>
 	    
