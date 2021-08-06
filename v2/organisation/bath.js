@@ -17,7 +17,6 @@ Bath = function (num_x, num_y, s, mx, my)
     this.grid_size = this.scale * MoleculeTemplate.Size + 2;
     this.width = this.num_x * this.grid_size + 2 * this.x_margin;
     this.height = this.num_y * this.grid_size + 2 * this.y_margin;
-    this.tracked_energy = 0;
     
     this.edge_energy = [[0, null, 0],[null, null, -2],[0, -1, -0.5]]; // straight = 0, out = 1, in = 2
     this.interaction_energy = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
@@ -50,6 +49,7 @@ Bath = function (num_x, num_y, s, mx, my)
         }
     }
 }
+//-------------------------------------------------------------------------------------------------
 Bath.MoveCounters = function ()
 {
     this.tries = new Array (Bath.MoveCounters.MOVE_TYPES);
@@ -57,8 +57,9 @@ Bath.MoveCounters = function ()
     this.total_tries = new Array (Bath.MoveCounters.MOVE_TYPES);
     this.total_accepted = new Array (Bath.MoveCounters.MOVE_TYPES);
     
-    this.reset ();
+    this.reset (0);
 }
+//-------------------------------------------------------------------------------------------------
 Bath.MoveCounters.Add = 0;
 Bath.MoveCounters.Remove = 1;
 Bath.MoveCounters.Exchange = 2;
@@ -67,9 +68,12 @@ Bath.MoveCounters.Move = 4;
 Bath.MoveCounters.Flip = 5;
 Bath.MoveCounters.MOVE_TYPES = 6;
 
+Bath.MoveCounters.AVERAGER1 = 0.99999;
+Bath.MoveCounters.AVERAGER2 = 1 - Bath.MoveCounters.AVERAGER1;
+
 Bath.MoveCounters.NAMES = ["Add", "Remove", "Exchange", "Move", "Rotate", "Flip"];
 
-Bath.MoveCounters.prototype.reset = function ()
+Bath.MoveCounters.prototype.reset = function (e)
 {
     for (var i = 0 ; i < Bath.MoveCounters.MOVE_TYPES ; ++i)
     {
@@ -78,12 +82,20 @@ Bath.MoveCounters.prototype.reset = function ()
         this.total_tries [i] = 0;
         this.total_accepted [i] = 0;
     }
+    this.tracked_energy = e;
+    this.average_energy = e;
 }
 //-------------------------------------------------------------------------------------------------
-Bath.MoveCounters.prototype.inc = function (type, accepted)
+Bath.MoveCounters.prototype.inc = function (type, delta, accepted)
 {
     ++ this.tries [type];
-    if (accepted) ++ this.accepted [type];
+    if (accepted)
+    {
+        ++ this.accepted [type];
+        this.tracked_energy += delta;
+    }
+    
+    this.average_energy = this.average_energy * Bath.MoveCounters.AVERAGER1 + this.tracked_energy * Bath.MoveCounters.AVERAGER2;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.MoveCounters.prototype.next_period = function ()
@@ -207,20 +219,18 @@ Bath.prototype.try_moves = function (num)
         
         var accepted = delta !== null;
         
-        this.move_counters.inc (n, accepted);
-        
-        if (accepted) this.tracked_energy += delta;
+        this.move_counters.inc (n, delta, accepted);
     }
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.reset_stats = function ()
+{
+    this.move_counters.reset (this.get_total_energy ());
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.start_next_period = function ()
 {
     this.move_counters.next_period ();
-}
-//-------------------------------------------------------------------------------------------------
-Bath.prototype.reset_tracked_energy = function ()
-{
-    this.tracked_energy = this.get_total_energy ();
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.get_counter_display = function ()
@@ -280,96 +290,36 @@ Bath.prototype.set_temperature = function (t)
 // Used for move type operations: exp (-de/T) > r
 Bath.prototype.test_delta = function (de, ch)
 {
-    var key = ch + Misc.FloatToText(de, 6);
-    var acc = this.acceptance [key];
-    
-    if (acc === undefined)
-    {
-        var prob = Bath.CreateProbability (de, this.pv, this.temperature, this.molecules.length);
-        acc = new Bath.Acceptance (prob);
-        this.acceptance [key] = acc;
-    }
-    
-    var rnd = Math.random ();    
-    var ret = acc.probability > rnd;
-    
-    Misc.Log ("Move: Key = {0}, {1}", key, acc);
-    
-    return ret;
+    var prob = Math.exp (- de / this.temperature);
+
+    return (prob >= 1) || (prob > Math.random ());
 }
 //-------------------------------------------------------------------------------------------------
 // Used for add type operations: 1/(1 + (N+1) exp (de/T) / P) > r
 Bath.prototype.test_create_delta = function (de)
 {
-    var key = "C" + Misc.FloatToText(de, 6);
-    var acc = this.acceptance [key];
-    
-    if (acc === undefined)
-    {
-        var prob = Bath.CreateProbability (de, this.pv, this.temperature, this.molecules.length);
-        acc = new Bath.Acceptance (prob);
-        this.acceptance [key] = acc;
-    }
-    
-    var rnd = Math.random ();    
-    var ret = acc.probability > rnd;
-    
-    acc.tries ++;
-    
-    if (ret)
-    {
-        acc.success ++;
-    }
-    
-    Misc.Log ("Create: Key = {0}, {1}", key, acc);
-    
-    return ret;
+    var prob = 1 / (1 + (this.molecules.length+1) * Math.exp (de / this.temperature) / this.pv);
+
+    return (prob >= 1) || (prob > Math.random ());
 }
 //-------------------------------------------------------------------------------------------------
 // Used for remove type operations: 1/(1 + P x exp (de/T) / N) > r
 Bath.prototype.test_destroy_delta = function (de)
 {
-    var key = "D" + Misc.FloatToText(de, 6);
-    var acc = this.acceptance [key];
-    
-    if (acc === undefined)
-    {
-        var prob = Bath.DestroyProbability (de, this.pv, this.temperature, this.molecules.length);
-        acc = new Bath.Acceptance (prob);
-        this.acceptance [key] = acc;
-        Bath.Acceptance.toTable (this.acceptance);
-    }
-    
-    var rnd = Math.random ();    
-    var ret = acc.probability > rnd;
-    
-    acc.tries ++;
-    
-    if (ret)
-    {
-        acc.success ++;
-    }
-    
-    Misc.Log ("Destroy: Key = {0}, {1}", key, acc);
-    
-    return ret;
+    var prob = 1 / (1 + this.pv * Math.exp (de / this.temperature) / this.molecules.length);
+
+    return (prob >= 1) || (prob > Math.random ());
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.reset = function ()
 {
     this.grid = new Array (this.num_cells);     // Location of molecules
     this.molecules = [];                        // List of molecules
-    this.reset_acceptance ();
     
     for (var i = 0 ; i < this.num_cells ; ++i)
     {
         this.grid [i] = null;
     }    
-}
-//-------------------------------------------------------------------------------------------------
-Bath.prototype.reset_acceptance = function ()
-{
-    this.acceptance = {}; 
 }
 //-------------------------------------------------------------------------------------------------
 Bath.CreateProbability = function (delta_E, PV, T, N)
