@@ -6,7 +6,7 @@
 // The spikes match the indents which is the basis of the intermolecular interaction and the 
 // self organisation we are hoping to simulate.
 //
-// (c) John Whitehouse 2020
+// (c) John Whitehouse 2021
 // www.eddaardvark.co.uk
 //-------------------------------------------------------------------------------------------------
 

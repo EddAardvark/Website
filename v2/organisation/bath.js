@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------
 // A container of molecules
-// (c) John Whitehouse 2020
+// (c) John Whitehouse 2021
 // www.eddaardvark.co.uk
 //-------------------------------------------------------------------------------------------------
 
@@ -50,6 +50,102 @@ Bath = function (num_x, num_y, s, mx, my)
     }
 }
 //-------------------------------------------------------------------------------------------------
+Bath.TryResult = function (de)
+{
+    this.delta_energy = de;
+    this.add_type = null;
+    this.del_type = null;
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.get_average_density = function (shape)
+{
+    var val = (shape == undefined) ? this.counters.average_number : this.counters.avg_shape_counts [shape];
+    return val / this.num_cells ;
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.get_density = function (shape)
+{
+    var val = (shape == undefined) ? this.molecules.length : this.counters.shape_counts [shape];
+    return val / this.num_cells ;
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.try_moves = function (num)
+{
+    for (var i = 0 ; i < num ; ++i)
+    {
+        var n = Misc.RandomInteger (BathCounters.MOVE_TYPES);
+        var result = null;
+        
+        if (n == BathCounters.Add)
+        {
+            var type = Misc.RandomInteger (SimController.SHAPE_TYPES);
+
+            result = SimController.bath.add_molecule (SimController.templates[type]);
+        }
+        else if (n == BathCounters.Rotate)
+        {
+            result = SimController.bath.rotate_molecule ();
+        }
+        else if (n == BathCounters.Move)
+        {
+            result = SimController.bath.move_molecule ();
+        }
+        else if (n == BathCounters.Flip)
+        {
+            result = SimController.bath.flip_molecule ();
+        }
+        else if (n == BathCounters.Remove)
+        {
+            result = SimController.bath.remove_molecule ();
+        }
+        else if (n == BathCounters.Exchange )
+        {
+            var type = Misc.RandomInteger (SimController.templates.length);
+
+            result = SimController.bath.exchange_molecule (SimController.templates[type]);
+        }
+        
+        this.counters.inc (n, result, this.molecules.length);
+    }
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.reset_stats = function ()
+{
+    this.counters.reset (this.get_total_energy (), this.molecules.length);
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.start_next_period = function ()
+{
+    this.counters.next_period ();
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.get_counter_display = function ()
+{
+    var ret = "<table>";
+    
+    ret += this.counters.heading_row();   
+    
+    for (var i = 0 ; i < BathCounters.MOVE_TYPES ; ++i)
+    {
+        ret += this.counters.table_row (i);
+    }
+    ret += this.counters.total_row ();
+    ret += "</table>";
+    
+    return ret;
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.next_period = function ()
+{
+    for (var i = 0 ; i < BathCounters.MOVE_TYPES ; ++i)
+    {
+        this.total_tries [i] += this.tries [i];
+        this.total_accepted [i] += this.accepted [i];
+        this.tries [i] = 0;
+        this.accepted [i] = 0;
+    }
+}
+//-------------------------------------------------------------------------------------------------
 Bath.prototype.set_edge_energy = function (edge1, edge2, energy)
 {
     if (edge1 == MoleculeTemplate.STRAIGHT && edge2 == MoleculeTemplate.STRAIGHT) throw "Can't set energy for flat-flat";
@@ -80,102 +176,38 @@ Bath.prototype.set_temperature = function (t)
 // Used for move type operations: exp (-de/T) > r
 Bath.prototype.test_delta = function (de, ch)
 {
-    var key = ch + Misc.FloatToText(de, 6);
-    var acc = this.acceptance [key];
-    
-    if (acc === undefined)
-    {
-        var prob = Bath.CreateProbability (de, this.pv, this.temperature, this.molecules.length);
-        acc = new Bath.Acceptance (prob);
-        this.acceptance [key] = acc;
-    }
-    
-    var rnd = Math.random ();    
-    var ret = acc.probability > rnd;
-    
-    acc.tries ++;
-    if (ret)
-    {
-        acc.success ++;
-    }
-    
-    Misc.Log ("Move: Key = {0}, {1}", key, acc);
-    
-    return ret;
+    var prob = Math.exp (- de / this.temperature);
+
+    return (prob >= 1) || (prob > Math.random ());
 }
 //-------------------------------------------------------------------------------------------------
 // Used for add type operations: 1/(1 + (N+1) exp (de/T) / P) > r
 Bath.prototype.test_create_delta = function (de)
 {
-    var key = "C" + Misc.FloatToText(de, 6);
-    var acc = this.acceptance [key];
-    
-    if (acc === undefined)
-    {
-        var prob = Bath.CreateProbability (de, this.pv, this.temperature, this.molecules.length);
-        acc = new Bath.Acceptance (prob);
-        this.acceptance [key] = acc;
-    }
-    
-    var rnd = Math.random ();    
-    var ret = acc.probability > rnd;
-    
-    acc.tries ++;
-    
-    if (ret)
-    {
-        acc.success ++;
-    }
-    
-    Misc.Log ("Create: Key = {0}, {1}", key, acc);
-    
-    return ret;
+    var prob = 1 / (1 + (this.molecules.length+1) * Math.exp (de / this.temperature) / this.pv);
+
+    return (prob >= 1) || (prob > Math.random ());
 }
 //-------------------------------------------------------------------------------------------------
 // Used for remove type operations: 1/(1 + P x exp (de/T) / N) > r
 Bath.prototype.test_destroy_delta = function (de)
 {
-    var key = "D" + Misc.FloatToText(de, 6);
-    var acc = this.acceptance [key];
-    
-    if (acc === undefined)
-    {
-        var prob = Bath.DestroyProbability (de, this.pv, this.temperature, this.molecules.length);
-        acc = new Bath.Acceptance (prob);
-        this.acceptance [key] = acc;
-        Bath.Acceptance.toTable (this.acceptance);
-    }
-    
-    var rnd = Math.random ();    
-    var ret = acc.probability > rnd;
-    
-    acc.tries ++;
-    
-    if (ret)
-    {
-        acc.success ++;
-    }
-    
-    Misc.Log ("Destroy: Key = {0}, {1}", key, acc);
-    
-    return ret;
+    var prob = 1 / (1 + this.pv * Math.exp (de / this.temperature) / this.molecules.length);
+
+    return (prob >= 1) || (prob > Math.random ());
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.reset = function ()
 {
     this.grid = new Array (this.num_cells);     // Location of molecules
     this.molecules = [];                        // List of molecules
-    this.reset_acceptance ();
     
     for (var i = 0 ; i < this.num_cells ; ++i)
     {
         this.grid [i] = null;
-    }    
-}
-//-------------------------------------------------------------------------------------------------
-Bath.prototype.reset_acceptance = function ()
-{
-    this.acceptance = {}; 
+    }
+    
+    this.counters = new BathCounters();
 }
 //-------------------------------------------------------------------------------------------------
 Bath.CreateProbability = function (delta_E, PV, T, N)
@@ -279,28 +311,34 @@ Bath.prototype.add_molecule = function (template)
     
     if (this.grid [pos] != null)
     {
-        Misc.Log ("Add: Failed, space occupied");
         return null;
     }
     
-    var mol = new Molecule (template, this);    
+    var mol = new Molecule (template, this);
+    
+    mol.rotate (Misc.RandomInteger(4));
+    
+    if (Misc.RandomBool()) mol.flip ();
+    
     var delta_e = this.get_molecule_energy (mol, pos);
     
     if (delta_e === null)
     {
-        Misc.Log ("Add: Invalid edge combination");
         return null;
     }
     
     if (! this.test_create_delta (delta_e))
     {
-        Misc.Log ("Add: delta rejected");
         return null;
     }
     this.place (mol, pos);
     this.grid [pos] = mol;
     this.molecules.push (mol);
-    return delta_e;
+    
+    var result = new Bath.TryResult (delta_e);
+    
+    result.add_type = template.id;
+    return result;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.exchange_molecule = function (template)
@@ -309,7 +347,6 @@ Bath.prototype.exchange_molecule = function (template)
     
     if (this.grid [pos] == null)
     {
-        Misc.Log ("Replace: Failed, space occupied");
         return null;
     }
     
@@ -320,7 +357,6 @@ Bath.prototype.exchange_molecule = function (template)
     
     if (old_e === null || new_e === null)
     {
-        Misc.Log ("Replace: Invalid edge combination");
         return null;
     }
     
@@ -328,7 +364,6 @@ Bath.prototype.exchange_molecule = function (template)
     
     if (! this.test_delta (delta_e, 'X'))
     {
-        Misc.Log ("Replace: delta rejected");
         return null;
     }
     
@@ -338,7 +373,11 @@ Bath.prototype.exchange_molecule = function (template)
     this.grid [pos] = new_mol;
     this.molecules [idx] = new_mol;
     
-    return delta_e;
+    var result = new Bath.TryResult (delta_e);
+    
+    result.add_type = new_mol.template.id;
+    result.del_type = old_mol.template.id;
+    return result;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.remove_molecule = function ()
@@ -348,7 +387,6 @@ Bath.prototype.remove_molecule = function ()
     
     if (mol == null)
     {
-        Misc.Log ("Remove: Failed, already empty");
         return null;
     }
 
@@ -357,7 +395,6 @@ Bath.prototype.remove_molecule = function ()
     
     if (! this.test_destroy_delta (delta_e))
     {
-        Misc.Log ("Remove: delta rejected");
         this.grid [pos] = mol;
         return null;
     }
@@ -369,7 +406,10 @@ Bath.prototype.remove_molecule = function ()
         this.molecules.splice (idx,1);
     }
     
-    return delta_e;
+    var result = new Bath.TryResult (delta_e);
+    
+    result.del_type = mol.template.id;
+    return result;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.rotate_molecule = function ()
@@ -389,7 +429,6 @@ Bath.prototype.rotate_molecule = function ()
     
     if (new_e == null)
     {
-        Misc.Log ("Rotate: Invalid");
         mol.uncache ();
         return null;
     }
@@ -398,14 +437,13 @@ Bath.prototype.rotate_molecule = function ()
     
     if (! this.test_delta (delta_e, 'R'))
     {
-        Misc.Log ("Rotate: delta rejected");
         mol.uncache ();
         return null;
     }
     
     mol.set_points();
-        
-    return delta_e;
+    
+    return new Bath.TryResult (delta_e);
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.flip_molecule = function ()
@@ -425,7 +463,6 @@ Bath.prototype.flip_molecule = function ()
     
     if (new_e == null)
     {
-        Misc.Log ("Flip: Invalid");
         mol.uncache ();
         return null;
     }
@@ -434,14 +471,13 @@ Bath.prototype.flip_molecule = function ()
     
     if (! this.test_delta (delta_e, 'F'))
     {
-        Misc.Log ("Flip: delta rejected");
         mol.uncache ();
         return null;
     }
     
     mol.set_points();
-        
-    return delta_e;
+    
+    return new Bath.TryResult (delta_e);
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.move_molecule = function ()
@@ -459,7 +495,6 @@ Bath.prototype.move_molecule = function ()
         
     if (this.grid [new_pos] != null)
     {
-        Misc.Log ("Move: Occupied");
         return null;
     }
     
@@ -470,7 +505,6 @@ Bath.prototype.move_molecule = function ()
     
     if (new_e === null)
     {
-        Misc.Log ("Move: Invalid");
         this.grid [old_pos] = mol;
         this.grid [new_pos] = null;   
         return null;
@@ -480,15 +514,14 @@ Bath.prototype.move_molecule = function ()
     
     if (! this.test_delta (delta_e, 'M'))
     {
-        Misc.Log ("Move: delta rejected");
         this.grid [old_pos] = mol;
         this.grid [new_pos] = null;  
         return null;
     }
 
     this.place (mol, new_pos);
-        
-    return delta_e;
+    
+    return new Bath.TryResult (delta_e);
 }
 //------------------------------------------------------------------------------------------------------------
 Bath.prototype.place = function (mol, pos)
@@ -524,7 +557,19 @@ Bath.prototype.get_neighbours = function (pos)
     return ret;
 }
 //-------------------------------------------------------------------------------------------------
-Bath.prototype.get_total_energy = function (mol, neighbours)
+// Corrects any drift caused by rounding in the floating-point maths. Calculating total energy
+// is expensive so we track it by adding deltas.
+Bath.prototype.correct_drift = function ()
+{
+    var energy = this.get_total_energy ();
+    var drift = this.counters.tracked_energy - energy;
+    
+    this.counters.tracked_energy = energy;
+    
+    return drift;
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.get_total_energy = function ()
 {
     var interaction_energy = 0;
     
@@ -557,7 +602,6 @@ Bath.prototype.get_molecule_energy = function (mol, pos)
 // returns null for invalid edge configurations
 Bath.prototype.get_interaction_energy = function (mol, neighbours)
 {        
-    //Misc.Log ("get_interaction_energy: Mol = {0}", mol);
     var energy = 0;
     var count = 0;
     var edge_energy = 0;
@@ -571,28 +615,17 @@ Bath.prototype.get_interaction_energy = function (mol, neighbours)
             var dir = MoleculeTemplate.opposite_edge [i];
             var edge1 = mol.get_edge(i);
             var edge2 = neighbours [i].get_edge(dir);
-            
-            
-//            Misc.Log ("Testing Edges: Sides = {0} and {1}, edges = {2} and {3}", MoleculeTemplate.GetFaceName(i), MoleculeTemplate.GetFaceName(dir),
-//                                                                MoleculeTemplate.GetEdgeName(edge1), MoleculeTemplate.GetEdgeName(edge2));
-            
             var allowed = MoleculeTemplate.allowed (edge1, edge2);
-//            Misc.Log ("Testing Edges: Allowed = {0}", allowed);
              
             if (! MoleculeTemplate.allowed (edge1, edge2))
             {
-//                Misc.Log ("Testing Edges: Not allowed");
                 return null;
             }
-            
-//            Misc.Log ("Testing Edges: Energy = {0}", this.edge_energy[edge1][edge2]);
 
             edge_energy += this.edge_energy[edge1][edge2];                
             count ++;
         }
     }
-        
-//    Misc.Log ("Neighbours = {0}", count);
     
     // Neighbour/neighbour interactions & point interactions
     
@@ -601,9 +634,6 @@ Bath.prototype.get_interaction_energy = function (mol, neighbours)
         if (neighbours [i] != null)
         {
             energy += this.interaction_energy [mol.template.id][neighbours [i].template.id];
-//            Misc.Log ("Sides = {0} and {1}, edges = {2} and {3}, energy = {4}", MoleculeTemplate.GetFaceName(i), MoleculeTemplate.GetFaceName(dir),
-//                                                                MoleculeTemplate.GetEdgeName(edge1), MoleculeTemplate.GetEdgeName(edge2),
-//                                                                this.interaction_energy [mol.template.id][neighbours [i].template.id]);
         }
     }
     return energy + edge_energy;
