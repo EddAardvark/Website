@@ -228,29 +228,6 @@ Bath.MoveProbability = function (delta_E, PV, T, N)
     return Math.min (1,x);
 }
 //-------------------------------------------------------------------------------------------------
-Bath.prototype.reset_acceptance = function ()
-{
-    this.acceptance = {}; 
-}
-//-------------------------------------------------------------------------------------------------
-Bath.CreateProbability = function (delta_E, PV, T, N)
-{
-    var x = 1 / (1 + (N+1) * Math.exp (delta_E / T) / PV);
-    return Math.min (1,x);
-}
-//-------------------------------------------------------------------------------------------------
-Bath.DestroyProbability = function (delta_E, PV, T, N)
-{
-    var x = 1 / (1 + PV * Math.exp (delta_E / T) / N);
-    return Math.min (1,x);
-}
-//-------------------------------------------------------------------------------------------------
-Bath.MoveProbability = function (delta_E, PV, T, N)
-{
-    var x = Math.exp (- delta_E / T);
-    return Math.min (1,x);
-}
-//-------------------------------------------------------------------------------------------------
 Bath.prototype.place_molecule = function (molecule, pts)
 {
     var mapped_points = new Array (pts.length);
@@ -624,7 +601,7 @@ Bath.prototype.get_molecule_energy = function (mol, pos)
 //-------------------------------------------------------------------------------------------------
 // returns null for invalid edge configurations
 Bath.prototype.get_interaction_energy = function (mol, neighbours)
-{
+{        
     var energy = 0;
     var count = 0;
     var edge_energy = 0;

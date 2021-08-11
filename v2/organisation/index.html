@@ -104,7 +104,6 @@ OnLoad = function ()
       </p><p>
         <button onclick="SimController.ResetSimulation()"> Reset </button>   
         <button onclick="SimController.StartSimulation()"> Simulate </button>              
-
         <button onclick="SimController.StopSimulation()"> Stop </button>
         Per second:  <input type="text" maxlength="12" id="simspeed" size="12" value="10000">  
         Steps: <span id="num_steps"> 0 </span>
@@ -140,7 +139,8 @@ OnLoad = function ()
              </table>
             </td>
            </tr> 
-          </table> 
+          </table>       
+          
       </p>
     </div>
     
@@ -304,7 +304,6 @@ OnLoad = function ()
                     <button onclick="SimController.UpdateMixedInteractions ()">All other</button>
                  </td>
                </tr>
-               
               </table>
              </p>
             </td>
