@@ -1,0 +1,178 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Cubes">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+
+<style>
+
+TD {padding: 3pt; border: 1px solid brown;}
+TH {padding: 3pt; border: 1px solid brown; background: orange;}
+
+</style>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/primes.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="sum_finder.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<title> Mapping Cube Sums Base 9</title>
+
+
+<script>
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnLoad = function ()
+    {
+        var all = document.getElementsByClassName("expr");
+
+        for (var i=0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+        
+        Primes.CacheUpTo (20000);
+        GetNearMisses();
+    }
+    
+    GetNearMisses = function()
+    {
+        var t1 = parseInt (tstart.value);
+        var t2 = parseInt (tend.value);
+        var limit = parseInt (maxz.value);          
+        var sums = new CubeSumFinder ();
+        
+        temp_count = 0;
+        
+        for (var n = t1 ; n <= t2 ; n++)
+        {
+            sums.getNearMisses (n, limit, CubeSumFinder.map_size);
+        }        
+        var count = sums.makeMap ();
+        
+        sums.drawMap (map81x81);
+        result.innerHTML = Misc.Format ("Tried up to Target = {0}, Zmax = {1}, found {2} solutions", t2, limit, count);
+        result2.innerHTML = "";
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnLoad();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Mapping Cube Sums Base 9 </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->
+    
+    <div class="float in2 box w9" style="overflow: auto;">
+
+        <h1> Mapping </h1>
+        
+        <p>
+        On the page <a href="index.html">index.html</a> we discussed finding cube sums using an algorithm described by "numberphile" youtube.
+        Here we look at the distribution of solutions that can be found using the algorithm when the equation doesn't have integer roots 
+        in the hope that they will be similarly small compared with the target.
+        </p><p>
+        The original pages searches for solutions of <span class="expr">x^3+y^3+z^3=k</span> by trying 'z' values and looking for
+        solutions for x and y. Here we use the same search algorithm but relax the rules for x and y, this allows us to find solutions
+        for other 'k' values. The hope is that this will be more efficient at finding solutions for small k than the more systematic
+        algorithm that just tries all x and y values.
+        </p><p>
+        The numbers found are plotted on a 81x81 grid as the answers seem to depend on base 9.
+                    
+        </p><p>
+        
+        Choose a range of 'k' values to search.
+        
+        </p><p>
+          Target Start: <input type="text" size="12" value="1" id="tstart">
+          End: <input type="text" size="12" value="11" id="tend">        
+          Max Z: <input type="text" size="12" value="11" id="maxz">
+          
+          <button onclick="GetNearMisses();"> Go </button> 
+          <button onclick="Reset();"> Reset </button> 
+
+        </p><p>
+        <span id="result">result</span>
+        <span id="result2"></span>
+        </p>
+        
+    </div>
+    
+    <!-- Map -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> 81 x 81 map </h2>
+        
+        <p>
+            <img id="map81x81">
+        </p>
+    </div>
+    
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2021 <p>
+
+
+</body>
+</html>
+
+
+
+

@@ -30,14 +30,12 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     {
         var all = document.getElementsByClassName("expr");
 
-        for (var i=0; i < all.length; i++)
+        for (var i = 0; i < all.length; i++)
         {
             Misc.expand_element (all[i]);
         }
         
         Primes.CacheUpTo (2000);
-        
-        var x = Primes.GetFactorsLessThan (288, 8);
     }
     
     GetValues = function (unique)
@@ -51,7 +49,9 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         }
         
         var limit = parseInt (maxz.value);
-        var sums = new CubeSunFinder (n, limit);
+        var sums = new CubeSumFinder ();
+        
+        sums.solve (n, limit);
         
         if (sums.result.length == 0)
         {
@@ -77,7 +77,6 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         var limit = parseInt (maxz.value);
         var text = "";
         var eq =  Misc.expand_expression("3x^2-3dx+d^2");
-
         
         for (var z = 1 ; z <= limit ; ++z)
         {
@@ -134,10 +133,8 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
             }
         }
         
-        result.innerHTML = text;
-        
+        result.innerHTML = text;        
     }
-
 
 </script>
 
@@ -183,183 +180,178 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     Main content
     ==============================================================================================================
     -->
-
-    <!-- Shows the vicinity as a 3D projection (sort of) -->
     
         <div class="float in2 box w10" style="overflow: auto;">
 
-            <h1> Search for specific values </h1>
-            
-            <p> There is a <a href="https://youtu.be/ASoz_NuIvP0" target="_blank">numberphile video on youtube</a> which talks about how they solved the problem of identifying 
-            integer solutions to equations like<span class="expr">x^3+y^3+z^3=42</span>. I found this quite interesting, but the video didn't go into the details of
-            how they actually implemented the algorithm, so I thought I'd give it a go and see how it pans out. The simplification they
-            made was that rather than search for any small sum they'd pick a single value and focus on that. At the time 42 was the smallest
-            unsolved value. To get a small value like 42 using cubes greater than 3 at least one of x, y and z must be negative.   
-
-            </p><p>
-            So we start by looking for solutions of 
-            <span class="expr">x^3+y^3-z^3=n</span>. We could also search for solutions of <span class="expr">x^3+y^3-z^3=-n</span> (as this rearranges to
-            <span class="expr">z^3-x^3-y^3=n</span>), but when I experimented using the tester below it always seemed to find both cases at the same time.
-                        
-            </p><p>
-            
-            This rearranges to <span class="expr">(x+y)(x^2-xy+y^2)=n+z^3</span>.
-                     
-            </p><p>
-            
-            We can set <span class="expr">x+y=d</span>, giving
-            </p><p>
-            <span class="expr">x^2-xy+y^2=(n+z^3)/d</span>, or:
-            </p><p>
-
-            <span class="expr">x^2-dx+d^2=(n+z^3)/d</span>.
-
-            </p><p>
-            The video argued that this is essentially a one-dimensional search (for z) as there are only a few plausible 'd' values. This wasn't justified in the video so I thought
-            I'd start by verifying that.
-            
-            </p><p>
-            
-            The first thing you'd notice is that, as we are looking for integers, 'd' must divide <span class="expr">n+z^3</span>, but <span class="expr">n+z^3</span> could be
-            a very large number with a large number of factors, and finding factors gets harder as the numbers get bigger. However, let's continue. For 'd' values that do divide
-            <span class="expr">n+z^3</span> we have to solve the quadratic equation:
-
-            </p><p>
-            <span class="expr">3x^2-3dx+d^2-(n+z^3)/d=0</span> for x.
-
-            </p><p>
-            Which is equvalent to the traditional quadratic equation 
-            <span class="expr">ax^2+bx+c=0</span> with <br>
-            <span class="expr">a=3</span>, <br>
-            <span class="expr">b=&minus;3d</span> and <br>
-            <span class="expr">c=d^2-(n+z^3)/d</span>.
-            </p><p>
-            For this to have integer roots the expression <span class="expr">b^2-4ac</span> must be a square number, which means that at least it must be positive, so :
-            
-            </p><p>
-            
-            <span class="expr">b^2-4ac=9d^2-12(d^2-(n+z^3)/d)>=0</span><br>
-            <span class="expr">=>&minus;3d^2+12(n+z^3)/d>=0</span><br>
-            <span class="expr">=>&minus;3d^3+12(n+z^3)>=0</span> (as 'd' is positive)<br>
-            <span class="expr">=>12(n+z^3)>=3d^3</span><br>
-            <span class="expr">=>4(n+z^3)>=d^3</span><br>
-            <span class="expr">=>d<=(4(n+z^3))^[1/3]~=1.6z</span> (for small n)
-
-            </p><p>
-            To be an integer <span class="expr">3d^3</span> must be a multiple of 4, so 'd' must be even. There are some other optimisations that can be applied, see the
-            <a href="#notes">Notes</a> section below, but these aren't used in the code associated with this page.
-            </p>
-            <h2>Interactive Section</h2>
-            <p>
-            Let's see how this works in reality. Note: This section is just to show you how the algorithm works, you won't be able to find any new solutions.
-            In the accompanying video you'll see that the components that add up to 42 have 16 digits. This isn't really reachable using the built in numbers of javascript
-            as the algorithm has a <span class="expr">z^3</span> term, which will overflow for 'z' values around 1 million. Also searching <span class="expr">10^17</span>
-            potential values will probably take longer than the lifetime of your computer.
-            </p><p>
-            in the controls below "Target" is the 'n' value you are looking for (42 in the video) and "Max Z" is the largest potential 'z' value that will be tested.
-            The "Verbose" button will generate output showing the workings described above, and will generate a lot of output. The "Solve" will just show the solutions
-            found, and "Unique" will eliminate duplicate solutions by arranging x, y and z so that <span class="expr">x>y>z</span>.
-            </p><p>
-            720 is an interesting target, also try comparing the results for n and &minus;n.
-            
-            </p><p>
-              Target: <input type="text" size="12" value="72" id="nval">
-              Max Z: <input type="text" size="12" value="11" id="maxz">
-            
-              <button onclick="ShowValues();"> Verbose Solve </button> 
-              <button onclick="GetValues(false);"> Solve </button> 
-              <button onclick="GetValues(true);"> Unique </button> 
-
-            </p><p>
-            <span id="result">result</span>
-            </p>
-            
-        </div>
+        <h1> Search for specific values </h1>
         
-        <!-- Notes -->
-	    
-        <div class="float in2 box w10" style="overflow: auto;">
+        <p> There is a <a href="https://youtu.be/ASoz_NuIvP0" target="_blank">numberphile video on youtube</a> which talks about how they solved the problem of identifying 
+        integer solutions to equations like<span class="expr">x^3+y^3+z^3=42</span>. I found this quite interesting, but the video didn't go into the details of
+        how they actually implemented the algorithm, so I thought I'd give it a go and see how it pans out. The simplification they
+        made was that rather than search for any small sum they'd pick a single value and focus on that. At the time 42 was the smallest
+        unsolved value. To get a small value like 42 using cubes greater than 3 at least one of x, y and z must be negative.   
 
-            <h1> Notes </h1>
-          <p>
-            If you calculate the sequence <span class="expr">z^3</span> modulo 9 you get [1,8,0,1,8,0,1,8,0,...]. This repeats indefinitely. You can show this
-            by considering the expression <span class="expr">(3n+k)^3</span> mod 9, where <span class="expr">0<=k<=2</span>. This expands to:
-          </p><p>
-            <span class="expr">(3n)^3+3.(3n)^2k+3.(3n)k^2+k^3</span> mod 9.
-          </p><p>
-            The first three terms are all multiples of 9, so the remainder will be <span class="expr">k^3</span> mod 9 which is [1,8,0] as we showed above.
-            The possible remainders when <span class="expr">x^3+y^3+z^3</span> is divided by 9 can be obtained by adding 
-            all the permutations of three numbers taken from this list, which are:
-            [0,1,2,3,8,9,10,16,17,24], which modulo 9 become [0,1,2,3,8,0,1,7,8,6]. 
-          </p><p>
-            If you expand these sums into a table:
-          </p><p>
-            <table>
-             <tr>
-              <th>k1,k2,k3</th><th>0,0</th><th>0,1</th><th>0,8</th><th>1,0</th><th>1,1</th><th>1,8</th><th>8,0</th><th>8,1</th><th>8,8</th>
-             </tr>
-            
-             <tr>
-              <th>0</th><td>0</td><td>1</td><td>8</td><td>1</td><td>2</td><td>0</td><td>8</td><td>0</td><td>7</td>
-             </tr>
-
-             <tr>
-              <th>1</th><td>1</td><td>2</td><td>0</td><td>2</td><td>3</td><td>1</td><td>0</td><td>1</td><td>8</td>
-             </tr>
-
-             <tr>
-              <th>8</th><td>8</td><td>0</td><td>7</td><td>0</td><td>1</td><td>8</td><td>7</td><td>8</td><td>6</td>
-             </tr>
-           </table>
-          </p><p>
-            And arrange them according to the total we can infer some additional constraints on 'z'.
-          </p><p>
-           <table>
-             <tr>
-              <th>Total</th><th>Combinations</th><th>Count</th><th>Constraints on 'z'</th>
-             </tr>
-            
-             <tr>
-              <th>0</th><td>(0,0,0), (0,1,8)</td><td>7</td><td>none</td>
-             </tr>
-
-             <tr>
-              <th>1</th><td>(0,0,1), (1,1,8)</td><td>6</td><td>none</td>
-             </tr>
-
-             <tr>
-              <th>2</th><td>(0,1,1)</td><td>3</td><td>z mod 3 can't be 2</td>
-             </tr>
-
-             <tr>
-              <th>3</th><td>(1,1,1)</td><td>1</td><td>z mod 3 must be 1</td>
-             </tr>
-
-             <tr>
-              <th>4</th><td></td><td>0</td><td>impossible</td>
-             </tr>
-
-             <tr>
-              <th>5</th><td></td><td>0</td><td>impossible</td>
-             </tr>
-
-             <tr>
-              <th>6</th><td>(8,8,8)</td><td>1</td><td>z mod 3 must be 2</td>
-             </tr>
-
-             <tr>
-              <th>7</th><td>(0,8,8)</td><td>3</td><td>z mod 3 can't be 1</td>
-             </tr>
-
-             <tr>
-              <th>8</th><td>(0,0,8), (1,8,8)</td><td>6</td><td>none</td>
-             </tr>
-           </table>
-        </div>
+        </p><p>
+        So we start by looking for solutions of 
+        <span class="expr">x^3+y^3-z^3=n</span>. We could also search for solutions of <span class="expr">x^3+y^3-z^3=-n</span> (as this rearranges to
+        <span class="expr">z^3-x^3-y^3=n</span>), but when I experimented using the tester below it always seemed to find both cases at the same time.
+                    
+        </p><p>
         
+        This rearranges to <span class="expr">(x+y)(x^2-xy+y^2)=n+z^3</span>.
+                 
+        </p><p>
         
-		<div class="endfloat"> &nbsp; </div>
-	    
+        We can set <span class="expr">x+y=d</span>, giving
+        </p><p>
+        <span class="expr">x^2-xy+y^2=(n+z^3)/d</span>, or:
+        </p><p>
+
+        <span class="expr">x^2-dx+d^2=(n+z^3)/d</span>.
+
+        </p><p>
+        The video argued that this is essentially a one-dimensional search (for z) as there are only a few plausible 'd' values. This wasn't justified in the video so I thought
+        I'd start by verifying that.
+        
+        </p><p>
+        
+        The first thing you'd notice is that, as we are looking for integers, 'd' must divide <span class="expr">n+z^3</span>, but <span class="expr">n+z^3</span> could be
+        a very large number with a large number of factors, and finding factors gets harder as the numbers get bigger. However, let's continue. For 'd' values that do divide
+        <span class="expr">n+z^3</span> we have to solve the quadratic equation:
+
+        </p><p>
+        <span class="expr">3x^2-3dx+d^2-(n+z^3)/d=0</span> for x.
+
+        </p><p>
+        Which is equvalent to the traditional quadratic equation 
+        <span class="expr">ax^2+bx+c=0</span> with <br>
+        <span class="expr">a=3</span>, <br>
+        <span class="expr">b=&minus;3d</span> and <br>
+        <span class="expr">c=d^2-(n+z^3)/d</span>.
+        </p><p>
+        For this to have integer roots the expression <span class="expr">b^2-4ac</span> must be a square number, which means that at least it must be positive, so :
+        
+        </p><p>
+        
+        <span class="expr">b^2-4ac=9d^2-12(d^2-(n+z^3)/d)>=0</span><br>
+        <span class="expr">=>&minus;3d^2+12(n+z^3)/d>=0</span><br>
+        <span class="expr">=>&minus;3d^3+12(n+z^3)>=0</span> (as 'd' is positive)<br>
+        <span class="expr">=>12(n+z^3)>=3d^3</span><br>
+        <span class="expr">=>4(n+z^3)>=d^3</span><br>
+        <span class="expr">=>d<=(4(n+z^3))^[1/3]~=1.6z</span> (for small n)
+
+        </p><p>
+        To be an integer <span class="expr">3d^3</span> must be a multiple of 4, so 'd' must be even. There are some other optimisations that can be applied, see the
+        <a href="#notes">Notes</a> section below, but these aren't used in the code associated with this page.
+        </p>
+        <h2>Interactive Section</h2>
+        <p>
+        Let's see how this works in reality. Note: This section is just to show you how the algorithm works, you won't be able to find any new solutions.
+        In the accompanying video you'll see that the components that add up to 42 have 16 digits. This isn't really reachable using the built in numbers of javascript
+        as the algorithm has a <span class="expr">z^3</span> term, which will overflow for 'z' values around 1 million. Also searching <span class="expr">10^17</span>
+        potential values will probably take longer than the lifetime of your computer.
+        </p><p>
+        in the controls below "Target" is the 'n' value you are looking for (42 in the video) and "Max Z" is the largest potential 'z' value that will be tested.
+        The "Verbose" button will generate output showing the workings described above, and will generate a lot of output. The "Solve" will just show the solutions
+        found, and "Unique" will eliminate duplicate solutions by arranging x, y and z so that <span class="expr">x>y>z</span>.
+        </p><p>
+        720 is an interesting target, also try comparing the results for n and &minus;n.
+        
+        </p><p>
+          Target: <input type="text" size="12" value="72" id="nval">
+          Max Z: <input type="text" size="12" value="11" id="maxz">
+        
+          <button onclick="ShowValues();"> Verbose Solve </button> 
+          <button onclick="GetValues(false);"> Solve </button> 
+          <button onclick="GetValues(true);"> Unique </button>
+
+        </p><p>
+        <span id="result">result</span>
+        </p>
+        
+    </div>
+    
+    <!-- Notes -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+
+        <h1> Notes </h1>
+      <p>
+        If you calculate the sequence <span class="expr">z^3</span> modulo 9 you get [1,8,0,1,8,0,1,8,0,...]. This repeats indefinitely. You can show this
+        by considering the expression <span class="expr">(3n+k)^3</span> mod 9, where <span class="expr">0<=k<=2</span>. This expands to:
+      </p><p>
+        <span class="expr">(3n)^3+3.(3n)^2k+3.(3n)k^2+k^3</span> mod 9.
+      </p><p>
+        The first three terms are all multiples of 9, so the remainder will be <span class="expr">k^3</span> mod 9 which is [1,8,0] as we showed above.
+        The possible remainders when <span class="expr">x^3+y^3+z^3</span> is divided by 9 can be obtained by adding 
+        all the permutations of three numbers taken from this list, which are:
+        [0,1,2,3,8,9,10,16,17,24], which modulo 9 become [0,1,2,3,8,0,1,7,8,6]. 
+      </p><p>
+        If you expand these sums into a table:
+      </p><p>
+        <table>
+         <tr>
+          <th>k1,k2,k3</th><th>0,0</th><th>0,1</th><th>0,8</th><th>1,0</th><th>1,1</th><th>1,8</th><th>8,0</th><th>8,1</th><th>8,8</th>
+         </tr>
+        
+         <tr>
+          <th>0</th><td>0</td><td>1</td><td>8</td><td>1</td><td>2</td><td>0</td><td>8</td><td>0</td><td>7</td>
+         </tr>
+
+         <tr>
+          <th>1</th><td>1</td><td>2</td><td>0</td><td>2</td><td>3</td><td>1</td><td>0</td><td>1</td><td>8</td>
+         </tr>
+
+         <tr>
+          <th>8</th><td>8</td><td>0</td><td>7</td><td>0</td><td>1</td><td>8</td><td>7</td><td>8</td><td>6</td>
+         </tr>
+       </table>
+      </p><p>
+        And arrange them according to the total we can infer some additional constraints on 'z'.
+      </p><p>
+       <table>
+         <tr>
+          <th>Total</th><th>Combinations</th><th>Count</th><th>Constraints on 'z'</th>
+         </tr>
+        
+         <tr>
+          <th>0</th><td>(0,0,0), (0,1,8)</td><td>7</td><td>none</td>
+         </tr>
+
+         <tr>
+          <th>1</th><td>(0,0,1), (1,1,8)</td><td>6</td><td>none</td>
+         </tr>
+
+         <tr>
+          <th>2</th><td>(0,1,1)</td><td>3</td><td>z mod 3 can't be 2</td>
+         </tr>
+
+         <tr>
+          <th>3</th><td>(1,1,1)</td><td>1</td><td>z mod 3 must be 1</td>
+         </tr>
+
+         <tr>
+          <th>4</th><td></td><td>0</td><td>impossible</td>
+         </tr>
+
+         <tr>
+          <th>5</th><td></td><td>0</td><td>impossible</td>
+         </tr>
+
+         <tr>
+          <th>6</th><td>(8,8,8)</td><td>1</td><td>z mod 3 must be 2</td>
+         </tr>
+
+         <tr>
+          <th>7</th><td>(0,8,8)</td><td>3</td><td>z mod 3 can't be 1</td>
+         </tr>
+
+         <tr>
+          <th>8</th><td>(0,0,8), (1,8,8)</td><td>6</td><td>none</td>
+         </tr>
+       </table>
+      </p>
+    </div>
     
 <!-- Generic links -->
 

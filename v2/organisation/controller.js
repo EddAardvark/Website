@@ -1,3 +1,4 @@
+
 //-------------------------------------------------------------------------------------------------
 // Molecule bath controller
 // (c) John Whitehouse 2021
@@ -77,12 +78,12 @@ SimController.initialise = function (w, h)
     
     SimController.densities = [density_1, density_2, density_3, density_4];
     SimController.avg_densities = [avg_density_1, avg_density_2, avg_density_3, avg_density_4];
-    
     SimController.mode_names = ["Add", "Rotate", "Move", "Flip", "Remove"];        
     
     SimController.templates = [];
     SimController.square_templates = [];
     
+
     for (var i = 0 ; i < SimController.SHAPE_TYPES ; ++i)
     {
         SimController.templates [i] = MoleculeTemplate.CreateFromEdges (SimController.edge_templates[i]);
@@ -311,7 +312,7 @@ SimController.InitEnergies = function ()
 SimController.UpdateInteractions = function ()
 {
     // TODO: Use SimController.SHAPE_TYPES
-    
+
     var e11 = parseFloat (energy1x1.value);
     var e12 = parseFloat (energy1x2.value);
     var e13 = parseFloat (energy1x3.value);
@@ -410,7 +411,7 @@ SimController.UpdateMixedInteractions = function ()
 SimController.ShowEnergies = function ()
 {
     // TODO: Use SimController.SHAPE_TYPES
-    
+ 
     energy1x1.value = Misc.FloatToText (SimController.bath.interaction_energy[0][0],6);
     energy1x2.value = Misc.FloatToText (SimController.bath.interaction_energy[0][1],6);
     energy1x3.value = Misc.FloatToText (SimController.bath.interaction_energy[0][2],6);
