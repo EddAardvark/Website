@@ -4,7 +4,7 @@
 // This is an instance of the molcule template. All molecules from the same template will
 // look the same, though they may be mirror images.
 //
-// (c) John Whitehouse 2020
+// (c) John Whitehouse 2021
 // www.eddaardvark.co.uk
 //-------------------------------------------------------------------------------------------------
 

@@ -1,6 +1,15 @@
+//-------------------------------------------------------------------------------------------------
+// Molecule bath controller
+// (c) John Whitehouse 2021
+// www.eddaardvark.co.uk
+//-------------------------------------------------------------------------------------------------
+
 SimController = function ()
 {
 }
+
+SimController.SHAPE_TYPES = 4;
+
 //------------------------------------------------------------------------------------------------------------------
 SimController.HidePopup = function ()
 {
@@ -12,7 +21,8 @@ SimController.initialise = function (w, h)
 {
     document.addEventListener('keydown', SimController.OnKey);
     SimController.popup = new Popup("popup");
-    SimController.timer = setInterval(SimController.DoAnimate, 200);
+    SimController.INTERVAL = 200;
+    SimController.timer = setInterval(SimController.DoAnimate, SimController.INTERVAL);
     SimController.colours = ["yellow", "green", "cyan", "magenta"];
     
     SVGColours.AddColours (colour1);
@@ -63,12 +73,17 @@ SimController.initialise = function (w, h)
         [MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT,MoleculeTemplate.STRAIGHT],
     ];
     
+    // UI elements to display shape densities
+    
+    SimController.densities = [density_1, density_2, density_3, density_4];
+    SimController.avg_densities = [avg_density_1, avg_density_2, avg_density_3, avg_density_4];
+    
     SimController.mode_names = ["Add", "Rotate", "Move", "Flip", "Remove"];        
     
     SimController.templates = [];
     SimController.square_templates = [];
     
-    for (var i = 0 ; i < 4 ; ++i)
+    for (var i = 0 ; i < SimController.SHAPE_TYPES ; ++i)
     {
         SimController.templates [i] = MoleculeTemplate.CreateFromEdges (SimController.edge_templates[i]);
         SimController.templates [i].set_colour (SimController.colours [i]);
@@ -88,7 +103,9 @@ SimController.initialise = function (w, h)
     SimController.DrawEdgeInteractions ();
     SimController.DrawShapeSelection (); 
     
+    SimController.ResetStats ();
     SimController.DrawSimulation ();
+    SimController.ShowCounts ();
 }
 //------------------------------------------------------------------------------------------------------------------
 SimController.OnKey = function (event)
@@ -109,7 +126,8 @@ SimController.DoAnimate = function ()
 //------------------------------------------------------------------------------------------------------------------
 SimController.StartSimulation = function ()
 {
-    SimController.draw_every = parseInt (simdraw.value);
+    var persec = parseInt (simspeed.value);
+    SimController.draw_every = persec * SimController.INTERVAL / 1000;
     SimController.sim_fun = SimController.DoSimulation;
 }
 //------------------------------------------------------------------------------------------------------------------
@@ -119,56 +137,45 @@ SimController.StopSimulation = function ()
 }
 //------------------------------------------------------------------------------------------------------------------
 SimController.DoSimulation = function ()
-{
+{   
     SimController.bath.start_next_period ();
     SimController.bath.try_moves (SimController.draw_every);
     
     SimController.DrawSimulation();
-    SimController.ShowTrackedEnergy ();
-    SimController.ShowCounts ();
-}
-//------------------------------------------------------------------------------------------------------------------
-SimController.ShowProbabilities = function (t_element, p_element, v_element, result)
-{
-    var T = parseFloat (t_element.value);
-    var P = parseFloat (p_element.value);
-    var V = parseFloat (v_element.value);
-    SimController.ShowProbabilitiesFromValues (T, P, V, result);
-}
-//------------------------------------------------------------------------------------------------------------------
-SimController.ShowProbabilitiesFromValues = function (T, P, V, result)
-{
-    var pv = P * V;
-    var energies = [-2, -1, -0.5, -0.1, 0, 0.1, 0.5, 1.0, 2.0];
+    num_steps.innerHTML = Misc.FormatNumberReadable (SimController.bath.counters.iterations);
     
-    var text = "<table><tr> <th>&Delta;E</th>  <th>Move</th>  <th>Create</th>  <th>Destroy</th> </tr>";
+    ++ SimController.ticks;
     
-    for (var i in energies)
+    if (SimController.ticks % 10 == 0)
     {
-        var de = energies [i];
+        SimController.ShowCounts ();
         
-        text += "<tr>";
-        text += "<td>" + Misc.FloatToText (de, 6) + "</td>";
-        text += "<td>" + Misc.FloatToText (Bath.MoveProbability (de, pv, T, 32), 6) + "</td>";
-        text += "<td>" + Misc.FloatToText (Bath.CreateProbability (de, pv, T, 32), 6) + "</td>";
-        text += "<td>" + Misc.FloatToText (Bath.DestroyProbability (de, pv, T, 32), 6) + "</td>";
-        text += "</tr>";
+        if (SimController.ticks % 1000 == 0)
+        {
+            SimController.bath.correct_drift ();
+        }        
     }
-    text += "</table>";
-    
-    result.innerHTML = text;
 }
 //------------------------------------------------------------------------------------------------------------------
 SimController.ShowCounts = function ()
 {
-    var text = SimController.bath.get_counter_display ();
+    simulation_counts.innerHTML = SimController.bath.get_counter_display ();
     
-    simulation_counts.innerHTML = text;
+    calc_energy.innerHTML = Misc.FloatToText (SimController.bath.counters.tracked_energy, 3);
+    avg_energy.innerHTML = Misc.FloatToText (SimController.bath.counters.average_energy, 3);
+    density.innerHTML = Misc.FloatToText (SimController.bath.get_density(), 3);
+    avg_density.innerHTML = Misc.FloatToText (SimController.bath.get_average_density(), 3);
+    
+    for (var i = 0 ; i < SimController.SHAPE_TYPES ; ++i)
+    {
+        SimController.densities [i].innerHTML = Misc.FloatToText (SimController.bath.get_density(i), 3);
+        SimController.avg_densities [i].innerHTML = Misc.FloatToText (SimController.bath.get_average_density(i), 3);
+    }
 }
 //------------------------------------------------------------------------------------------------------------------
 SimController.DrawTemplates = function ()
 {
-    for (var i = 0 ; i < 4 ; ++i)
+    for (var i = 0 ; i < SimController.SHAPE_TYPES ; ++i)
     {
         SimController.DrawTemplate (i);
     }
@@ -200,11 +207,11 @@ SimController.DrawPairs = function ()
     var b2 = new Bath (2, 1, 2, 0, 0);
     var shape = 0;
     
-    for (var i = 0 ; i < 4 ; ++i)
+    for (var i = 0 ; i < SimController.SHAPE_TYPES ; ++i)
     {
         b2.simple_replace_molecule (0, 0, SimController.square_templates[i]);   
 
-        for (var j = i ; j < 4 ; ++j)
+        for (var j = i ; j < SimController.SHAPE_TYPES ; ++j)
         {     
             b2.simple_replace_molecule (1, 0, SimController.square_templates[j]);        
             b2.draw (SimController.pair_shapes[shape++]);
@@ -280,22 +287,20 @@ SimController.InitEnergies = function ()
 {   
     try
     {
-        SimController.bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, 0.1);
-        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, 0.2);
-        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, -0.5);
-
-        SimController.bath.set_interaction_energy (0, 0, -0.2);
-        SimController.bath.set_interaction_energy (0, 1, 0.2);
-        SimController.bath.set_interaction_energy (0, 2, 0.3);
-        SimController.bath.set_interaction_energy (0, 3, 0.2);
-        SimController.bath.set_interaction_energy (1, 1, -0.3);
-        SimController.bath.set_interaction_energy (1, 2, 0.1);
-        SimController.bath.set_interaction_energy (1, 3, 0.1);
-        SimController.bath.set_interaction_energy (2, 2, -0.4);
-        SimController.bath.set_interaction_energy (2, 3, -0.2);
-        SimController.bath.set_interaction_energy (3, 3, -0.5);
+        SimController.bath.set_edge_energy (MoleculeTemplate.STRAIGHT, MoleculeTemplate.IN, 0.5);
+        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.IN, 1);
+        SimController.bath.set_edge_energy (MoleculeTemplate.IN, MoleculeTemplate.OUT, -2);
+        
+        for (var i = 0 ; i < SimController.SHAPE_TYPES ; ++i)
+        {
+            for (var j = i ; j < SimController.SHAPE_TYPES ; ++j)
+            {
+                SimController.bath.set_interaction_energy (i, j, 0);
+            }
+        }
 
         SimController.bath.set_temperature (1.0);
+        SimController.bath.set_pressure (1.0);
     }
     catch (e)
     {
@@ -305,6 +310,8 @@ SimController.InitEnergies = function ()
 //------------------------------------------------------------------------------------------------------------------
 SimController.UpdateInteractions = function ()
 {
+    // TODO: Use SimController.SHAPE_TYPES
+    
     var e11 = parseFloat (energy1x1.value);
     var e12 = parseFloat (energy1x2.value);
     var e13 = parseFloat (energy1x3.value);
@@ -355,6 +362,8 @@ SimController.UpdateInteractions = function ()
 //------------------------------------------------------------------------------------------------------------------
 SimController.UpdateAllInteractions = function ()
 {   
+    // TODO: Use SimController.SHAPE_TYPES
+        
     var e = parseFloat (all_energy.value);
     
     energy1x1.value = e;
@@ -399,7 +408,9 @@ SimController.UpdateMixedInteractions = function ()
 }    
 //------------------------------------------------------------------------------------------------------------------    
 SimController.ShowEnergies = function ()
-{    
+{
+    // TODO: Use SimController.SHAPE_TYPES
+    
     energy1x1.value = Misc.FloatToText (SimController.bath.interaction_energy[0][0],6);
     energy1x2.value = Misc.FloatToText (SimController.bath.interaction_energy[0][1],6);
     energy1x3.value = Misc.FloatToText (SimController.bath.interaction_energy[0][2],6);
@@ -426,14 +437,9 @@ SimController.DrawSimulation = function ()
 //------------------------------------------------------------------------------------------------------------------
 SimController.ResetStats = function ()
 {
+    SimController.ticks = 0;
     SimController.bath.reset_stats ();
-    SimController.ShowTrackedEnergy ();
-}
-//------------------------------------------------------------------------------------------------------------------
-SimController.ShowTrackedEnergy = function ()
-{
-    calc_energy.innerHTML = Misc.FloatToText (SimController.bath.move_counters.tracked_energy, 3);
-    avg_energy.innerHTML = Misc.FloatToText (SimController.bath.move_counters.average_energy, 3);
+    SimController.ShowCounts ();
 }
 //------------------------------------------------------------------------------------------------------------------
 SimController.ShowTotalEnergy = function ()

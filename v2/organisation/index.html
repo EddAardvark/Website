@@ -36,6 +36,7 @@ DIV.popup {
 <script src="controller.js"> </script>
 <script src="molecule_template.js"> </script>
 <script src="molecule.js"> </script>
+<script src="counters.js"> </script>
 <script src="bath.js"> </script>
 
 <title> A 2-Dimensional self-organising system </title>
@@ -103,16 +104,43 @@ OnLoad = function ()
       </p><p>
         <button onclick="SimController.ResetSimulation()"> Reset </button>   
         <button onclick="SimController.StartSimulation()"> Simulate </button>              
-        <button onclick="SimController.StopSimulation()"> Stop </button>              
+        <button onclick="SimController.StopSimulation()"> Stop </button>
+        Per second:  <input type="text" maxlength="12" id="simspeed" size="12" value="10000">  
+        Steps: <span id="num_steps"> 0 </span>
+      </p>
+    </div>
+    
+    <!-- Status -->
+    
+    <div class="float in2 box w9" style="overflow: auto;"><p>
+      
+        <h1> Status </h1>
         
-      </p><p>
-        Energy (E):     <span id="calc_energy"> &nbsp; </span>,
-        &lt;E&gt;:      <span id="avg_energy"> 
-        <button onclick="SimController.SyncEnergy()">Sync</button> 
-      </p><p>
-        Draw every:  <input type="text" maxlength="12" id="simdraw" size="12" value="1000">  
-      </p><p>
-        <span id="simulation_counts"> &nbsp; </span>
+          <table>
+           <tr>
+            <td>
+                <span id="simulation_counts"> &nbsp; </span>
+            </td>
+            <td>
+             <table>
+              <tr>
+               <th>Energy (E)</th> <td> <span id="calc_energy"> n/a </span> </td> <th> &lt;E&gt; </th> <td> <span id="avg_energy"> n/a </span> </td>
+              </tr> <tr>
+               <th>Density (&rho;)</th> <td> <span id="density"> n/a </span> </td> <th> &lt;&rho;&gt; </th> <td> <span id="avg_density"> n/a </span> </td>
+              </tr> <tr>
+               <th>Density (&rho;<span class="subscript">1</span>)</th> <td> <span id="density_1"> n/a </span> </td> <th> &lt;&rho;<span class="subscript">1</span>&gt; </th> <td> <span id="avg_density_1"> n/a </span> </td>
+              </tr> <tr>
+               <th>Density (&rho;<span class="subscript">2</span>)</th> <td> <span id="density_2"> n/a </span> </td> <th> &lt;&rho;<span class="subscript">2</span>&gt; </th> <td> <span id="avg_density_2"> n/a </span> </td>
+              </tr> <tr>
+               <th>Density (&rho;<span class="subscript">3</span>)</th> <td> <span id="density_3"> n/a </span> </td> <th> &lt;&rho;<span class="subscript">3</span>&gt; </th> <td> <span id="avg_density_3"> n/a </span> </td>
+              </tr> <tr>
+               <th>Density (&rho;<span class="subscript">4</span>)</th> <td> <span id="density_4"> n/a </span> </td> <th> &lt;&rho;<span class="subscript">4</span>&gt; </th> <td> <span id="avg_density_4"> n/a </span> </td>
+              </tr>
+             </table>
+            </td>
+           </tr> 
+          </table>       
+          
       </p>
     </div>
     
@@ -137,7 +165,7 @@ OnLoad = function ()
                  Enter the interaction energies for adjacent shapes for the various colour and edge combinations. The relationship are symmetrical so only one value per pair is required.
                  Negative energies are attractive, positive ones repulsive. Interactions where a spike abuts another spike or flat edge aren't allowed. Two flat edges in contact
                  contribute no additional energy.
-             </P>
+             </p>
             </td> 
          </tr>
 

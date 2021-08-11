@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------
 // A container of molecules
-// (c) John Whitehouse 2020
+// (c) John Whitehouse 2021
 // www.eddaardvark.co.uk
 //-------------------------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ Bath = function (num_x, num_y, s, mx, my)
     this.interaction_energy = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
     this.temperature = 1;
     this.set_pressure (1);
-    this.move_counters = new Bath.MoveCounters();
+    
     // Adjacent cells
     
     this.up = new Array (this.num_cells);
@@ -50,200 +50,86 @@ Bath = function (num_x, num_y, s, mx, my)
     }
 }
 //-------------------------------------------------------------------------------------------------
-Bath.MoveCounters = function ()
+Bath.TryResult = function (de)
 {
-    this.tries = new Array (Bath.MoveCounters.MOVE_TYPES);
-    this.accepted = new Array (Bath.MoveCounters.MOVE_TYPES);
-    this.total_tries = new Array (Bath.MoveCounters.MOVE_TYPES);
-    this.total_accepted = new Array (Bath.MoveCounters.MOVE_TYPES);
-    
-    this.reset (0);
+    this.delta_energy = de;
+    this.add_type = null;
+    this.del_type = null;
 }
 //-------------------------------------------------------------------------------------------------
-Bath.MoveCounters.Add = 0;
-Bath.MoveCounters.Remove = 1;
-Bath.MoveCounters.Exchange = 2;
-Bath.MoveCounters.Rotate = 3;
-Bath.MoveCounters.Move = 4;
-Bath.MoveCounters.Flip = 5;
-Bath.MoveCounters.MOVE_TYPES = 6;
-
-Bath.MoveCounters.AVERAGER1 = 0.99999;
-Bath.MoveCounters.AVERAGER2 = 1 - Bath.MoveCounters.AVERAGER1;
-
-Bath.MoveCounters.NAMES = ["Add", "Remove", "Exchange", "Move", "Rotate", "Flip"];
-
-Bath.MoveCounters.prototype.reset = function (e)
+Bath.prototype.get_average_density = function (shape)
 {
-    for (var i = 0 ; i < Bath.MoveCounters.MOVE_TYPES ; ++i)
-    {
-        this.tries [i] = 0;
-        this.accepted [i] = 0;
-        this.total_tries [i] = 0;
-        this.total_accepted [i] = 0;
-    }
-    this.tracked_energy = e;
-    this.average_energy = e;
+    var val = (shape == undefined) ? this.counters.average_number : this.counters.avg_shape_counts [shape];
+    return val / this.num_cells ;
 }
 //-------------------------------------------------------------------------------------------------
-Bath.MoveCounters.prototype.inc = function (type, delta, accepted)
+Bath.prototype.get_density = function (shape)
 {
-    ++ this.tries [type];
-    if (accepted)
-    {
-        ++ this.accepted [type];
-        this.tracked_energy += delta;
-    }
-    
-    this.average_energy = this.average_energy * Bath.MoveCounters.AVERAGER1 + this.tracked_energy * Bath.MoveCounters.AVERAGER2;
-}
-//-------------------------------------------------------------------------------------------------
-Bath.MoveCounters.prototype.next_period = function ()
-{
-    for (var i = 0 ; i < Bath.MoveCounters.MOVE_TYPES ; ++i)
-    {
-        this.total_tries [i] += this.tries [i];
-        this.total_accepted [i] += this.accepted [i];
-        this.tries [i] = 0;
-        this.accepted [i] = 0;
-    }
-}
-//-------------------------------------------------------------------------------------------------
-Bath.MoveCounters.prototype.table_row = function (type)
-{
-    var ret = "<tr>";
-    
-    ret += "<td>" + Bath.MoveCounters.NAMES[type] + "</td>";
-    
-    ret += "<td>" + this.tries [type] + "</td>";
-    ret += "<td>" + this.accepted [type] + "</td>";
-    ret += "<td>" + Misc.FloatToText (100 * this.accepted [type] / this.tries [type], 3) + "</td>";
-    
-    var total_t = this.tries [type] + this.total_tries [type];
-    var total_a = this.accepted [type] + this.total_accepted [type];
-    
-    ret += "<td>" + total_t + "</td>";
-    ret += "<td>" + total_a + "</td>";
-    ret += "<td>" + Misc.FloatToText (100 * total_a / total_t, 3) + "</td>";
-
-    ret += "</tr>";
-    return ret;
-}
-//-------------------------------------------------------------------------------------------------
-Bath.MoveCounters.prototype.total_row = function ()
-{
-    
-    var tries = 0;
-    var accepted = 0;
-    var tot_tries = 0;
-    var tot_accepted = 0;
-        
-    for (var i = 0 ; i < Bath.MoveCounters.MOVE_TYPES ; ++i)
-    {
-        tot_tries += this.total_tries [i];
-        tot_accepted += this.total_accepted [i];
-        tries += this.tries [i];
-        accepted += this.accepted [i];
-    }
-    
-    var ret = "<tr>";
-    
-    ret += "<td> Total </td>";
-    
-    ret += "<td>" + tries + "</td>";
-    ret += "<td>" + accepted + "</td>";
-    ret += "<td>" + Misc.FloatToText (100 * accepted / tries, 3) + "</td>";
-    
-    ret += "<td>" + tot_tries + "</td>";
-    ret += "<td>" + tot_accepted + "</td>";
-    ret += "<td>" + Misc.FloatToText (100 * tot_accepted / tot_tries, 3) + "</td>";
-
-    ret += "</tr>";
-    
-    return ret;
-}
-//-------------------------------------------------------------------------------------------------
-Bath.MoveCounters.prototype.heading_row = function ()
-{
-    var ret = "<tr>";
-    
-    ret += "<th> Action </th>";
-    
-    ret += "<th> Tries </th>";
-    ret += "<th> Accepted </th>";
-    ret += "<th> % </th>";
-
-    ret += "<th> Total Tries </th>";
-    ret += "<th> Total Accepted </th>";
-    ret += "<th> Total % </th>";
-
-    ret += "</tr>";
-    return ret;
+    var val = (shape == undefined) ? this.molecules.length : this.counters.shape_counts [shape];
+    return val / this.num_cells ;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.try_moves = function (num)
 {
     for (var i = 0 ; i < num ; ++i)
     {
-        var n = Misc.RandomInteger (Bath.MoveCounters.MOVE_TYPES);
-        var delta = null;
+        var n = Misc.RandomInteger (BathCounters.MOVE_TYPES);
+        var result = null;
         
-        if (n == Bath.MoveCounters.Add)
+        if (n == BathCounters.Add)
+        {
+            var type = Misc.RandomInteger (SimController.SHAPE_TYPES);
+
+            result = SimController.bath.add_molecule (SimController.templates[type]);
+        }
+        else if (n == BathCounters.Rotate)
+        {
+            result = SimController.bath.rotate_molecule ();
+        }
+        else if (n == BathCounters.Move)
+        {
+            result = SimController.bath.move_molecule ();
+        }
+        else if (n == BathCounters.Flip)
+        {
+            result = SimController.bath.flip_molecule ();
+        }
+        else if (n == BathCounters.Remove)
+        {
+            result = SimController.bath.remove_molecule ();
+        }
+        else if (n == BathCounters.Exchange )
         {
             var type = Misc.RandomInteger (SimController.templates.length);
 
-            delta = SimController.bath.add_molecule (SimController.templates[type]);
-        }
-        else if (n == Bath.MoveCounters.Rotate)
-        {
-            delta = SimController.bath.rotate_molecule ();
-        }
-        else if (n == Bath.MoveCounters.Move)
-        {
-            delta = SimController.bath.move_molecule ();
-        }
-        else if (n == Bath.MoveCounters.Flip)
-        {
-            delta = SimController.bath.flip_molecule ();
-        }
-        else if (n == Bath.MoveCounters.Remove)
-        {
-            delta = SimController.bath.remove_molecule ();
-        }
-        else if (n == Bath.MoveCounters.Exchange )
-        {
-            var type = Misc.RandomInteger (SimController.templates.length);
-
-            delta = SimController.bath.exchange_molecule (SimController.templates[type]);
+            result = SimController.bath.exchange_molecule (SimController.templates[type]);
         }
         
-        var accepted = delta !== null;
-        
-        this.move_counters.inc (n, delta, accepted);
+        this.counters.inc (n, result, this.molecules.length);
     }
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.reset_stats = function ()
 {
-    this.move_counters.reset (this.get_total_energy ());
+    this.counters.reset (this.get_total_energy (), this.molecules.length);
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.start_next_period = function ()
 {
-    this.move_counters.next_period ();
+    this.counters.next_period ();
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.get_counter_display = function ()
 {
     var ret = "<table>";
     
-    ret += this.move_counters.heading_row();   
+    ret += this.counters.heading_row();   
     
-    for (var i = 0 ; i < Bath.MoveCounters.MOVE_TYPES ; ++i)
+    for (var i = 0 ; i < BathCounters.MOVE_TYPES ; ++i)
     {
-        ret += this.move_counters.table_row (i);
+        ret += this.counters.table_row (i);
     }
-    ret += this.move_counters.total_row ();
+    ret += this.counters.total_row ();
     ret += "</table>";
     
     return ret;
@@ -251,7 +137,7 @@ Bath.prototype.get_counter_display = function ()
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.next_period = function ()
 {
-    for (var i = 0 ; i < Bath.MoveCounters.MOVE_TYPES ; ++i)
+    for (var i = 0 ; i < BathCounters.MOVE_TYPES ; ++i)
     {
         this.total_tries [i] += this.tries [i];
         this.total_accepted [i] += this.accepted [i];
@@ -319,7 +205,9 @@ Bath.prototype.reset = function ()
     for (var i = 0 ; i < this.num_cells ; ++i)
     {
         this.grid [i] = null;
-    }    
+    }
+    
+    this.counters = new BathCounters();
 }
 //-------------------------------------------------------------------------------------------------
 Bath.CreateProbability = function (delta_E, PV, T, N)
@@ -426,7 +314,12 @@ Bath.prototype.add_molecule = function (template)
         return null;
     }
     
-    var mol = new Molecule (template, this);    
+    var mol = new Molecule (template, this);
+    
+    mol.rotate (Misc.RandomInteger(4));
+    
+    if (Misc.RandomBool()) mol.flip ();
+    
     var delta_e = this.get_molecule_energy (mol, pos);
     
     if (delta_e === null)
@@ -441,7 +334,11 @@ Bath.prototype.add_molecule = function (template)
     this.place (mol, pos);
     this.grid [pos] = mol;
     this.molecules.push (mol);
-    return delta_e;
+    
+    var result = new Bath.TryResult (delta_e);
+    
+    result.add_type = template.id;
+    return result;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.exchange_molecule = function (template)
@@ -476,7 +373,11 @@ Bath.prototype.exchange_molecule = function (template)
     this.grid [pos] = new_mol;
     this.molecules [idx] = new_mol;
     
-    return delta_e;
+    var result = new Bath.TryResult (delta_e);
+    
+    result.add_type = new_mol.template.id;
+    result.del_type = old_mol.template.id;
+    return result;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.remove_molecule = function ()
@@ -505,7 +406,10 @@ Bath.prototype.remove_molecule = function ()
         this.molecules.splice (idx,1);
     }
     
-    return delta_e;
+    var result = new Bath.TryResult (delta_e);
+    
+    result.del_type = mol.template.id;
+    return result;
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.rotate_molecule = function ()
@@ -538,8 +442,8 @@ Bath.prototype.rotate_molecule = function ()
     }
     
     mol.set_points();
-        
-    return delta_e;
+    
+    return new Bath.TryResult (delta_e);
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.flip_molecule = function ()
@@ -572,8 +476,8 @@ Bath.prototype.flip_molecule = function ()
     }
     
     mol.set_points();
-        
-    return delta_e;
+    
+    return new Bath.TryResult (delta_e);
 }
 //-------------------------------------------------------------------------------------------------
 Bath.prototype.move_molecule = function ()
@@ -616,8 +520,8 @@ Bath.prototype.move_molecule = function ()
     }
 
     this.place (mol, new_pos);
-        
-    return delta_e;
+    
+    return new Bath.TryResult (delta_e);
 }
 //------------------------------------------------------------------------------------------------------------
 Bath.prototype.place = function (mol, pos)
@@ -653,7 +557,19 @@ Bath.prototype.get_neighbours = function (pos)
     return ret;
 }
 //-------------------------------------------------------------------------------------------------
-Bath.prototype.get_total_energy = function (mol, neighbours)
+// Corrects any drift caused by rounding in the floating-point maths. Calculating total energy
+// is expensive so we track it by adding deltas.
+Bath.prototype.correct_drift = function ()
+{
+    var energy = this.get_total_energy ();
+    var drift = this.counters.tracked_energy - energy;
+    
+    this.counters.tracked_energy = energy;
+    
+    return drift;
+}
+//-------------------------------------------------------------------------------------------------
+Bath.prototype.get_total_energy = function ()
 {
     var interaction_energy = 0;
     

@@ -38,34 +38,6 @@ Misc.FloatToText = function (x, precision)
     }
     return x.toFixed(precision).replace(/0+$/,"").replace(/\.$/,"");
 }
-
-//----------------------------------------------------------------------------------------------------------
-Misc.FormatNumberReadable = function (x)
-{
-    var absv = Math.abs (x);
-    
-    if (absv < 1000)
-    {
-        return Misc.FloatToText (x, 3);
-    }
-    
-    if (absv < 1000000)
-    {
-        return Misc.FloatToText (x / 1000, 3) + " thousand";
-    }
-    
-    if (absv < 1000000000)
-    {
-        return Misc.FloatToText (x / 1000000, 3) + " million";
-    }
-    
-    if (absv < 1000000000000)
-    {
-        return Misc.FloatToText (x / 1000000000, 3) + " billion";
-    }
-
-    return Misc.FloatToText (x / 1000000000000, 3) + " trillion";    
-}
 //-------------------------------------------------------------------------------------------------
 // Uses C# printf notation, "{n}" is replaced by the (n+1)th argument, count starts at 0.
 //-------------------------------------------------------------------------------------------------
