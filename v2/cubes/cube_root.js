@@ -7,7 +7,6 @@
 //
 // Uses vlint.js
 //-------------------------------------------------------------------------------------------------
-
 CubeRoot = function (cube, a, b, count)
 {
     // cube - the number being rooted
@@ -20,12 +19,22 @@ CubeRoot = function (cube, a, b, count)
     this.a = a;
     this.b = b;
     
-    this.sequence = [[a,b]];
+    this.sequence = [[a,b,a.Divide(b)]];
     
     for (var i = 0 ; i < count ; ++i)
     {
-        this.GetNext ();
+        if (this.GetNext ()) break;
     }
+    return this.sequence[this.sequence.length-1][2];
+}
+CubeRoot.FromXY = function (x, y, n)
+{
+    var x3 = x.Cube ();
+    var y3 = y.Cube ();
+    var guess = (VLInt.Compare (x, y) > 0) ? x : y;
+    
+    var cr = new CubeRoot (x3.Add(y3), guess, VLInt.ONE, n);
+    return cr;
 }
 //--------------------------------------------------------------------------------------------
 CubeRoot.Initialise = function ()
@@ -45,6 +54,7 @@ CubeRoot.prototype.GetNext = function ()
     var len = this.sequence.length;
     var a = this.sequence[len-1][0];
     var b = this.sequence[len-1][1];
+    var prev = this.sequence[len-1][2];
     
     var a2 = a.Multiply (a);
     var a3 = a2.Multiply(a);
@@ -52,8 +62,13 @@ CubeRoot.prototype.GetNext = function ()
 
     var new_a = CubeRoot.Two.Multiply (a3).Add (b3.Multiply(this.cube));
     var new_b = CubeRoot.Three.Multiply (a2).Multiply (b);
+    var int_val = new_a.Divide(new_b);
+    
+    if (VLInt.Compare (int_val, prev) == 0) return true;
 
-    this.sequence.push ([new_a, new_b]);    
+    Misc.Log ("A = {0}, B = {1}, Ratio = {2}", new_a, new_b, int_val);
+    this.sequence.push ([new_a, new_b, int_val]);   
+    return false;
 }
 //--------------------------------------------------------------------------------------------
 CubeRoot.prototype.ToList = function (element_id)
