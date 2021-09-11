@@ -186,10 +186,15 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         <h1> Search for specific values </h1>
         
         <p> There is a <a href="https://youtu.be/ASoz_NuIvP0" target="_blank">numberphile video on youtube</a> which talks about how they solved the problem of identifying 
-        integer solutions to equations like<span class="expr">x^3+y^3+z^3=42</span>. I found this quite interesting, but the video didn't go into the details of
+        integer solutions to equations like<span class="expr">x^3+y^3+z^3=33</span>. I found this quite interesting, but the video didn't go into the details of
         how they actually implemented the algorithm, so I thought I'd give it a go and see how it pans out. The simplification they
-        made was that rather than search for any small sum they'd pick a single value and focus on that. At the time 42 was the smallest
-        unsolved value. To get a small value like 42 using cubes greater than 3 at least one of x, y and z must be negative.   
+        made was that rather than search for any small sum they'd pick a single value and focus on that. At the time 33 was the smallest
+        unsolved value. To get a small value like 33 using cubes greater than 3 at least one of x, y and z must be negative.   
+
+        </p><p>
+        
+        Since this video a <a href="https://www.youtube.com/watch?v=zyG8Vlw5aAw">follow-up video</a> provides a solution for 42. It uses 17 digit numbers. This is the last possible
+        number smaller than 100 to be solved.
 
         </p><p>
         So we start by looking for solutions of 
@@ -247,11 +252,11 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         <h2>Interactive Section</h2>
         <p>
         Let's see how this works in reality. Note: This section is just to show you how the algorithm works, you won't be able to find any new solutions.
-        In the accompanying video you'll see that the components that add up to 42 have 16 digits. This isn't really reachable using the built in numbers of javascript
+        In the accompanying video you'll see that the components that add up to 33 have 16 digits. This isn't really reachable using the built in numbers of javascript
         as the algorithm has a <span class="expr">z^3</span> term, which will overflow for 'z' values around 1 million. Also searching <span class="expr">10^17</span>
         potential values will probably take longer than the lifetime of your computer.
         </p><p>
-        in the controls below "Target" is the 'n' value you are looking for (42 in the video) and "Max Z" is the largest potential 'z' value that will be tested.
+        in the controls below "Target" is the 'n' value you are looking for (33 in the video) and "Max Z" is the largest potential 'z' value that will be tested.
         The "Verbose" button will generate output showing the workings described above, and will generate a lot of output. The "Solve" will just show the solutions
         found, and "Unique" will eliminate duplicate solutions by arranging x, y and z so that <span class="expr">x>y>z</span>.
         </p><p>

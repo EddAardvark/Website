@@ -51,6 +51,18 @@ BigCube.FromVLInt = function (n)
     return ret;
 }
 //-------------------------------------------------------------------------------------------------
+BigCube.prototype.Clone = function ()
+{    
+    var ret = new BigCube ();
+    
+    ret.root = VLInt.FromVLInt(this.root);
+    ret.dy = VLInt.FromVLInt(this.dy);
+    ret.ddy = VLInt.FromVLInt(this.ddy);
+    ret.cube = VLInt.FromVLInt(this.cube);
+    
+    return ret;
+}
+//-------------------------------------------------------------------------------------------------
 BigCube.prototype.GetIncrement = function ()
 {
     var ret = new BigCube ();

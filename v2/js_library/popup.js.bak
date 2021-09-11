@@ -124,24 +124,13 @@ Popup.prototype.Replace = function (text, closefun)
     }
 }
 //-------------------------------------------------------------
-Popup.prototype.Show = function (text, closefun, overflow)
+Popup.prototype.Show = function (text, closefun)
 {
     if (! this.has_popup)
     {
         this.has_popup = true;
         this.Replace (text, closefun);
         this.popup_element.style.visibility = "visible";
-        
-        if (overflow)
-        {
-            this.popup_element.style.overflow = overflow.o ? overflow.o : "";
-            this.popup_element.style.overflowX = overflow.ox ? overflow.ox : "";
-            this.popup_element.style.overflowY = overflow.oy ? overflow.oy : "";
-        }
-        else
-        {
-            this.popup_element.style.overflow = "";
-        }
     }
 }
 //-------------------------------------------------------------

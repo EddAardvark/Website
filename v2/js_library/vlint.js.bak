@@ -19,15 +19,14 @@ VLInt.MAX_STRING_LEN = Number.MAX_SAFE_INTEGER.toString ().length - 1;
 VLInt.EXP = Math.floor (VLInt.MAX_STRING_LEN / 2);
 VLInt.BASE = Math.pow (10, VLInt.EXP); 
 VLInt.PREFIX = "0000000000";
+
 //----------------------------------------------------------------------------------------------------------------
 VLInt.Initialise = function ()
 {
-    VLInt.ZERO = VLInt.FromInt (0);
     VLInt.ONE = VLInt.FromInt (1);
     VLInt.TWO = VLInt.FromInt (2);
     VLInt.THREE = VLInt.FromInt (3);
     VLInt.EIGHT = VLInt.FromInt (8);
-    VLInt.powers2 = [VLInt.FromInt(1)];
 }
 //----------------------------------------------------------------------------------------------------------------
 VLInt.FromInt = function (n)
@@ -515,44 +514,35 @@ VLInt.prototype.Divide = function (other)
         return new VLInt (0);
     }
 
-    var temp = new VLInt.FromVLInt (this);
-    var subs = [VLInt.FromVLInt(other)];
-    var answer = new VLInt.FromInt (0);
+    var len1 = other.value.length;
+    var len2 = this.value.length;
+    var two = new VLInt (2);
+    var temp = new VLInt (this.value);
+    var powers = [new VLInt (1)];
+    var subs = [new VLInt (other.value)];
+    var answer = new VLInt (0);
     var pos = 0;
 
     // We will subtract out powers of 2 times the divisor
 
     while (this.IsGreaterThan (subs[pos]))
     {
-        subs.push (subs [pos].Multiply (VLInt.TWO));        // denominator x 2^n
+        subs.push (subs [pos].Multiply (two));
+        powers.push (powers [pos].Multiply (two));
         ++ pos;
     }
-    
-    VLInt.PreparePowers (subs.length);    
-    
-    while (--pos >= 0)
+
+    for (var i = pos ; i >= 0 ; --i)
     {
-        if (temp.IsGreaterThanOrEqualTo (subs[pos]))
+        if (temp.IsGreaterThanOrEqualTo (subs[i]))
         {
-            answer = answer.Add (VLInt.powers2[pos]);
-            temp = temp.Subtract (subs [pos]);
+            answer = answer.Add (powers[i]);
+            temp = temp.Subtract (subs [i]);
         }
     }
     return answer;
 }
 
-// Saves recalculating these every time we do a division
-
-VLInt.PreparePowers = function (n)
-{
-    if (n > VLInt.powers2.length)
-    {
-        for (var i = VLInt.powers2.length ; i < n ; ++i)
-        {
-            VLInt.powers2.push (VLInt.powers2 [i-1].MultiplyInt (2));    // 2^n
-        }
-    }
-}
 
 // Calculates this^n (n is a positive integer, doesn't do fractional or negative powers)
 
@@ -616,7 +606,6 @@ VLInt.prototype.MantissaExponent = function ()
 
     return [mantissa, exponent];
 }
-
 VLInt.Ratio = function (b1, b2)
 {
     var m1 = b1.MantissaExponent (b1);
@@ -624,13 +613,6 @@ VLInt.Ratio = function (b1, b2)
 
     return (m1[0] / m2[0]) * Math.pow (10, (m1[1] - m2[1]));
 }
-VLInt.prototype.Square = function ()
-{
-    return this.Multiply (this);
-}
-VLInt.prototype.Cube = function ()
-{
-    return this.Multiply (this.Multiply (this));
-}
+
 
 

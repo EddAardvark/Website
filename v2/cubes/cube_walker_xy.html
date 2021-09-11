@@ -1,0 +1,249 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Cubes">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/event_parser.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/vlint.js"> </script>
+<script src="big_cube.js"> </script>
+<script src="cube_walker.js"> </script>
+<script src="cube_surfer.js"> </script>
+<script src="cube_root.js"> </script>
+<script src="cubes.js"> </script>
+
+<title> Cube Sums Walker XY </title>
+
+
+<script>
+
+    var controller;
+    var event_handler;
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        var all = document.getElementsByClassName("expr");
+
+        for (var i = 0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+        
+        CubeRoot.Initialise ();
+        VLInt.Initialise ();
+        
+        x_start.value = 7;
+        y_start.value = 9;
+        
+        ShowResults (0);
+    }
+    var mdoe;
+    ShowResults = function (n)
+    {
+        var xin = parseInt (x_start.value);
+        var yin = parseInt (y_start.value);
+        
+        var x = new VLInt.FromInt (xin);
+        var y = new VLInt.FromInt (yin);
+        var z = CubeRoot.FromXY (x, y, 10);
+        var x3 = x.Cube ();
+        var y3 = y.Cube ();
+        var z3 = z.Cube ();
+        var bcx = BigCube.FromVLInt (x);
+        var bcy = BigCube.FromVLInt (y);
+        var bcz = BigCube.FromVLInt (z);
+        var cw = CubeWalker.FromCubes (bcx, bcy, bcz);
+        
+        /*
+        var A = cw.value;
+        var dv;
+                
+        Misc.Log ("CW (A) = {0}, val = {1}", cw, A);
+        
+        if (VLInt.Compare (A, VLInt.ZERO) < 0)
+        {
+            dv = cw.big_cz.dy.Minus();
+            cw.DecrementZ ();
+            
+        }
+        else
+        {
+            dv = cw.big_cz.dy;
+            cw.IncrementZ ();
+        }
+        
+        var B = cw.value;
+        
+        Misc.Log ("CW (B) = {0}, val = {1}", cw, B);
+        
+        var ab = A.Subtract(B);
+        var midpoint = VLInt.Ratio (A, ab);
+        
+        Misc.Log ("A-B = {0},{1}: A / (A-B) = {2}", ab, dv, midpoint);      */
+        
+
+// A cube-walker straddle will the CW that has the smallest positive value, the straddle is the CW value and the value - dv
+
+        while (VLInt.Compare (cw.value, VLInt.ZERO) < 0)
+        {
+            cw.DecrementZ ();
+        }
+        var dv = cw.big_cz.dy;
+        var A = cw.value;
+        var B = A.Subtract (cw.big_cz.dy)
+        var midpoint = VLInt.Ratio (A, cw.big_cz.dy);
+        
+        Misc.Log ("A = {0}, B = {1}, dv = {2}, mid = {3}", A, B, dv, midpoint);
+
+        mode = n;
+        cw.SetSubValue ();
+        Create10x10Grid (cw);
+    }
+    
+    Create10x10Grid = function (cw)
+    {
+        var grid = new Array (100);
+
+        grid [0] = new CubeSurfer (cw);
+        
+        ExpandColumn (grid, 10, 0, 0);
+        GridToTable (grid, 10);
+    }
+    
+    ExpandColumn = function (grid, size, x)
+    {
+        var idx = x * size;
+        
+        for (var i = 1 ; i < size ; ++i)
+        {
+            grid [idx+1] = grid [idx].TrackY ();
+            ++ idx;
+        }
+        
+        for (var i = 0 ; i < size ; ++i)
+        {
+            ExpandRow (grid, 10, i);
+        }
+    }
+    
+    ExpandRow = function (grid, size, y)
+    {
+        var idx = y;
+        
+        for (var i = 1 ; i < size ; ++i)
+        {
+            grid [idx+size] = grid [idx].TrackX ();
+            idx += size;
+        }
+    }
+    
+    GridToTable = function (grid, size)
+    {
+        var text = "<table>";
+        for (var x = 0 ; x < size ; ++x)
+        {
+            text += "<tr>";
+            for (var y = 0 ; y < size ; ++y)
+            {
+                var idx = y + size * x;
+                
+                text += "<td>";
+                text += grid [idx].DisplayText (mode);
+                text += "</td>";
+            }
+            text += "</tr>";
+        }
+        text += "</table>";
+        grid_text.innerHTML = text;
+    }
+
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+	<div style="margin: auto; widtd: 1024px;">
+		<button style="widtd: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+			<p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+			<p> <strong>Home page</strong>
+		</button>
+
+		<button class="banner">
+			<h1> Cubes</h1>
+		</button>
+
+		 <!-- Ads -->
+
+	</div>
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->    
+    <!-- Shows the vicinity of the current (x,y) position -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+
+        <h1> Cubes Sums </h1>
+        <p>
+        This application walks the XY surface calculating the integer bounds of the expression
+        <span class="expr">z=(x^3+y^3)^[1/3]</span>
+        </p><p>
+         X <input type="text" maxlength="12" id="x_start" size="12" value="7">  
+         Y <input type="text" maxlength="12" id="y_start" size="12" value="9">
+        
+        Show: <button onclick="ShowResults(CubeSurfer.SM_Z)"> Z </button>
+              <button onclick="ShowResults(CubeSurfer.SM_XYZ)"> XYZ </button>
+                <button onclick="ShowResults(CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="ShowResults(CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="ShowResults(CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="ShowResults(CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="ShowResults(CubeSurfer.SM_WALKER)"> CW </button>
+        </p><p>
+            <span id="grid_text"> grid </span>
+        </p>
+    </div>
+
+    
+    <div class="endfloat"> &nbsp; </div>
+	    
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+    <p class="small"> (c) John Whitehouse 2021 <p>
+
+			  
+
+</body>
+</html>
+
+
+
+

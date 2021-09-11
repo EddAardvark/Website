@@ -44,6 +44,25 @@ CubeWalker.FromInts = function (x, y, z)
 
     return CubeWalker.FromCubes (xc, yc, zc);
 }
+//-------------------------------------------------------------------------------------------------
+CubeWalker.Clone = function (other)
+{  
+    var ret = new CubeWalker ();
+    
+    ret.big_cx = other.big_cx.Clone ();
+    ret.big_cy = other.big_cy.Clone ();
+    ret.big_cz = other.big_cz.Clone ();
+    
+    ret.SetValue ();
+    ret.subvalue = VLInt.FromVLInt (other.subvalue);
+    
+    return ret;
+}
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.SetSubValue = function ()
+{
+    this.subvalue = this.GetNextZValue ();
+}
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.Neighbours = function ()
 {
@@ -194,13 +213,66 @@ CubeWalker.prototype.WalkZ = function ()
     return null;
 }
 //--------------------------------------------------------------------------------------------
+CubeWalker.prototype.SetValue = function ()
+{
+    this.value = this.big_cx.cube.Add (this.big_cy.cube).Subtract(this.big_cz.cube);
+}
+//--------------------------------------------------------------------------------------------
 CubeWalker.prototype.Scale = function (n)
 {
     this.big_cx = new BigCube.FromVLInt (this.big_cx.root.Multiply (n));
     this.big_cy = new BigCube.FromVLInt (this.big_cy.root.Multiply (n));
     this.big_cz = new BigCube.FromVLInt (this.big_cz.root.Multiply (n));
 
-    this.value = this.big_cx.cube.Add (this.big_cy.cube).Subtract(this.big_cz.cube);
+    this.SetValue ();
+}
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.SetXCube = function (xc)
+{
+    this.big_cx = xc;
+    this.SetValue ();
+}
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.SetYCube = function (yc)
+{
+    this.big_cy = yc
+    this.SetValue ();
+}
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.SetZCube = function (z)
+{
+    this.big_cz = zc
+    this.SetValue ();
+}
+//----------------------------------------------------------------------------------------------------------------
+CubeWalker.prototype.GetPreviousXValue = function ()
+{
+    return this.value.Add (this.big_cx.DeltaMinus ());
+}
+//----------------------------------------------------------------------------------------------------------------
+CubeWalker.prototype.GetNextXValue = function ()
+{
+    return this.value.Add (this.big_cx.DeltaPlus ());
+}
+//----------------------------------------------------------------------------------------------------------------
+CubeWalker.prototype.GetPreviousYValue = function ()
+{
+    return this.value.Add (this.big_cy.DeltaMinus ());
+}
+//----------------------------------------------------------------------------------------------------------------
+CubeWalker.prototype.GetNextYValue = function ()
+{
+    return this.value.Add (this.big_cy.DeltaPlus ());
+}
+//----------------------------------------------------------------------------------------------------------------
+CubeWalker.prototype.GetPreviousZValue = function ()
+{
+    return this.value.Subtract (this.big_cz.DeltaMinus ());
+}
+//----------------------------------------------------------------------------------------------------------------
+CubeWalker.prototype.GetNextZValue = function ()
+{
+    return this.value.Subtract (this.big_cz.DeltaPlus ());
 }
 //----------------------------------------------------------------------------------------------------------------
 CubeWalker.prototype.DecrementX = function ()
