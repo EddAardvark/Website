@@ -64,6 +64,41 @@ CubeWalker.prototype.SetSubValue = function ()
     this.subvalue = this.GetNextZValue ();
 }
 //--------------------------------------------------------------------------------------------
+CubeWalker.prototype.Range = function ()
+{
+    if (this.range == null)
+    {
+        this.range = this.value.Subtract (this.subvalue);
+    }
+    return this.range;
+}
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.Intercept = function ()
+{
+    if (this.intercept == null)
+    {
+        var temp = this.value.Subtract (this.subvalue);
+        
+        this.intercept = VLInt.Ratio (this.value, temp);
+    }
+    return this.intercept;
+}
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.DistanceFrom = function (list)
+{
+    var min = 1;
+    var f = this.Intercept ();
+    
+    for (var i in list)
+    {
+        var dif = Math.abs (f - list [i]);
+        
+        if (dif < min) min = dif;
+    }
+    
+    return min;
+}
+//--------------------------------------------------------------------------------------------
 CubeWalker.prototype.Neighbours = function ()
 {
     var neighbours = new Array (27);

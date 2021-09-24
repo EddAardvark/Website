@@ -390,7 +390,7 @@ VLInt.Compare = function (first, second)
     return first.positive ? c : -c;
 }
 //--------------------------------------------------------------------------------------------
-// Compare the vector component ingnoring the positive,
+// Compare the vector component ignoring the positive,
 // returns -1, 0 or 1 for (first < second), (first == second) and (first > second)
 // Assumes the vector have no leading 0's
 //--------------------------------------------------------------------------------------------
@@ -496,10 +496,15 @@ VLInt.prototype.DivMod = function (number)
     {
         var rem = buffer [i] % number;
 
-        buffer [i] = Math.floor (buffer [i]/ number);
-        buffer [i-1] += VLInt.BASE * rem;
+        buffer [i] = Math.floor (buffer [i] / number);
+        
+        if (i > 0)
+        {
+            buffer [i-1] += VLInt.BASE * rem;
+        }
     }
-    return [VLInt.Test ("DivMod", new VLInt(buffer)), rem];
+    
+    return [VLInt.FromVector (buffer, this.positive), rem];
 }
 // Divide, this/other, returns a VLInt
 
