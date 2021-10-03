@@ -31,9 +31,25 @@ CubeRoot.FromXY = function (x, y, n)
 {
     var x3 = x.Cube ();
     var y3 = y.Cube ();
-    var guess = (VLInt.Compare (x, y) > 0) ? x : y;
+    var target = x3.Add(y3);
     
-    var cr = new CubeRoot (x3.Add(y3), guess, VLInt.ONE, n);
+    if (x.positive == y.positive)
+    {
+        if (VLInt.Compare (x, y) > 0)
+        {
+            guess = x.positive ? x : y;
+        }
+        else
+        {
+            guess = x.positive ? y : x;
+        }
+    }
+    else
+    {
+        guess = VLInt.ZERO;
+    }
+    
+    var cr = new CubeRoot (target, guess, VLInt.ONE, n);
     return cr;
 }
 //--------------------------------------------------------------------------------------------

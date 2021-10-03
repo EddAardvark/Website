@@ -147,5 +147,47 @@ BigCube.prototype.toString = function ()
 {
     return "BigCube(" + this.root + ") = " + this.cube;
 }
+BigCube.prototype.FullText = function ()
+{
+    return Misc.Format ("BC: n = {0}, n^3 = {1}, dx = {2}, ddx = {3}, dddx = 6", this.root, this.cube, this.dy, this.ddy);
+}
+
+//-------------------------------------------------------------------------------------------------
+BigCube.prototype.Verify = function (where)
+{
+    // y = n^3;
+    // y' = 3xn^2 + 3xn + 1
+    // y'' = 6xn + 6
+    // y''' = 6;
+    
+    var n = this.root;
+    
+    var n2 = n.Multiply (n);
+    var n3 = n2.Multiply (n);
+
+    var cube = n3;
+    
+    if (VLInt.Compare (cube, this.cube) != 0)
+    {
+        throw where + " " + this.FullText ();
+    }
+
+    var dy = n2.Add (n);
+    dy = dy.MultiplyInt (3);
+    dy = dy.AddInt (1);
+    
+    if (VLInt.Compare (dy, this.dy) != 0)
+    {
+        throw where + " " + this.FullText ();
+    }
+    
+    var ddy = n.AddInt (1);
+    ddy = ddy.MultiplyInt (6);
+    
+    if (VLInt.Compare (ddy, this.ddy) != 0)
+    {
+        throw where + " " + this.FullText ();
+    }
+}
    
    

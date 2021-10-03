@@ -16,7 +16,6 @@
 <script src="big_cube.js"> </script>
 <script src="cube_walker.js"> </script>
 <script src="cube_surfer.js"> </script>
-<script src="cube_root.js"> </script>
 <script src="cubes.js"> </script>
 
 <title> Cube Sums Walker XY </title>
@@ -24,21 +23,17 @@
 
 <script>
 
-    var mode = CubeSurfer.SM_Z;
-    var G11 = 0;
-    var G101 = 1;
-    var G1001 = 2;
-    
-    var gmode = [CubeSurfer.SM_Z, CubeSurfer.SM_Z, CubeSurfer.SM_Z];
+    var mode = CubeSurfer.SM_Z;    
+    var action = CubeSurferGrid.SCROLL;
+
     var grid = [null, null, null];
     var gelement = [null, null, null];
-    var gsize = [11, 101, 1001];
-    var gcell = [32, 4, 1];
-    var gslide = [5, 50, 400];
-    
+    var gmode = [CubeSurfer.SM_Z, CubeSurfer.SM_Z, CubeSurfer.SM_Z];
+
     var current_x = 7;
     var current_y = 9;
     var view_div = null;
+    var table_mode = CubeSurfer.SM_Z;
     //------------------------------------------------------------------------------------------------------------------------------------
     // Auto-Start
     //------------------------------------------------------------------------------------------------------------------------------------
@@ -51,17 +46,18 @@
             Misc.expand_element (all[i]);
         }
         
-        CubeRoot.Initialise ();
+        //CubeRoot.Initialise ();
+        
         VLInt.Initialise ();
+        VLInt.Test ();
         
-        x_start.value = current_x;
-        y_start.value = current_y;
+        gelement [CubeSurferGrid.G11] = the_view;
+        gelement [CubeSurferGrid.G101] = big_view;
+        gelement [CubeSurferGrid.G1001] = vbig_view;
         
-        gelement [G11] = the_view;
-        gelement [G101] = big_view;
-        gelement [G1001] = vbig_view;
-        
-        UpdateGrid (G11);   
+        UpdateGrid (CubeSurferGrid.G11);
+        SetTableMode (table_mode);
+        click_action.value = gmode[CubeSurferGrid.G11];
     }
 
     UpdateGrid = function (which)
@@ -72,50 +68,46 @@
         current_x = new VLInt.FromInt (xin);
         current_y = new VLInt.FromInt (yin);
         
+        ShowCurrent ();
         Construct (which);
     }
-    
-    SetCentre = function (which, x, y)
-    {
-        var slide = VLInt.FromInt (gslide[which]);
-        current_x = x.Subtract (slide);
-        current_y = y.Subtract (slide);
-        
-        Construct (which);
+    ShowCurrent = function ()
+    {   
+        x_start.value = current_x;
+        y_start.value = current_y;
     }   
+    
     Construct = function (which)
     {
         grid [which] = null; // recreate in SetDisplay
         
         SetDisplay (which, gmode[which]);
-        ShowResults ();
-
-        x_start.value = current_x;
-        y_start.value = current_y;
     }
 
-    SetDisplayMode = function (m)
+    SetTableMode = function (m)
     {
-        mode = m;
-        ShowResults ();
-    }
-
-    ShowResults = function ()
-    {   
-        grid_heading.innerHTML = CubeSurfer.MODE_TEXT [mode];
-        grid_text.innerHTML = grid[G11].ToTable (mode);
+        table_mode = m;
+        grid_text.innerHTML = grid[CubeSurferGrid.G11].ToTable (m);
     }
     
     SetDisplay = function (which, m)
     {
         gmode [which] = m;
-        DisplayGrid(which);
+        
+        if (grid[which] == null)
+        {
+            grid[which] = new CubeSurferGrid (which, current_x, current_y);
+        }
+        
+        grid[which].DrawPattern (gelement[which], gmode[which]);
 
-        if (which == G11)
+        if (which == CubeSurferGrid.G11)
         {
             ShowDiv (view_div, "none");
             view_div = "div" + m;
             ShowDiv (view_div, "block");
+            grid_heading.innerHTML = CubeSurfer.MODE_TEXT [mode];
+            SetTableMode (table_mode);
         }
     }
     
@@ -123,19 +115,7 @@
     {
         gmode [which] = m;
         SetDisplay(which, m);
-    }
-
-    DisplayGrid = function (which)
-    {
-        if (grid[which] == null)
-        {
-            grid[which] = new CubeSurferGrid (gsize[which], current_x, current_y);
-            grid[which].cell_size = gcell[which];            
-        }
-        
-        grid[which].DrawPattern (gelement[which], gmode[which]);
-    }
-    
+    }    
     
     ShowDiv = function (div, disp)
     {
@@ -148,10 +128,19 @@
     
     ClickGrid = function (which, event)
     {
-    	var cell = grid[which].GetCellAt (event.offsetX, event.offsetY);        
-        var x = cell.cw.big_cx.root;
-        var y = cell.cw.big_cy.root;
-        SetCentre (which, x, y);
+        var corner = grid[which].GetNewCorner (event.offsetX, event.offsetY, action);
+
+        current_x = corner [0];
+        current_y = corner [1];
+        
+        Construct (which);
+        
+        while (which > CubeSurferGrid.G11)
+        {
+            Construct (--which);
+        }
+
+        ShowCurrent ();
     }
     
     GridHover = function (which,event)
@@ -164,6 +153,12 @@
         
         element.innerHTML = text;
     }
+    SetClickAction = function ()
+    {
+        action = click_action.value;
+    }
+                   
+                
 
 </script>
 
@@ -202,49 +197,75 @@
         <p>
         This application walks the XY surface calculating the integer bounds of the expression
         <span class="expr">z=(x^3+y^3)^[1/3]</span>
-        </p><p>
-         X <input type="text" maxlength="12" id="x_start" size="12" value="7">  
-         Y <input type="text" maxlength="12" id="y_start" size="12" value="9">
-         <button onclick="UpdateGrid()"> Update </button>
+        </p>
+        
+        <h4>Value view </h4><p>
+          X <input type="text" maxlength="12" id="x_start" size="12" value="7">  
+          Y <input type="text" maxlength="12" id="y_start" size="12" value="9">
+          Grid: <button onclick="UpdateGrid(G11)"> 11</button>
+          <button onclick="UpdateGrid(G101)"> 101 </button>
+          <button onclick="UpdateGrid(G1001)"> 1001 </button>
+          Click actions: 
+           
+           <select id="click_action" onchange="SetClickAction ()">
+                    <option value="0">Set Corner</option>
+                    <option value="1">Scroll to centre</option>
+                    <option value="2">Zoom x 2</option>
+                    <option value="3">Zoom x 3</option>
+                    <option value="4">Zoom x 4</option>
+                    <option value="5">Zoom x 5</option>
+           </select>
+
         </p><p>
         
-        Show: <button onclick="SetDisplayMode(CubeSurfer.SM_Z)"> Z </button>
-              <button onclick="SetDisplayMode(CubeSurfer.SM_XYZ)"> XYZ </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_INTERCEPT)"> Intercept </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_WALKER)"> CW </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_MOD9)"> Moduo 9 </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_F2)"> 1/2 </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_F3)"> 1/3 </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_F4)"> 1/4 </button>
-                <button onclick="SetDisplayMode(CubeSurfer.SM_F5)"> 1/5 </button>
+        Show: <button onclick="SetTableMode(CubeSurfer.SM_Z)"> Z </button>
+              <button onclick="SetTableMode(CubeSurfer.SM_XYZ)"> XYZ </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_WALKER)"> CW </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F5)"> 1/5 </button>
         </p><p>
-            11x11 grid for <span id="grid_heading">x</span> 
-        </p><p>
-            <span id="grid_text"> grid </span>
-        </p>
+            <table>
+             <tr>
+              <td>
+               <p>
+                <span id="grid_text"> grid </span>
+               </p>
+              </td>
+              <td>
+               <p>
+                11x11 grid for <span id="grid_heading">x</span> 
+               </p>
+              </td>
+             </tr>
+            </table>
+            </p>
         
         <h4> 11x11 Visualisation </h4>
         <p>
         
-        Draw: <button onclick="SetDisplay(G11,CubeSurfer.SM_Z)"> Z </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_MOD9)"> Modulo 9 </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_F2)"> 1/2 </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_F3)"> 1/3 </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_F4)"> 1/4 </button>
-                <button onclick="SetDisplay(G11,CubeSurfer.SM_F5)"> 1/5 </button>
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_Z)"> Z </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_MOD9)"> Modulo 9 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F5)"> 1/5 </button>
         
         </p><p>
         <table>
          <tr>
           <td>
-            <img id="the_view" onClick="ClickGrid(G11, event)" onMouseMove="GridHover(G11,event)">
+            <img id="the_view" onClick="ClickGrid(CubeSurferGrid.G11, event)" onMouseMove="GridHover(CubeSurferGrid.G11,event)">
             <br>
             <span id="hover0"> grid </span>
           </td><td>
@@ -359,22 +380,22 @@
     <h4> 101x101 Visualisation </h4>
         
         <p>        
-        Draw: <button onclick="SetDisplay(G101,CubeSurfer.SM_Z)"> Z </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_F2)"> 1/2 </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_F3)"> 1/3 </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_F4)"> 1/4 </button>
-                <button onclick="SetDisplay(G101,CubeSurfer.SM_F5)"> 1/5 </button>
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_Z)"> Z </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F5)"> 1/5 </button>
         
         </p><p>
          <table>
           <tr>
            <td>
-            <img id="big_view" onClick="ClickGrid(G101, event)" onMouseMove="GridHover(G101,event)">
+            <img id="big_view" onClick="ClickGrid(CubeSurferGrid.G101, event)" onMouseMove="GridHover(CubeSurferGrid.G101,event)">
             <br>
             <span id="hover1"> grid </span>
            </td>
@@ -388,22 +409,22 @@
     <h4> 1001x1001 Visualisation </h4>
         
         <p>        
-        Draw: <button onclick="SetDisplay(G1001,CubeSurfer.SM_Z)"> Z </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_F2)"> 1/2 </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_F3)"> 1/3 </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_F4)"> 1/4 </button>
-                <button onclick="SetDisplay(G1001,CubeSurfer.SM_F5)"> 1/5 </button>
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_Z)"> Z </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F5)"> 1/5 </button>
         
         </p><p>
          <table>
           <tr>
            <td>
-            <img id="vbig_view" onClick="ClickGrid(G1001, event)" onMouseMove="GridHover(G1001,event)">
+            <img id="vbig_view" onClick="ClickGrid(CubeSurferGrid.G1001, event)" onMouseMove="GridHover(CubeSurferGrid.G1001,event)">
             <br>
             <span id="hover2"> grid </span>
            </td>

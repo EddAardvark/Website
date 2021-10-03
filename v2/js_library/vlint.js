@@ -148,35 +148,23 @@ VLInt.FromWeightings = function (n1, n2, w1, w2)
     return ret;
 }
 //--------------------------------------------------------------------------------------------
-VLInt.prototype.toString = function ()
-{
-    var len = this.value.length;
-
-    if (len == 0)
-    {
-        return "0";
-    }
-
-    var ret = this.value[len-1].toString ();
-
-    for (var i = len-2 ; i >= 0 ; --i)
-    {
-        ret += (VLInt.PREFIX + this.value[i]).substr(-VLInt.EXP, VLInt.EXP);
-    }
-    return this.positive ? ret : ("-" + ret);
-}
-//--------------------------------------------------------------------------------------------
 // Multiply by a simple number (this number is truncated to an integer)
 //--------------------------------------------------------------------------------------------
 VLInt.prototype.MultiplyInt = function (num)
 {
+    if (num == 0 || this.IsZero ())
+    {
+        return VLInt.FromInt (0);
+    }
+    
     num = Math.floor (num);
 
-    var positive = (num >= 0);
+    var positive = this.positive;
     
-    if (! positive)
+    if (num < 0)
     {
         num = -num;
+        positive = ! positive;
     }
 
     var carry = 0;
@@ -203,6 +191,11 @@ VLInt.prototype.MultiplyInt = function (num)
 //--------------------------------------------------------------------------------------------
 VLInt.prototype.Multiply = function (other)
 {
+    if (other.IsZero () || this.IsZero ())
+    {
+        return VLInt.FromInt (0);
+    }
+
     var vector = VLInt.MultiplyVectors (this.value, other.value);
     
     return new VLInt.FromVector (vector, this.positive == other.positive);
@@ -236,7 +229,14 @@ VLInt.prototype.Add = function (other)
         return VLInt.FromVector (vec, this.positive);
     }
     
-    if (VLInt.CompareVector (this.value, other.value) >= 0)
+    var comp = VLInt.CompareVector (this.value, other.value);
+    
+    if (comp == 0)
+    {
+        return VLInt.FromVector ([0], true);
+    }
+    
+    if (comp > 0)
     {
         var vec = VLInt.SubtractVectors (this.value, other.value);
         return VLInt.FromVector (vec, this.positive);
@@ -256,7 +256,14 @@ VLInt.prototype.Subtract = function (other)
         return VLInt.FromVector (vec, this.positive);
     }
     
-    if (VLInt.CompareVector (this.value, other.value) >= 0)
+    var comp = VLInt.CompareVector (this.value, other.value);
+    
+    if (comp == 0)
+    {
+        return VLInt.FromVector ([0], true);
+    }
+    
+    if (comp > 0)
     {
         var vec = VLInt.SubtractVectors (this.value, other.value);
         return VLInt.FromVector (vec, this.positive);
@@ -368,7 +375,7 @@ VLInt.MultiplyVectors = function (vec1, vec2)
         }
     }
 
-    while (ret [ret.length-1] == 0)
+    while (ret.length > 1 && ret [ret.length-1] == 0)
     {
         ret = ret.splice (0, ret.length-1);
     }
@@ -390,7 +397,7 @@ VLInt.Compare = function (first, second)
     return first.positive ? c : -c;
 }
 //--------------------------------------------------------------------------------------------
-// Compare the vector component ignoring the positive,
+// Compare the vector component ingnoring the positive,
 // returns -1, 0 or 1 for (first < second), (first == second) and (first > second)
 // Assumes the vector have no leading 0's
 //--------------------------------------------------------------------------------------------
@@ -496,7 +503,7 @@ VLInt.prototype.DivMod = function (number)
     {
         var rem = buffer [i] % number;
 
-        buffer [i] = Math.floor (buffer [i] / number);
+        buffer [i] = Math.floor (buffer [i]/ number);
         
         if (i > 0)
         {
@@ -515,19 +522,25 @@ VLInt.prototype.Divide = function (other)
         return null;
     }
 
-    if (other.IsGreaterThan (this))
+    if (VLInt.CompareVector (other, this) > 0)
     {
-        return new VLInt (0);
+        return new VLInt.FromInt(0);
     }
-
-    var temp = new VLInt.FromVLInt (this);
-    var subs = [VLInt.FromVLInt(other)];
+    
+    var positive = this.positive == other.positive;
+    var num = VLInt.FromVLInt (this);
+    var den = VLInt.FromVLInt (other);
+    
+    num.positive = true;
+    den.positive = true;
+    
+    var subs = [den];
     var answer = new VLInt.FromInt (0);
     var pos = 0;
 
     // We will subtract out powers of 2 times the divisor
 
-    while (this.IsGreaterThan (subs[pos]))
+    while (num.IsGreaterThan (subs[pos]))
     {
         subs.push (subs [pos].Multiply (VLInt.TWO));        // denominator x 2^n
         ++ pos;
@@ -537,11 +550,20 @@ VLInt.prototype.Divide = function (other)
     
     while (--pos >= 0)
     {
-        if (temp.IsGreaterThanOrEqualTo (subs[pos]))
+        if (num.IsGreaterThanOrEqualTo (subs[pos]))
         {
             answer = answer.Add (VLInt.powers2[pos]);
-            temp = temp.Subtract (subs [pos]);
+            num = num.Subtract (subs [pos]);
         }
+    }
+    
+    if (answer.IsZero ())
+    {
+        answer.positive = true;
+    }
+    else if (! positive)
+    {
+        answer.positive = false;
     }
     return answer;
 }
@@ -559,6 +581,7 @@ VLInt.PreparePowers = function (n)
     }
 }
 
+//------------------------------------------------------------------------------------------------------
 // Calculates this^n (n is a positive integer, doesn't do fractional or negative powers)
 
 VLInt.prototype.Pow = function (n)
@@ -589,17 +612,17 @@ VLInt.prototype.Pow = function (n)
 
     return VLInt.Test ("Pow", ret);
 }
-// Calculates this^n (n is a positive integer, doesn't do fractional or negative powers)
+//------------------------------------------------------------------------------------------------------
+// Convert to f * 10^n (ignores the sign)
 
 VLInt.prototype.MantissaExponent = function ()
 {
-    var len = this.value.length;
-
     if (this.IsZero())
     {
         return [0,1];
     }
 
+    var len = this.value.length;
     var exponent = VLInt.EXP * len;
     var mantissa = this.value [len-1] / VLInt.BASE;
     
@@ -621,7 +644,20 @@ VLInt.prototype.MantissaExponent = function ()
 
     return [mantissa, exponent];
 }
-
+//------------------------------------------------------------------------------------------------------
+// Log base 10
+VLInt.prototype.Log10 = function ()
+{
+    var me = this.MantissaExponent ();
+    
+    if (me [0] == 0)
+    {
+        return null;
+    }
+    
+    return me[1] + Math.log10 (me [0]);
+}
+//------------------------------------------------------------------------------------------------------
 VLInt.Ratio = function (b1, b2)
 {
     var m1 = b1.MantissaExponent (b1);
@@ -629,13 +665,75 @@ VLInt.Ratio = function (b1, b2)
 
     return (m1[0] / m2[0]) * Math.pow (10, (m1[1] - m2[1]));
 }
+//------------------------------------------------------------------------------------------------------
 VLInt.prototype.Square = function ()
 {
     return this.Multiply (this);
 }
+//------------------------------------------------------------------------------------------------------
 VLInt.prototype.Cube = function ()
 {
     return this.Multiply (this.Multiply (this));
 }
+//=========================================================================================================
+// Monitoring and debugging
+//=========================================================================================================
+VLInt.prototype.toString = function ()
+{
+    var len = this.value.length;
+
+    if (len == 0)
+    {
+        return "0";
+    }
+
+    var ret = this.value[len-1].toString ();
+
+    for (var i = len-2 ; i >= 0 ; --i)
+    {
+        ret += (VLInt.PREFIX + this.value[i]).substr(-VLInt.EXP, VLInt.EXP);
+    }
+    return this.positive ? ret : ("-" + ret);
+}
+//------------------------------------------------------------------------------------------------------
+VLInt.Test = function ()
+{
+    // AddInt
+    
+    var n = VLInt.FromInt (3);
+    
+    var n1 = n.AddInt (2);
+    if (n1.toString () != "5") throw "VLInt AddInt (1)";
+    
+    n1 = n.AddInt (-1);
+    if (n1.toString () != "2") throw "VLInt AddInt (2)";
+    
+    n1 = n.AddInt (-5);
+    if (n1.toString () != "-2") throw "VLInt AddInt (3)";
+    
+    n1 = n.AddInt (-3);
+    if (n1.toString () != "0") throw "VLInt AddInt (4)";
+    
+    // Add int with negative base
+    
+    n = VLInt.FromInt (-3);
+    n1 = n.AddInt (2);
+    if (n1.toString () != "-1") throw "VLInt AddInt (5)";
+    
+    n1 = n.AddInt (4);
+    if (n1.toString () != "1") throw "VLInt AddInt (6)";
+    
+    n1 = n.AddInt (-5);
+    if (n1.toString () != "-8") throw "VLInt AddInt (7)";
+    
+    n1 = n.AddInt (3);
+    if (n1.toString () != "0") throw "VLInt AddInt (8)";
+}
+
+
+
+
+
+
 
 
