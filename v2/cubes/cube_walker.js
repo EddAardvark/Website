@@ -248,6 +248,80 @@ CubeWalker.prototype.WalkZ = function ()
     return null;
 }
 //--------------------------------------------------------------------------------------------
+// We need to find a Z-value where value is positive and sub-value is negative
+CubeWalker.prototype.MoveToSurface = function ()
+{
+    var five = VLInt.FromInt (5);
+    
+    while (true)
+    {
+        if (this.subvalue.positive)
+        {
+            var distance = this.subvalue.Minus ().Divide (this.big_cz.DeltaPlus ());
+            
+            if (distance < 5)
+            {
+                this.FixZ ();
+                return;
+            }
+            var z = this.big_cz.root.Add (distance);
+            this.SetZCube (BigCube.FromVLInt (z));
+            this.SetSubValue ();
+        }
+        else if (! this.value.positive)
+        {
+            var distance = this.value.Divide (this.big_cz.DeltaMinus ());
+            
+            if (distance < 5)
+            {
+                this.FixZ ();
+                return;
+            }
+            var z = this.big_cz.root.Subtract (distance);
+            this.SetZCube (BigCube.FromVLInt (z));
+            this.SetSubValue ();
+        }
+        else
+        {
+            break;
+        }
+    }
+    /*
+    while (VLInt.Compare (this.value, VLInt.ZERO) < 0)
+    {
+        cw.DecrementZ ();
+    }
+    
+    this.subvalue = this.GetNextZValue ();
+    */
+}
+//--------------------------------------------------------------------------------------------
+// Adjust Z to find the smallest positive value
+CubeWalker.prototype.FixZ = function ()
+{    
+    if (this.value.positive)
+    {
+        while (true)
+        {
+            this.SetSubValue ();
+
+            if (! this.subvalue.positive)
+            {
+                break;
+            }
+            this.IncrementZ ();
+        }        
+    }
+    else
+    {
+        while (! this.value.positive)
+        {
+            this.DecrementZ ();
+        }
+        this.SetSubValue ();
+    }
+}
+//--------------------------------------------------------------------------------------------
 CubeWalker.prototype.SetValue = function ()
 {
     this.value = this.big_cx.cube.Add (this.big_cy.cube).Subtract(this.big_cz.cube);
@@ -274,7 +348,7 @@ CubeWalker.prototype.SetYCube = function (yc)
     this.SetValue ();
 }
 //--------------------------------------------------------------------------------------------
-CubeWalker.prototype.SetZCube = function (z)
+CubeWalker.prototype.SetZCube = function (zc)
 {
     this.big_cz = zc
     this.SetValue ();
@@ -472,7 +546,6 @@ CubeWalker.prototype.MakeNeighboursTable_Old = function (map)
     text += "</table>";
     return text;
 }
-
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.ToList = function (element_id)
 {
@@ -487,11 +560,35 @@ CubeWalker.prototype.ToList = function (element_id)
     text += "</ul>";
     element_id.innerHTML = text;
 }
-
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.toString = function ()
 {
     return "(" + [this.big_cx.root, this.big_cy.root, this.big_cz.root] + ") = " + this.value;
 }
+    
+//--------------------------------------------------------------------------------------------
+CubeWalker.prototype.LogFull = function (where)
+{
+    Misc.Log ("Cube Walker at " + where);
+    Misc.Log ("X = {0}", this.big_cx.FullText ());
+    Misc.Log ("Y = {0}", this.big_cy.FullText ());
+    Misc.Log ("Z = {0}", this.big_cz.FullText ());
+    Misc.Log ("Val = {0}, Subv = {1}", this.value, this.subvalue);
+}
+
+CubeWalker.prototype.Verify = function (where)
+{
+    this.big_cx.Verify (where);
+    this.big_cy.Verify (where);
+    this.big_cz.Verify (where);
+    
+    var value = this.big_cx.cube.Add (this.big_cy.cube).Subtract(this.big_cz.cube);
+    
+    if (VLInt.Compare (value, this.value) != 0) throw where + " Wrong value";
+    
+}
+
+
+
    
    

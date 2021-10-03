@@ -15,27 +15,36 @@ CubeSurfer = function (cw)
 
 CubeSurfer.FromPosition = function (x, y)
 {
-    var z = CubeRoot.FromXY (x, y, 10);
-    var x3 = x.Cube ();
-    var y3 = y.Cube ();
-    var z3 = z.Cube ();
+    var z;
+    
+    if (x.positive == y.positive)
+    {
+        if (VLInt.Compare (x, y) > 0)
+        {
+            z = x.positive ? x : y;
+        }
+        else
+        {
+            z = x.positive ? y : x;
+        }
+    }
+    else
+    {
+        z = VLInt.ZERO;
+    }
+
     var bcx = BigCube.FromVLInt (x);
     var bcy = BigCube.FromVLInt (y);
     var bcz = BigCube.FromVLInt (z);
 
 // A cube-walker straddle will the CW that has the smallest positive value, the straddle is the CW value and the value - dv
 
-    var cw = CubeWalker.FromCubes (bcx, bcy, bcz);
-
-    while (VLInt.Compare (cw.value, VLInt.ZERO) < 0)
-    {
-        cw.DecrementZ ();
-    }
-    
+    var cw = CubeWalker.FromCubes (bcx, bcy, bcz);    
     var ret = new CubeSurfer (cw);
     
     ret.cw = cw;
     ret.cw.SetSubValue ();
+    ret.cw.MoveToSurface ();
     
     return ret;
 }
@@ -46,44 +55,20 @@ CubeSurfer.prototype.TrackX = function ()
     var ret = new CubeSurfer (CubeWalker.Clone (this.cw));
     
     ret.cw.IncrementX ();
-    ret.FixZ ();
+    ret.cw.FixZ ();
+    
     return ret;
 }
 //--------------------------------------------------------------------------------------------
 // Increments Y and adjusts z so that x^3+y^3-z^3 is the smallest possible value.
 CubeSurfer.prototype.TrackY = function ()
-{
+{    
     var ret = new CubeSurfer (CubeWalker.Clone (this.cw));
     
     ret.cw.IncrementY ();
-    ret.FixZ ();
+    ret.cw.FixZ ();
+    
     return ret;
-}
-//--------------------------------------------------------------------------------------------
-// Adjust Z to find the smallest positive value
-CubeSurfer.prototype.FixZ = function ()
-{
-    if (this.cw.value.positive)
-    {
-        while (true)
-        {
-            this.cw.SetSubValue ();
-
-            if (! this.cw.subvalue.positive)
-            {
-                break;
-            }
-            this.cw.IncrementZ ();
-        }        
-    }
-    else
-    {
-        while (! this.cw.value.positive)
-        {
-            this.cw.DecrementZ ();
-        }
-        this.cw.SetSubValue ();
-    }
 }
 
 CubeSurfer.SM_Z = 0;
@@ -129,15 +114,11 @@ CubeSurfer.VALUE_TEXT [CubeSurfer.SM_F3] =        function (x) { return Misc.Flo
 CubeSurfer.VALUE_TEXT [CubeSurfer.SM_F4] =        function (x) { return Misc.FloatToText (x.cw.DistanceFrom ([1/4, 2/4, 3/4]), 8);}
 CubeSurfer.VALUE_TEXT [CubeSurfer.SM_F5] =        function (x) { return Misc.FloatToText (x.cw.DistanceFrom ([1/5, 2/5, 3/5, 4/5]), 8);}
 
+
 //--------------------------------------------------------------------------------------------
 CubeSurfer.prototype.DisplayText = function (mode)
 {
     return CubeSurfer.VALUE_TEXT [mode] (this);
-}
-//--------------------------------------------------------------------------------------------
-CubeSurfer.prototype.toString = function ()
-{
-    return "(" + this.cw.value + "," + this.subvalue + ")";
 }
 //--------------------------------------------------------------------------------------------
 CubeSurfer.prototype.toString = function ()
@@ -147,22 +128,38 @@ CubeSurfer.prototype.toString = function ()
 
 //==========================================================================================================
 //==========================================================================================================
-CubeSurferGrid = function (n, x, y)
+CubeSurferGrid = function (type, x, y)
 {
-    this.size = n;
-    this.cell_size = 32;
-    this.grid = new Array (n * n);
-
+    this.size = CubeSurferGrid.size [type];
+    this.num_cells = this.size * this.size;
+    this.cell_size = CubeSurferGrid.cell [type];
+    this.grid = new Array (this.num_cells);
+    this.type = type;
+    
     this.grid [0] = CubeSurfer.FromPosition (x, y);
-    
     this.ExpandColumn (0);
-    
     this.CalcLimits ();
 }
+
+CubeSurferGrid.SCROLL = 0;
+CubeSurferGrid.CENTRE = 1;
+CubeSurferGrid.TIMES2 = 2;
+CubeSurferGrid.TIMES3 = 3;
+CubeSurferGrid.TIMES4 = 4;
+CubeSurferGrid.TIMES5 = 5;
+    
+CubeSurferGrid.G11 = 0;
+CubeSurferGrid.G101 = 1;
+CubeSurferGrid.G1001 = 2;
+
+CubeSurferGrid.size = [11, 101, 1001];
+CubeSurferGrid.cell = [32, 8, 1];
+CubeSurferGrid.slide = [5, 50, 500];
+    
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.CalcLimits = function ()
 {
-    var n = this.grid.length;
+    var n = this.num_cells;
     
     this.vmax = VLInt.ZERO;
     this.smin = VLInt.ZERO;
@@ -267,9 +264,76 @@ CubeSurferGrid.prototype.GetCellAt = function (xpos, ypos)
 {
     var x = Math.floor (xpos / this.cell_size);
     var y = Math.floor (ypos / this.cell_size);
+    
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    if (x >= this.size) x = this.size - 1;
+    if (y >= this.size) y = this.size - 1;
+    
     var idx = y + this.size * x;
+    
+    if (idx < 0 || idx >= this.num_cells)
+    {
+        Misc.Alert ("No cell at ({0},{1})", x, y);
+    }
     return this.grid [idx];
-}   
+}
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.prototype.GetNewCorner = function (xpos, ypos, action)
+{
+    var cell = this.GetCellAt (event.offsetX, event.offsetY);
+
+    var x = cell.cw.big_cx.root;
+    var y = cell.cw.big_cy.root;
+
+    if (action == CubeSurferGrid.SCROLL)
+    {
+        return [x,y];
+    }
+    
+    if (action == CubeSurferGrid.CENTRE)
+    {
+        var slide = CubeSurferGrid.slide[this.type];
+        
+        x = x.AddInt (-slide);
+        y = y.AddInt (-slide);
+            
+        return [x,y];
+    }
+    
+    var mull = 0;
+    
+    if (action == CubeSurferGrid.TIMES2)
+    {
+        var mul = 2;
+    }
+    
+    if (action == CubeSurferGrid.TIMES3)
+    {
+        var mul = 3;
+    }
+    
+    if (action == CubeSurferGrid.TIMES4)
+    {
+        var mul = 4;
+    }
+    
+    if (action == CubeSurferGrid.TIMES5)
+    {
+        var mul = 5;
+    }
+    
+    if (mul > 0)
+    {
+        x = x.MultiplyInt (mul);
+        y = y.MultiplyInt (mul);
+            
+        return [x,y];
+    }
+    
+    return [x,y];    
+}
+
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.COLOUR = [];
 
@@ -386,7 +450,11 @@ CubeSurferGrid.COLOUR [CubeSurfer.SM_F5] = function (csg, surfer)
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.GetColour = function (idx, mode)
 {
-    return CubeSurferGrid.COLOUR [mode] (this, this.grid [idx]);
+    var surfer = this.grid [idx];
+    
+    if (surfer.cw.big_cx.IsZero () || surfer.cw.big_cy.IsZero ()) return "black";
+    
+    return CubeSurferGrid.COLOUR [mode] (this, surfer);
 }
 
 
