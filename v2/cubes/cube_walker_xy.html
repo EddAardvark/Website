@@ -14,7 +14,9 @@
 <script src="../js_library/vlint.js"> </script>
 <script src="../js_library/canvas_helpers.js"> </script>
 <script src="big_cube.js"> </script>
+<script src="sub_cube.js"> </script>
 <script src="cube_walker.js"> </script>
+<script src="contour_walker.js"> </script>
 <script src="cube_surfer.js"> </script>
 <script src="cubes.js"> </script>
 
@@ -34,17 +36,29 @@
     var current_y = 9;
     var view_div = null;
     var table_mode = CubeSurfer.SM_Z;
+    var timer;
+    
     //------------------------------------------------------------------------------------------------------------------------------------
     // Auto-Start
     //------------------------------------------------------------------------------------------------------------------------------------
     OnStart = function ()
     {
+        SubCube.Test();
+        ContourWalker.Test ();
+        CubeSurfer.Initialise ();
+        
+        var q = ContourWalker.FromInts (3,4,5);
+        
         var all = document.getElementsByClassName("expr");
 
         for (var i = 0; i < all.length; i++)
         {
             Misc.expand_element (all[i]);
         }
+        
+        // Creates a timer
+        
+        timer = setInterval(CubeSurferGrid.Animate, 1000);
         
         //CubeRoot.Initialise ();
         
@@ -75,8 +89,12 @@
     {   
         x_start.value = current_x;
         y_start.value = current_y;
-    }   
-    
+    }
+    StartWalk = function (inc_x)
+    {
+        var nin = parseInt (walk_n.value);
+        CubeSurferGrid.Walk (inc_x, current_x, current_y, VLInt.FromInt (nin));
+    }
     Construct = function (which)
     {
         grid [which] = null; // recreate in SetDisplay
@@ -145,13 +163,16 @@
     
     GridHover = function (which,event)
     {
-    	var cell = grid[which].GetCellAt (event.offsetX, event.offsetY);        
-        var x = cell.cw.big_cx.root;
-        var y = cell.cw.big_cy.root;
-        var text = Misc.Format ("Hover at ({0},{1}) = {2}", x, y, CubeSurfer.VALUE_TEXT [gmode[which]](cell));
-        var element = document.getElementById ("hover"+which);
-        
-        element.innerHTML = text;
+        if (grid[which] != null)
+        {
+            var cell = grid[which].GetCellAt (event.offsetX, event.offsetY);        
+            var x = cell.cw.big_cx.root;
+            var y = cell.cw.big_cy.root;
+            var text = Misc.Format ("Hover at ({0},{1}) = {2}", x, y, CubeSurfer.VALUE_TEXT [gmode[which]](cell));
+            var element = document.getElementById ("hover"+which);
+
+            element.innerHTML = text;
+        }
     }
     SetClickAction = function ()
     {
@@ -202,9 +223,9 @@
         <h4>Value view </h4><p>
           X <input type="text" maxlength="12" id="x_start" size="12" value="7">  
           Y <input type="text" maxlength="12" id="y_start" size="12" value="9">
-          Grid: <button onclick="UpdateGrid(G11)"> 11</button>
-          <button onclick="UpdateGrid(G101)"> 101 </button>
-          <button onclick="UpdateGrid(G1001)"> 1001 </button>
+          Grid: <button onclick="UpdateGrid(CubeSurferGrid.G11)"> 11</button>
+          <button onclick="UpdateGrid(CubeSurferGrid.G101)"> 101 </button>
+          <button onclick="UpdateGrid(CubeSurferGrid.G1001)"> 1001 </button>
           Click actions: 
            
            <select id="click_action" onchange="SetClickAction ()">
@@ -215,6 +236,11 @@
                     <option value="4">Zoom x 4</option>
                     <option value="5">Zoom x 5</option>
            </select>
+           
+           Walk: 
+          <button onclick="StartWalk(true)"> +X </button>
+          <button onclick="StartWalk(false)"> +Y </button>
+          <input type="text" maxlength="12" id="walk_n" size="12" value="1">
 
         </p><p>
         
@@ -230,6 +256,7 @@
                 <button onclick="SetTableMode(CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_F4)"> 1/4 </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_N)"> Contour </button>
         </p><p>
             <table>
              <tr>
@@ -260,6 +287,7 @@
                 <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F4)"> 1/4 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_N)"> Contour </button>
         
         </p><p>
         <table>
@@ -267,7 +295,7 @@
           <td>
             <img id="the_view" onClick="ClickGrid(CubeSurferGrid.G11, event)" onMouseMove="GridHover(CubeSurferGrid.G11,event)">
             <br>
-            <span id="hover0"> grid </span>
+            <span id="hover0"> [hover mouse over grid to see values] </span>
           </td><td>
            <div style="display:none;" id="div0">
             <p>
@@ -370,6 +398,14 @@
             </p>
            </div>
            
+           <div style="display:none;" id="div12">
+            <p>
+             <strong>Contours</strong>
+            </p><p>
+                If you reformulate the equation as <strong><span class="expr">x^3+y^3-(x+n)^3, where x>y</span>, the the 'n' values define contours.
+            </p>
+           </div>
+           
           </td>
          </tr>
         </table>
@@ -390,6 +426,7 @@
                 <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F4)"> 1/4 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_N)"> Contour </button>
         
         </p><p>
          <table>
@@ -397,7 +434,7 @@
            <td>
             <img id="big_view" onClick="ClickGrid(CubeSurferGrid.G101, event)" onMouseMove="GridHover(CubeSurferGrid.G101,event)">
             <br>
-            <span id="hover1"> grid </span>
+            <span id="hover1"> [hover mouse over grid to see values] </span>
            </td>
           </tr>
          </table>
@@ -419,6 +456,7 @@
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F4)"> 1/4 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_N)"> Contour </button>                
         
         </p><p>
          <table>
@@ -426,7 +464,7 @@
            <td>
             <img id="vbig_view" onClick="ClickGrid(CubeSurferGrid.G1001, event)" onMouseMove="GridHover(CubeSurferGrid.G1001,event)">
             <br>
-            <span id="hover2"> grid </span>
+            <span id="hover2"> [hover mouse over grid to see values] </span>
            </td>
           </tr>
          </table>

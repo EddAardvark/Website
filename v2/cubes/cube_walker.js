@@ -99,6 +99,11 @@ CubeWalker.prototype.DistanceFrom = function (list)
     return min;
 }
 //--------------------------------------------------------------------------------------------
+CubeWalker.prototype.GetContour = function ()
+{
+    return this.big_cz.root.Subtract(VLInt.Max(this.big_cx.root, this.big_cy.root));
+}
+//--------------------------------------------------------------------------------------------
 CubeWalker.prototype.Neighbours = function ()
 {
     var neighbours = new Array (27);
@@ -286,14 +291,6 @@ CubeWalker.prototype.MoveToSurface = function ()
             break;
         }
     }
-    /*
-    while (VLInt.Compare (this.value, VLInt.ZERO) < 0)
-    {
-        cw.DecrementZ ();
-    }
-    
-    this.subvalue = this.GetNextZValue ();
-    */
 }
 //--------------------------------------------------------------------------------------------
 // Adjust Z to find the smallest positive value
@@ -387,37 +384,37 @@ CubeWalker.prototype.GetNextZValue = function ()
 CubeWalker.prototype.DecrementX = function ()
 {
     this.value = this.value.Add (this.big_cx.DeltaMinus ());
-    this.big_cx = this.big_cx.GetDecrement ();
+    this.big_cx.Decrement ();
 }
 //----------------------------------------------------------------------------------------------------------------
 CubeWalker.prototype.IncrementX = function ()
 {
     this.value = this.value.Add (this.big_cx.DeltaPlus ());
-    this.big_cx = this.big_cx.GetIncrement ();
+    this.big_cx.Increment ();
 }
 //----------------------------------------------------------------------------------------------------------------
 CubeWalker.prototype.DecrementY = function ()
 {
     this.value = this.value.Add (this.big_cy.DeltaMinus ());
-    this.big_cy = this.big_cy.GetDecrement ();
+    this.big_cy.Decrement ();
 }
 //----------------------------------------------------------------------------------------------------------------
 CubeWalker.prototype.IncrementY = function ()
 {
     this.value = this.value.Add (this.big_cy.DeltaPlus ());
-    this.big_cy = this.big_cy.GetIncrement ();
+    this.big_cy.Increment ();
 }
 //----------------------------------------------------------------------------------------------------------------
 CubeWalker.prototype.DecrementZ = function ()
 {
     this.value = this.value.Subtract (this.big_cz.DeltaMinus ());
-    this.big_cz = this.big_cz.GetDecrement ();
+    this.big_cz.Decrement ();
 }
 //----------------------------------------------------------------------------------------------------------------
 CubeWalker.prototype.IncrementZ = function ()
 {
     this.value = this.value.Subtract (this.big_cz.DeltaPlus ());
-    this.big_cz = this.big_cz.GetIncrement ();
+    this.big_cz.Increment ();
 }
 //--------------------------------------------------------------------------------------------
 CubeWalker.TABLE_MAP =

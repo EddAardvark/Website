@@ -12,6 +12,14 @@ CubeSurfer = function (cw)
 {
     this.cw = cw;
 }
+//-------------------------------------------------------------------------------------------------
+CubeSurfer.Initialise = function ()
+{
+    CubeSurferGrid.red = SVGColours.RgbFromName ("red");
+    CubeSurferGrid.blue = SVGColours.RgbFromName ("blue");
+    CubeSurferGrid.black = SVGColours.RgbFromName ("black");
+    CubeSurferGrid.white = SVGColours.RgbFromName ("white");
+}
 
 CubeSurfer.FromPosition = function (x, y)
 {
@@ -83,6 +91,7 @@ CubeSurfer.SM_F2 = 8;
 CubeSurfer.SM_F3 = 9;
 CubeSurfer.SM_F4 = 10;
 CubeSurfer.SM_F5 = 11;
+CubeSurfer.SM_N = 12;
 
 CubeSurfer.MODE_TEXT = [];
 
@@ -98,6 +107,7 @@ CubeSurfer.MODE_TEXT [CubeSurfer.SM_F2] =        "Close to 1/2";
 CubeSurfer.MODE_TEXT [CubeSurfer.SM_F3] =        "Close to 1/3";
 CubeSurfer.MODE_TEXT [CubeSurfer.SM_F4] =        "Close to 1/4";
 CubeSurfer.MODE_TEXT [CubeSurfer.SM_F5] =        "Close to 1/5";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_N] =         "Z - Max (X,Y)";
     
 CubeSurfer.VALUE_TEXT = [];
 
@@ -113,7 +123,7 @@ CubeSurfer.VALUE_TEXT [CubeSurfer.SM_F2] =        function (x) { return Misc.Flo
 CubeSurfer.VALUE_TEXT [CubeSurfer.SM_F3] =        function (x) { return Misc.FloatToText (x.cw.DistanceFrom ([1/3, 2/3]), 8);}
 CubeSurfer.VALUE_TEXT [CubeSurfer.SM_F4] =        function (x) { return Misc.FloatToText (x.cw.DistanceFrom ([1/4, 2/4, 3/4]), 8);}
 CubeSurfer.VALUE_TEXT [CubeSurfer.SM_F5] =        function (x) { return Misc.FloatToText (x.cw.DistanceFrom ([1/5, 2/5, 3/5, 4/5]), 8);}
-
+CubeSurfer.VALUE_TEXT [CubeSurfer.SM_N] =         function (x) { return x.cw.GetContour().toString ();}
 
 //--------------------------------------------------------------------------------------------
 CubeSurfer.prototype.DisplayText = function (mode)
@@ -125,7 +135,6 @@ CubeSurfer.prototype.toString = function ()
 {
     return "(" + this.cw.value + "," + this.cw.subvalue + ")";
 }
-
 //==========================================================================================================
 //==========================================================================================================
 CubeSurferGrid = function (type, x, y)
@@ -135,6 +144,8 @@ CubeSurferGrid = function (type, x, y)
     this.cell_size = CubeSurferGrid.cell [type];
     this.grid = new Array (this.num_cells);
     this.type = type;
+    this.x0 = x;
+    this.y0 = y;
     
     this.grid [0] = CubeSurfer.FromPosition (x, y);
     this.ExpandColumn (0);
@@ -155,38 +166,139 @@ CubeSurferGrid.G1001 = 2;
 CubeSurferGrid.size = [11, 101, 1001];
 CubeSurferGrid.cell = [32, 8, 1];
 CubeSurferGrid.slide = [5, 50, 500];
+
+CubeSurferGrid.animate = null;
+CubeSurferGrid.surfer = null;
+
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.prototype.StartSurfing = function (x, y)
+{
+    var ix = (x.Subtract(this.x0)).ToInt ();
+    var iy = (y.Subtract(this.y0)).ToInt ();
+    var idx = iy + this.size * ix;
     
+    CubeSurferGrid.surfer = new CubeSurfer (CubeWalker.Clone (this.grid[idx].cw));
+    CubeSurferGrid.animate = this;
+}
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.Animate = function ()
+{
+    if (CubeSurferGrid.animate != null)
+    {
+        CubeSurferGrid.animate.Animate ();
+    }
+}
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.prototype.Animate = function ()
+{
+}
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.CalcLimits = function ()
 {
     var n = this.num_cells;
     
-    this.vmax = VLInt.ZERO;
-    this.smin = VLInt.ZERO;
-    this.zmin = this.grid [0].cw.big_cz.root;
+    // Defer calculation until required
     
-    this.zmin = this.grid [0].cw.big_cz.root;
-    this.zmax = this.grid [n - 1].cw.big_cz.root;
-    this.zrange = this.zmax.Subtract (this.zmin);
-    
-    this.rmin = this.grid [0].cw.Range();
-    this.rmax = this.grid [n - 1].cw.Range();
-    this.rrange = this.rmax.Subtract (this.rmin);
-    
-    for (var i = 0 ; i < n ; ++i)
+    this.vmax = null;
+    this.smin = null;
+    this.zmin = null;
+    this.range_min = null;
+    this.contour_min = null;
+} 
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.prototype.InitRangeZ = function ()
+{
+    if (this.zmin === null)
     {
-        var cw = this.grid[i].cw;
+        var n = this.num_cells;
+    
+        this.zmin = VLInt.FromVLInt (this.grid[0].cw.big_cz.root);
+        this.zmax = VLInt.FromVLInt (this.grid[0].cw.big_cz.root);
+    
+        for (var i = 0 ; i < n ; ++i)
+        {
+            var z = this.grid[i].cw.big_cz.root;
         
-        if (VLInt.Compare (cw.value, this.vmax) > 0)
-        {
-            this.vmax = VLInt.FromVLInt (cw.value);
+            if (VLInt.Compare (z, this.zmax) > 0)
+            {
+                this.zmax = z;
+            }
+            if (VLInt.Compare (z, this.zmin) < 0)
+            {
+                this.zmin = z;
+            }
         }
-        if (VLInt.Compare (cw.subvalue, this.smin) < 0)
+        
+        this.zrange = this.zmax.Subtract (this.zmin);
+    }
+}   
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.prototype.InitRangeV = function ()
+{
+    if (this.vmax === null)
+    {
+        var n = this.num_cells;
+    
+        this.vmax = VLInt.ZERO;
+        
+        for (var i = 0 ; i < n ; ++i)
         {
-            this.smin = VLInt.FromVLInt (cw.subvalue);
+            var v = this.grid[i].cw.value;
+        
+            if (VLInt.Compare (v, this.vmax) > 0)
+            {
+                this.vmax = v;
+            }
         }
     }
 }   
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.prototype.InitRangeS = function ()
+{
+    if (this.smin === null)
+    {
+        var n = this.num_cells;
+    
+        this.smin = VLInt.ZERO;
+        
+        for (var i = 0 ; i < n ; ++i)
+        {
+            var s = this.grid[i].cw.subvalue;
+
+            if (VLInt.Compare (s, this.smin) < 0)
+            {
+                this.smin = s;
+            }
+        }
+    }
+}
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.prototype.InitRangeRange = function ()
+{
+    if (this.range_min === null)
+    {
+        var n = this.num_cells;
+    
+        this.range_min = VLInt.FromVLInt (this.grid[0].cw.big_cz.root);
+        this.range_max = VLInt.FromVLInt (this.grid[0].cw.big_cz.root);
+    
+        for (var i = 0 ; i < n ; ++i)
+        {
+            var r = this.grid[i].cw.Range ();
+        
+            if (VLInt.Compare (r, this.range_max) > 0)
+            {
+                this.range_max = r;
+            }
+            if (VLInt.Compare (r, this.range_min) < 0)
+            {
+                this.range_min = r;
+            }
+        }
+        
+        this.range_range = this.range_max.Subtract (this.range_min);
+    }
+}      
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.ExpandColumn = function (x)
 {
@@ -202,8 +314,8 @@ CubeSurferGrid.prototype.ExpandColumn = function (x)
     {
         this.ExpandRow (i);
     }
-}
-    
+} 
+//--------------------------------------------------------------------------------------------    
 CubeSurferGrid.prototype.ExpandRow = function (y)
 {
     var idx = y;
@@ -214,8 +326,7 @@ CubeSurferGrid.prototype.ExpandRow = function (y)
         this.grid [nidx] = this.grid [idx].TrackX ();
         idx = nidx;
     }
-}
-    
+}    
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.ToTable = function (mode)
 {
@@ -237,13 +348,14 @@ CubeSurferGrid.prototype.ToTable = function (mode)
     text += "</table>";
     return text;
 }
-
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.DrawPattern = function (img_element, mode)
 {
     var cell = this.cell_size;
     var width = this.size * cell;    
     var chelp = new CanvasHelp (width, width);
+
+    CubeSurferGrid.INITRANGE [mode] (this);
 
     for (var x = 0 ; x < this.size ; ++x)
     {
@@ -278,82 +390,87 @@ CubeSurferGrid.prototype.GetCellAt = function (xpos, ypos)
     }
     return this.grid [idx];
 }
+
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.ACTION=[];
+CubeSurferGrid.ACTION[CubeSurferGrid.SCROLL] = function (csg, x, y)
+{
+    return [x,y];    
+}
+CubeSurferGrid.ACTION[CubeSurferGrid.CENTRE] = function (csg, x, y)
+{
+    var slide = CubeSurferGrid.slide[csg.type];
+        
+    return [x.AddInt (-slide),y.AddInt (-slide)];
+}
+CubeSurferGrid.ACTION[CubeSurferGrid.TIMES2] = function (csg, x, y)
+{
+    return [x.MultiplyInt (2),y.MultiplyInt (2)];
+}
+CubeSurferGrid.ACTION[CubeSurferGrid.TIMES3] = function (csg, x, y)
+{
+    return [x.MultiplyInt (2),y.MultiplyInt (2)];
+}
+CubeSurferGrid.ACTION[CubeSurferGrid.TIMES4] = function (csg, x, y)
+{
+    return [x.MultiplyInt (2),y.MultiplyInt (2)];
+}
+CubeSurferGrid.ACTION[CubeSurferGrid.TIMES5] = function (csg, x, y)
+{
+    return [x.MultiplyInt (2),y.MultiplyInt (2)];
+}
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.GetNewCorner = function (xpos, ypos, action)
 {
-    var cell = this.GetCellAt (event.offsetX, event.offsetY);
+    var cell = this.GetCellAt (xpos, ypos);
 
     var x = cell.cw.big_cx.root;
     var y = cell.cw.big_cy.root;
-
-    if (action == CubeSurferGrid.SCROLL)
-    {
-        return [x,y];
-    }
     
-    if (action == CubeSurferGrid.CENTRE)
-    {
-        var slide = CubeSurferGrid.slide[this.type];
-        
-        x = x.AddInt (-slide);
-        y = y.AddInt (-slide);
-            
-        return [x,y];
-    }
-    
-    var mull = 0;
-    
-    if (action == CubeSurferGrid.TIMES2)
-    {
-        var mul = 2;
-    }
-    
-    if (action == CubeSurferGrid.TIMES3)
-    {
-        var mul = 3;
-    }
-    
-    if (action == CubeSurferGrid.TIMES4)
-    {
-        var mul = 4;
-    }
-    
-    if (action == CubeSurferGrid.TIMES5)
-    {
-        var mul = 5;
-    }
-    
-    if (mul > 0)
-    {
-        x = x.MultiplyInt (mul);
-        y = y.MultiplyInt (mul);
-            
-        return [x,y];
-    }
-    
-    return [x,y];    
+    return CubeSurferGrid.ACTION[action](this, x, y); 
 }
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.Walk = function (inc_x, x, y, n)
+{
+    var walker = ContourWalker.FromVLInts (x, y, n, inc_x);
+    
+    for (var i = 0 ; i < 10 ; ++i)
+    {
+        walker.Next ();
+    }
+}
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.INITRANGE = [];
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_Z] = function (csg) { csg.InitRangeZ (); }
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_VALUE] = function (csg) { csg.InitRangeV (); }
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_WALKER] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_XYZ] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_RANGE] = function (csg) { csg.InitRangeRange (); }
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_SUBVALUE] = function (csg) { csg.InitRangeS (); }
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_INTERCEPT] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_MOD9] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_F2] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_F3] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_F4] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_F5] = function (csg) {}
+CubeSurferGrid.INITRANGE [CubeSurfer.SM_N] = function (csg) {}
 
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.COLOUR = [];
 
 CubeSurferGrid.COLOUR [CubeSurfer.SM_Z] = function (csg, surfer)
 {
-    var c1 = SVGColours.RgbFromName ("red");
-    var c2 = SVGColours.RgbFromName ("blue");
     var dz = surfer.cw.big_cz.root.Subtract (csg.zmin);
     var f = VLInt.Ratio (dz, csg.zrange);
     
-    return SVGColours.BlendRGB (c1, c2, f);
+    return SVGColours.BlendRGB (CubeSurferGrid.red, CubeSurferGrid.blue, f);
 }
 
 CubeSurferGrid.COLOUR [CubeSurfer.SM_VALUE] = function (csg, surfer)
 {
-    var c1 = SVGColours.RgbFromName ("blue");
-    var c2 = SVGColours.RgbFromName ("white");
     var f = VLInt.Ratio (surfer.cw.value, csg.vmax);
     
-    return SVGColours.BlendRGB (c1, c2, f);
+    return SVGColours.BlendRGB (CubeSurferGrid.blue, CubeSurferGrid.white, f);
 }
 
 CubeSurferGrid.COLOUR [CubeSurfer.SM_WALKER] = function (csg, surfer)
@@ -366,35 +483,28 @@ CubeSurferGrid.COLOUR [CubeSurfer.SM_XYZ] = function (csg, surfer)
 }
 CubeSurferGrid.COLOUR [CubeSurfer.SM_RANGE] = function (csg, surfer)
 {
-    var c1 = SVGColours.RgbFromName ("red");
-    var c2 = SVGColours.RgbFromName ("blue");
-    var dz = surfer.cw.Range().Subtract (csg.rmin);
-    var f = VLInt.Ratio (dz, csg.rrange);
+    var dz = surfer.cw.Range().Subtract (csg.range_min);
+    var f = VLInt.Ratio (dz, csg.range_range);
     
-    return SVGColours.BlendRGB (c1, c2, f);
+    return SVGColours.BlendRGB (CubeSurferGrid.red, CubeSurferGrid.blue, f);
 }
 CubeSurferGrid.COLOUR [CubeSurfer.SM_SUBVALUE] =  function (csg, surfer)
 {
-    var c1 = SVGColours.RgbFromName ("red");
-    var c2 = SVGColours.RgbFromName ("white");
     var f = VLInt.Ratio (surfer.cw.subvalue, csg.smin);
     
-    return SVGColours.BlendRGB (c1, c2, f);
+    return SVGColours.BlendRGB (CubeSurferGrid.red, CubeSurferGrid.white, f);
 }
 CubeSurferGrid.COLOUR [CubeSurfer.SM_INTERCEPT] = function (csg, surfer)
 {
-    var white = SVGColours.RgbFromName ("white");
     var r = surfer.cw.value.Subtract (surfer.cw.subvalue);
     var f = VLInt.Ratio (surfer.cw.value, r);
     
     if (f > 0.5)
     {
-        var red = SVGColours.RgbFromName ("red");
-        return SVGColours.BlendRGB (red, white, 2 * (f - 0.5));
+        return SVGColours.BlendRGB (CubeSurferGrid.red, CubeSurferGrid.white, 2 * (f - 0.5));
     }
     
-    var blue = SVGColours.RgbFromName ("blue");
-    return SVGColours.BlendRGB (white, blue, 2 * f);
+    return SVGColours.BlendRGB (CubeSurferGrid.white, CubeSurferGrid.blue, 2 * f);
 }
 
 CubeSurferGrid.RAINBOW = ["red","orange","yellow","green","black","black","blue","indigo","violet"]; // no 4 or 5
@@ -405,7 +515,6 @@ CubeSurferGrid.COLOUR [CubeSurfer.SM_MOD9] = function (csg, surfer)
     return CubeSurferGrid.RAINBOW [n];
 }
 
-
 CubeSurferGrid.COLOUR [CubeSurfer.SM_F2] = function (csg, surfer)
 {
     var x = surfer.cw.DistanceFrom ([1/2]);
@@ -413,8 +522,8 @@ CubeSurferGrid.COLOUR [CubeSurfer.SM_F2] = function (csg, surfer)
     if (x > 1/8) return "white";
     
     var white = SVGColours.RgbFromName ("white");
-    var blue = SVGColours.RgbFromName ("blue");
-    return SVGColours.BlendRGB (blue, white, 1 - 8 * x);
+
+    return SVGColours.BlendRGB (CubeSurferGrid.blue, white, 1 - 8 * x);
 }
 CubeSurferGrid.COLOUR [CubeSurfer.SM_F3] = function (csg, surfer)
 {
@@ -423,8 +532,8 @@ CubeSurferGrid.COLOUR [CubeSurfer.SM_F3] = function (csg, surfer)
     if (x > 1/27) return "white";
     
     var white = SVGColours.RgbFromName ("white");
-    var blue = SVGColours.RgbFromName ("blue");
-    return SVGColours.BlendRGB (blue, white, 1 - 27 * x);
+
+    return SVGColours.BlendRGB (CubeSurferGrid.blue, white, 1 - 27 * x);
 }
 CubeSurferGrid.COLOUR [CubeSurfer.SM_F4] = function (csg, surfer)
 {
@@ -433,20 +542,25 @@ CubeSurferGrid.COLOUR [CubeSurfer.SM_F4] = function (csg, surfer)
     if (x > 1/64) return "white";
     
     var white = SVGColours.RgbFromName ("white");
-    var blue = SVGColours.RgbFromName ("blue");
-    return SVGColours.BlendRGB (blue, white, 1 - 64 * x);
+
+    return SVGColours.BlendRGB (CubeSurferGrid.blue, white, 1 - 64 * x);
 }
 CubeSurferGrid.COLOUR [CubeSurfer.SM_F5] = function (csg, surfer)
 {
     var x = surfer.cw.DistanceFrom ([1/5, 2/5, 3/5, 4/5]);
     
     if (x > 1/125) return "white";
-    
-    var white = SVGColours.RgbFromName ("white");
-    var blue = SVGColours.RgbFromName ("blue");
-    return SVGColours.BlendRGB (blue, white, 1 - 125 * x);
-}
 
+    return SVGColours.BlendRGB (CubeSurferGrid.blue, CubeSurferGrid.white, 1 - 125 * x);
+}
+//--------------------------------------------------------------------------------------------
+CubeSurferGrid.COLOUR [CubeSurfer.SM_N] = function (csg, surfer)
+{
+    var x = surfer.cw.GetContour ().Mod8();
+    var f = x / 7;
+    
+    return SVGColours.BlendRGB (CubeSurferGrid.black, CubeSurferGrid.white, f);
+}
 //--------------------------------------------------------------------------------------------
 CubeSurferGrid.prototype.GetColour = function (idx, mode)
 {
@@ -456,6 +570,7 @@ CubeSurferGrid.prototype.GetColour = function (idx, mode)
     
     return CubeSurferGrid.COLOUR [mode] (this, surfer);
 }
+
 
 
     
