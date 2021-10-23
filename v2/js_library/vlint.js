@@ -22,12 +22,30 @@ VLInt.PREFIX = "0000000000";
 //----------------------------------------------------------------------------------------------------------------
 VLInt.Initialise = function ()
 {
-    VLInt.ZERO = VLInt.FromInt (0);
-    VLInt.ONE = VLInt.FromInt (1);
+    VLInt.ZERO = VLInt.MakeZero ();
+    VLInt.ONE = VLInt.MakeOne ();
     VLInt.TWO = VLInt.FromInt (2);
     VLInt.THREE = VLInt.FromInt (3);
     VLInt.EIGHT = VLInt.FromInt (8);
     VLInt.powers2 = [VLInt.FromInt(1)];
+}
+//----------------------------------------------------------------------------------------------------------------
+VLInt.MakeZero = function ()
+{
+    var ret = new VLInt ();
+    
+    ret.positive = true;
+    ret.value = [0];
+    return ret;
+}
+//----------------------------------------------------------------------------------------------------------------
+VLInt.MakeOne = function ()
+{
+    var ret = new VLInt ();
+    
+    ret.positive = true;
+    ret.value = [1];
+    return ret;
 }
 //----------------------------------------------------------------------------------------------------------------
 VLInt.FromInt = function (n)
@@ -154,7 +172,7 @@ VLInt.prototype.MultiplyInt = function (num)
 {
     if (num == 0 || this.IsZero ())
     {
-        return VLInt.FromInt (0);
+        return VLInt.MakeZero (0);
     }
     
     num = Math.floor (num);
@@ -193,7 +211,7 @@ VLInt.prototype.Multiply = function (other)
 {
     if (other.IsZero () || this.IsZero ())
     {
-        return VLInt.FromInt (0);
+        return VLInt.MakeZero ();
     }
 
     var vector = VLInt.MultiplyVectors (this.value, other.value);
@@ -217,6 +235,34 @@ VLInt.prototype.SubtractInt = function (num)
     var n = VLInt.FromInt (num);
 
     return this.Subtract (n);
+}
+//--------------------------------------------------------------------------------------------
+// Add 1 (in place)
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.Increment = function ()
+{
+    if (this.negative)
+    {
+        this.DecrementVector ();
+    }
+    else
+    {
+        this.IncrementVector ();
+    }
+}
+//--------------------------------------------------------------------------------------------
+// Subtract 1 (in place)
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.Decrement = function ()
+{
+    if (this.negative)
+    {
+        this.IncrementVector ();
+    }
+    else
+    {
+        this.DecrementVector ();
+    }
 }
 //--------------------------------------------------------------------------------------------
 // Add a simple number (this number is truncated to an integer)
@@ -297,6 +343,41 @@ VLInt.AddVectors = function (vec1, vec2)
     }
     
     return ret;
+}
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.IncrementVector = function ()
+{
+    var n = this.value.length - 1;
+    ++this.value[0];
+    
+    for (var i = 0 ; i < n && this.value[i] == VLInt.BASE ; ++i)
+    {
+        this.value [i] = 0;
+        ++this.value[i+1];
+    }
+    
+    if (this.value[n] == VLInt.BASE)
+    {
+        this.value [n] = 0;
+        this.value[n+1] = 1;
+    }
+}
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.DecrementVector = function ()
+{
+    var n = this.value.length - 1;
+    --this.value[0];
+    
+    for (var i = 0 ; i < n && this.value[i] < 0 ; ++i)
+    {
+        this.value [i] = VLInt.BASE - 1;
+        --this.value[i+1];
+    }
+    
+    if (this.value[n] < 0)
+    {
+        throw "VLInt: Decrement past 0 not supported";
+    }
 }
 //--------------------------------------------------------------------------------------------
 VLInt.SubtractVectors = function (vec1, vec2)
@@ -397,7 +478,21 @@ VLInt.Compare = function (first, second)
     return first.positive ? c : -c;
 }
 //--------------------------------------------------------------------------------------------
-// Compare the vector component ingnoring the positive,
+// returns the minimum (by reference)
+//--------------------------------------------------------------------------------------------
+VLInt.Min = function (first, second)
+{
+    return (VLInt.Compare (first, second) > 0) ? second : first;
+}
+//--------------------------------------------------------------------------------------------
+// returns the maximum (by reference)
+//--------------------------------------------------------------------------------------------
+VLInt.Max = function (first, second)
+{
+    return (VLInt.Compare (first, second) > 0) ? first : second;
+}
+//--------------------------------------------------------------------------------------------
+// Compare the vector component ignoring the positive,
 // returns -1, 0 or 1 for (first < second), (first == second) and (first > second)
 // Assumes the vector have no leading 0's
 //--------------------------------------------------------------------------------------------
@@ -465,21 +560,44 @@ VLInt.prototype.Minus = function ()
 {
     return VLInt.FromVector (this.value, !this.positive);
 }
-
+//--------------------------------------------------------------------------------------------
 VLInt.prototype.SubtractNumber = function (number)
 {
     return new VLInt.FromInt (number).Subtract (this);
 }
-
+//--------------------------------------------------------------------------------------------
 // Check if zero
-
 VLInt.prototype.IsZero = function ()
 {
     return this.value.length == 0 || (this.value.length == 1 && this.value[0] == 0);
 }
-
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.Mod2 = function ()
+{
+    return (this.value.length > 0) ? (this.value [0] % 2) : 0;
+}
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.Mod4 = function ()
+{
+    return (this.value.length > 0) ? (this.value [0] % 4) : 0;
+}
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.Mod5 = function ()
+{
+    return (this.value.length > 0) ? (this.value [0] % 5) : 0;
+}
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.Mod8 = function ()
+{
+    return (this.value.length > 0) ? (this.value [0] % 8) : 0;
+}
+//--------------------------------------------------------------------------------------------
+VLInt.prototype.Mod10 = function ()
+{
+    return (this.value.length > 0) ? (this.value [0] % 10) : 0;
+}
+//--------------------------------------------------------------------------------------------
 // Divide by an integer (< BASE)
-
 VLInt.prototype.DivideByNumber = function (number)
 {
     return this.DivMod (number) [0];
@@ -674,6 +792,23 @@ VLInt.prototype.Square = function ()
 VLInt.prototype.Cube = function ()
 {
     return this.Multiply (this.Multiply (this));
+}
+//------------------------------------------------------------------------------------------------------
+VLInt.prototype.ToInt = function ()
+{
+    var len = this.value.length;
+    var ret = this.value[0];
+    
+    if (len > 3) return null;
+    
+    for (var i = 1 ; i < len ; ++i)
+    {
+        ret = ret * VLInt.BASE + this.value[i];
+        
+        if (ret > Number.MAX_SAFE_INTEGER) return null;
+    }
+    
+    return ret;
 }
 //=========================================================================================================
 // Monitoring and debugging

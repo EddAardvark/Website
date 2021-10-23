@@ -34,7 +34,7 @@ BigCube.FromVLInt = function (n)
     
     var ret = new BigCube ();
     
-    ret.root = n;
+    ret.root = VLInt.FromVLInt (n);
     
     var n2 = n.Multiply (n);
     var n3 = n2.Multiply (n);
@@ -67,7 +67,7 @@ BigCube.prototype.GetIncrement = function ()
 {
     var ret = new BigCube ();
     
-    ret.root = this.root.AddInt (1);
+    this.root.Increment ();
     ret.cube = this.cube.Add (this.dy);
     ret.dy = this.dy.Add (this.ddy);
     ret.ddy = this.ddy.AddInt (BigCube.dddy);
@@ -82,9 +82,25 @@ BigCube.prototype.GetDecrement = function ()
     ret.ddy = this.ddy.SubtractInt (BigCube.dddy);
     ret.dy = this.dy.Subtract (ret.ddy);
     ret.cube = this.cube.Subtract (ret.dy);
-    ret.root = this.root.SubtractInt (1);
+    this.root.Decrement ();
     
     return ret;
+}
+//-------------------------------------------------------------------------------------------------
+BigCube.prototype.Increment = function ()
+{    
+    this.root.Increment ();
+    this.cube = this.cube.Add (this.dy);
+    this.dy = this.dy.Add (this.ddy);
+    this.ddy = this.ddy.AddInt (BigCube.dddy);
+}
+//-------------------------------------------------------------------------------------------------
+BigCube.prototype.Decrement = function ()
+{
+    this.ddy = this.ddy.SubtractInt (BigCube.dddy);
+    this.dy = this.dy.Subtract (this.ddy);
+    this.cube = this.cube.Subtract (this.dy);
+    this.root.Decrement ();
 }
 //-------------------------------------------------------------------------------------------------
 BigCube.prototype.DeltaPlus = function ()
