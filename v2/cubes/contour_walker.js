@@ -40,6 +40,7 @@ ContourWalker.FromVLInts = function (x, y, n, inc_x)
     
     ret.n = VLInt.FromVLInt (n);
     ret.value = ret.cube.cube.Subtract (ret.subcube.value);
+    ret.subvalue = ret.value.Subtract (ret.cube.GetDecrement ());
     ret.walk = inc_x ? ret.WalkX : ret.WalkY;
     return ret;
 }
@@ -71,12 +72,14 @@ ContourWalker.prototype.DecrementSub = function ()
 {
     this.subcube.DecrementX ();
     this.value = this.value.Add (this.subcube.dv); // Value = cube - sub, so add
+    this.subvalue = this.value.Add (this.subcube.dv); // Value = cube - sub, so add
     this.s.Decrement ();
 }
 //----------------------------------------------------------------------------------------------------------------
 ContourWalker.prototype.IncrementSub = function ()
 {
     this.value = this.value.Subtract (this.subcube.dv); // Value = cube - sub, so subtract
+    this.subvalue = this.value.Subtract (this.subcube.dv); // Value = cube - sub, so subtract
     this.subcube.IncrementX ();
     this.s.Increment ();
 }
@@ -85,11 +88,13 @@ ContourWalker.prototype.DecrementCube = function ()
 {
     this.cube.Decrement ();
     this.value = this.value.Subtract (this.cube.dy);
+    this.subvalue = this.value.Subtract (this.cube.GetDecrement ());
     this.c.Decrement ();
 }
 //----------------------------------------------------------------------------------------------------------------
 ContourWalker.prototype.IncrementCube = function ()
 {
+    this.subvalue = VLInt.FromVLInt (this.value);
     this.value = this.value.Add (this.cube.dy);
     this.cube.Increment ();    
     this.c.Increment ();
@@ -97,7 +102,7 @@ ContourWalker.prototype.IncrementCube = function ()
 //--------------------------------------------------------------------------------------------
 ContourWalker.prototype.toString = function ()
 {
-    return Misc.Format ("Contour({0},{1},{2})={2}", this.x, this.y, this.n, this.value);
+    return Misc.Format ("Contour({0},{1},{2})={3},{4}", this.x, this.y, this.n, this.value, this.subvalue);
 }     
 //--------------------------------------------------------------------------------------------
 ContourWalker.prototype.Verify = function (where)
@@ -114,7 +119,14 @@ ContourWalker.prototype.Verify = function (where)
     var sv = a.Add(b).Add(n3);
     var v = c3.Subtract (sv);
     
-    if (v.toString () != this.value.toString ()) throw "ContourWalker Verify failed";
+    var cm = this.c.SubtractInt(1);
+    var cm2 = this.cm.Multiply (this.cm);
+    var cm3 = cm2.Multiply (this.cm);
+    var subv = cm3.Subtract (sv);
+    
+    
+    if (v.toString () != this.value.toString ()) throw "ContourWalker value failed";
+    if (subv.toString () != this.subvalue.toString ()) throw "ContourWalker subvalue failed";
 }
 //--------------------------------------------------------------------------------------------
 ContourWalker.Test = function ()
