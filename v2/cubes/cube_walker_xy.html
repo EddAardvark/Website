@@ -178,6 +178,40 @@
     {
         action = click_action.value;
     }
+    
+    TrackContour = function()
+    {
+    
+        if (grid[CubeSurferGrid.G1001] == null)
+        {
+            grid[CubeSurferGrid.G1001] = new CubeSurferGrid (CubeSurferGrid.G1001, current_x, current_y);
+            grid[CubeSurferGrid.G1001].DrawPattern (gelement[CubeSurferGrid.G1001], gmode[CubeSurferGrid.G1001]);
+        }
+        
+        // start at (0,0)
+        
+        var cw = grid[CubeSurferGrid.G1001].grid[0].cw;        
+        var n = cw.GetContour ();
+        var contour_walker = null;
+        
+        if (VLInt.Compare (cw.big_cx.root, cw.big_cy.root) > 0)
+        {
+            contour_walker = ContourWalker.FromVLInts (cw.big_cx.root, cw.big_cy.root, n, true);
+        }
+        else
+        {
+            contour_walker = ContourWalker.FromVLInts (cw.big_cy.root, cw.big_cx.root, n, false);
+        }
+        
+        Misc.Log ("{0}: {1}", 0, contour_walker);
+        
+        for (var i = 1 ; i < 21 ; ++i)
+        {
+            contour_walker.Next ();
+            Misc.Log ("{0}: {1}", i, contour_walker);
+        }
+    }
+    
                    
                 
 
@@ -457,6 +491,7 @@
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F4)"> 1/4 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F5)"> 1/5 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_N)"> Contour </button>                
+                <button onclick="TrackContour()"> Track Contour </button>                
         
         </p><p>
          <table>

@@ -65,26 +65,13 @@ BigCube.prototype.Clone = function ()
 //-------------------------------------------------------------------------------------------------
 BigCube.prototype.GetIncrement = function ()
 {
-    var ret = new BigCube ();
-    
-    this.root.Increment ();
-    ret.cube = this.cube.Add (this.dy);
-    ret.dy = this.dy.Add (this.ddy);
-    ret.ddy = this.ddy.AddInt (BigCube.dddy);
-    
-    return ret;
+    return this.dy;
 }
 //-------------------------------------------------------------------------------------------------
 BigCube.prototype.GetDecrement = function ()
 {
-    var ret = new BigCube ();
-
-    ret.ddy = this.ddy.SubtractInt (BigCube.dddy);
-    ret.dy = this.dy.Subtract (ret.ddy);
-    ret.cube = this.cube.Subtract (ret.dy);
-    this.root.Decrement ();
-    
-    return ret;
+    var temp_ddy = this.ddy.SubtractInt (BigCube.dddy);
+    return this.dy.Subtract (temp_ddy);
 }
 //-------------------------------------------------------------------------------------------------
 BigCube.prototype.Increment = function ()
