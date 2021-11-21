@@ -33,7 +33,7 @@ Primes.CacheUpTo = function (maxp)
         next = current_max + 2;
     }
     
-    while (next <= maxp)
+    while (Primes.list [Primes.list.length-1] <= maxp)
     {
         Primes.TryAdd (next);
         Primes.TryAdd (next+4);
@@ -53,7 +53,9 @@ Primes.IsPrime = function (n)
 {
     if (Primes.list.indexOf (n) >= 0) return true;
     
-    var limit = Math.sqrt (n);
+    var limit = Math.floor (Math.sqrt (n));
+
+    Primes.CacheUpTo (limit);
 
     for (var i in Primes.list)
     {
@@ -75,7 +77,9 @@ Primes.GetPrimeFactors = function (n)
 {
     if (Primes.list.indexOf (n) >= 0) return [n];
     
-    var limit = Math.sqrt (n);
+    var limit = Math.floor (Math.sqrt (n));
+
+    Primes.CacheUpTo (limit);
 
     for (var i in Primes.list)
     {
@@ -97,8 +101,10 @@ Primes.GetUniquePrimeFactors = function (n)
 {
     if (Primes.list.indexOf (n) >= 0) return [n];
     
-    var limit = Math.sqrt (n);
+    var limit = Math.floor (Math.sqrt (n));
 
+    Primes.CacheUpTo (limit);
+    
     for (var i in Primes.list)
     {
         var p = Primes.list [i];
@@ -128,7 +134,9 @@ Primes.GAF2 = function (n)
 {
     if (Primes.list.indexOf (n) >= 0) return [1,n];
     
-    var limit = Math.sqrt (n);
+    var limit = Math.floor (Math.sqrt (n));
+
+    Primes.CacheUpTo (limit);
 
     for (var i in Primes.list)
     {
@@ -172,15 +180,17 @@ Primes.GFLT2 = function (n, less_than)
         return (n < less_than) ? [1,n] : [1];
     }
     
-    var limit = Math.sqrt (n);
+    //var limit = Math.floor (Math.sqrt (n));
+
+    Primes.CacheUpTo (less_than);
 
     for (var i in Primes.list)
     {
         var p = Primes.list [i];
         
-        if (p > limit)
+        if (p > less_than)
         {
-            return [n];
+            return [];
         }
         if (n % p == 0)
         {

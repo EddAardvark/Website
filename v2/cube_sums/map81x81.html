@@ -104,13 +104,95 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     Main content
     ==============================================================================================================
     -->
+        
+    <!-- Notes -->
     
-    <div class="float in2 box w9" style="overflow: auto;">
+    <div class="float in2 box w10" style="overflow: auto;">
 
+        <h1> Notes </h1>
+      <p>
+        If you calculate the sequence <span class="expr">z^3</span> modulo 9 you get [1,8,0,1,8,0,1,8,0,...]. This repeats indefinitely. You can show this
+        by considering the expression <span class="expr">(3n+k)^3</span> mod 9, where <span class="expr">0<=k<=2</span>. This expands to:
+      </p><p>
+        <span class="expr">(3n)^3+3.(3n)^2k+3.(3n)k^2+k^3</span> mod 9.
+      </p><p>
+        The first three terms are all multiples of 9, so the remainder will be <span class="expr">k^3</span> mod 9 which is [1,8,0] as we showed above.
+        The possible remainders when <span class="expr">x^3+y^3+z^3</span> is divided by 9 can be obtained by adding 
+        all the permutations of three numbers taken from this list, which are:
+        [0,1,2,3,8,9,10,16,17,24], which modulo 9 become [0,1,2,3,8,0,1,7,8,6]. 
+      </p><p>
+        If you expand these sums into a table:
+      </p><p>
+        <table>
+         <tr>
+          <th>k1,k2,k3</th><th>0,0</th><th>0,1</th><th>0,8</th><th>1,0</th><th>1,1</th><th>1,8</th><th>8,0</th><th>8,1</th><th>8,8</th>
+         </tr>
+        
+         <tr>
+          <th>0</th><td>0</td><td>1</td><td>8</td><td>1</td><td>2</td><td>0</td><td>8</td><td>0</td><td>7</td>
+         </tr>
+
+         <tr>
+          <th>1</th><td>1</td><td>2</td><td>0</td><td>2</td><td>3</td><td>1</td><td>0</td><td>1</td><td>8</td>
+         </tr>
+
+         <tr>
+          <th>8</th><td>8</td><td>0</td><td>7</td><td>0</td><td>1</td><td>8</td><td>7</td><td>8</td><td>6</td>
+         </tr>
+       </table>
+      </p><p>
+        And arrange them according to the total we can infer some additional constraints on 'z'.
+      </p><p>
+       <table>
+         <tr>
+          <th>Total</th><th>Combinations</th><th>Count</th><th>Constraints on 'z'</th>
+         </tr>
+        
+         <tr>
+          <th>0</th><td>(0,0,0), (0,1,8)</td><td>7</td><td>none</td>
+         </tr>
+
+         <tr>
+          <th>1</th><td>(0,0,1), (1,1,8)</td><td>6</td><td>none</td>
+         </tr>
+
+         <tr>
+          <th>2</th><td>(0,1,1)</td><td>3</td><td>z mod 3 can't be 2</td>
+         </tr>
+
+         <tr>
+          <th>3</th><td>(1,1,1)</td><td>1</td><td>z mod 3 must be 1</td>
+         </tr>
+
+         <tr>
+          <th>4</th><td></td><td>0</td><td>impossible</td>
+         </tr>
+
+         <tr>
+          <th>5</th><td></td><td>0</td><td>impossible</td>
+         </tr>
+
+         <tr>
+          <th>6</th><td>(8,8,8)</td><td>1</td><td>z mod 3 must be 2</td>
+         </tr>
+
+         <tr>
+          <th>7</th><td>(0,8,8)</td><td>3</td><td>z mod 3 can't be 1</td>
+         </tr>
+
+         <tr>
+          <th>8</th><td>(0,0,8), (1,8,8)</td><td>6</td><td>none</td>
+         </tr>
+       </table>
+      </p>
+    </div>
+    
+
+    <div class="float in2 box w10" style="overflow: auto;">
         <h1> Mapping </h1>
         
         <p>
-        On the page <a href="index.html">index.html</a> we discussed finding cube sums using an algorithm described by "numberphile" youtube.
+        On the <a href="numberphile.html">Numberphile page</a> we discussed finding cube sums using an algorithm described by "numberphile" youtube.
         Here we look at the distribution of solutions that can be found using the algorithm when the equation doesn't have integer roots 
         in the hope that they will be similarly small compared with the target.
         </p><p>
@@ -142,7 +224,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     
     <!-- Map -->
 
-    <div class="float w9 in2 box" style="overflow: auto;">
+    <div class="float in2 box w10" style="overflow: auto;">
 
         <h2> 81 x 81 map </h2>
         
@@ -154,8 +236,8 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     
 <!-- Generic links -->
 
-    <div class="float w9 in2 box" style="overflow: auto;">
-
+    <div class="float in2 box w10" style="overflow: auto;">
+    
         <h2> Other pages </h2>
         
         <p>

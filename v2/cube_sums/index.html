@@ -1,0 +1,321 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Cube Sums">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+
+<style>
+
+TD {padding: 3pt; border: 1px solid brown;}
+TH {padding: 3pt; border: 1px solid brown; background: orange;}
+
+</style>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/primes.js"> </script>
+<script src="sum_finder.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<title> Searching for Cube Sums </title>
+
+
+<script>
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnLoad = function ()
+    {
+        var all = document.getElementsByClassName("expr");
+
+        for (var i = 0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+        
+        Primes.CacheUpTo (2000);
+    }
+    
+    GetValues = function (unique)
+    {
+        var n = parseInt (nval.value);
+        
+        if (n%9 == 4 || n%9 == 5)
+        {
+            result.innerHTML = "No possible solutions";
+            return;
+        }
+        
+        var limit = parseInt (maxz.value);
+        var sums = new CubeSumFinder ();
+        
+        sums.solve (n, limit);
+        
+        if (sums.result.length == 0)
+        {
+            result.innerHTML = "No solutions found";
+            return;
+        }
+        
+        var res = unique ? sums.getUnique () : sums.result;
+       
+        var text = "";
+       
+        for (var i in res)
+        {
+            if (unique) res[i].normalise();
+            text += Misc.expand_expression(res[i].getText ()) + "<br>";
+        }        
+        result.innerHTML = text;        
+    }
+    
+    ShowValues = function()
+    {
+        var n = parseInt (nval.value);
+        var limit = parseInt (maxz.value);
+        var text = "";
+        var eq =  Misc.expand_expression("3x^2-3dx+d^2");
+        
+        for (var z = 1 ; z <= limit ; ++z)
+        {
+            var t = n+z*z*z;
+            
+            if (t < 0) continue;
+            
+            var max_d = Math.floor (Math.pow (4*t,1/3));
+            var dvals = Primes.GetFactorsLessThan (t, max_d+1);
+            
+            text += eq + " = " + t + "/d, factors = [" + dvals + "], max d = " + max_d + "<br>";
+                        
+            for (var j in dvals)
+            {
+                var d = dvals[j];
+                var a = 3;
+                var b = -3 * d;
+                var c = (d*d-t/d);
+                var op_b = (b > 0) ? ('+' + b) : b;
+                var op_c = (c > 0) ? ('+' + c) : c;
+                var b2 = b*b-4*a*c;
+                var b2t = (b2 > 0) ? b2 : '&minus;' + -b2;
+                var line = "=>" + a + "x^2" + op_b + "x" + op_c + "=0, b^2-4ac=" + b2t;
+                
+                var sr = Math.round(Math.sqrt(b2));
+              
+                text += Misc.expand_expression(line) + "<br>";
+                
+                if (sr * sr == b2)
+                {
+                    var x1 = (-b + sr);
+                    var x2 = (-b - sr);
+                                        
+                    text += "&nbsp;&nbsp;" + "Result: " + b2 + " is a square, x1 = " + x1 + "/6, x2 = " + x2 + "/6<br>";
+                    
+                    if (x1 % 6 == 0)
+                    {
+                        x1 /= 6;
+                        var y1 = d - x1;
+                        var s1 = x1*x1*x1 + y1*y1*y1 - z*z*z;
+                        
+                        text += "&nbsp;&nbsp;&nbsp;&nbsp;S1: " + Misc.expand_expression(x1 + "^3+" + y1 + "^3-" + z + "^3=") + n + "(" + s1 + ")" + ",<br>";
+                    }
+
+                    if (x2 % 6 == 0)
+                    {
+                        x2 /= 6;
+                        var y2 = d - x2;
+                        var s2 = x2*x2*x2 + y2*y2*y2 - z*z*z;
+
+                        text += "&nbsp;&nbsp;&nbsp;&nbsp;S2: " + Misc.expand_expression(x2 + "^3+" + y2 + "^3-" + z + "^3=") + n + "(" + s2 + ")" + "<br>";
+                    }
+                }
+            }
+        }
+        
+        result.innerHTML = text;        
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnLoad();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Sums of cubes </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->
+    
+        <div class="float in2 box w10" style="overflow: auto;">
+
+        <h1> Introduction </h1>
+        
+        <p>
+        This page explores the search for small values (V) of the expression 
+        
+        <span class="expr">V=x^3+y^3+z^3</span>. If x, y and z are all positive then this is a trivial, once you decide on what you mean by small, say less than 1000, 
+        then you only need to search x, y and z values less than the cube root of 1000 (10). Ignoring 0, that's 729 possibilities. But, if you allow negative values
+        it becomes a lot more interesting as some combinations of very large (in every day life) numbers can results in small sums. Form instance the sums for
+        <span class="expr">V=33</span> and <span class="expr">V=42</span> have only recently been found and require component values with 17 digits. The solutions
+        can be seen in these numberphile videos
+        
+        <a href="https://youtu.be/ASoz_NuIvP0" target="_blank" alt="Solution for 33">33</a>
+        
+        and 
+        
+        <a href="https://www.youtube.com/watch?v=zyG8Vlw5aAw" alt="Solution for 42">42</a>.
+        
+        </p><p>
+        
+        The equation <span class="expr">V=x^3+y^3+z^3</span> defines 'V' for every point in 3D space, and in real numbers every value of 'V' defines a surface.
+        The shape of this surface is quite difficult (at least for me) to visualise. It has a lot of symmetries, as swapping any permutations of the three components
+        x, y and z, leaves the value unchanged, and changing the sign of all the components changes the sign of 'V'. The crux of the question being explored here is
+        "do these surfaces pass through any points where 'x', 'y' and 'z' are all integers?". We know from Fermat that the only pointt where
+        <span class="expr">V=0</span>  is (0,0,0). Some other values of 'V' can also be ruled out as we'll discover later.
+        
+        </p><p>
+        
+        On most of these pages I will be making 'x' and 'y' the independent variables, with <span class="expr">'x'>'y'>0</span>, which defines a
+        triangular prism, occupying 1/8th of the space. The remaining 7/8th can be reproduces by changing the signs or swapping 'x' and 'y'. 
+        Also, to keep all the values positive I will be using the expression <span class="expr">V=x^3+y^3-z^3</span>, replacing 'z' with
+        <span class="expr">-z</span>.
+        The pages in this section are:
+        
+        </p><p>
+        
+        <table>
+         <tr>
+          <td> <a href="cube_walker.html"><img src="images/walker_icon.png" width="160"></a> </td>
+          <td>
+            <h4>3D View</h4>
+            <p>
+            We start looking at the whole 3D lattice.
+            This page allows us to explore the 26 cells in the immediate vicinity of a point, it gives you a good idea of how quickly the numbers become very large.
+            </p>
+          </td>
+         </tr>
+         
+         <tr>
+          <td> <a href="cube_walker_xy.html"><img src="images/xymap.png" width="160"></a> </td>
+          <td>
+            <h4>2D View</h4>
+            <p>
+                Except for the immediate region of the origin any small value of 'V' will lie close to the surface <span class="expr">V=x^3+y^3-z^3</span>. For every 
+                integer pair (x,y) the points on this surface will fall between two integers, the 'V' we have already defined, which will be positive and a second
+                integer, which I will call 'S', for "sub-value", which will be negative. This page peovides tools to display how, 'V', 'S' and some related values
+                vary as a function of x and y. If we find a small value of 'S' we can convert it to a positive value by calculating
+                <span class="expr">V=z^3-y^3-y^3</span>.
+          </td>
+         </tr>
+
+         <tr>
+          <td> <a href="contour_walker.html"><img src="images/contour.png" width="160"></a> </td>
+          <td>
+            <h4>1D View</h4>
+            <p>
+                In the 3D-view we can see lines where the values seem to separate good (small) values from larger ones. These lines show where the difference
+                between between 'x' and 'z' increases by one. If we reformulate the equation to be
+                <span class="expr">V=x^3+y^3-(x+n)^3</span> then these lines are contours of constant 'n'.
+                The linked page allows you to search along these contours, observing how the value of V varies as a function of 'x' at constant 'n'. in this
+                search 'y' is no longer independent so the search becomes one dimensional.
+            </p>
+          </td>
+         </tr>
+         
+         <tr>
+          <td> <a href="numberphile.html">Numberphile</a>
+          </a> </td>
+          <td>
+            <p>
+                This method is also 1 close to being one dimensional. In this case though rather than searching along a contour it fixes the target (V) and looks
+                for solutions that single value. The linked page shows worked examples of how this works.
+            </p>
+          </td>
+         </tr>
+         
+         <tr>
+          <td> <a href="fractions.html"><img src="images/fcover.png" width="160"></a> </td>
+          <td>
+          <h4>Fractional Coverage</h4>
+          <p>
+                Looks at the problem of finding good fractional approximations to arbitrary real numbers. Turns out it's not that easy.
+           </p>
+          </td>
+         </tr>
+         
+         <tr>
+          <td> <a href="map81x81.html"><img src="images/mod9.png" width="160"></a> </td>
+          <td>
+           <h4>Modulo 9</h4>
+            <p>
+                Looks at the distribution of solutions modulo 9. The image on the left shows a 101x101 region around (x,y) = (3900,1900). The colours follow the rainbow, 
+                [Red, Orange, Yellow, Green, Blue, Indigo, Violet]&nbsp;&rarr; [0, 1, 2, 3, 6, 7, 8]. '4' and '5' never occur, '3' and '6' are a lot rarer than the
+                others. Follow the link for more details.
+            </p>
+          </td>
+         </tr>
+         
+        </table>
+        
+    </div>
+    
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2021 <p>
+
+
+</body>
+</html>
+
+
+
+
