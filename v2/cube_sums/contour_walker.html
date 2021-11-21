@@ -43,11 +43,9 @@
     //------------------------------------------------------------------------------------------------------------------------------------
     OnStart = function ()
     {
-        SubCube.Test();
-        ContourWalker.Test ();
+        //SubCube.Test();
+        //ContourWalker.Test ();
         CubeSurfer.Initialise ();
-        
-        var q = ContourWalker.FromInts (3,4,5);
         
         var all = document.getElementsByClassName("expr");
 
@@ -89,11 +87,6 @@
     {   
         x_start.value = current_x;
         y_start.value = current_y;
-    }
-    StartWalk = function (inc_x)
-    {
-        var nin = parseInt (walk_n.value);
-        CubeSurferGrid.Walk (inc_x, current_x, current_y, VLInt.FromInt (nin));
     }
     Construct = function (which)
     {
@@ -174,46 +167,47 @@
             element.innerHTML = text;
         }
     }
+    ClickContour = function (event)
+    {
+        if (contour_walker && contour_walker.contour)
+        {
+            contour_walker.ScrollTrack (200, contour_view);
+        }
+    }
+    ContourHover = function (event)
+    {
+        if (contour_walker)
+        {
+            hover_cont.innerHTML = contour_walker.HoverText (event);
+        }
+    }
+    AnimateContour = function ()
+    {
+        if (contour_walker)
+        {
+            contour_walker.Animate (200, 200, contour_view);
+        }
+    }
+    StopAnimate = function ()
+    {
+        contour_walker.StopAnimate ();
+    }
+    
     SetClickAction = function ()
     {
         action = click_action.value;
     }
     
+    var contour_walker = null;
     TrackContour = function()
     {
-    
-        if (grid[CubeSurferGrid.G1001] == null)
-        {
-            grid[CubeSurferGrid.G1001] = new CubeSurferGrid (CubeSurferGrid.G1001, current_x, current_y);
-            grid[CubeSurferGrid.G1001].DrawPattern (gelement[CubeSurferGrid.G1001], gmode[CubeSurferGrid.G1001]);
-        }
-        
         // start at (0,0)
         
-        var cw = grid[CubeSurferGrid.G1001].grid[0].cw;        
-        var n = cw.GetContour ();
-        var contour_walker = null;
+        var cw = grid[CubeSurferGrid.G11].grid[0].cw; 
         
-        if (VLInt.Compare (cw.big_cx.root, cw.big_cy.root) > 0)
-        {
-            contour_walker = ContourWalker.FromVLInts (cw.big_cx.root, cw.big_cy.root, n, true);
-        }
-        else
-        {
-            contour_walker = ContourWalker.FromVLInts (cw.big_cy.root, cw.big_cx.root, n, false);
-        }
-        
-        Misc.Log ("{0}: {1}", 0, contour_walker);
-        
-        for (var i = 1 ; i < 21 ; ++i)
-        {
-            contour_walker.Next ();
-            Misc.Log ("{0}: {1}", i, contour_walker);
-        }
+        contour_walker = ContourWalker.FromVLInts (cw.big_cy.root, cw.big_cx.root);
+        contour_walker.CreateTrack (1001, contour_view);
     }
-    
-                   
-                
 
 </script>
 
@@ -270,11 +264,6 @@
                     <option value="4">Zoom x 4</option>
                     <option value="5">Zoom x 5</option>
            </select>
-           
-           Walk: 
-          <button onclick="StartWalk(true)"> +X </button>
-          <button onclick="StartWalk(false)"> +Y </button>
-          <input type="text" maxlength="12" id="walk_n" size="12" value="1">
 
         </p><p>
         
@@ -476,7 +465,6 @@
         <p>
       
       
-      
     <h4> 1001x1001 Visualisation </h4>
         
         <p>        
@@ -490,9 +478,8 @@
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F4)"> 1/4 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F5)"> 1/5 </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_N)"> Contour </button>                
-                <button onclick="TrackContour()"> Track Contour </button>                
-        
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_N)"> Contour </button>   
+                
         </p><p>
          <table>
           <tr>
@@ -500,6 +487,26 @@
             <img id="vbig_view" onClick="ClickGrid(CubeSurferGrid.G1001, event)" onMouseMove="GridHover(CubeSurferGrid.G1001,event)">
             <br>
             <span id="hover2"> [hover mouse over grid to see values] </span>
+           </td>
+          </tr>
+         </table>
+        
+        <p>
+        
+    <h4> Contour tracking </h4>
+        
+        <p>               
+        <button onclick="TrackContour()"> Track Contour </button>     
+        <button onclick="AnimateContour()"> Animate </button>     
+        <button onclick="StopAnimate()"> Stop </button>                
+        
+        </p><p>
+         <table>
+          <tr>
+           <td>
+            <img id="contour_view" onClick="ClickContour(event)" onMouseMove="ContourHover(event)">
+            <br>
+            <span id="hover_cont"> [hover mouse over grid to see values] </span>
            </td>
           </tr>
          </table>

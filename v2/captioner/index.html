@@ -1,0 +1,430 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Caption Creator">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+
+<style>
+
+TD {padding: 3pt; border: 1px solid brown;}
+TH {padding: 3pt; border: 1px solid brown; background: orange;}
+
+</style>
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/colours.js"> </script>
+
+<title> Caption Creator </title>
+
+
+<script>
+
+OnLoad = function ()
+{
+    SVGColours.AddColours (foreground_colour_select);
+    SVGColours.AddColours (background_colour_select);
+    SVGColours.AddColours (border_colour_select);
+    
+    Init ();
+    DoUpdate ();
+}
+
+Init = function ()
+{
+    foreground_colour.value = foreground_colour_select.value = "aliceblue";
+    background_colour.value = background_colour_select.value = "#303030";
+    border_colour.value = border_colour_select.value = "black";
+    border_width.value = 640;
+    border_height.value = 400;
+    border_margin.value = 32;
+    border_padding.value = 12;
+    border_thick.value = border_thick_select.value = "10px";
+    font_family.value = font_family_select.value = "Arial";
+    font_size.value = font_size_select.value = "300%";
+    font_style.value = font_style_select.value = "normal";
+    font_weight.value = font_weight_select.value = "normal";
+    font_variant.value = font_variant_select.value = "normal";
+    h_align.value = h_align_select.value = "left";
+    v_space.value = v_space_select.value = "normal";
+    text_dec.value = text_dec_select.value = "none";
+    content.value = "Hello:\nEnter your caption here.";
+}
+
+
+DoUpdate = function ()
+{
+    var txt = content.value;
+    txt = txt.replace (/\n/g, "<br>");
+
+    caption.innerHTML = txt;
+    container.style.background = background_colour.value;
+    container.style.color = foreground_colour.value;
+    container.style.width = border_width.value;
+    container.style.height = border_height.value;
+    container.style.margin = border_margin.value;
+    container.style.padding = border_padding.value;
+    container.style.fontSize = font_size.value;
+    container.style.fontFamily = font_family.value;
+    container.style.fontStyle = font_style.value;
+    container.style.fontWeight = font_weight.value;
+    container.style.fontVariant = font_variant.value;
+    container.style.textDecoration = text_dec.value;
+    container.style.textAlign = h_align.value;
+    container.style.lineHeight = v_space.value;
+
+    
+    var border = "solid" + " " + border_thick.value + " " + border_colour.value;
+    container.style.border = border;
+}
+
+SelectValue = function (sel, val)
+{
+    val.value = sel.value;
+    DoUpdate ();
+}
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnLoad();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img class="noborder"  border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Caption Creator </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->
+
+    <!-- Stuff -->
+
+    <div class="float in2 box w9" style="overflow: auto;">
+
+      <h1> Settings </h1>
+      <p>
+      This page allows you to format some text that you can then cut and paste
+      into some other application.
+      </p><p>
+        
+
+      </p><p>
+      
+        <div id="container" style="overflow: hidden;">
+            <span id="caption"> &nbsp; </span>
+        </div>    
+      
+      </p><p>
+        
+        <table>
+         <tr> <th> Category </th> <th> Attribute </th>  <th> Value </th> <th> Pre-defined values </th> </tr>
+
+         <!-- Border -->
+
+         <tr>
+            <th rowspan="7"> Container </th>
+            <th> Background </th>
+            <td> <input type="text" maxlength="12" id="background_colour" size="24" value="0"></td>
+            <td> <select id="background_colour_select" onchange="SelectValue(background_colour_select, background_colour)" /> </th>
+         </tr>
+         
+         <tr>
+            <th> Border Colour </th>
+            <td> <input type="text" maxlength="12" id="border_colour" size="24" value="0"></td>
+            <td> <select id="border_colour_select" onchange="SelectValue(border_colour_select, border_colour)" /> </th>
+         </tr>
+
+         <tr>
+            <th> Border Thickness </th>
+            <td> <input type="text" maxlength="12" id="border_thick" size="24" value="0"></td>
+            <td>
+                <select id="border_thick_select" onchange="SelectValue(border_thick_select, border_thick)">
+                    <option value="0">None</option>
+                    <option value="thin">Thin</option>
+                    <option value="medium">Medium</option>
+                    <option value="thick">Thick</option>
+                    <option value="10px">10px</option>
+                    <option value="6pt">6pt</option>
+                </select>
+
+            </th>
+         </tr>
+         
+         <tr>
+            <th> Width </th>
+            <td> <input type="text" maxlength="12" id="border_width" size="24" value="0"></td>
+            <td> &nbsp; </th>
+         </tr>
+         
+         <tr>
+            <th> Height </th>
+            <td> <input type="text" maxlength="12" id="border_height" size="24" value="0"></td>
+            <td> &nbsp; </th>
+         </tr>
+         
+         <tr>
+            <th> Margin </th>
+            <td> <input type="text" maxlength="12" id="border_margin" size="24" value="0"></td>
+            <td> &nbsp; </th>
+         </tr>
+         
+         <tr>
+            <th> Padding </th>
+            <td> <input type="text" maxlength="12" id="border_padding" size="24" value="0"></td>
+            <td> &nbsp; </th>
+         </tr>
+         
+         <!-- Text Style -->
+         
+         <tr>
+            <th rowspan="7"> Text </th>
+            <th> Colour </th>
+            <td> <input type="text" maxlength="12" id="foreground_colour" size="24" value="0"></td>
+            <td> <select id="foreground_colour_select" onchange="SelectValue(foreground_colour_select, foreground_colour)" /> </th>
+         </tr>
+         
+         <tr>
+            <th> Font </th>
+            <td> <input type="text" maxlength="40" id="font_family" size="24" value="0"></td>
+            <td>
+                <select id="font_family_select" onchange="SelectValue(font_family_select, font_family)">
+                    <option value="Serif">Serif</option>
+                    <option value="Sans-serif">Sans-serif</option>
+                    <option value="Monospace">Monospace</option>
+                    <option value="Cursive">Cursive</option>
+                    <option value="Fantasy">Fantasy</option>
+
+                    <option value="Times New Roman,serif">Times New Roman</option>
+                    <option value="Didot,serif">Didot</option>
+                    <option value="Georgia,serif">Georgia</option>
+                    <option value="Palatino,serif">Palatino</option>
+                    <option value="Bookman,serif">Bookman</option>
+                    <option value="New Century Schoolbook,serif">New Century Schoolbook</option>
+                    <option value="American Typewriter,serif">American Typewriter</option>
+
+                    <option value="Gill Sans,sans-serif">Gill Sans</option>
+                    <option value="Noto Sans,sans-serif">Noto Sans</option>
+                    <option value="Optima,sans-serif">Optima</option>
+                    <option value="Avantgarde">Avantgarde</option>
+                    <option value="Arial,sans-serif">Arial</option>
+                    <option value="Arial Narrow,sans-serif">Arial Narrow</option>
+                    <option value="Trebuchet MS,sans-serif">Trebuchet MS</option>
+                    <option value="Verdan,sans-serif">Verdana</option>
+                    <option value="Helvetica,sans-serif">Helvetica</option>
+                    
+                    <option value="Tahoma">Tahoma</option>
+                    <option value="Garamond">Garamond</option>
+                    
+                    <option value="Andale Mono,monospace">Andale</option>
+                    <option value="Courier New,monospace">Courier New</option>
+                    <option value="Courier,monospace">Courier</option>
+                    <option value="FreeMono,monospace">FreeMono</option>
+                    <option value="OCR A Std,monospace">OCR A Std</option>
+                    <option value="DejaVu Sans Mono,monospace">DejaVu Sans Mono</option>
+                    
+                    <option value="Comic Sans MS,cursive">Comic Sans MS</option>
+                    <option value="Apple Chancery,cursive">Apple Chancery</option>
+                    <option value="Bradley Hand,cursive">Bradley Hand</option>
+                    <option value="Brush Script MT,cursive">Brush Script MT</option>
+                    <option value="Snell Roundhand,cursive">Snell Roundhand</option>
+                    <option value="URW Chancery L,cursive">URW Chancery L</option>
+                    
+                    <option value="Impact,fantasy">Impact</option>
+                    <option value="Luminari,fantasy">Luminari</option>
+                    <option value="Chalkduster,fantasy">Chalkduster</option>
+                    <option value="Jazz LET,fantasy">Jazz LET</option>
+                    <option value="Blippo,fantasy">Blippo</option>
+                    <option value="Stencil Std,fantasy">Stencil</option>
+                    <option value="Marker Felt,fantasy">Marker Felt</option>
+                    <option value="Trattatello,fantasy">Trattatello</option>
+                </select>
+            </th>
+         </tr>    
+         
+         <tr>
+            <th> Size </th>
+            <td> <input type="text" maxlength="12" id="font_size" size="24" value="0"></td>
+            <td>
+                <select id="font_size_select" onchange="SelectValue(font_size_select, font_size)">
+                    <option value="xx-small">xx-small</option>
+                    <option value="x-small">x-small</option>
+                    <option value="small">small</option>
+                    <option value="medium">medium</option>
+                    <option value="large">large</option>
+                    <option value="x-large">x-large</option>
+                    <option value="xx-large">xx-large</option>
+                    <option value="300%">300%</option>
+                    <option value="400%">400%</option>
+                    <option value="500%">500%</option>
+                    <option value="600%">600%</option>
+                </select>
+            </th>
+         </tr>
+         
+         <tr>
+            <th> Style </th>
+            <td> <input type="text" maxlength="12" id="font_style" size="24" value="0"></td>
+            <td>
+                <select id="font_style_select" onchange="SelectValue(font_style_select, font_style)">
+                    <option value="normal">normal</option>
+                    <option value="italic">italic</option>
+                    <option value="oblique">oblique</option>
+                </select>
+            </th>
+         </tr>       
+         
+         <tr>
+            <th> Weight </th>
+            <td> <input type="text" maxlength="12" id="font_weight" size="24" value="0"></td>
+            <td>
+                <select id="font_weight_select" onchange="SelectValue(font_weight_select, font_weight)">
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="300">300</option>
+                    <option value="normal">normal</option>
+                    <option value="500">500</option>
+                    <option value="600">600</option>
+                    <option value="bold">bold</option>
+                    <option value="800">700</option>
+                    <option value="900">800</option>
+                </select>
+            </th>
+         </tr>      
+
+         <tr>
+            <th> Variant </th>
+            <td> <input type="text" maxlength="12" id="font_variant" size="24" value="0"></td>
+            <td>
+                <select id="font_variant_select" onchange="SelectValue(font_variant_select, font_variant)">
+                    <option value="normal">normal</option>
+                    <option value="small-caps">small-caps</option>
+                </select>
+            </th>
+         </tr>
+         
+         <tr>
+            <th> Decoration </th>
+            <td> <input type="text" maxlength="12" id="text_dec" size="24" value="0"></td>
+            <td>
+                <select id="text_dec_select" onchange="SelectValue(text_dec_select, text_dec)">
+                    <option value="none">none</option>
+                    <option value="overline">overline</option>
+                    <option value="line-through">line-through</option>
+                    <option value="underline">underline</option>
+                    <option value="underline overline">underline overline</option>
+                </select>
+            </th>
+         </tr>      
+
+         <!-- The Layout -->
+         
+         <tr>
+            <th rowspan="2"> Layout </th>
+            <th> Horizontal </th>
+            <td> <input type="text" maxlength="12" id="h_align" size="24" value="0"></td>
+            <td>
+                <select id="h_align_select" onchange="SelectValue(h_align_select, h_align)">
+                    <option value="center">centre</option>
+                    <option value="left">left</option>
+                    <option value="right">right</option>
+                    <option value="justify">justify</option>
+                </select>
+            </th>
+         </tr>
+         
+         <tr>
+            <th> Spacing </th>
+            <td> <input type="text" maxlength="12" id="v_space" size="24" value="0"></td>
+            <td>
+                <select id="v_space_select" onchange="SelectValue(v_space_select, v_space)">
+                    <option value="normal">normal</option>
+                    <option value="75%">75%</option>
+                    <option value="100%">100%</option>
+                    <option value="150%">150%</option>
+                    <option value="200%">200%</option>
+                </select>
+            </th>
+         </tr>
+         
+
+         
+
+         <!-- The Text -->
+         
+         <tr>
+            <th> Content </th>
+            <td colspan="3"> <textarea id="content" cols="60" rows="10"></textarea> </td>
+         </tr>
+
+         <tr>
+            <td colspan="4"> <button onclick="DoUpdate()"> Update </button> </td>
+         </tr>
+         
+        </table> 
+        
+      </p>  
+        
+    </div>
+    
+<!-- End of main content -->
+    
+    <div class="endfloat"> &nbsp; </div>
+	    
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2021 <p>
+
+
+</body>
+</html>
+
+
+
+

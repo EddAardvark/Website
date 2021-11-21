@@ -1,0 +1,544 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Cubes">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/event_parser.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/vlint.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="big_cube.js"> </script>
+<script src="sub_cube.js"> </script>
+<script src="cube_walker.js"> </script>
+<script src="contour_walker.js"> </script>
+<script src="cube_surfer.js"> </script>
+<script src="cubes.js"> </script>
+
+<title> Cube Sums Walker XY </title>
+
+
+<script>
+
+    var mode = CubeSurfer.SM_Z;    
+    var action = CubeSurferGrid.SCROLL;
+
+    var grid = [null, null, null];
+    var gelement = [null, null, null];
+    var gmode = [CubeSurfer.SM_Z, CubeSurfer.SM_Z, CubeSurfer.SM_Z];
+
+    var current_x = 7;
+    var current_y = 9;
+    var view_div = null;
+    var table_mode = CubeSurfer.SM_Z;
+    var timer;
+    
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {
+        //SubCube.Test();
+        //ContourWalker.Test ();
+        CubeSurfer.Initialise ();
+        
+        var all = document.getElementsByClassName("expr");
+
+        for (var i = 0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+        
+        // Creates a timer
+        
+        timer = setInterval(CubeSurferGrid.Animate, 1000);
+        
+        //CubeRoot.Initialise ();
+        
+        VLInt.Initialise ();
+        VLInt.Test ();
+        
+        gelement [CubeSurferGrid.G11] = the_view;
+        gelement [CubeSurferGrid.G101] = big_view;
+        gelement [CubeSurferGrid.G1001] = vbig_view;
+        
+        UpdateGrid (CubeSurferGrid.G11);
+        SetTableMode (table_mode);
+        click_action.value = gmode[CubeSurferGrid.G11];
+    }
+
+    UpdateGrid = function (which)
+    {
+        var xin = parseInt (x_start.value);
+        var yin = parseInt (y_start.value);
+        
+        current_x = new VLInt.FromInt (xin);
+        current_y = new VLInt.FromInt (yin);
+        
+        ShowCurrent ();
+        Construct (which);
+    }
+    ShowCurrent = function ()
+    {   
+        x_start.value = current_x;
+        y_start.value = current_y;
+    }
+    Construct = function (which)
+    {
+        grid [which] = null; // recreate in SetDisplay
+        
+        SetDisplay (which, gmode[which]);
+    }
+
+    SetTableMode = function (m)
+    {
+        table_mode = m;
+        grid_text.innerHTML = grid[CubeSurferGrid.G11].ToTable (m);
+    }
+    
+    SetDisplay = function (which, m)
+    {
+        gmode [which] = m;
+        
+        if (grid[which] == null)
+        {
+            grid[which] = new CubeSurferGrid (which, current_x, current_y);
+        }
+        
+        grid[which].DrawPattern (gelement[which], gmode[which]);
+
+        if (which == CubeSurferGrid.G11)
+        {
+            ShowDiv (view_div, "none");
+            view_div = "div" + m;
+            ShowDiv (view_div, "block");
+            grid_heading.innerHTML = CubeSurfer.MODE_TEXT [mode];
+            SetTableMode (table_mode);
+        }
+    }
+    
+    SetView = function (which, m)
+    {
+        gmode [which] = m;
+        SetDisplay(which, m);
+    }    
+    
+    ShowDiv = function (div, disp)
+    {
+        if (div != null)
+        {
+            var element = document.getElementById (div);
+            element.style.display = disp;
+        }
+    }
+    
+    ClickGrid = function (which, event)
+    {
+        var corner = grid[which].GetNewCorner (event.offsetX, event.offsetY, action);
+
+        current_x = corner [0];
+        current_y = corner [1];
+        
+        Construct (which);
+        
+        while (which > CubeSurferGrid.G11)
+        {
+            Construct (--which);
+        }
+
+        ShowCurrent ();
+    }
+    
+    GridHover = function (which,event)
+    {
+        if (grid[which] != null)
+        {
+            var cell = grid[which].GetCellAt (event.offsetX, event.offsetY);        
+            var x = cell.cw.big_cx.root;
+            var y = cell.cw.big_cy.root;
+            var text = Misc.Format ("Hover at ({0},{1}) = {2}", x, y, CubeSurfer.VALUE_TEXT [gmode[which]](cell));
+            var element = document.getElementById ("hover"+which);
+
+            element.innerHTML = text;
+        }
+    }
+    ClickContour = function (event)
+    {
+        if (contour_walker && contour_walker.contour)
+        {
+            contour_walker.ScrollTrack (200, contour_view);
+        }
+    }
+    ContourHover = function (event)
+    {
+        if (contour_walker)
+        {
+            hover_cont.innerHTML = contour_walker.HoverText (event);
+        }
+    }
+    AnimateContour = function ()
+    {
+        if (contour_walker)
+        {
+            contour_walker.Animate (200, 200, contour_view);
+        }
+    }
+    StopAnimate = function ()
+    {
+        contour_walker.StopAnimate ();
+    }
+    
+    SetClickAction = function ()
+    {
+        action = click_action.value;
+    }
+    
+    var contour_walker = null;
+    TrackContour = function()
+    {
+        // start at (0,0)
+        
+        var cw = grid[CubeSurferGrid.G11].grid[0].cw; 
+        
+        contour_walker = ContourWalker.FromVLInts (cw.big_cy.root, cw.big_cx.root);
+        contour_walker.CreateTrack (1001, contour_view);
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+	<div style="margin: auto; widtd: 1024px;">
+		<button style="widtd: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+			<p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+			<p> <strong>Home page</strong>
+		</button>
+
+		<button class="banner">
+			<h1> Cubes</h1>
+		</button>
+
+		 <!-- Ads -->
+
+	</div>
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->    
+    <!-- Shows the vicinity of the current (x,y) position -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+
+        <h1> Cubes Sums </h1>
+        <p>
+        This application walks the XY surface calculating the integer bounds of the expression
+        <span class="expr">z=(x^3+y^3)^[1/3]</span>
+        </p>
+        
+        <h4>Value view </h4><p>
+          X <input type="text" maxlength="12" id="x_start" size="12" value="7">  
+          Y <input type="text" maxlength="12" id="y_start" size="12" value="9">
+          Grid: <button onclick="UpdateGrid(CubeSurferGrid.G11)"> 11</button>
+          <button onclick="UpdateGrid(CubeSurferGrid.G101)"> 101 </button>
+          <button onclick="UpdateGrid(CubeSurferGrid.G1001)"> 1001 </button>
+          Click actions: 
+           
+           <select id="click_action" onchange="SetClickAction ()">
+                    <option value="0">Set Corner</option>
+                    <option value="1">Scroll to centre</option>
+                    <option value="2">Zoom x 2</option>
+                    <option value="3">Zoom x 3</option>
+                    <option value="4">Zoom x 4</option>
+                    <option value="5">Zoom x 5</option>
+           </select>
+
+        </p><p>
+        
+        Show: <button onclick="SetTableMode(CubeSurfer.SM_Z)"> Z </button>
+              <button onclick="SetTableMode(CubeSurfer.SM_XYZ)"> XYZ </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_WALKER)"> CW </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_N)"> Contour </button>
+        </p><p>
+            <table>
+             <tr>
+              <td>
+               <p>
+                <span id="grid_text"> grid </span>
+               </p>
+              </td>
+              <td>
+               <p>
+                11x11 grid for <span id="grid_heading">x</span> 
+               </p>
+              </td>
+             </tr>
+            </table>
+            </p>
+        
+        <h4> 11x11 Visualisation </h4>
+        <p>
+        
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_Z)"> Z </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_MOD9)"> Modulo 9 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_N)"> Contour </button>
+        
+        </p><p>
+        <table>
+         <tr>
+          <td>
+            <img id="the_view" onClick="ClickGrid(CubeSurferGrid.G11, event)" onMouseMove="GridHover(CubeSurferGrid.G11,event)">
+            <br>
+            <span id="hover0"> [hover mouse over grid to see values] </span>
+          </td><td>
+           <div style="display:none;" id="div0">
+            <p>
+             <strong><span class="expr">Z=(x^3+y^3)^[1/3]</span></strong>
+            </p><p>
+             'z' Values coloured from the minimum (blue) to the maximum (red)
+            </p>
+           </div>
+           <div style="display:none;" id="div1">
+            <p>
+             <strong><span class="expr">Value=x^3+y^3-z^3</span> </strong>
+            </p><p>These are coloured based on how far value is from 0.
+            Zero is white, and the largest value encountered is blue. Interpolation is linear.
+            </p><p>
+            If the calculations are correct, the subvalue and value will define a range that includes 0.            
+            </p>
+           </div>
+
+           <div style="display:none;" id="div2">
+             DIV 2
+            </p>
+           </div>
+
+           <div style="display:none;" id="div3">
+            <p>
+             DIV 3
+            </p>
+           </div>
+
+           <div style="display:none;" id="div4">
+            <p>
+             DIV 4
+            </p>
+           </div>
+
+           <div style="display:none;" id="div5">
+            <p>
+             <strong><span class="expr">Subvalue=x^3+y^3-(z+1)^3</span> </strong>
+            </p><p>
+            These are coloured based on how far subvalue is from 0.
+            Zero is white, and the most negative value encountered is red. Interpolation is linear.
+            </p><p>
+            If the calculations are correct, the subvalue and value will define a range that includes 0.            
+            </p>
+           </div>
+
+           <div style="display:none;" id="div6">
+            <p>
+             <strong>Intercept</strong>
+            </p><p>
+            Offset to the 'z' value where the line joining (z, value) to (z+1, subvalue) intercepts 0, an approximation to the cube root
+            of <span class="expr">x^3+y^3</span>.
+            </p>
+           </div>
+
+           <div style="display:none;" id="div7">
+            <p>
+             <strong><span class="expr">(x^3+y^3+z^3)</span> modulo 9. </strong>
+            </p><p>
+            There are nine possible values but 4 and 5 never occur. The other 7 are coloured using the colours of the rainbow: 
+            0:"red", 1:"orange", 2:"yellow", 3:"green", 6:"blue", 7:"indigo", 8:"violet".
+            </p><p>
+            The corresponding frequencies (out of 27) are 7,6,3,1,0,0,1,3,6.
+            </p>
+           </div>
+           
+           <div style="display:none;" id="div8">
+            <p>
+             <strong>Close to 1/2</strong>
+            </p><p>
+                Highlights cells where the intercept is close to 0.5. Multiplying the values by two will generate a cell where the value is
+                closer to 0.
+            </p>
+           </div>
+           
+           <div style="display:none;" id="div9">
+            <p>
+             <strong>Close to 1/3</strong>
+            </p><p>
+                Highlights cells where the intercept is close to a multiple of 1/3. Multiplying the values by three will generate a cell where the value is
+                closer to 0.
+            </p>
+           </div>
+           
+           <div style="display:none;" id="div10">
+            <p>
+             <strong>Close to 1/4</strong>
+            </p><p>
+                Highlights cells where the intercept is close to a multiple of 1/4. Multiplying the values by four will generate a cell where the value is
+                closer to 0.
+            </p>
+           </div>
+           
+           <div style="display:none;" id="div11">
+            <p>
+             <strong>Close to 1/5</strong>
+            </p><p>
+                Highlights cells where the intercept is close to a multiple of 1/5. Multiplying the values by five will generate a cell where the value is
+                closer to 0.
+            </p>
+           </div>
+           
+           <div style="display:none;" id="div12">
+            <p>
+             <strong>Contours</strong>
+            </p><p>
+                If you reformulate the equation as <strong><span class="expr">x^3+y^3-(x+n)^3, where x>y</span>, the the 'n' values define contours.
+            </p>
+           </div>
+           
+          </td>
+         </tr>
+        </table>
+           
+      </p>
+      
+      
+    <h4> 101x101 Visualisation </h4>
+        
+        <p>        
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_Z)"> Z </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_N)"> Contour </button>
+        
+        </p><p>
+         <table>
+          <tr>
+           <td>
+            <img id="big_view" onClick="ClickGrid(CubeSurferGrid.G101, event)" onMouseMove="GridHover(CubeSurferGrid.G101,event)">
+            <br>
+            <span id="hover1"> [hover mouse over grid to see values] </span>
+           </td>
+          </tr>
+         </table>
+        
+        <p>
+      
+      
+    <h4> 1001x1001 Visualisation </h4>
+        
+        <p>        
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_Z)"> Z </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_VALUE)"> Value </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_RANGE)"> Range </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F2)"> 1/2 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F3)"> 1/3 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F4)"> 1/4 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F5)"> 1/5 </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_N)"> Contour </button>   
+                
+        </p><p>
+         <table>
+          <tr>
+           <td>
+            <img id="vbig_view" onClick="ClickGrid(CubeSurferGrid.G1001, event)" onMouseMove="GridHover(CubeSurferGrid.G1001,event)">
+            <br>
+            <span id="hover2"> [hover mouse over grid to see values] </span>
+           </td>
+          </tr>
+         </table>
+        
+        <p>
+        
+    <h4> Contour tracking </h4>
+        
+        <p>               
+        <button onclick="TrackContour()"> Track Contour </button>     
+        <button onclick="AnimateContour()"> Animate </button>     
+        <button onclick="StopAnimate()"> Stop </button>                
+        
+        </p><p>
+         <table>
+          <tr>
+           <td>
+            <img id="contour_view" onClick="ClickContour(event)" onMouseMove="ContourHover(event)">
+            <br>
+            <span id="hover_cont"> [hover mouse over grid to see values] </span>
+           </td>
+          </tr>
+         </table>
+        
+        <p>
+      
+    </div>
+
+    
+    <div class="endfloat"> &nbsp; </div>
+	    
+    
+<!-- Generic links -->
+
+    <div class="float w9 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+    <p class="small"> (c) John Whitehouse 2021 <p>
+
+			  
+
+</body>
+</html>
+
+
+
+

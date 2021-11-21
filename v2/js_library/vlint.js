@@ -597,6 +597,11 @@ VLInt.prototype.Mod10 = function ()
     return (this.value.length > 0) ? (this.value [0] % 10) : 0;
 }
 //--------------------------------------------------------------------------------------------
+VLInt.prototype.Mod16 = function ()
+{
+    return (this.value.length > 0) ? (this.value [0] % 16) : 0;
+}
+//--------------------------------------------------------------------------------------------
 // Divide by an integer (< BASE)
 VLInt.prototype.DivideByNumber = function (number)
 {

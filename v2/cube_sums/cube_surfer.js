@@ -20,7 +20,7 @@ CubeSurfer.Initialise = function ()
     CubeSurferGrid.black = SVGColours.RgbFromName ("black");
     CubeSurferGrid.white = SVGColours.RgbFromName ("white");
 }
-
+//-------------------------------------------------------------------------------------------------
 CubeSurfer.FromPosition = function (x, y)
 {
     var z;
@@ -55,6 +55,13 @@ CubeSurfer.FromPosition = function (x, y)
     ret.cw.MoveToSurface ();
     
     return ret;
+}
+//-------------------------------------------------------------------------------------------------
+CubeSurfer.GetZ = function (x, y)
+{
+    var cs = CubeSurfer.FromPosition (x, y);
+
+    return cs.cw.big_cz.root;
 }
 //--------------------------------------------------------------------------------------------
 // Increments X and adjusts z so that x^3+y^3-z^3 is the smallest possible value.
@@ -430,16 +437,6 @@ CubeSurferGrid.prototype.GetNewCorner = function (xpos, ypos, action)
     return CubeSurferGrid.ACTION[action](this, x, y); 
 }
 //--------------------------------------------------------------------------------------------
-CubeSurferGrid.Walk = function (inc_x, x, y, n)
-{
-    var walker = ContourWalker.FromVLInts (x, y, n, inc_x);
-    
-    for (var i = 0 ; i < 10 ; ++i)
-    {
-        walker.Next ();
-    }
-}
-//--------------------------------------------------------------------------------------------
 CubeSurferGrid.INITRANGE = [];
 CubeSurferGrid.INITRANGE [CubeSurfer.SM_Z] = function (csg) { csg.InitRangeZ (); }
 CubeSurferGrid.INITRANGE [CubeSurfer.SM_VALUE] = function (csg) { csg.InitRangeV (); }
@@ -460,8 +457,8 @@ CubeSurferGrid.COLOUR = [];
 
 CubeSurferGrid.COLOUR [CubeSurfer.SM_Z] = function (csg, surfer)
 {
-    var dz = surfer.cw.big_cz.root.Subtract (csg.zmin);
-    var f = VLInt.Ratio (dz, csg.zrange);
+    var dz = surfer.cw.big_cz.root.Mod16();
+    var f = dz / 16;
     
     return SVGColours.BlendRGB (CubeSurferGrid.red, CubeSurferGrid.blue, f);
 }

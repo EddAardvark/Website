@@ -17,7 +17,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
 <script src="sum_finder.js"> </script>
 <script src="http://www.eddaardvark.co.uk/john.js"> </script>
 
-<title> Searching for Cube Sums </title>
+<title> Numberphile Algorithm </title>
 
 
 <script>
@@ -245,15 +245,12 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         <span class="expr">=>4(n+z^3)>=d^3</span><br>
         <span class="expr">=>d<=(4(n+z^3))^[1/3]~=1.6z</span> (for small n)
 
-        </p><p>
-        To be an integer <span class="expr">3d^3</span> must be a multiple of 4, so 'd' must be even. There are some other optimisations that can be applied, see the
-        <a href="#notes">Notes</a> section below, but these aren't used in the code associated with this page.
         </p>
         <h2>Interactive Section</h2>
         <p>
         Let's see how this works in reality. Note: This section is just to show you how the algorithm works, you won't be able to find any new solutions.
         In the accompanying video you'll see that the components that add up to 33 have 16 digits. This isn't really reachable using the built in numbers of javascript
-        as the algorithm has a <span class="expr">z^3</span> term, which will overflow for 'z' values around 1 million. Also searching <span class="expr">10^17</span>
+        as the algorithm has a <span class="expr">z^3</span> term, which will overflow for 'z' values around 1 million. Also searching <span class="expr">10^[17]</span>
         potential values will probably take longer than the lifetime of your computer.
         </p><p>
         in the controls below "Target" is the 'n' value you are looking for (33 in the video) and "Max Z" is the largest potential 'z' value that will be tested.
@@ -274,88 +271,6 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         <span id="result">result</span>
         </p>
         
-    </div>
-    
-    <!-- Notes -->
-    
-    <div class="float in2 box w10" style="overflow: auto;">
-
-        <h1> Notes </h1>
-      <p>
-        If you calculate the sequence <span class="expr">z^3</span> modulo 9 you get [1,8,0,1,8,0,1,8,0,...]. This repeats indefinitely. You can show this
-        by considering the expression <span class="expr">(3n+k)^3</span> mod 9, where <span class="expr">0<=k<=2</span>. This expands to:
-      </p><p>
-        <span class="expr">(3n)^3+3.(3n)^2k+3.(3n)k^2+k^3</span> mod 9.
-      </p><p>
-        The first three terms are all multiples of 9, so the remainder will be <span class="expr">k^3</span> mod 9 which is [1,8,0] as we showed above.
-        The possible remainders when <span class="expr">x^3+y^3+z^3</span> is divided by 9 can be obtained by adding 
-        all the permutations of three numbers taken from this list, which are:
-        [0,1,2,3,8,9,10,16,17,24], which modulo 9 become [0,1,2,3,8,0,1,7,8,6]. 
-      </p><p>
-        If you expand these sums into a table:
-      </p><p>
-        <table>
-         <tr>
-          <th>k1,k2,k3</th><th>0,0</th><th>0,1</th><th>0,8</th><th>1,0</th><th>1,1</th><th>1,8</th><th>8,0</th><th>8,1</th><th>8,8</th>
-         </tr>
-        
-         <tr>
-          <th>0</th><td>0</td><td>1</td><td>8</td><td>1</td><td>2</td><td>0</td><td>8</td><td>0</td><td>7</td>
-         </tr>
-
-         <tr>
-          <th>1</th><td>1</td><td>2</td><td>0</td><td>2</td><td>3</td><td>1</td><td>0</td><td>1</td><td>8</td>
-         </tr>
-
-         <tr>
-          <th>8</th><td>8</td><td>0</td><td>7</td><td>0</td><td>1</td><td>8</td><td>7</td><td>8</td><td>6</td>
-         </tr>
-       </table>
-      </p><p>
-        And arrange them according to the total we can infer some additional constraints on 'z'.
-      </p><p>
-       <table>
-         <tr>
-          <th>Total</th><th>Combinations</th><th>Count</th><th>Constraints on 'z'</th>
-         </tr>
-        
-         <tr>
-          <th>0</th><td>(0,0,0), (0,1,8)</td><td>7</td><td>none</td>
-         </tr>
-
-         <tr>
-          <th>1</th><td>(0,0,1), (1,1,8)</td><td>6</td><td>none</td>
-         </tr>
-
-         <tr>
-          <th>2</th><td>(0,1,1)</td><td>3</td><td>z mod 3 can't be 2</td>
-         </tr>
-
-         <tr>
-          <th>3</th><td>(1,1,1)</td><td>1</td><td>z mod 3 must be 1</td>
-         </tr>
-
-         <tr>
-          <th>4</th><td></td><td>0</td><td>impossible</td>
-         </tr>
-
-         <tr>
-          <th>5</th><td></td><td>0</td><td>impossible</td>
-         </tr>
-
-         <tr>
-          <th>6</th><td>(8,8,8)</td><td>1</td><td>z mod 3 must be 2</td>
-         </tr>
-
-         <tr>
-          <th>7</th><td>(0,8,8)</td><td>3</td><td>z mod 3 can't be 1</td>
-         </tr>
-
-         <tr>
-          <th>8</th><td>(0,0,8), (1,8,8)</td><td>6</td><td>none</td>
-         </tr>
-       </table>
-      </p>
     </div>
     
 <!-- Generic links -->
