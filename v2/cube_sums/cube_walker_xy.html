@@ -5,6 +5,8 @@
 <meta name="KeyWords" content="Cubes">
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
 <script src="http://www.eddaardvark.co.uk/john.js"> </script>
 <script src="../js_library/misc.js"> </script>
@@ -20,7 +22,7 @@
 <script src="cube_surfer.js"> </script>
 <script src="cubes.js"> </script>
 
-<title> Cube Sums Walker XY </title>
+<title> Cube Sum Surfer </title>
 
 
 <script>
@@ -69,7 +71,7 @@
         
         UpdateGrid (CubeSurferGrid.G11);
         SetTableMode (table_mode);
-        click_action.value = gmode[CubeSurferGrid.G11];
+        click_action.value = gmode[CubeSurferGrid.G11];        
     }
 
     UpdateGrid = function (which)
@@ -95,10 +97,11 @@
         SetDisplay (which, gmode[which]);
     }
 
-    SetTableMode = function (m)
+    SetTableMode = function (mode)
     {
-        table_mode = m;
-        grid_text.innerHTML = grid[CubeSurferGrid.G11].ToTable (m);
+        table_mode = mode;
+        grid_text.innerHTML = grid[CubeSurferGrid.G11].ToTable (mode);
+        grid_heading.innerHTML = Misc.expand_expression(CubeSurfer.MODE_TEXT [mode]);
     }
     
     SetDisplay = function (which, m)
@@ -117,7 +120,6 @@
             ShowDiv (view_div, "none");
             view_div = "div" + m;
             ShowDiv (view_div, "block");
-            grid_heading.innerHTML = CubeSurfer.MODE_TEXT [mode];
             SetTableMode (table_mode);
         }
     }
@@ -226,7 +228,7 @@
 		</button>
 
 		<button class="banner">
-			<h1> Cubes</h1>
+			<h1> Cube Sum Surfer</h1>
 		</button>
 
 		 <!-- Ads -->
@@ -244,8 +246,30 @@
 
         <h1> Cubes Sums </h1>
         <p>
-        This application walks the XY surface calculating the integer bounds of the expression
-        <span class="expr">z=(x^3+y^3)^[1/3]</span>
+        This page surfs the surface defined by the function Zv(x,y), which for a given position (x,y) returns the largest integer
+        value of 'z' where <span class="expr">x^3+y^3-z^3</span> is positive. There is a matching function Zs(x,y), which 
+        returns the smallest integer value of 'z' where <span class="expr">x^3+y^3-z^3</span> is negative. We can then define two values, V and S as
+        <span class="expr">V(x,y)=x^3+y^3-Zv(x,y)^3</span> and <span class="expr">S(x,y)=x^3+y^3-Zs(x,y)^3</span>. We can convert S to a positive
+        value negating the equation, <span class="expr">&minus;S(x,y)=Zs(x,y)^3-x^3-y^3</span>. We are searching for small positive values of
+        V and &minus;S.
+        
+        </p><p>
+        
+        
+        These surfaces are flat everywhere except at a set of edges where Zv and Zs change by 1, so you will have a surface that looks like it's been 
+        built from stacked cubes. At all points other than at the steps <span class="expr">Zs=Zv+1</span>. And the smooth surface 
+        <span class="expr">x^3+y^3-z^3=0</span> lies between the two. They never intersect at integer value of x and y unless one or both of x and y are zero.
+        We are only interested in the integer values of x and y.
+        
+        </p><p>
+        
+        This page allows you to explore this surface, with four views, one that shows an 11x11 grid of values and 3 that show different graphical views
+        at different resolution .
+        The underlying maths uses a variable length integer that allows you to explore arbitrarily large values. Also, to generate the images in a reasonable
+        time (we are using Javascript in a browser, and the largest image contains a million points) we us a surfing algorithm. Once we have a value
+        for Zv we can calculate the adjacent ones by adding the deltas, a bit like derivatives, but based on increments of one, rather than infinitesimals.
+        
+        
         </p>
         
         <h4>Value view </h4><p>
@@ -267,45 +291,35 @@
 
         </p><p>
         
-        Show: <button onclick="SetTableMode(CubeSurfer.SM_Z)"> Z </button>
+        Show: <button onclick="SetTableMode(CubeSurfer.SM_Z)"> Zv </button>
               <button onclick="SetTableMode(CubeSurfer.SM_XYZ)"> XYZ </button>
-                <button onclick="SetTableMode(CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetTableMode(CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetTableMode(CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetTableMode(CubeSurfer.SM_INTERCEPT)"> Intercept </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_VALUE)"> V </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_SUBVALUE)"> S </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_RANGE)"> V&minus;S </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_INTERCEPT)"> (V-S)/V </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_WALKER)"> CW </button>
-                <button onclick="SetTableMode(CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+                <button onclick="SetTableMode(CubeSurfer.SM_MOD9)"> V % 9 </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_F2)"> 1/2 </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_F4)"> 1/4 </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_F5)"> 1/5 </button>
                 <button onclick="SetTableMode(CubeSurfer.SM_N)"> Contour </button>
         </p><p>
-            <table>
-             <tr>
-              <td>
-               <p>
                 <span id="grid_text"> grid </span>
                </p>
-              </td>
-              <td>
                <p>
                 11x11 grid for <span id="grid_heading">x</span> 
                </p>
-              </td>
-             </tr>
-            </table>
-            </p>
         
         <h4> 11x11 Visualisation </h4>
         <p>
         
-        Draw: <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_Z)"> Z </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_MOD9)"> Modulo 9 </button>
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_Z)"> Zv </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_VALUE)"> V </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_SUBVALUE)"> S </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_RANGE)"> V&minus;S </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_INTERCEPT)"> (V-S)/V </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_MOD9)"> V % 9 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F2)"> 1/2 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G11,CubeSurfer.SM_F4)"> 1/4 </button>
@@ -329,11 +343,11 @@
            </div>
            <div style="display:none;" id="div1">
             <p>
-             <strong><span class="expr">Value=x^3+y^3-z^3</span> </strong>
-            </p><p>These are coloured based on how far value is from 0.
-            Zero is white, and the largest value encountered is blue. Interpolation is linear.
+             <strong><span class="expr">V=x^3+y^3-z^3</span> </strong>
+            </p><p>These are coloured based on how far V is from 0.
+            Zero is white, and the largest V % 9 encountered is blue. Interpolation is linear.
             </p><p>
-            If the calculations are correct, the subvalue and value will define a range that includes 0.            
+            V and S will define a range that includes 0.            
             </p>
            </div>
 
@@ -439,12 +453,12 @@
     <h4> 101x101 Visualisation </h4>
         
         <p>        
-        Draw: <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_Z)"> Z </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_Z)"> Zv </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_VALUE)"> V </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_SUBVALUE)"> S </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_RANGE)"> V&minus;S </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_INTERCEPT)"> (V-S)/V </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_MOD9)"> V % 9 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F2)"> 1/2 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G101,CubeSurfer.SM_F4)"> 1/4 </button>
@@ -468,12 +482,12 @@
     <h4> 1001x1001 Visualisation </h4>
         
         <p>        
-        Draw: <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_Z)"> Z </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_VALUE)"> Value </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_SUBVALUE)"> Subvalue </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_RANGE)"> Range </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_INTERCEPT)"> Intercept </button>
-                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_MOD9)"> Moduo 9 </button>
+        Draw: <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_Z)"> Zv </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_VALUE)"> V </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_SUBVALUE)"> S </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_RANGE)"> V&minus;S </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_INTERCEPT)"> (V-S)/V </button>
+                <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_MOD9)"> V % 9 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F2)"> 1/2 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F3)"> 1/3 </button>
                 <button onclick="SetDisplay(CubeSurferGrid.G1001,CubeSurfer.SM_F4)"> 1/4 </button>
@@ -487,26 +501,6 @@
             <img id="vbig_view" onClick="ClickGrid(CubeSurferGrid.G1001, event)" onMouseMove="GridHover(CubeSurferGrid.G1001,event)">
             <br>
             <span id="hover2"> [hover mouse over grid to see values] </span>
-           </td>
-          </tr>
-         </table>
-        
-        <p>
-        
-    <h4> Contour tracking </h4>
-        
-        <p>               
-        <button onclick="TrackContour()"> Track Contour </button>     
-        <button onclick="AnimateContour()"> Animate </button>     
-        <button onclick="StopAnimate()"> Stop </button>                
-        
-        </p><p>
-         <table>
-          <tr>
-           <td>
-            <img id="contour_view" onClick="ClickContour(event)" onMouseMove="ContourHover(event)">
-            <br>
-            <span id="hover_cont"> [hover mouse over grid to see values] </span>
            </td>
           </tr>
          </table>

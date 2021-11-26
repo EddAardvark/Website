@@ -5,6 +5,8 @@
 <meta name="KeyWords" content="Cubes">
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
 <style>
 
@@ -109,7 +111,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
     
     <div class="float in2 box w10" style="overflow: auto;">
 
-        <h1> Notes </h1>
+        <h1> Not all values are possible </h1>
       <p>
         If you calculate the sequence <span class="expr">z^3</span> modulo 9 you get [1,8,0,1,8,0,1,8,0,...]. This repeats indefinitely. You can show this
         by considering the expression <span class="expr">(3n+k)^3</span> mod 9, where <span class="expr">0<=k<=2</span>. This expands to:
@@ -118,10 +120,10 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
       </p><p>
         The first three terms are all multiples of 9, so the remainder will be <span class="expr">k^3</span> mod 9 which is [1,8,0] as we showed above.
         The possible remainders when <span class="expr">x^3+y^3+z^3</span> is divided by 9 can be obtained by adding 
-        all the permutations of three numbers taken from this list, which are:
-        [0,1,2,3,8,9,10,16,17,24], which modulo 9 become [0,1,2,3,8,0,1,7,8,6]. 
+        all the combinations of three remainders taken from this list. This gives:
+        [0,1,2,3,8,9,10,16,17,24], which when reduced modulo 9 becomes [0,1,2,3,8,0,1,7,8,6]. 
       </p><p>
-        If you expand these sums into a table:
+        We can expand these sums into a table, k1 down the column and (k2,k3) across:
       </p><p>
         <table>
          <tr>
@@ -141,7 +143,8 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
          </tr>
        </table>
       </p><p>
-        And arrange them according to the total we can infer some additional constraints on 'z'.
+        We can now count how many of the 27 combinations add up to each possible sum (0-8). The result is shown in the following table.
+        This allows us to infer some additional constraints on 'z':
       </p><p>
        <table>
          <tr>
@@ -187,7 +190,37 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
       </p>
     </div>
     
+    <div class="float in2 box w10" style="overflow: auto;">
+        <h1> Distribution of modulo value </h1>
+        <p>
+         It is quite difficult to generate a graphic showing how these modulo values are distributed throughout space, but we can hone in on the values
+         close to the surface <span class="expr">V(x,y,z)=x^3+y^3-z^3=0</span>. We can define the function Zv(x,y), which returns the largest
+         z value where V is positive. There are tools on the 
+         <a href="cube_walker_xy.html">2D mapping page</a> that will let you visualise the distribution of Zv values. One of these allows
+         you to plot the distribution of Zd modulo 9. Near the origin this looks like:
+         </p><p>
+         <img src="images/mod9b.png">
+         </p><p>
+         The map seems to be divided into three types of zone, separated by the contour lines, corresponding to increasing values of 
+         <span class="expr">n=z-x</span>.
+         </p><p>
+         <img src="images/mod9bzoom.png">
+         </p><p>
+         There are three patterns:
+         </p><p>
+         <table>
+          <tr> <td> n mod 3 = 0 </td> <td> n mod 3 = 1 </td> <td> n mod 3 = 2 </td> </tr>
+          <tr> <td> <img src="images/mod9_zone0.png"> </td> <td> <img src="images/mod9_zone1.png"> </td> <td> <img src="images/mod9_zone2.png"> </td> </tr>
+         </table>
+         
+         </p><p>
+         
+         The rarest values, 3 (green) and 6 (blue) only occur in a single band.
+         
+         </p>
 
+    </div>
+    
     <div class="float in2 box w10" style="overflow: auto;">
         <h1> Mapping </h1>
         
@@ -219,20 +252,11 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         <span id="result">result</span>
         <span id="result2"></span>
         </p>
-        
-    </div>
-    
-    <!-- Map -->
-
-    <div class="float in2 box w10" style="overflow: auto;">
-
-        <h2> 81 x 81 map </h2>
-        
         <p>
             <img id="map81x81">
         </p>
+        
     </div>
-    
     
 <!-- Generic links -->
 

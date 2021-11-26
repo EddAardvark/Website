@@ -241,28 +241,40 @@ VLInt.prototype.SubtractInt = function (num)
 //--------------------------------------------------------------------------------------------
 VLInt.prototype.Increment = function ()
 {
-    if (this.negative)
+    if (this.IsZero())
     {
-        this.DecrementVector ();
+        this.positive = true;
+        this.value = [1];
+        return;
     }
-    else
+    
+    if (this.positive)
     {
         this.IncrementVector ();
+        return;
     }
+
+    this.DecrementVector ();
 }
 //--------------------------------------------------------------------------------------------
 // Subtract 1 (in place)
 //--------------------------------------------------------------------------------------------
 VLInt.prototype.Decrement = function ()
 {
-    if (this.negative)
+    if (this.IsZero())
     {
-        this.IncrementVector ();
+        this.positive = false;
+        this.value = [1];
+        return;
     }
-    else
+    
+    if (this.positive)
     {
         this.DecrementVector ();
+        return;
     }
+    
+    this.IncrementVector ();
 }
 //--------------------------------------------------------------------------------------------
 // Add a simple number (this number is truncated to an integer)
@@ -665,7 +677,7 @@ VLInt.prototype.Divide = function (other)
 
     while (num.IsGreaterThan (subs[pos]))
     {
-        subs.push (subs [pos].Multiply (VLInt.TWO));        // denominator x 2^n
+        subs.push (subs [pos].MultiplyInt (2));        // denominator x 2^n
         ++ pos;
     }
     
