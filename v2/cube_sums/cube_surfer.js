@@ -102,19 +102,19 @@ CubeSurfer.SM_N = 12;
 
 CubeSurfer.MODE_TEXT = [];
 
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_Z] =         "Z";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_VALUE] =     "x^3+y^3-z^3";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_WALKER] =    "Walker";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_Z] =         "Zv (max z where x^3+y^3-z^3>0)";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_VALUE] =     "V=x^3+y^3-Zv^3";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_WALKER] =    "Cube Walker";
 CubeSurfer.MODE_TEXT [CubeSurfer.SM_XYZ] =       "(x, y, z)";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_RANGE] =     "Z Range";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_SUBVALUE] =  "Z below";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_INTERCEPT] = "Linear intersect";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_MOD9] =      "Modulo 9";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_F2] =        "Close to 1/2";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_F3] =        "Close to 1/3";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_F4] =        "Close to 1/4";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_F5] =        "Close to 1/5";
-CubeSurfer.MODE_TEXT [CubeSurfer.SM_N] =         "Z - Max (X,Y)";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_RANGE] =     "V-S=(x^3+y^3-Zv^3)-(x^3+y^3-(Zv+1)^3)=(Zv+1)^3-Zv^3=3Zv^2+3Zv+1";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_SUBVALUE] =  "S=x^3+y^3-(Zv+1)^3";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_INTERCEPT] = "Linear intersect: V/(V-S)";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_MOD9] =      "V Modulo 9";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_F2] =        "When the intersect is close to 1/2";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_F3] =        "When the intersect close to 1/3 or 2/3";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_F4] =        "When the intersect close to 1/4, 2/4 or 3/4";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_F5] =        "When the intersect close to 1/5, 2/5, 3/5 or 4/5";
+CubeSurfer.MODE_TEXT [CubeSurfer.SM_N] =         "The contour below, max (z-x,z-y)";
     
 CubeSurfer.VALUE_TEXT = [];
 

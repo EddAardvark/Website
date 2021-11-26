@@ -5,6 +5,8 @@
 <meta name="KeyWords" content="Cube Sums">
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 <link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
 <style>
 
@@ -189,31 +191,26 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
         This page explores the search for small values (V) of the expression 
         
         <span class="expr">V=x^3+y^3+z^3</span>. If x, y and z are all positive then this is a trivial, once you decide on what you mean by small, say less than 1000, 
-        then you only need to search x, y and z values less than the cube root of 1000 (10). Ignoring 0, that's 729 possibilities. But, if you allow negative values
-        it becomes a lot more interesting as some combinations of very large (in every day life) numbers can results in small sums. Form instance the sums for
-        <span class="expr">V=33</span> and <span class="expr">V=42</span> have only recently been found and require component values with 17 digits. The solutions
-        can be seen in these numberphile videos
-        
-        <a href="https://youtu.be/ASoz_NuIvP0" target="_blank" alt="Solution for 33">33</a>
-        
-        and 
-        
-        <a href="https://www.youtube.com/watch?v=zyG8Vlw5aAw" alt="Solution for 42">42</a>.
+        then you only need to search x, y and z values less than the cube root of 1000 (10). Ignoring 0, that's 729 possibilities. When you allow negative values
+        it becomes a lot more interesting, as some combinations of very large (in every day life) numbers can results in small sums.
         
         </p><p>
         
-        The equation <span class="expr">V=x^3+y^3+z^3</span> defines 'V' for every point in 3D space, and in real numbers every value of 'V' defines a surface.
-        The shape of this surface is quite difficult (at least for me) to visualise. It has a lot of symmetries, as swapping any permutations of the three components
-        x, y and z, leaves the value unchanged, and changing the sign of all the components changes the sign of 'V'. The crux of the question being explored here is
-        "do these surfaces pass through any points where 'x', 'y' and 'z' are all integers?". We know from Fermat that the only pointt where
-        <span class="expr">V=0</span>  is (0,0,0). Some other values of 'V' can also be ruled out as we'll discover later.
+        The equation <span class="expr">V=x^3+y^3+z^3</span> defines 'V' for every point in 3D space, and in real numbers the values of 'V' defines a surface.
+        The shape of this surface is quite difficult (at least for me) to visualise. It has a lot of symmetries, as any permutation of the three components
+        x, y and z, leaves the value unchanged. Also, changing the sign of all the components changes the sign of 'V'. The crux of the question being explored here is
+        "do these surfaces pass through any points where 'x', 'y' and 'z' are all integers?". We know from Fermat that there are no solutions for V=0, other than
+        <span class="expr">V(0,0,0)=V(x,0,&minus;x)=0</span>. Some other values of 'V' can also be shown to have no solutions, as we'll discover later.
         
         </p><p>
         
-        On most of these pages I will be making 'x' and 'y' the independent variables, with <span class="expr">'x'>'y'>0</span>, which defines a
-        triangular prism, occupying 1/8th of the space. The remaining 7/8th can be reproduces by changing the signs or swapping 'x' and 'y'. 
+        On most of these pages I will be making 'x' and 'y' the independent variables, with <span class="expr">'x'>'y'>0</span>, which defines an
+        infinitely tall triangular prism, occupying 1/8th of the space. The remaining 7/8th can be reproduce by changing the signs or swapping 'x' and 'y'. 
         Also, to keep all the values positive I will be using the expression <span class="expr">V=x^3+y^3-z^3</span>, replacing 'z' with
-        <span class="expr">-z</span>.
+        <span class="expr">&minus;z</span>.
+        
+        </p><p>
+        
         The pages in this section are:
         
         </p><p>
@@ -246,7 +243,7 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
          <tr>
           <td> <a href="contour_walker.html"><img src="images/contour.png" width="160"></a> </td>
           <td>
-            <h4>1D View</h4>
+            <h4>1D View (Contour Following)</h4>
             <p>
                 In the 3D-view we can see lines where the values seem to separate good (small) values from larger ones. These lines show where the difference
                 between between 'x' and 'z' increases by one. If we reformulate the equation to be
@@ -262,9 +259,14 @@ TH {padding: 3pt; border: 1px solid brown; background: orange;}
           </a> </td>
           <td>
             <p>
-                This method is also 1 close to being one dimensional. In this case though rather than searching along a contour it fixes the target (V) and looks
-                for solutions that single value. The linked page shows worked examples of how this works.
+                This method is also close to being one dimensional. In this case though rather than searching along a contour it fixes the target (V) and looks
+                for solutions for that single value. The linked page shows worked examples of how this works.
             </p>
+            <p>
+             Solutions for V=33 and V=42 can be seen on these Numberphile videos, 
+                <span class="expr">V=33</span> and <span class="expr">V=42</span>. These have only recently been found and require component values with 17 and 18 digits.
+            </p>
+        
           </td>
          </tr>
          
