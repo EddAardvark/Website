@@ -255,33 +255,33 @@ CubeWalker.prototype.WalkZ = function ()
 //--------------------------------------------------------------------------------------------
 // We need to find a Z-value where value is positive and sub-value is negative
 CubeWalker.prototype.MoveToSurface = function ()
-{
-    var five = VLInt.FromInt (5);
-    
+{    
     while (true)
     {
         if (this.subvalue.positive)
         {
-            var distance = this.subvalue.Minus ().Divide (this.big_cz.DeltaPlus ());
-            
-            if (distance < 5)
+            var d = VLInt.Ratio (this.value, this.big_cz.DeltaPlus ());
+        
+            if (d < 5)
             {
                 this.FixZ ();
                 return;
             }
+            var distance = this.value.Divide (this.big_cz.DeltaPlus ());
             var z = this.big_cz.root.Add (distance);
             this.SetZCube (BigCube.FromVLInt (z));
             this.SetSubValue ();
         }
         else if (! this.value.positive)
         {
-            var distance = this.value.Divide (this.big_cz.DeltaMinus ());
-            
-            if (distance < 5)
+            var d = VLInt.Ratio (this.value, this.big_cz.DeltaMinus ());
+
+            if (d < 5)
             {
                 this.FixZ ();
                 return;
             }
+            var distance = this.value.Divide (this.big_cz.DeltaMinus ());
             var z = this.big_cz.root.Subtract (distance);
             this.SetZCube (BigCube.FromVLInt (z));
             this.SetSubValue ();
@@ -301,7 +301,7 @@ CubeWalker.prototype.FixZ = function ()
         while (true)
         {
             this.SetSubValue ();
-
+            
             if (! this.subvalue.positive)
             {
                 break;

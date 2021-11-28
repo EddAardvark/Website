@@ -91,7 +91,9 @@ VLInt.FromVector = function (value, positive)
 }
 //--------------------------------------------------------------------------------------------
 VLInt.FromFloat = function (f)
-{   
+{
+    // Not very efficient
+
     var positive = f >= 0;
     
     if (! positive) f = -f;
@@ -809,6 +811,22 @@ VLInt.prototype.Square = function ()
 VLInt.prototype.Cube = function ()
 {
     return this.Multiply (this.Multiply (this));
+}
+//------------------------------------------------------------------------------------------------------
+VLInt.prototype.CubeRoot = function ()
+{
+    var me = this.MantissaExponent ();
+    
+    while (me [1] % 3 != 0)
+    {
+        --me [1];
+        me [0] *= 10;
+    }
+    
+    var f = Math.pow (me [0], 1/3) * Math.pow (10, me[1]/3);
+    var ret = VLInt.FromFloat (f);
+    ret.positive = this.positive;
+    return ret;
 }
 //------------------------------------------------------------------------------------------------------
 VLInt.prototype.ToInt = function ()
