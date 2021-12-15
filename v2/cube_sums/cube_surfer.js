@@ -22,30 +22,14 @@ CubeSurfer.Initialise = function ()
 }
 //-------------------------------------------------------------------------------------------------
 CubeSurfer.FromPosition = function (x, y)
-{
-    var z;
-    
-    if (x.positive == y.positive)
-    {
-        if (VLInt.Compare (x, y) > 0)
-        {
-            z = x.positive ? x : y;
-        }
-        else
-        {
-            z = x.positive ? y : x;
-        }
-    }
-    else
-    {
-        z = VLInt.ZERO;
-    }
-
+{    
     var bcx = BigCube.FromVLInt (x);
     var bcy = BigCube.FromVLInt (y);
+    var v = bcx.cube.Add (bcy.cube);
+    var z = v.CubeRoot ();
     var bcz = BigCube.FromVLInt (z);
 
-// A cube-walker straddle will the CW that has the smallest positive value, the straddle is the CW value and the value - dv
+// A cube-walker straddle has the smallest positive value, the largest negative sub-value
 
     var cw = CubeWalker.FromCubes (bcx, bcy, bcz);    
     var ret = new CubeSurfer (cw);

@@ -21,6 +21,7 @@
 <script src="contour_walker.js"> </script>
 <script src="cube_surfer.js"> </script>
 <script src="cubes.js"> </script>
+<script src="results.js"> </script>
 
 <title> Contour walker </title>
 
@@ -40,13 +41,18 @@
     var table_mode = CubeSurfer.SM_Z;
     var timer;
     
+    var contour_walker = null;
+    var cm_value = ContourWalker.NORMAL;
+    var tm_value = ContourWalker.FULL;
+    
     //------------------------------------------------------------------------------------------------------------------------------------
     // Auto-Start
     //------------------------------------------------------------------------------------------------------------------------------------
     OnStart = function ()
-    {
+    {    
         CubeSurfer.Initialise ();
         VLInt.Initialise ();
+        ContourWalker.Initialise (contour_view,hover_cont);
         
         var all = document.getElementsByClassName("expr");
 
@@ -74,18 +80,26 @@
     {
         if (contour_walker)
         {
-            contour_walker.Animate (200, 200, contour_view);
+            var speed = parseInt (a_speed.value);
+            
+            if (speed < 1 || speed > 200)
+            {
+                Misc.Alert ("Speed must be in the range 1-200");
+                return;
+            }
+            contour_walker.Animate (speed, 50, contour_view);
         }
     }
     StopAnimate = function ()
     {
         contour_walker.StopAnimate ();
     }
-    
-    var contour_walker = null;
+    ShowResults = function ()
+    {
+        ContourWalker.ShowResults (results);
+    }
     TrackContour = function()
     {
-
         var xin = parseInt (x_start.value);
         var yin = parseInt (y_start.value);
         var x = VLInt.FromInt (xin);
@@ -94,7 +108,26 @@
         var cw = cs.cw; 
         
         contour_walker = ContourWalker.FromVLInts (cw.big_cy.root, cw.big_cx.root);
+        contour_walker.cmode = cm_value;
+        contour_walker.SetTrackingMode (tm_value);        
         contour_walker.CreateTrack (1001, contour_view);
+    }
+    SetColourMode = function ()
+    {
+        cm_value = colour_mode.value;
+        if (contour_walker)
+        {
+            contour_walker.cmode = cm_value;
+            contour_walker.DrawTrack (contour_view);
+        }
+    }
+    SetTrackingMode = function ()
+    {
+        tm_value = tracking_mode.value;
+        if (contour_walker)
+        {
+            contour_walker.SetTrackingMode (tm_value);
+        }
     }
 
 </script>
@@ -144,7 +177,24 @@
         <p>               
         <button onclick="TrackContour()"> Track Contour </button>     
         <button onclick="AnimateContour()"> Animate </button>     
-        <button onclick="StopAnimate()"> Stop </button>                
+        <button onclick="StopAnimate()"> Stop </button>          
+        <button onclick="ShowResults()"> Results </button>                
+        
+        Tracking Mode: 
+           
+           <select id="tracking_mode" onchange="SetTrackingMode ()">
+                    <option value="0">Full</option>
+                    <option value="1">Compact</option>>
+           </select>
+        
+        Colouring: 
+           
+           <select id="colour_mode" onchange="SetColourMode ()">
+                    <option value="0">Blue/Red</option>
+                    <option value="1">Rainbow</option>>
+           </select>
+        
+        Animate Speed: <input type="text" maxlength="12" id="a_speed" size="12" value="30">  
         
         </p><p>
          <table>
@@ -163,11 +213,24 @@
 
     
     <div class="endfloat"> &nbsp; </div>
+    
+    
+<!-- Results -->
+
+    <div class="float w10 in2 box" style="overflow: auto;">
+
+        <h2> Results </h2>
+        
+        <p>
+            <span id="results"> Results go here </span>
+        </p>
+    </div>
+
 	    
     
 <!-- Generic links -->
 
-    <div class="float w9 in2 box" style="overflow: auto;">
+    <div class="float w10 in2 box" style="overflow: auto;">
 
         <h2> Other pages </h2>
         
