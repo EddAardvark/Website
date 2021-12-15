@@ -1,0 +1,142 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Cubes">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<style>
+
+TD {padding: 3pt; border: 1px solid brown;}
+TH {padding: 3pt; border: 1px solid brown; background: orange;}
+
+</style>
+<script src="../js_library/misc.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+
+<title> Cube Sums: Special cases</title>
+
+
+<script>
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnLoad = function ()
+    {
+        var all = document.getElementsByClassName("expr");
+
+        for (var i=0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+    }
+    
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnLoad();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
+
+     <button class="banner">
+        <h1> Mapping Cube Sums Base 9 </h1>
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
+
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->
+        
+    <!-- Notes -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+
+        <h1> Sum is 2 </h1>
+        
+        <p>
+        If you run the <a href="contour_walker.html">contour walker</a> for N=2, you will get a lot of hits for a sum of 2, for instance:
+        </p><p>
+        
+        <ul>
+            <li> <span class="expr">49^3-47^3-24^3</span></li>
+            <li> <span class="expr">163^3-161^3-54^3</span></li>
+            <li> <span class="expr">385^3-383^3-96^3</span></li>
+            <li> <span class="expr">751^3-749^3-150^3</span></li>
+            <li> <span class="expr">1297^3-1295^3-216^3</span></li>
+            <li> <span class="expr">2059^3-2057^3-294^3</span></li>
+            <li> ...</li>
+            <li> <span class="expr">10841593393^3-10841593391^3-8901144^3</span></li>
+            <li> ...</li>
+        </ul>
+        </p><p>
+        10,841,593,393 was the largest value found when I stopped the search.
+        </p><p>
+        Inspection reveals that these are all of the form <span class="expr">(6n^3+1)^3-(6n^3-1)^3-(6n^2)^3</span>. The above list starts with n = 2.
+        </p>
+    
+        <h1> Sum is <span class="expr">2&times;m^3</span></h1>
+        <p>
+          Clearly, it you take all the terms of a sum from the previous section (that yields 2) and multiply them by 'm', the sum will be <span class="expr">2m^3</span>,
+          so there is a simple series that can generate an infinite number of examples of any sum of this form.
+        
+    </div>
+    
+<!-- Generic links -->
+
+    <div class="float in2 box w10" style="overflow: auto;">
+    
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+    </div>
+
+<!-- Copyright -->
+
+<div class="endfloat"/>
+
+<p class="small"> (c) John Whitehouse 2021 <p>
+
+
+</body>
+</html>
+
+
+
+

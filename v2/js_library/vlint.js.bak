@@ -91,9 +91,7 @@ VLInt.FromVector = function (value, positive)
 }
 //--------------------------------------------------------------------------------------------
 VLInt.FromFloat = function (f)
-{
-    // Not very efficient
-
+{   
     var positive = f >= 0;
     
     if (! positive) f = -f;
@@ -606,16 +604,6 @@ VLInt.prototype.Mod8 = function ()
     return (this.value.length > 0) ? (this.value [0] % 8) : 0;
 }
 //--------------------------------------------------------------------------------------------
-VLInt.prototype.Mod9 = function ()
-{
-    var sum = this.value [0];
-    for (var i = i ; i < this.value.length ; ++i)
-    {
-        sum += this.value[i];
-    }
-    return sum % 9;
-}
-//--------------------------------------------------------------------------------------------
 VLInt.prototype.Mod10 = function ()
 {
     return (this.value.length > 0) ? (this.value [0] % 10) : 0;
@@ -823,22 +811,6 @@ VLInt.prototype.Cube = function ()
     return this.Multiply (this.Multiply (this));
 }
 //------------------------------------------------------------------------------------------------------
-VLInt.prototype.CubeRoot = function ()
-{
-    var me = this.MantissaExponent ();
-    
-    while (me [1] % 3 != 0)
-    {
-        --me [1];
-        me [0] *= 10;
-    }
-    
-    var f = Math.pow (me [0], 1/3) * Math.pow (10, me[1]/3);
-    var ret = VLInt.FromFloat (f);
-    ret.positive = this.positive;
-    return ret;
-}
-//------------------------------------------------------------------------------------------------------
 VLInt.prototype.ToInt = function ()
 {
     var len = this.value.length;
@@ -853,7 +825,7 @@ VLInt.prototype.ToInt = function ()
         if (ret > Number.MAX_SAFE_INTEGER) return null;
     }
     
-    return (this.positive) ? ret : -ret;
+    return ret;
 }
 //=========================================================================================================
 // Monitoring and debugging

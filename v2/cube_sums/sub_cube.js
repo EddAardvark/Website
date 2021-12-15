@@ -40,31 +40,38 @@ SubCube.FromVLInts = function (x, n)
     var t2 = n2.MultiplyInt(3);
     ret.dv = t.AddInt(t2);
     ret.ddv = n.MultiplyInt(6);
+    ret.n2 = n2;
+    ret.n3 = n3;
     
     return ret;
 }
 //-------------------------------------------------------------------------------------------------
 SubCube.Clone = function (other)
-{  
-    var ret = new SubCube ();
+{
+    return SubCube.FromVLInts (this.x, this.n);
+}
+//-------------------------------------------------------------------------------------------------
+SubCube.prototype.Hop = function (hop)
+{
+    this.x = this.x.AddInt (hop);
     
-    ret.x = VLInt.FromVLInt (ret.x);
-    ret.n = VLInt.FromVLInt (ret.n);
-    ret.value = VLInt.FromVLInt (ret.value);
-    ret.dv = VLInt.FromVLInt (ret.dv);
-    ret.ddv = VLInt.FromVLInt (ret.ddv);
+    var next = SubCube.FromVLInts (this.x, this.n);
     
-    return ret;
+    this.value = next.value;
+    this.dv = next.dv;
+    this.ddv = next.ddv;
 }
 //----------------------------------------------------------------------------------------------------------------
 SubCube.prototype.DecrementX = function ()
 {
+    this.x.Decrement ();
     this.dv = this.dv.Subtract (this.ddv);
     this.value = this.value.Subtract (this.dv);
 }
 //----------------------------------------------------------------------------------------------------------------
 SubCube.prototype.IncrementX = function ()
 {
+    this.x.Increment ();
     this.value = this.value.Add (this.dv);
     this.dv = this.dv.Add (this.ddv);
 }
@@ -83,14 +90,22 @@ SubCube.prototype.LogFull = function (where)
 //--------------------------------------------------------------------------------------------
 SubCube.prototype.Verify = function (where)
 {
-    var n2 = n.Multiply (n);
-    var n3 = n2.Multiply (n);
-    var x2 = x.Multiply (x);
-    var a = n.Multiply(x2).MultiplyInt (3);
-    var b = x.Multiply(n2).MultiplyInt (3);
-    var value = n3.Add(a).Add(b);
+    var good = SubCube.FromVLInts (this.x, this.n);
     
-    if (VLInt.Compare (value, this.value) != 0) throw where + " SC Wrong value";
+    if (good.value.toString () != this.value.toString ())
+        throw Misc.Format ("SubCube: value {0} != {1}", this.value, good.value);
+    
+    if (good.dv.toString () != this.dv.toString ())
+        throw Misc.Format ("SubCube: Delta-v {0} != {1}", this.dv, good.dv);
+    
+    if (good.ddv.toString () != this.ddv.toString ())
+        throw Misc.Format ("SubCube: Delta-Delta-v {0} != {1}", this.ddv, good.ddv);
+
+    if (good.n2.toString () != this.n2.toString ())
+        throw Misc.Format ("SubCube: N^2 {0} != {1}", this.n2, good.n2);
+
+    if (good.n3.toString () != this.n3.toString ())
+        throw Misc.Format ("SubCube: N^3 {0} != {1}", this.n3, good.n3);
 }
 //--------------------------------------------------------------------------------------------
 SubCube.Test = function ()
