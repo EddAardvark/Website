@@ -25,6 +25,18 @@
 
 <title> Contour walker </title>
 
+<style>
+
+TD.rt {text-align: right; border: 1px solid orange;}
+TH.rt {text-align: right; border: 1px solid orange;}
+
+TD.box { border: 1px solid maroon; padding: 3pt; }
+TH.box { border: 1px solid maroon; padding: 3pt; }
+
+
+
+</style>
+
 
 <script>
 
@@ -35,15 +47,14 @@
     var gelement = [null, null, null];
     var gmode = [CubeSurfer.SM_Z, CubeSurfer.SM_Z, CubeSurfer.SM_Z];
 
-    var current_x = 7;
-    var current_y = 9;
     var view_div = null;
     var table_mode = CubeSurfer.SM_Z;
     var timer;
     
     var contour_walker = null;
-    var cm_value = ContourWalker.NORMAL;
-    var tm_value = ContourWalker.FULL;
+    var cm_value = ContourWalker.CM_RED_BLUE;
+    var tm_value = ContourWalker.TM_ONLINE;
+    var pm_value = ContourWalker.PM_NORMAL;
     
     //------------------------------------------------------------------------------------------------------------------------------------
     // Auto-Start
@@ -52,7 +63,7 @@
     {    
         CubeSurfer.Initialise ();
         VLInt.Initialise ();
-        ContourWalker.Initialise (contour_view,hover_cont);
+        ContourWalker.Initialise (contour_view,hover_cont, latest);
         
         var all = document.getElementsByClassName("expr");
 
@@ -87,7 +98,7 @@
                 Misc.Alert ("Speed must be in the range 1-200");
                 return;
             }
-            contour_walker.Animate (speed, 50, contour_view);
+            contour_walker.Animate (speed, 50);
         }
     }
     StopAnimate = function ()
@@ -98,18 +109,20 @@
     {
         ContourWalker.ShowResults (results);
     }
+    ClearResults = function ()
+    {
+        ContourWalker.ClearResults ();
+        results.innerHTML = "&nbsp;";
+    }
+    
     TrackContour = function()
     {
-        var xin = parseInt (x_start.value);
-        var yin = parseInt (y_start.value);
-        var x = VLInt.FromInt (xin);
-        var y = VLInt.FromInt (xin);
-        var cs = CubeSurfer.FromPosition (x, y);
-        var cw = cs.cw; 
+        var n = parseInt (contour_val.value);
         
-        contour_walker = ContourWalker.FromVLInts (cw.big_cy.root, cw.big_cx.root);
-        contour_walker.cmode = cm_value;
+        contour_walker = ContourWalker.FromContour (n);
+        contour_walker.SetColourMode (cm_value);
         contour_walker.SetTrackingMode (tm_value);        
+        contour_walker.SetPlotMode (pm_value);   
         contour_walker.CreateTrack (1001, contour_view);
     }
     SetColourMode = function ()
@@ -117,8 +130,7 @@
         cm_value = colour_mode.value;
         if (contour_walker)
         {
-            contour_walker.cmode = cm_value;
-            contour_walker.DrawTrack (contour_view);
+            contour_walker.SetColourMode (cm_value);
         }
     }
     SetTrackingMode = function ()
@@ -129,6 +141,16 @@
             contour_walker.SetTrackingMode (tm_value);
         }
     }
+    SetPlotMode = function ()
+    {
+        pm_value = plot_mode.value;
+        if (contour_walker)
+        {
+            contour_walker.SetPlotMode (pm_value);
+        }
+    }
+    
+    goto=function(x) { document.location=x; }
 
 </script>
 
@@ -152,6 +174,21 @@
 
 		 <!-- Ads -->
 
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+
 	</div>
 	
     <!--
@@ -159,56 +196,81 @@
     Main content
     ==============================================================================================================
     -->    
-    <!-- Shows the vicinity of the current (x,y) position -->
     
     <div class="float in2 box w10" style="overflow: auto;">
 
         <h1> Contour walker </h1>
         <p>
-        This page isn't ready yet.
-        </p>
+        This page implements an algorithm that searches along contours of the surface <span class="expr">v=x^3+y^3-z^3</span>
+        looking for close integer approximations to 
+        <span class="expr">v=0</span>. The contours, which I shall label using 'n' are formed by setting <span class="expr">z=x+n</span>.
+        The equation of a single contour is <span class="expr">x^3+y^3-(x+n)^3=0</span>. This can be arranged to 
+        <span class="expr">y^3-3nx^2-3n^2x-n^3=0</span>. This algorithm used used is a modification of
+        <a href="https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm" target="_blank">Bresenham's line algorithm</a>. This allows us to trace
+        the contours just by adding derivatives, a lot faster than calculating y as a function of x or vice versa.
+        </p><p>
+        The option "Follow Contour" plots the values generated using this algorithm. We focus on the subset of contours where <span class="expr">x>y</span>
+        as these approach <span class="expr">y&nbsp;&prop;&nbsp;x^[2/3]</span> as x gets larger. This means that the gradient approaches 1, which alllows
+        us to accelerate the search for larger x values. This is the basis of the algorithm used in the second option, "Fast tracing". Because the gradient is
+        close to 1 the 'v' values generated by the algorithm follow a saw-tooth pattern, so we can work of the wavelength and skip the intermediate values. This
+        allows the algorithm to accelerate and allows me to check 100s of trillion values per day, even running javascript in a browser. See the "Algorithm details"
+        section below.
         
-        <h4>Value view </h4><p>
-          X <input type="text" maxlength="12" id="x_start" size="12" value="7">  
-          Y <input type="text" maxlength="12" id="y_start" size="12" value="9">
+        </p><p>
+                
+        <h4> Contour tracking </h4>
+        <p>
         
-    <h4> Contour tracking </h4>
-        
-        <p>               
-        <button onclick="TrackContour()"> Track Contour </button>     
-        <button onclick="AnimateContour()"> Animate </button>     
-        <button onclick="StopAnimate()"> Stop </button>          
-        <button onclick="ShowResults()"> Results </button>                
+        Contour: <input type="text" maxlength="12" id="contour_val" size="12" value="2"> 
         
         Tracking Mode: 
            
            <select id="tracking_mode" onchange="SetTrackingMode ()">
-                    <option value="0">Full</option>
-                    <option value="1">Compact</option>>
+                    <option value="0">Follow Contour</option>
+                    <option value="1">Fast tracing</option>
+                    <option value="2">Flat out (no draw)</option>
            </select>
         
         Colouring: 
            
            <select id="colour_mode" onchange="SetColourMode ()">
-                    <option value="0">Blue/Red</option>
-                    <option value="1">Rainbow</option>>
+                    <option value="0">Blue/Red Bars</option>
+                    <option value="1">Rainbow Bars</option>
+                    <option value="2">Solid</option>
            </select>
         
+        Plot: 
+           
+           <select id="plot_mode" onchange="SetPlotMode ()">
+                    <option value="0">Normal</option>
+                    <option value="1">Log</option>
+           </select>
+           
         Animate Speed: <input type="text" maxlength="12" id="a_speed" size="12" value="30">  
         
         </p><p>
-         <table>
-          <tr>
-           <td>
-            <img id="contour_view" onClick="ClickContour(event)" onMouseMove="ContourHover(event)">
-            <br>
-            <span id="hover_cont"> [hover mouse over grid to see values] </span>
-           </td>
-          </tr>
-         </table>
         
-        <p>
-      
+         <table>        
+          <tr><td>
+            <img id="contour_view" onClick="ClickContour(event)" onMouseMove="ContourHover(event)">
+          </td></tr><tr><td>
+            Current: <span id="hover_cont"> [hover mouse over grid to see values] </span>
+          </td></tr><tr><td>
+            Latest: <span id="latest"></span>
+          </td></tr>
+         </table>
+
+        </p><p>               
+        
+        <button onclick="TrackContour()"> Track Contour </button>     
+        <button onclick="AnimateContour()"> Animate </button>     
+        <button onclick="StopAnimate()"> Stop </button>          
+        <button onclick="ShowResults()"> Results </button>                
+        <button onclick="ClearResults()"> Clear Results </button>                
+        <button onclick="goto('contour_algo.html')"> Algorithm Details </button>                
+        <button onclick="goto('#ss')"> Some Solutions </button>                
+        
+        </p>
     </div>
 
     
@@ -225,6 +287,133 @@
             <span id="results"> Results go here </span>
         </p>
     </div>
+    
+    
+<!-- Some Solutions -->
+
+    <div class="float w10 in2 box" style="overflow: auto;">
+
+        <h2> <a name="ss"/>Some Solutions </h2>
+        
+        <table>
+         <tr><th>Contour</th><th>Details</th><tr>
+         <tr><td>1</td>
+             <td><p>
+                Found 837 solutions, though I might have missed a few small ones. The last was
+                
+                <span class="expr">825=2781957377^3-2781957376^3-2852818^3</span>
+             </p></td>
+        </tr>
+        
+         <tr><td>2</td>
+             <td><p>
+                This generates an infinite series of solutions that add to 2. See the <a href="special_cases.html">special cases</a> page.
+                The same effect can be seen on all even contours,
+                the nth contour generates an infinite sequence of solutions for
+                <span class="expr">n^3/4</span>. We are only searching for solutions up to 1024, so we only find 2&rarr;2, 4&rarr;16,
+                6&rarr;54, 8&rarr;128, 10&rarr;250, 12&rarr;432, 14&rarr;686 and 16&rarr;1024. 
+                To keep the output manageable the "results" section only shows the last ten examples of any repeated solution.
+                </p><p>
+                Ignoring the predictable solutions the furthest out I have found so far are
+                
+                <ul>
+                 <li> <span class="expr">620=8140652757^3-8140652755^3-7353429^3</span> </li>
+                 <li> <span class="expr">456=1178496770^3+2027384^3-1178496772^3</span> </li>
+                </ul>
+                
+             </p></td>
+        </tr>
+        
+         <tr><td>5</td>
+            <td><p>
+                I ran this up to over 20 trillion, these are the only solutions where X is over a million that I found:
+            </p><p>
+                <span class="expr">1101509^3-1101504^3-26304^3=701</span><br>    
+                <span class="expr">3757419^3-3757414^3-59606^3=99</span><br>    
+                <span class="expr">8756836^3-8756831^3-104776^3=289</span><br>    
+                <span class="expr">4440347405^3+6662569^3-4440347410^3=134</span><br>        
+                <span class="expr">76275664911^3+44356209^3-76275664916^3=64</span>
+            </p></td>
+        </tr>
+        
+        <tr><td>7</td>
+            <td><p>
+                Tested up to 1.17 trillion, solutions over 1 million (notice that 771 appears twice):
+            </p><p>
+                <span class="expr">3077972^3-3077965^3-58378^3=771</span><br>  
+                <span class="expr">14454639^3-14454632^3-163711^3=720</span><br>  
+                <span class="expr">36460580^3-36460573^3-303358^3=771</span><br>  
+                <span class="expr">89534194^3+552161^3-89534201^3=64</span><br>  
+                <span class="expr">129629906^3-129629899^3-706659^3=538</span><br>  
+            </p></td>
+        </tr>
+        
+        
+        <tr><td>9</td>
+            <td><p>
+            I didn't find many solutions, I ran up to X = 129 billion, but the last solution found was for 125 at X = 196,416,133. Interestingly there are a lot
+            of cubes, generally it seams that cubes are easier to find than other values.
+            </p><p>
+            <table>
+                <tr>
+                    <td>1</td>
+                    <td>
+                        (94<span class="superscript">3</span> &nbsp;+&nbsp; 64<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 103<span class="superscript">3</span>),
+                        (729<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 720<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 242<span class="superscript">3</span>),
+                        (729<span class="superscript">3</span> &nbsp;+&nbsp; 244<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 738<span class="superscript">3</span>)
+                    </td>
+                </tr><tr>
+                    <td>8</td>
+                    <td>
+                        (141<span class="superscript">3</span> &nbsp;+&nbsp; 83<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 150<span class="superscript">3</span>),
+                        (2840<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 2831<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 601<span class="superscript">3</span>)
+                    </td>
+                </tr><tr>
+                    <td>27</td>
+                    <td>
+                        (46<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 37<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 36<span class="superscript">3</span>),
+                        (1652<span class="superscript">3</span> &nbsp;+&nbsp; 420<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 1661<span class="superscript">3</span>),
+                        (3630<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 3621<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 708<span class="superscript">3</span>)
+                    </td>
+                </tr><tr>
+                    <td>64</td>
+                    <td>
+                        (101<span class="superscript">3</span> &nbsp;+&nbsp; 67<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 110<span class="superscript">3</span>),
+                        (1447<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 1438<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 383<span class="superscript">3</span>)
+                    </td>
+                </tr><tr>
+                    <td>125</td>
+                    <td>
+                        (132<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 123<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 76<span class="superscript">3</span>),
+                        (196416133<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 196416124<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 1013692<span class="superscript">3</span>)
+                    </td>
+                </tr><tr>
+                    <tr>
+                    <td>216</td>
+                    <td>
+                        (258<span class="superscript">3</span> &nbsp;+&nbsp; 123<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 267<span class="superscript">3</span>),
+                        (14363<span class="superscript">3</span> &nbsp;+&nbsp; 1773<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 14372<span class="superscript">3</span>)
+                    </td>
+                </tr><tr>
+                    <td>512</td>
+                    <td>
+                        (2649<span class="superscript">3</span> &nbsp;+&nbsp; 575<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 2658<span class="superscript">3</span>),
+                        (14024<span class="superscript">3</span> &nbsp;+&nbsp; 1745<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 14033<span class="superscript">3</span>)
+                    </td>
+                </tr><tr>
+                    <td>1000</td>
+                    <td>
+                        (27281<span class="superscript">3</span> &nbsp;+&nbsp; 2719<span class="superscript">3</span> &nbsp;&#8722;&nbsp; 27290<span class="superscript">3</span>)
+                    </td>
+                </tr>
+            </table>            
+            </p></td>
+        </tr>
+    </table>
+        
+            
+    </div>
+    
 
 	    
     
@@ -237,17 +426,15 @@
         <p>
             <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
         </p>
+        
     </div>
 
 <!-- Copyright -->
 
-    <p class="small"> (c) John Whitehouse 2021 <p>
+    <p class="small"> (c) John Whitehouse 2021 </p>
 
 			  
 
 </body>
 </html>
-
-
-
 

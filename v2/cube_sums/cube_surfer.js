@@ -552,8 +552,3 @@ CubeSurferGrid.prototype.GetColour = function (idx, mode)
     return CubeSurferGrid.COLOUR [mode] (this, surfer);
 }
 
-
-
-    
-
-   

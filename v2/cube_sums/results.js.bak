@@ -75,11 +75,6 @@ WalkingResults.prototype.Add = function (result)
     {
         this.results [result.v] = [key];
     }
-    else if (this.results[result.v].length == 10)
-    {
-        this.results[result.v] = this.results[result.v].slice (-9);        
-        this.results[result.v].push (key);
-    }
     else if (this.results[result.v].indexOf(key) < 0)
     {        
         this.results [result.v].push (key);
