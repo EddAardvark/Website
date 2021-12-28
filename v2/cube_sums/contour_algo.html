@@ -1,0 +1,172 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Autdor" content="John Whitehouse">
+<meta name="KeyWords" content="Cubes">
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="StyleSheet" href="cube_styles.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+
+<title> Contour Walking Algorithm </title>
+
+<style>
+
+TD.rt {text-align: right; border: 1px solid orange;}
+TH.rt {text-align: right; border: 1px solid orange;}
+
+TD.box { border: 1px solid maroon; padding: 3pt; }
+TH.box { border: 1px solid maroon; padding: 3pt; }
+
+
+</style>
+
+
+<script>
+    //------------------------------------------------------------------------------------------------------------------------------------
+    // Auto-Start
+    //------------------------------------------------------------------------------------------------------------------------------------
+    OnStart = function ()
+    {    
+        var all = document.getElementsByClassName("expr");
+
+        for (var i = 0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+    }
+
+</script>
+
+</head>
+
+<!-- Body -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+	<div style="margin: auto; widtd: 1024px;">
+		<button style="widtd: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+			<p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+			<p> <strong>Home page</strong>
+		</button>
+
+		<button class="banner">
+			<h1> Contour Walking Algorithm </h1>
+		</button>
+
+		 <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+
+	</div>
+	
+    <!--
+    ==============================================================================================================
+    Main content
+    ==============================================================================================================
+    -->    
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+
+        <h1> How the algorithm works </h1>
+        <p>
+        We start where the line <span class="expr">x^3+y^3-(x+n)^3=0</span> intersects <span class="expr">x=y</span> which gives
+        <span class="expr">2x^3=(x+n)^3</span>, or <span class="expr">x=n/(2^[1/3]-1) (approx n/0.26)</span>, which we round up to the next integer. 
+        </p><p>
+        Next we create a class the allows us to track y cubed. We start by calculating the difference between adjant cubes, then the differences between the 
+        differences and then the differences between those until we arrive at a constant. If we start at 1, this looks like:
+        </p><p>
+        <table>
+         <tr>
+          <th class="rt box">V</th><td class="rt box">1</td><td class="rt box">8</td><td class="rt box">27</td><td class="rt box">64</td><td class="rt box">125</td>
+         </tr><tr>
+          <th class="rt box">&Delta;V</th><td>&nbsp;</td><td class="rt box">7</td><td class="rt box">19</td><td class="rt box">37</td><td class="rt box">61</td>
+         </tr><tr>
+          <th class="rt box">&Delta;&Delta;V</th><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="rt box">12</td><td class="rt box">18</td><td class="rt box">24</td>
+         </tr><tr>
+          <th class="rt box">&Delta;&Delta;&Delta;V</th><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="rt box">6</td><td class="rt box">6</td>
+         <tr>
+        </table>
+        
+        </p><p>
+        To calculate the next cube we start at the bottom, and extend the row right by inserting a 6. We then move up the new column by adding 6
+        to the last value, 24, giving 30.
+        The second row becomes <span class="expr">61+30=91 and the top row 125+91=216 (6^3)</span>. More generically:
+        </p><p>
+        <table>
+         <tr>
+          <th class="rt box">V</th>
+          <th class="rt box"><span class="expr">y^3</span></th>
+          <th class="rt box"><span class="expr">(y+1)^3</span></th>
+          <th class="rt box"><span class="expr">(y+2)^3</span></th>
+          <th class="rt box"><span class="expr">(y+3)^3</span></th>
+         </tr><tr>
+          <th class="rt box">&Delta;V</th>
+          <td class="box">&nbsp;</td>
+          <td class="rt box"><span class="expr">3y^2+3y+1</span></td>
+          <td class="rt box"><span class="expr">3y^2+9y+7</span></td>
+          <td class="rt box"><span class="expr">3y^2+15y+19</span></td>
+         </tr><tr>
+          <th class="rt box">&Delta;&Delta;V</th>
+          <td class="box">&nbsp;</td>
+          <td class="box">&nbsp;</td>
+          <td class="rt box"><span class="expr">6y+6</span></td>
+          <td class="rt box"><span class="expr">6y+12</span></td>
+         </tr><tr>
+          <th class="rt box">&Delta;&Delta;&Delta;V</th>
+          <td class="box">&nbsp;</td>
+          <td class="box">&nbsp;</td>
+          <td class="box">&nbsp;</td>
+          <td class="rt box">6</td>
+         </tr>
+        </table>
+        
+        </p><p>
+        The graphs below show the positions of the points near the n=1 contour and the corresponding values of the sum of cubes.
+        
+        <img src="images/graph_c1.png">
+                
+                
+        </p>
+    </div>
+	    
+    
+<!-- Generic links -->
+
+    <div class="float w10 in2 box" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        
+        <p>
+            <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+        
+    </div>
+
+<!-- Copyright -->
+
+    <p class="small"> (c) John Whitehouse 2021 </p>
+
+			  
+
+</body>
+</html>
+
