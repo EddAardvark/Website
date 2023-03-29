@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 
 <meta name="KeyWords" content="Python Collatz 3x+1">
@@ -12,11 +12,26 @@
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
-<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/svg_helpers.js"> </script>
+
+
+<style>
+
+TD
+    {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
+    }
+        
+TABLE { border-collapse: collapse; }
+
+</style>
+
 <script>
-OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+    OnStart = function () { }
 </script>
 
 </head>
@@ -65,7 +80,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- Main content -->
 
-<div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
     <h2> Introduction </h2>
 
@@ -73,9 +88,9 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
         We've seen earlier that once we remove the even numbers the tree becomes more
         compact. Now the root node (one) has an infinite number of immediate precursors,
         starting with:
-    </p><p class="code">
-        1, 5, 21, 85, 341, 1365, 5461, 21845, 87381, 349525, 1398101, 5592405, 22369621, 89478485, 357913941, 1431655765,
-        5726623061, 22906492245, 91625968981, 366503875925, ...
+    </p><p>
+    <pre class="code">1, 5, 21, 85, 341, 1365, 5461, 21845, 87381, 349525, 1398101, 5592405, 22369621, 89478485,
+357913941, 1431655765, 5726623061, 22906492245, 91625968981, 366503875925, &hellip;</pre>
     </p><p>
         This gives us the opportunity to partition the set of positive integers
         according to which of these precursors they pass through on their way to one.
@@ -94,7 +109,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- The Distributions -->
 
-<div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
     <h2><a name="The Distributions">The Distributions</a></h2>
 
@@ -123,7 +138,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- Smallest node -->
 
-<div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
     <h2><a name="Smallest Node">Smallest Node</a></h2>
 
@@ -259,34 +274,36 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- Other pages -->
 
-<div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
-    <h2><a name="Other Pages">Other Pages</a></h2>
+    <h2><a name="s9">Other 3x+1 related pages</a></h2>
     <p>
-        <table border="2" cellpadding="4" cellspacing="0" width="500">
-            <tr>
-                <td><a href="residues.html"><img src="images/icon.gif" width="97" height="97"></a></td>
-                <td class="linkP"><b>Residues:</b> These are defined as 2<sup>even</sup>/(X
-                        * 3<sup>odd</sup>). Their distribution is quite interesting, and is
-                        related to these domains of attraction.</td>
-            </tr>
-        </table>
+    Click the images...
+    </p><p>
+
+    <table cellpadding="4" cellspacing="0" width="500">
+      <tr>
+        <td><a href="residues.html"><img src="images/icon.gif" width="97" height="97"></a></td>
+        <td class="linkP"><b>Residues:</b> These are defined as 2<sup>even</sup>/(X
+                            * 3<sup>odd</sup>). Their distribution is quite interesting, and is
+                            related to these domains of attraction.</td>
+      </tr>
+    </table>
     </p>
-
-</div>
-
 
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
-
-      </div>
+    <h2> Elsewhere on this site </h2>
+        
+    <p>
+      <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+          
+</div>
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 

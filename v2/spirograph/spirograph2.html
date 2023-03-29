@@ -70,39 +70,41 @@ P.instructions
 
 <body onload="OnStart();">
 
-<table>
+<!-- Banner -->
 
- <tr>
-  <td width="200" class="top">
-   <p> Home page
-   </p><p>
-   <a href="http://www.eddaardvark.co.uk"><img border="0" src="http://www.eddaardvark.co.uk/images/home.png"></a>
-   </p>
-  </td>
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
 
-  <td class="top" width="100%">
-      <h1> <br> SVG Spirograph Page </h1>
-  </td>
+     <button class="banner">
+       <h1> SVG Spirograph Page </h1>
+     </button>
 
-  <td>
-    <script type="text/javascript"><!--
-      google_ad_client = "ca-pub-3534237235440125";
-      /* Small Square */
-      google_ad_slot = "0024655068";
-      google_ad_width = 200;
-      google_ad_height = 200;
-      //-->
-    </script>
-    <script type="text/javascript"
-      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-    </script>
-  </td>
- </tr>
-</table>
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
 
 <!-- Main Content -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
 
-<div class="float box in2 w10" style="overflow: auto;">
+
     <h2> Spirographs </h2>
 
     <!-- Buttons -->
@@ -621,12 +623,11 @@ P.instructions
             </p>
 		</div>
                 
+                <!-- Instructions -->
 
-    <div class="endfloat"></div>
-
-</div></div>
-
-    <div class="in2 box w10">
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+    
         <h2> <a name="help"/> Instructions </a></h2>
         <p>
             The display consists of three areas, the pattern, the controls and the current status. How these are arranged will depend on
@@ -957,25 +958,25 @@ P.instructions
                 </tr>
             </table>
 
-
-
         </p>
     </div>
 
+
 <!-- Generic links -->
 
-    <div class="in2 box">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+    <div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
-      
-       
+        <h2> Other pages </h2>
+        <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+          
+    </div>
 
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2010 - 2017 <p>
+   <p class="small"> (c) John Whitehouse 2010 - 2022 <p>
 
 
 <script type="text/javascript">

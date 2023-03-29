@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 <meta name="KeyWords" content="Python Collatz 3x+1">
 
@@ -11,11 +11,21 @@
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
-<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="../js_library/misc.js"> </script>
 <script>
-OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+
+OnStart = function ()
+{
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+}
+
 </script>
 
 </head>
@@ -63,7 +73,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- Main content -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2> Introduction </h2>
 
@@ -77,6 +87,8 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
     but with the even numbers removed. At least for the first million numbers the
     two sets are the same:
 </p><p>
+
+<!-- The First 12 Odd Glide Records -->
 
 <table border="0" cellpadding="4" cellspacing="0">
   <tr>
@@ -195,7 +207,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- The First 12 Odd Glide Records -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2> The First 12 Odd Glide Records </h2>
 
@@ -272,18 +284,20 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 
 
-
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+    <div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
-
+        <h2> Other pages </h2>
+        <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+          
+    </div>
+    
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+<p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 

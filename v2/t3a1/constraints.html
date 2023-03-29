@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 
 <meta name="KeyWords" content="Python Collatz 3x+1">
@@ -11,10 +11,22 @@
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="../js_library/misc.js"> </script>
+
 <script>
-    OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+
+OnStart = function ()
+{
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+}
+
 </script>
 
 </head>
@@ -60,15 +72,16 @@
 
 <!-- Main content -->
 
-    <div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
+
 <h2>Constraints</h2>
 
 <p>
     The largest loop member can be used to provide a constraint on the smallest
     possible cycle size. For instance, 82 is the smallest cycle size where the largest possible loop member
-    is more than 10<sup>15</sup>. As we know that all numbers smaller than 10<sup>15</sup>
-    don't form loops we can use this fact to prove that no cycles smaller than 82
-    exist. This isn't&nbsp; a very good constraint though as the cycle containing
+    is more than <span class="expr">10^[15]</span>. As we know that all numbers smaller than <span class="expr">10^[15]</span>
+    don't form loops we can use this fact to prove that no cycles (other than [1,4,2,1]) smaller than 82
+    exist. This isn't a very good constraint though as the cycle containing
     the largest possible loop member will also contain a number of smaller values.
     In fact by rotating the set of 'a' values we can see that the loop with the largest
     member also contains the smallest.</p>
@@ -76,8 +89,8 @@
 </p><p>
     We can call the smallest member of a loop its 'seed'. For a given
     cycle size we can search all the loops and identify the largest seed. In the K= 82 system this value is
-    about 867K, so to eliminate the possibility of 82&minus;cycles in 3x+1 we only need to test
-    values up to 867, which is a lot smaller than 10<sup>15</sup>. For large loops
+    about <span class="expr">867*K</span>, so to eliminate the possibility of 82&minus;cycles in 3x+1 we only need to test
+    values up to 867, which is a lot smaller than <span class="expr">10^[15]</span>. For large loops
     we can't simply search for the largest seed so we need a method of predicting
     it, see <a href="largestsmallest.html">Largest loop seeds</a>.</p>
 
@@ -85,17 +98,20 @@
 
     We know that for a given
     pair of 'm' and 'n' values the size of the loop is m+n, 'n' odd values and 'm'
-    even ones. We also know that the range of possible values is constrained by the
-    loop members. The range of loop members increases relatively smoothly with 'n',
-    but the conversion into the 3x+1 system depends on the value K, which behaves
-    less smoothly. If we are going to find any loops in the domain of the integers we
+    even ones. We also know that the range of possible values is constrained by 'a' values defining
+    the loop members. The range of loop members increases relatively smoothly with 'n',
+    but the conversion into the 3x+1 system depends on the value K, which is
+    less smooth. If we are going to find any loops in the domain of the integers we
     can comprehend we will need to look at systems where K is atypically small.
-    These occur when m&#x2215;n is close to, but larger than, log(3)&#x2215;log(2).
-    On the <a href="int_log32.html">Integer approximations to log(3)&#x2215;log(2)</a>page I
-    identify 'm' and 'n' values where this is the case.</p>
+    These occur when <span class="expr">m/n is close to, but larger than, log(3)/log(2)</span>.
+    On the <a href="int_log32.html">Integer approximations page</a> I explore 
+    identifying the 'm' and 'n' values where this is the case.</p>
 
 </p><p>
-The first few pairs are shown in the following table.
+  The first few pairs are shown in the following table.
+  
+</p><p>
+  
  <table class="whitebox" border="1" cellpadding="4" cellspacing="0">
   <tr>
     <td>m&nbsp;&#x2215;&nbsp;n</td>
@@ -200,9 +216,10 @@ The first few pairs are shown in the following table.
 
 </div>
 
+<div class="float w10 box in2" style="overflow: auto;">
 
-    <div class="in2 box w8 float">
     <h2><a name="Other Pages">Other Pages</a></h2>
+
 <p>
 <table border="2" cellpadding="4" cellspacing="0" width="500">
   <tr>
@@ -212,19 +229,13 @@ The first few pairs are shown in the following table.
   </tr>
 </table>
 
-</p>
+    </p><p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
 </div>
 
-
-<!-- Generic links -->
-
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
-
-      </div>
-
-   <p class="small"> (c) John Whitehouse 2011-2013 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011-2022 <p> </td>
 
 
 <script type="text/javascript">

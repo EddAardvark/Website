@@ -2,7 +2,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 
 <meta name="KeyWords" content="Python Collatz 3x+1">
@@ -25,8 +25,6 @@ DIV.breakable { word-wrap: break-word; }
 <script>
     OnStart = function ()
     {
-        document.getElementById("links_go_here").innerHTML = MakeButtons ();
-
         log32_a.value = 2;
         log32_b.value = 1;
         log32_limit.value = 10;
@@ -133,7 +131,7 @@ DIV.breakable { word-wrap: break-word; }
 
 <!-- Main content -->
 
-<div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2>In this section</h2>
     <p>
@@ -151,22 +149,19 @@ DIV.breakable { word-wrap: break-word; }
 
 <!-- Rational Approximations to ln(2) -->
 
-<div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="rational_ln2">Rational Approximations to ln(2)</a></h2>
 
-    <p>
-
+    </p><p>
+    
         The exponential logarithm &quot;ln(1+x)&quot; can be approximated by the series
 
-    </p>
-        <div class="code w5 in2">
-            <p class="code">
-                ln(1+x) = x - x<span class="superscript">2</span>/2 + x<span class="superscript">3</span>/3
-                            - x<span class="superscript">4</span>/4 ...
-            </p>
-        </div>
-    <p>
+    </p><p>
+
+        <pre class="code">ln(1+x) = x - x<span class="superscript">2</span>/2 + x<span class="superscript">3</span>/3 - x<span class="superscript">4</span>/4 ...</pre>
+        
+    </p><p>
         So to calculate ln(2) we can substitute x=1 and get the following series of approximations
 
     </p><p>
@@ -281,16 +276,12 @@ DIV.breakable { word-wrap: break-word; }
         to find an expression involving values closer to 1.
         We we can make substitutions like
     </p><p>
-
-        <div class="code w5 in2">
-            <p class="code">
-                2 = (3/2) * (4/3)
-            <br>
-                &#x21d2; ln(2) = ln(3/2) + ln(4/3)
-            </p>
-        </div>
-
-    <p>
+    
+    <pre class="code">2 = (3/2) * (4/3)
+&#x21d2; ln(2) = ln(3/2) + ln(4/3)</pre>
+    
+    </p><p>
+    
         How this converges can be seen in the next table.</p>
 
         <div class="in2">
@@ -393,17 +384,13 @@ DIV.breakable { word-wrap: break-word; }
         terms, the previous equation barely achieved 1. We can derive even faster
         converging equations, by making additional substitutions like </p>
 
-    </p>
+    </p><p>
+    
+    <pre class="code">ln(3/2) = ln(4/3) + ln(9/8)
+&#x21d2; ln(2)&nbsp;&nbsp; = 2 * ln(4/3) + ln(9/8)</pre>
 
-    <div class="code w5 in2">
-        <p class="code">
-            &nbsp; ln(3/2) = ln(4/3) + ln(9/8)
-        <br>
-            &#x21d2; ln(2)&nbsp;&nbsp; = 2 * ln(4/3) + ln(9/8)</p>
-        </p>
-    </div>
-
-    <p>
+    </p><p>
+    
         This converges a bit faster than the previous series, but not spectacularly
         so, at the expense of generating much larger integers in the rational representation.
     </p>
@@ -412,38 +399,36 @@ DIV.breakable { word-wrap: break-word; }
 
 <!-- Calculating ln(3)/ln(2) -->
 
-<div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="Calculating_ln32">Calculating ln(3)/ln(2)</a></h2>
 
-<p>To calculate ln(3)&nbsp;/&nbsp;ln(2) we notice that</p>
+    <p>
+    To calculate ln(3)&nbsp;/&nbsp;ln(2) we notice that
 
-    <div class="code w5 in2">
-        <p class="code">
-            ln(3) = ln(3/2) + ln(2)
-        </p>
-    </div>
+    </p><p>
+    
+    <pre class="code">ln(3) = ln(3/2) + ln(2)</pre>
 
-<p>which leads to</p>
+    </p><p>
+    
+    which leads to
 
-    <div class="code w5 in2">
-        <p class="code">
-            ln(3)/ln(2) = 1 + ln(3/2) / ln(2)
-        </p>
-    </div>
+    </p><p>
+    
+    <pre class="code">ln(2) = ln(3/2) + ln(4/3)ln(3)/ln(2) = 1 + ln(3/2) / ln(2)</pre>
 
-<p>This isn't very good as we still have the slowly converging log(2) to calculate. But</p>
+    </p><p>
+    
+    This isn't very good as we still have the slowly converging log(2) to calculate. But</p>
 
+    </p><p>
 
-    <div class="code w5 in2">
-        <p class="code">
-            ln(2) = ln(3/2) + ln(4/3)
-        <br>
-            &#x21d2; ln(3)/ln(2) = 1 + ln(3/2) / (ln(3/2) + ln(4/3))</p>
-        </p>
-    </div>
+        <pre class="code">ln(2) = ln(3/2) + ln(4/3)
+&#x21d2; ln(3)/ln(2) = 1 + ln(3/2) / (ln(3/2) + ln(4/3))</pre>
 
-
+    </p>
+    
 <p>Calculating this gives</p>
 
 <div class="in2">
@@ -522,17 +507,13 @@ DIV.breakable { word-wrap: break-word; }
     This converges quite quickly with the error roughly halving for each extra
     term. The expected value is about 1.58496250072116. We can though make the
     additional substitution
-</p>
+</p><p>
 
-    <div class="code w5 in2">
-        <p class="code">
-            ln(3/2) = ln(4/3) + ln(9/8)
-        <br>
-            &#x21d2; ln(3)/ln(2) = 2 - ln(4/3)/(2 * ln(4/3) + ln(9/8))
-        </p>
-    </div>
+<pre class="code">ln(3/2) = ln(4/3) + ln(9/8)
+&#x21d2; ln(3)/ln(2) = 2 - ln(4/3)/(2 * ln(4/3) + ln(9/8))</pre>
 
-<p>
+    </p><p>
+    
     Which will converge even faster as 1 &lt; 9&nbsp;/&nbsp;8 &lt; 4&nbsp;/&nbsp;3 but with the same
     drawbacks found when calculating ln(2).
 </p>
@@ -541,7 +522,7 @@ DIV.breakable { word-wrap: break-word; }
 
 <!-- Factorising_2 -->
 
-<div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="Factorising_2">Factorising 2</a></h2>
 
@@ -649,32 +630,25 @@ DIV.breakable { word-wrap: break-word; }
         </div>
 
 
-    <p>
+    </p><p>
         The product is is always of the form
-    </p>
+    </p><p>
 
-    <div class="code w5 in2">
-        <p class="code">
-            (2<span class="superscript">a</span>/3<span class="superscript">b</span>)<span class="superscript">c</span> *
-            (3<span class="superscript">e</span>/2<span class="superscript">f</span>)<span class="superscript">g</span> =
-            2<span class="superscript">(a*c - f*g)</span>/3<span class="superscript">(f*g - b*c)</span> = 2
-        <br>
-            &#x21d2; a*c = f*g + 1 and b*c = e*g</p>
-        </p>
-    </div>
+    <pre class="code">(2<span class="superscript">a</span>/3<span class="superscript">b</span>)<span class="superscript">c</span> * (3<span class="superscript">e</span>/2<span class="superscript">f</span>)<span class="superscript">g</span> = 2<span class="superscript">(a*c - f*g)</span>/3<span class="superscript">(f*g - b*c)</span> = 2
+&#x21d2; a*c = f*g + 1 and b*c = e*g</pre></p>
 
-    <p>
+    </p><p>
         If we sum the first 5 terms of ln(2) = 41*log(G) + 12*ln(J) we get 0.693147180608,
         which compares quite well with the floating point version 0.6931471805599. Unfortunately,
         the 2 integers involved in forming this ratio are rather large: 2.953...*10<span class="superscript">127</span>
         and 4.261...*10<span class="superscript">127</span>.
-    </p>
+    </p><p>
 
 </div>
 
 <!-- ln(3)/ln(2) revisited -->
 
-<div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2> <a name="ln32_revisited"> ln(3)&nbsp;/&nbsp;ln(2) revisited</a></h2>
 
@@ -685,9 +659,8 @@ DIV.breakable { word-wrap: break-word; }
         (3<span class="superscript">e</span>&nbsp;/&nbsp;2<span class="superscript">f</span>) get closer to one the ratios a&nbsp;/&nbsp;b and
         f&nbsp;/&nbsp;e get to closer ln(3)&nbsp;/&nbsp;ln(2), and obey the relation
 
-    </p><p class="code">
-
-        a/b &gt; ln(3)/ln(2) &gt; f/e
+    </p><p>
+    <pre class="code">a/b &gt; ln(3)/ln(2) &gt; f/e</pre>
 
     </p><p>
 
@@ -695,8 +668,7 @@ DIV.breakable { word-wrap: break-word; }
         in the associated script "<a href="log3over2.js">log3over2.js</a>".
     </p><p>
 
-<div class="code w5 in2">
-<pre>
+<pre class="code">
 def findFactors(limit):
 
     a = 2
@@ -717,7 +689,7 @@ def findFactors(limit):
             e = n
             f = m
 </pre>
-</div>
+
 <p>
 
     <p>
@@ -1129,7 +1101,7 @@ def findFactors(limit):
 
 <!-- Are these the best? -->
 
-<div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
     <h2> <a name="thebest">Are these the best?</a></h2>
 
@@ -1552,17 +1524,21 @@ def findFactors(limit):
 </div>
 
 
+
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+<div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
+    <h2> Other pages </h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 

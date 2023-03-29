@@ -25,7 +25,7 @@ CubeSurfer.FromPosition = function (x, y)
 {    
     var bcx = BigCube.FromVLInt (x);
     var bcy = BigCube.FromVLInt (y);
-    var v = bcx.cube.Add (bcy.cube);
+    var v = bcx.value.Add (bcy.value);
     var z = v.CubeRoot ();
     var bcz = BigCube.FromVLInt (z);
 

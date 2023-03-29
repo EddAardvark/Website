@@ -222,6 +222,7 @@ VLInt.prototype.Multiply = function (other)
 }
 //--------------------------------------------------------------------------------------------
 // Add a simple number (this number is truncated to an integer)
+// TODO: Optimise using values directly
 //--------------------------------------------------------------------------------------------
 VLInt.prototype.AddInt = function (num)
 {
@@ -231,6 +232,7 @@ VLInt.prototype.AddInt = function (num)
 }
 //--------------------------------------------------------------------------------------------
 // Add a simple number (this number is truncated to an integer)
+// TODO: Optimise using values directly
 //--------------------------------------------------------------------------------------------
 VLInt.prototype.SubtractInt = function (num)
 {
@@ -402,7 +404,7 @@ VLInt.SubtractVectors = function (vec1, vec2)
     var ret = new Array (len);
     var carry = 0;
 
-    for (i = 0 ; i < len ; ++i)
+    for (var i = 0 ; i < len ; ++i)
     {
         var diff = carry;
         if (i < vec1.length) diff += vec1[i];
@@ -560,11 +562,6 @@ VLInt.prototype.IsNotEqualTo = function (other)
     return VLInt.Compare (this, other) != 0;
 }
 //--------------------------------------------------------------------------------------------
-VLInt.prototype.AddNumber = function (number)
-{
-    return VLInt.FromInt (number).Add (this);
-}
-//--------------------------------------------------------------------------------------------
 VLInt.prototype.Abs = function ()
 {
     return VLInt.FromVector (this.value, true);
@@ -573,11 +570,6 @@ VLInt.prototype.Abs = function ()
 VLInt.prototype.Minus = function ()
 {
     return VLInt.FromVector (this.value, !this.positive);
-}
-//--------------------------------------------------------------------------------------------
-VLInt.prototype.SubtractNumber = function (number)
-{
-    return new VLInt.FromInt (number).Subtract (this);
 }
 //--------------------------------------------------------------------------------------------
 // Check if zero
@@ -609,7 +601,7 @@ VLInt.prototype.Mod8 = function ()
 VLInt.prototype.Mod9 = function ()
 {
     var sum = this.value [0];
-    for (var i = i ; i < this.value.length ; ++i)
+    for (var i = 1 ; i < this.value.length ; ++i)
     {
         sum += this.value[i];
     }
@@ -695,15 +687,15 @@ VLInt.prototype.Divide = function (other)
     
     VLInt.PreparePowers (subs.length);    
     
-    while (--pos >= 0)
+    while (pos >= 0)
     {
         if (num.IsGreaterThanOrEqualTo (subs[pos]))
         {
             answer = answer.Add (VLInt.powers2[pos]);
             num = num.Subtract (subs [pos]);
         }
+        --pos;
     }
-    
     if (answer.IsZero ())
     {
         answer.positive = true;
@@ -807,8 +799,8 @@ VLInt.prototype.Log10 = function ()
 //------------------------------------------------------------------------------------------------------
 VLInt.Ratio = function (b1, b2)
 {
-    var m1 = b1.MantissaExponent (b1);
-    var m2 = b2.MantissaExponent (b2);
+    var m1 = b1.MantissaExponent ();
+    var m2 = b2.MantissaExponent ();
 
     return (m1[0] / m2[0]) * Math.pow (10, (m1[1] - m2[1]));
 }

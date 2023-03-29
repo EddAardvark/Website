@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 
 <meta name="KeyWords" content="Python Collatz 3x+1">
@@ -12,11 +12,35 @@
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
-<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="../js_library/svg_helpers.js"> </script>
+
+<style>
+
+TD
+    {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
+    }
+        
+TABLE { border-collapse: collapse; }
+
+
+</style>
+
 <script>
-OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+
+OnStart = function ()
+{
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+}
+
 </script>
 
 </head>
@@ -65,7 +89,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- Main content -->
 
-<div class="in2 box w7 float">
+    <div class="float w10 box in2" style="overflow: auto;">
 
     <h2> Contents </h2>
     <p>
@@ -79,7 +103,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
     </div>
 
-    <div class="in2 box w7 float">
+    <div class="float w10 box in2" style="overflow: auto;">
 
     <h2><a name="Introduction">Introduction</a></h2>
 
@@ -467,7 +491,7 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- The tree -->
 
-<div class="in2 box w7 float">
+    <div class="float w10 box in2" style="overflow: auto;">
 
     <h2> <a name="tree">The Tree</a> </h2>
 
@@ -486,33 +510,33 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- Other pages -->
 
-<div class="in2 box w7 float">
-<h2><a name="Other Pages">Other Pages</a></h2>
+<div class="float w10 box in2" style="overflow: auto;">
+    
+<h2><a name="Other Pages">Other 3x+1 Pages</a></h2>
     <p>
-    <table border="2" cellpadding="4" cellspacing="0" width="500">
-        <tr>
-            <td><a href="workingback.html"><img border="0" src="images/icon.gif" width="97" height="97"></a></td>
-            <td class="linkP"><b>Working Backwards:</b> The forward equation we introduced above is quite
+    
+    <table cellpadding="4" cellspacing="0" width="500">
+      <tr>
+        <td><a href="workingback.html"><img border="0" src="images/icon.gif" width="97" height="97"></a></td>
+        <td class="linkP"><b>Working Backwards:</b> The forward equation we introduced above is quite
                 straight forward. This page explores working backward to find a number's
                 predecessors.&nbsp;</td>
-        </tr>
+      </tr>
     </table>
+    <p>
+    
+    <h2>Elsewhere on this site</h2>
+    
+    <p>
+        <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
     </p>
+      
 </div>
 
 
-
-<!-- Generic links -->
-
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
-
-      </div>
-
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 <script type="text/javascript">

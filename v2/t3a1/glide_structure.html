@@ -2,7 +2,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 
 <meta name="KeyWords" content="Python Collatz 3x+1">
@@ -12,11 +12,21 @@
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
-<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/svg_helpers.js"> </script>
 <script>
-OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+
+OnStart = function ()
+{
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+}
 </script>
 
 </head>
@@ -29,9 +39,9 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 <!-- Banner -->
 
   <div style="margin: auto; width: 1024px;">
-     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
-        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
-        <br><strong>Home page</strong>
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
      </button>
 
      <button class="banner clickable" onclick="Show(T3A1.INDEX)">
@@ -58,13 +68,13 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
         <script type="text/javascript"
           src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
         </script>
-        <br><strong>Advertisement</strong>
-     </button>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
     </div>
-
+    
 <!-- Main content -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
     <h2>Contents</h2>
 
@@ -82,8 +92,8 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 </div>
 
 <!-- Introduction -->
-
-    <div class="in2 box w7 float">
+    
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="Introduction">Introduction</a></h2>
 
@@ -106,16 +116,19 @@ than 1) has a
 glide. In the 3x+5 and 3x+7 systems there are loops with other seeds (L5 and L7
 in 3x+7 and L1, L5, L19, L23, L187 and L347 in 3x+5). In these systems not all
 numbers have a glide, for instance 11 in 3x+5 gets stuck in a loop based on 19 (11
--&gt; 19 -&gt; 31 -&gt; 49 -&gt; 19).&nbsp;</p>
+&rarr; 19 &rarr; 31 &rarr; 49 &rarr; 19).
 
-<p>The following illustrations show the glide structure for systems where K=1,
+</p><p>
+
+The following illustrations show the glide structure for systems where K=1,
 5, 7, 11 and 13 for odd numbers in the range 1-199.</p>
 
 </div>
 
 <!-- 3x + 1 -->
 
-    <div class="in2 box w7 float">
+
+<div class="float in2 box w10" style="overflow: auto;">
 
     <h2>3x + <a name="1"> 1</a></h2>
         <p>
@@ -127,7 +140,8 @@ numbers have a glide, for instance 11 in 3x+5 gets stuck in a loop based on 19 (
 
 <!-- 3x + 5 -->
 
-    <div class="in2 box w7 float">
+
+<div class="float in2 box w10" style="overflow: auto;">
 
     <h2>3x + <a name="5"> 5</a></h2>
 
@@ -143,7 +157,8 @@ numbers have a glide, for instance 11 in 3x+5 gets stuck in a loop based on 19 (
 
 <!-- 3x + 7 -->
 
-    <div class="in2 box w7 float">
+
+<div class="float in2 box w10" style="overflow: auto;">
 
         <h2>3x + <a name="7"> 7</a></h2>
         <p>
@@ -157,7 +172,8 @@ numbers have a glide, for instance 11 in 3x+5 gets stuck in a loop based on 19 (
 
 <!-- 3x + 11 -->
 
-    <div class="in2 box w7 float">
+
+<div class="float in2 box w10" style="overflow: auto;">
     <h2>3x + <a name="11"> 11</a></h2>
         <p>
 
@@ -170,7 +186,8 @@ numbers have a glide, for instance 11 in 3x+5 gets stuck in a loop based on 19 (
 
 <!-- 3x + 13 -->
 
-    <div class="in2 box w7 float">
+
+<div class="float in2 box w10" style="overflow: auto;">
 
     <h2>3x + <a name="13"> 13</a></h2>
         <p>
@@ -183,15 +200,22 @@ numbers have a glide, for instance 11 in 3x+5 gets stuck in a loop based on 19 (
 
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+<div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
+    <h2> Other pages </h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
+
+
+
 
 
 <script type="text/javascript">

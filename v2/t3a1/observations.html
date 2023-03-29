@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 <meta name="KeyWords" content="Python 3x+1">
 
@@ -11,8 +11,9 @@
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="t3a1.js"> </script>
 
 <script>
 
@@ -27,9 +28,14 @@
     // Start
     //-------------------------------------------------------------
     OnStart = function ()
-    {
-        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+    {   
+        var all = document.getElementsByClassName("expr");
 
+        for (var i = 0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+     
         number1_input = document.getElementById("number1");
         number2_input = document.getElementById("number2");
         result1_paragraph = document.getElementById("result1");
@@ -49,7 +55,7 @@
         if (x > 1)
         {
             var seq = T3A1.MakeGlideSequence (x);
-            result1_paragraph.innerHTML = T3A1.SequenceToText (seq);
+            result1_paragraph.innerHTML = T3A1.SequenceToText (seq, 120);
         }
     }
     // Show the residue calculation
@@ -120,7 +126,7 @@
 
 <!-- Main content -->
 
-    <div class="in2 box w7 float">
+    <div class="float in2 box w10" style="overflow: auto;">
 
     <h2><a name="s1">Introduction</a></h2>
 
@@ -146,7 +152,8 @@
 
 <!-- Full tree -->
 
-    <div class="in2 box w7 float">
+
+    <div class="float in2 box w10" style="overflow: auto;">
 
     <h2><a name="s2">The full tree</a></h2>
 
@@ -205,7 +212,7 @@
     </p>
     </div>
 
-    <div class="in2 box w7 float">
+    <div class="float in2 box w10" style="overflow: auto;">
 
     <h2>The <a name="s3">odd tree</a></h2>
 
@@ -227,13 +234,13 @@
         the way and hence one more than the 'a' values mentioned on the <a href="index.html">introductory page</a>
         and discussed in more detail on the <a href="a_lists.html">a-lists page</a>. To calculate how far numbers are from the root we have
         add together the lengths of these vectors. For example, to get from 213 to 1 will take
-        8&nbsp;+&nbsp;5&nbsp;=&nbsp;13 steps.
+        <span class="expr">8+5=13</span> steps.
 
     </p><p>
 
         The set of odd numbers that precedes a value displays the colour sequence green, blue, red, though
         they don't always start on the same colour. This is because these numbers follow the sequence
-        n&nbsp;&rarr;&nbsp;4n&nbsp;+&nbsp;1. For instance the
+        <span class="expr">n&nbsp;&rarr;&nbsp;4n+1</span>. For instance the
         predecessors of 5 follow the sequence 3, 13, 53, 213, ...
 
     </p><p>
@@ -268,44 +275,33 @@
 
 <!-- Glide Tree -->
 
-    <div class="in2 box w7 float">
+    <div class="float in2 box w10" style="overflow: auto;">
 
     <h2>The <a name="s4"> glide tree</a></h2>
 
     <p>
         Glides are sequences that end when a number smaller than the seed is
         encountered. The sequence we met earlier based on 29
-
-    <p class="code">
-
-        [29, 88, 44, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1]
-
-    <p>
-
+    </p><p>
+    
+    <pre class="code">29, 88, 44, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1</pre>
+    </p><p>
         includes the glide
-
-    <p class="code">
-
-        [29, 88, 44, 22]
-
-    <p>
-
+    </p><p>
+        <pre class="code">29, 88, 44, 22</pre>
+    </p><p>
         as 22 is the first number smaller than 29 encountered. I prefer to work with
         odd glides, and ignore the even numbers. The glide of 29 then becomes
+    </p><p>
+    <pre class="code">29, 11</pre>
 
-    <p class="code">
-
-        [29, 11].
-
-    <p>
+    </p><p>
 
         Construct a glide sequence: <input type="text" id="number1" size="12">
                                     <button onclick="DrawGlideSequence();"> Show </button>
-        <p>
+    </p><p>
 
-        <div class="code in2 w6">
-            <p class="code" id="result1"> &nbsp; <p>
-        </div><p>
+        <pre class="code"><span id="result1"> &nbsp; </span></pre>
 
     </p><p>
 
@@ -340,49 +336,52 @@
         refers to a page showing the first 12 odd glide record holders. These get quite
         long quite quickly, for instance, the 3rd record holder is 27, which has 38
         members.
-    </p>
+    </p><p>
 
-    <div class="in2">
-    <p class="code">[27, 41, 31, 47, 71, 107, 161, 121, 91, 137, 103, 155, 233, 175, 263, 395, 593, 445, 167, 251, 377, 283, 425, 319, 479, 719, 1079, 1619, 2429, 911, 1367, 2051, 3077, 577, 433, 325, 61,
-    23]</p>
-    </div>
-    <p><a href="glidechainrecords.html">Glide Chain Records</a>:  If you examine the
+    
+    <pre class="code">27, 41, 31, 47, 71, 107, 161, 121, 91, 137, 103, 155, 233, 175, 263, 395, 593, 445, 167, 251, 377, 283, 425, 319, 479, 719,
+1079, 1619, 2429, 911, 1367, 2051, 3077, 577, 433, 325, 61, 23</pre>
+
+    </p><p>
+    <a href="glidechainrecords.html">Glide Chain Records</a>:  If you examine the
     diagram above you can see that '3' is the smallest number only one step away
     from 1. The smallest number two steps away is 7, and for 3 steps it is 9. These,
     being the smallest numbers at successive distances from the root form the glide
     chain record holders. The <a href="glidechainrecords.html">Glide Chain Records</a>  page
-    explores these record holders for a larger sequence of seeds.</p>
+    explores these record holders for a larger sequence of seeds.
+    
+    </p>
 
     </div>
 
     <!-- Residues -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
 
-    <div class="in2 box w7 float">
 
     <h2><a name="s5"> Residues</a></h2>
 
     <p>
         The &quot;residue&quot; of a sequence is calculated by counting the number of odd and
-        even terms in a descent and then calculating 2<span class="superscript">even</span>/(x&nbsp;*&nbsp;3<span class="superscript">odd</span>).
-        If we choose x=7, for instance we get the series [7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2,
-        1], which has 11 even and 5 odd members (we don't count the '1'),&nbsp; so:
+        even terms in a descent and then calculating <span class="expr">2^[even]/(x*3^[odd])</span>.
+        If we choose <span class="expr">x=7</span>, for instance we get the series [7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2,
+        1], which has 11 even and 5 odd members (we don't count the '1'), so:
+    </p><p>
+    <pre class="code"><span class="expr">R(7)=2^[11]/(7*3^5)=2048/1701 = 1.2039976...</span></pre>
 
-    <p class="code">
-
-        R(7) = 2<span class="superscript">11</span>/ (7&nbsp;*&nbsp;3<span class="superscript">5</span>) = 2048/1701 = 1.2039976...
-
-    <p>
+    </p><p>
 
         Eric Roosendaal introduces residues on one of his pages -
         see <a href="http://www.ericr.nl/wondrous/index.html">http://www.ericr.nl/wondrous/index.html</a>
         - where he discusses the non-uniformity of the distribution and postulates that the largest residue is
         R(993):
+    </p><p>
 
-    <p class="code">
+    <pre class="code"><span class="expr">R(993)=2^[61]/(993*3^[32])=1.2531421...</span></pre>
+    </p><p>
+    
+    </p><p>
 
-        R(993) = 2<span class="superscript">61</span>/ (993 * 3<span class="superscript">32</span>) = 1.2531421...
-
-    <p>
         This chart shows the residue distribution for all the odd numbers in the range
         3 to 1048575, in bins of 0.001. See the following links for more information.
     <p>
@@ -391,21 +390,16 @@
         Residues can be calculated from the a-list generated by the seed (<a href="index.html">see the introductory page</a>).
         Set 'n' to the number of 'a' values and 'm' to their sum.
         The residue is now:
-    <p class="code">
-        R(seed) = 2<span class="superscript">m</span>/(seed&nbsp;x&nbsp;3<span class="superscript">n</span>)
-        &equiv;
-        (2/3)<span class="superscript">n</span> x 2<span class="superscript">m-n</span> / seed;
-    <p>
-        The second version is better for calculating as it is less likely to overflow and
+    </p><p>
+
+    <pre class="code"><span class="expr">R(seed)=2^m/(seed*3^n) &equiv; (2/3)^n*2^[m-n]/seed</span></pre>
+    </p><p>
+        The second equation is better for calculating as it is less likely to overflow and
         probably more accurate. Calculate a residue: <input type="text" id="number2" size="12">
-                                    <button onclick="ShowResidue();"> Show </button>
-    <p>
-
-        <div class="code in2 w6">
-            <p class="code" id="result2"> &nbsp; <p>
-        </div><p>
-
-
+    </p><p>
+    
+        <pre class="code" id="result2"> &nbsp; </pre>
+        
     <h3> See also</h3>
 
     <p>
@@ -431,28 +425,34 @@
     </p>
     </div>
 
-</div>
-
-    <div class="in2 box w7 float">
-
+    <!-- Residues -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+    
     <h2>The <a name="s6">5x</a> + 1 System</h2>
 
     <p>
         <a href="fiveandone.html">5x+1</a>:  A related system based on the 5x+1 equation.
     </p>
-</div>
+    
+    </div>
 
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+<!-- Generic links -->
 
-      </div>
+    <div class="float w10 box in2" style="overflow: auto;">
+
+        <h2> Other pages </h2>
+        <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+          
+    </div>
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2016 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 </div>
 

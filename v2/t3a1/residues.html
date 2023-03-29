@@ -1,26 +1,28 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 <meta name="KeyWords" content="Python Collatz 3x+1">
 <TITLE> 3x+1 (3x+1 Residues) </TITLE>
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="t3a1.js"> </script>
 
 <style>
 
-TD {
-        font-family: Courier;
-        font-size: 75%;
-        padding-right: 12pt;
-        padding-left: 0pt;
-        padding-top: 0pt;
-        padding-bottom: 0pt;
+TD, TH
+    {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
     }
+        
+TABLE { border-collapse: collapse; }
+
 
 </style>
 
@@ -41,8 +43,13 @@ TD {
     //-------------------------------------------------------------
     OnStart = function ()
     {
-        document.getElementById("links_go_here").innerHTML = MakeButtons ();
+        var all = document.getElementsByClassName("expr");
 
+        for (var i = 0; i < all.length; i++)
+        {
+            Misc.expand_element (all[i]);
+        }
+     
         number1_input = document.getElementById("number1");
         number2_input = document.getElementById("number2");
         number3_input = document.getElementById("number3");
@@ -124,9 +131,9 @@ TD {
     {
         var text = "";
 
-        text += "<tr><td>" + T3A1.FromBinary (binary);
+        text += "<tr><td style='text-align:right'>" + T3A1.FromBinary (binary);
         text += "</td><td>" + T3A1.SequenceToText (binary.reverse());
-        text += "</td><td>" + seq[0];
+        text += "</td><td style='text-align:right'>" + seq[0];
         text += "</td><td>" + seq[1];
         text += "</td></tr>";
 
@@ -221,21 +228,14 @@ TD {
 <!-- Banner -->
 
   <div style="margin: auto; width: 1024px;">
-     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
-        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
-        <br><strong>Home page</strong>
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
      </button>
 
-     <button class="banner clickable" onclick="Show(T3A1.INDEX)">
-
-        <p style="max-width: 420px;" >
-            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
-        </p><p style="max-width: 420px;" >
-            Residues
-        </p>
-
+     <button class="banner">
+       <h1> Residues </h1>
      </button>
-
 
      <!-- Ads -->
 
@@ -251,14 +251,13 @@ TD {
         <script type="text/javascript"
           src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
         </script>
-        <br><strong>Advertisement</strong>
-     </button>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
     </div>
-
+    
 <!-- Main content -->
 
-    <div class="in2 box w7 float">
-
+<div class="float in2 box w10" style="overflow: auto;">
 
  <h2> Contents </h2>
 
@@ -279,8 +278,8 @@ TD {
 
 <!-- Introduction -->
 
-    <div class="in2 box w7 float">
-
+<div class="float in2 box w10" style="overflow: auto;">
+    
 <h2><a name="s1">Introduction</a></h2>
 
 <p>
@@ -289,28 +288,29 @@ TD {
     If we choose x=7, for instance we get the series [7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2,
     1], which has 11 even and 5 odd members (we don't count the '1'),&nbsp; so:
 
-</p><p class="code">
-    R(7) = 2<sup>11</sup> / (7&nbsp;*&nbsp;3<sup>5</sup>) = 2048/1701 = 1.2039976...
+</p><p>
+
+    <pre class="code"><span class="expr">R(7)=2^[11]/(7*3^5)=2048/1701=1.2039976&hellip;</span></pre>
 
 </p><p>
-    From her on we will refer to the number of even steps as 'm' and odd steps as 'n'.
+    From here on we will refer to the number of even steps as 'm' and odd steps as 'n'.
     You can calculate residues using these controls:
 </p><p>
     <input type="text" id="number2" size="12"> <button onclick="ShowResidue();"> Show </button>
+
 </p><p>
 
-    <div class="code in2 w6">
-        <p class="code" id="result2"> &nbsp; </p>
-    </div>
-
+    <pre class="code" id="result2"> &nbsp; </pre>
+    
 </p><p>
     Eric Roosendaal introduces residues on one of his pages -
     <a href="http://www.ericr.nl/wondrous/index.html">http://www.ericr.nl/wondrous/index.html</a>,
     where he discusses the non-uniformity of the distribution and postulates that the largest residue is
-    R(993):</p>
+    R(993):
 
-</p><p class="code">
-    R(993) = 2<sup>61</sup> / (993 * 3<sup>32</sup>) = 1.2531421...
+</p><p>
+
+    <pre class="code"><span class="expr">R(993)=2^[61]/(993*3^[32])=1.2531421&hellip;</span></pre>
 
 </p><p>
     On the rest of this page we
@@ -322,7 +322,7 @@ TD {
 
 <!-- The Distribution -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s2">The Distribution</a></h2>
 
@@ -336,7 +336,7 @@ TD {
 
 </p><p>
     Clearly this is non-uniform. There is a large gap between 1.012 and 1.065 (actually
-    there is one entry at R(21)=1.015873... which doesn't register on
+    there is one entry at R(21)=1.015873&hellip; which doesn't register on
     the chart) and numerous smaller gaps. The colour coding is explained in a <a href="#s5">later
     section</a>.
 </p>
@@ -345,7 +345,7 @@ TD {
 
 <!-- A-Lists and Residues-->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s3"> A-Lists and Residues</a></h2>
 
@@ -355,49 +355,52 @@ TD {
         residue values. On the <a href="observations.html#Residues">observations page</a> we presented an interactive residue
         calculator that was underpinned by the a-list generated by a seed. The residue equation is;
     </p><p class="code">
-        R(seed) = 2<span class="superscript">m</span>/(seed&nbsp;x&nbsp;3<span class="superscript">n</span>)
-        &equiv;
-        (2/3)<span class="superscript">n</span> &times; 2<span class="superscript">m-n</span> / seed;
+    
+    
+    <pre class="code"><span class="expr">R(seed)=2^m/(seed*3^n) &equiv; (2/3)^n*2^(m-n)/seed</span></pre>
 
     </p><p>
-        where 'n' is the number of 'a' values and 'm' their sum.
+        where 'n' is the number of 'a' values and 'm', their sum.
     </p><p>
         We can set up an algorithm that generates all possible a-lists and then searches this for residue values, this is esentially
         the same as the working backwards algorithm introduced previously, but is more compact.
     </p><p>
         The set of a-lists with one member
-        is infinite, starting [[1], [2], [3], ...]. The tree is anchored at 1 and for a single 'a' value, a<span class="subscript">1</span>,
-        the next number is:
-    </p><p class="code">
-         1&nbsp;&times;&nbsp;(2<span class="superscript">a1</span>&nbsp;&minus;&nbsp;1)&nbsp;/&nbsp;3 =
-        [1/3, 1, 7/3, 5, 31/3, ...].
+        is infinite, starting [[1], [2], [3], &hellip;]. The tree is anchored at 1 and for a particular 'a' value, <span class="expr">a¬[1,i]</span>,
+        the value is:
     </p><p>
-        The odd 'a' values don't generate integers and we can skip 2 as this generates the
-        loop [1,4,2,1], so the set of viable 1-member lists starts with [[4], [6], [8], ...].
+        <pre class="code"><span class="expr">V(i)=(1*2^[a1i]-1)/3=</span>[1/3, 1, 7/3, 5, 31/3, &hellip;]</pre>
+    </p><p>
+        The odd 'a' values don't generate integers, [1/3, 7/3, &hellip;), and we can skip '2' as this generates the
+        loop [1,4,2,1], so the set of viable single member lists starts with [[4], [6], [8], &hellip;] and generates the sequence [5, 21, 85, 341, &hellip;]. This is the set of
+        odd numbers that converge directly on '1' without visiting any other odd numbers, for instance
+        <span class=expr">341*3+1=1024</span>, which being a power of two cascades all the way to the end.
     </p><p>
         We can now look at the second term.
-        The set of lists starting with [4] is also infinite and starts [[4,1], [4,2], [4,3], ...} and generate the sequence
-    </p><p class="code">
-        5&nbsp;&times;&nbsp;(2<span class="superscript">a2</span>&nbsp;&minus;&nbsp;1)&nbsp;/&nbsp;3 =
-        [3, 19/3, 13, 79, 3].
+        The set of lists starting with [4] is also infinite and starts [[4,1], [4,2], [4,3], &hellip;}. We saw in the previous paragraph, [4] generates
+        the value 5, this series of A-lists generates the odd predecessors of 5. If we label the A-values <span class="expr">a¬[2,i]</span> we get:
     </p><p>
-        This time only the odd terms are valid, and the set of viable 2-member lists based on [4] starts
-        [[4,1], [4,3], [4,5], ...].
+        <pre class="code"><span class="expr">V(i)=(5*2^[a2i]-1)/3=</span>[3, 19/3, 13, 79, 3, &hellip;]</pre>
     </p><p>
-        The set of lists starting with [6]: [6,1], [6,2], [6,3], ...] generates the series
-    </p><p class="code">
-        21&nbsp;&times;&nbsp;(2<span class="superscript">a2</span>&nbsp;&minus;&nbsp;1)&nbsp;/&nbsp;3 =
-        [41/3, 83/3, 167/3, ...]
+        This time only the odd terms are valid, and the set of viable 2-member A-lists based on [4] starts
+        [[4,1], [4,3], [4,5], &hellip;].
     </p><p>
-         which contains no integer values. Generally if an a-list generates a value that is a multiple of 3 it is the
-         end of the line. If a list generates a number of the form 6n&nbsp;&plus;&nbsp;1 then the next 'a'  value must be
-         even and for 6n&nbsp;&plus;&nbsp;5 it must be odd.
+        The set of lists starting with [6]: [6,1], [6,2], [6,3], &hellip;] behaves differently, fromt eh previous
+        examples you would expect this to generate all the odd values
+        that map to 21. But if you make the calculation you see that the potential values
+    </p><p>
+    <pre class="code"><span class="expr">V(i)=(21*2^[a2i]-1)/3=</span>[41/3, 83/3, 167/3, &hellip;]</pre>
+    </p><p>
+         which contains no integers. Generally, <span class="expr">(3*2^n-1)/3</span> can never be a multiple of three,
+         so the orbit of any odd number will never pass through a multiple of 3.
+         If an A-list generates a number of the form <span class="expr">6n+1</span>, then to extend this list the 'a' value must be
+         even, and for <span class="expr">6n+5</span> it must be odd. If an A-list generates a multiple of three it can't be expanded.
     </p>
 </div>
 
 <!-- Working Backwards -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s4">Working</a> Backwards</h2>
 
@@ -408,39 +411,28 @@ TD {
     here we look at searching this backwards tree for residue records.
     As we saw in the <a href="#s3">a-lists section</a> the equation to calculate a residue is:
 
-</p><p class="code">
-    R(x) = 2<span class="superscript">m</span>/(x &times; 3<span class="superscript">n</span>)
-    &equiv;
-    (2/3)<span class="superscript">n</span> &times; 2<span class="superscript">m-n</span> / x;
+</p><p>
+    <pre class="code"><span class="expr">R(x) = 2^m/(x*3^n) &equiv; (2/3)^n*2^[(m-n)]/x</span></pre>
 </p><p>
     The forward equation (for odd numbers only) is
-</p><p class="code">
-    x &rarr; (3 &times; x + 1) / 2<span class="superscript">k</span>.
+</p><p>
+    <pre class="code"><span class="expr">x &rarr; (3*x + 1)/2^k</span></pre>
 </p><p>
     So the reverse calculation is
-</p><p class="code">
-    x &rarr; (2<span class="superscript">k</span> &times; x - 1) / 3.
+</p><p>
+    <pre class="code"><span class="expr">x &rarr; (2^k*x-1)/3</span></pre>
 </p><p>
     Which has the effect of increasing m by k and n by 1. Not all 'k' values are valid, for instance if we start with 5, we can
-    use k values of 1, 3, 5, 7, ... giving new x values of 3, 13, 53, 213, ...
-</p><p class="code">
-    R(x<span class="subscript">n+1</span>) / R(x<span class="subscript">n</span>) =
-    (2<span class="superscript">m+k</span>/(3<span class="superscript">n+1</span> &times; x<span class="subscript">n+1</span>) /
-    (2<span class="superscript">m</span>/(3<span class="superscript">n</span> &times; x<span class="subscript">n</span>))
-</p><p class="code">
-    = (2<span class="superscript">m+k</span> &times; 3<span class="superscript">n</span> &times; x<span class="subscript">n</span>)
-    / (2<span class="superscript">m</span> &times; 3<span class="superscript">n+1</span> &times; x<span class="subscript">n+1</span>)
-</p><p class="code">
-    = (2<span class="superscript">k</span> &times; x<span class="subscript">n</span>)
-    / (3 &times; x<span class="subscript">n+1</span>)
-</p><p class="code">
-    = (2<span class="superscript">k</span> &times; x<span class="subscript">n</span>)
-    / (3 &times; ((2<span class="superscript">k</span> &times; x<span class="subscript">n</span> - 1) / 3)
-</p><p class="code">
-    = (2<span class="superscript">k</span> &times; x<span class="subscript">n</span>)
-    / (2<span class="superscript">k</span> &times; x<span class="subscript">n</span> - 1)
-</p><p class="code">
-    = 1 + 1 / (2<span class="superscript">k</span> &times; x<span class="subscript">n</span> - 1)
+    use k values of [1, 3, 5, 7, &hellip;] giving new x values of [3, 13, 53, 213, &hellip;]
+
+</p><p>
+    <pre class="code"><span class="expr">R(x¬[n+1])/R(x¬n)=(2^[m+k]/(3^[n+1]*x¬[n+1])/(2^m/(3^n*x¬n))
+=(2^[m+k]*3^n*x¬n)/(2^m*3^[n+1]*x¬[n+1])
+=(2^k*x¬n)/(3*x¬[n+1])
+=(2^k*x¬n)/(3*((2^k*x¬n-1)/3)
+=(2^k*x¬n)/(2^k*x¬n-1)
+=1+1/(2^k*x¬n-1)</span></pre>
+
 </p><p>
     This term is alway greater than one so the residues of
     the precursors of a number will always be greater than the residue of the number
@@ -459,22 +451,22 @@ TD {
     options onto the binary digits 0 and 1.
     The choice is arbitrary, but I'm choosing to have '0' represent the (2x&minus;1)/3 and (4x&minus;1)/3
     options and 1 represent the 4n+1 option. You can iterate backwards in this tree using these controls. The number creates a binary
-    sequence of steps, the table option extends it.
+    sequence of steps, the "table" option extends it.
+    
 </p><p>
     <input type="text" id="number4" size="12">
     <button onclick="Do4nBinary();"> Show </button>
     <button onclick="Do4nTable();"> Create Table </button>
 </p><p>
 
-    <div class="code in2 w6">
-        <p class="code" id="result4"> &nbsp;</p>
-    </div>
+    <pre class="code" id="result4"> &nbsp;</pre>
+    
 </p>
 </div>
 
 <!-- Partitioning the Distribution -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s5">Partitioning</a> the Distribution</h2>
 
@@ -568,7 +560,7 @@ TD {
           </table>
         </td>
         <td>&nbsp; </td>
-        <td><p>The multiples of 3 (21, 1365, ...) can only ever have one value so they
+        <td><p>The multiples of 3 (21, 1365, &hellip;) can only ever have one value so they
           don't really enter into the calculation. The values generated by the 85
           and 341 sub-domains overlap but are confined to very small values compared
           to 5 (though there is no guarantee this is the case when we include the
@@ -627,8 +619,8 @@ TD {
         <td class="code">1 + 1/1048575</td>
       </tr>
       <tr>
-        <td class="code">...</td>
-        <td class="code">...</td>
+        <td class="code">&hellip;</td>
+        <td class="code">&hellip;</td>
       </tr>
     </table>
 
@@ -647,15 +639,12 @@ TD {
     iteration again to find the immediate precursors of 5 and their residue
     multipliers (shown in the next table). To get the actual residues the numbers
     in the second column need to be multiplied by R(5)=16/15. We also show the
-    number of iterations that start with numbers in the range that 3-1048575 that go
-    through each, and the range of residue values encountered. The first row
-    represents '5' which doesn't go through a precursor.</p>
+    iterations that start in the range 3-1048575 partition among the precursors, and the range of residue values encountered
+    in each partition. The first row represents '5', which doesn't go through a precursor.</p>
 
 </p><p>
 
-    <div class="code in2 w6">
-        (1 + 1 / a) * (1 + 1 / b) = 1 + (a + b + 1) / ab
-    </div>
+    <pre class="code"> (1 + 1 / a) * (1 + 1 / b) = 1 + (a + b + 1) / ab</pre>
 </p><p>
 
     <table class="noborder" cellpadding="4" cellspacing="0" border="1">
@@ -788,7 +777,7 @@ TD {
 
 <!-- Finding the Maximum -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s6">Finding the Maximum</a></h2>
 
@@ -813,9 +802,9 @@ TD {
           <p>
           <table border="1" cellpadding="4" cellspacing="0">
             <tr>
-              <th>N</th>
-              <th>Multiplier</th>
-              <th>R(N)</th>
+              <td>N</td>
+              <td>Multiplier</td>
+              <td>R(N)</td>
             </tr>
             <tr>
               <td class="code">57</td>
@@ -921,38 +910,37 @@ TD {
 
 </div>
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s10">Exploring the limits</h2>
 
 <p>
     Every number has an infinite sequence of precursors (in the 4n+1 tree) related by the formula
 
-</p><p class="code">
-    x &rarr; 4 &times; x + 1
+</p><p>
+    <pre class="code">x &rarr; 4 &times; x + 1</pre>
 
 </p><p>
     Where the residue decreases by the factor (1 - 1 / (4 &times; x + 1)). You can see how the residue converges as
     you move along this sequence using the following controls. The number in the first box is the value of the binary
     sequence that generates the first seed, for instance, '5' generates the sequence [1,0,1], which leads to 13.
-
-    <input type="text" id="number1" size="12"> <button onclick="ExploreHorizontalChain();"> Show </button>
 </p><p>
 
-    <div class="code in2 w6">
-        <p id="result1"> &nbsp; </p>
-    </div>
+    <input type="text" id="number1" size="12"> <button onclick="ExploreHorizontalChain();"> Show </button>
+    
+</p><p id="result1">
+
+    &nbsp;
 
 </p><p>
     These next controls will search various seeds for residue records along the 4n+1 chains. It's been initialised with seeds up
     to 100, if you try a larger number you may find some more.
 
     <input type="text" id="number3" size="12"> <button onclick="SearchResidueLimits();"> Show </button>
-</p><p>
 
-    <div class="code in2 w6">
-        <p id="result3"> &nbsp; </p>
-    </div>
+</p><p id="result3">
+
+    &nbsp;
 
 </p><p>
     If you do try larger numbers you will find the residue for 993 is 1.253142&hellip;, the largest known, but this isn't the value
@@ -965,7 +953,7 @@ TD {
 </div>
 <!-- Value Limited Backward Searching -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s7">Value Limited</a> Backward Searching</h2>
 <p>
@@ -997,7 +985,7 @@ TD {
 
 <!-- Width Limited Backward Searching -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h2><a name="s8">Width Limited</a> Backward Searching</h2>
 
@@ -1579,51 +1567,51 @@ precursor, 917, appears in the 12th column, as can be seen in the next table,
 
 <!-- Other Pages -->
 
-    <div class="in2 box w7 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
-<h2><a name="s9">See Also</a></h2>
+<h2><a name="s9">Other 3x+1 related pages</a></h2>
 <p>
-<table border="2" cellpadding="4" cellspacing="0" width="500">
-  <tr>
-    <td><a href="workingback.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
-    <td><strong>Working Backwards:</strong> The forward equation we introduced above is quite
-      straightforward. This page explores working backward to find a number's
-      predecessors.&nbsp;</td>
-  </tr>
-</table>
+Click the images...
 </p><p>
-<table border="2" cellpadding="4" cellspacing="0" width="500">
-  <tr>
-    <td><a href="attraction.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
-    <td><strong>Domains of Attraction:</strong> Before converging on one,
-      sequences must pass through one of one's predecessors (1, 5, 21, etc).
-      This pages explores the relative popularity of these gateways.</td>
-  </tr>
-</table>
-</p><p>
-<table border="2" cellpadding="4" cellspacing="0" width="500">
-  <tr>
-    <td><a href="residue_records.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
-    <td><strong>Residue Records:</strong>  Although 993 is probably the
-      largest , if we ignore multiples of three the numbers keep growing.</td>
-  </tr>
-</table>
-</p>
 
-</div>
+    <table cellpadding="4" cellspacing="0" width="500">
+      <tr>
+        <td><a href="workingback.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
+        <td><strong>Working Backwards:</strong> The forward equation we introduced above is quite
+          straightforward. This page explores working backward to find a number's
+          predecessors.&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td><a href="attraction.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
+        <td><strong>Domains of Attraction:</strong> Before converging on one,
+          sequences must pass through one of one's predecessors (1, 5, 21, etc).
+          This pages explores the relative popularity of these gateways.</td>
+      </tr>
+
+      <tr>
+        <td><a href="residue_records.html"><img class="noborder" src="images/icon.gif" width="97" height="97"></a></td>
+        <td><strong>Residue Records:</strong>  Although 993 is probably the
+          largest , if we ignore multiples of three, the numbers keep growing.</td>
+      </tr>
+    </table>
+</p>
 
 
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+<h2> Elsewhere on this site </h2>
+        
+        <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+          
+    </div>
 
-      </div>
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2016 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 

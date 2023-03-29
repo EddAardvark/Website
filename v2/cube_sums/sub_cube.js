@@ -17,49 +17,51 @@ SubCube.FromInts = function (x, n)
     return SubCube.FromVLInts (VLInt.FromInt (x), VLInt.FromInt (n));
 }
 //-------------------------------------------------------------------------------------------------
-SubCube.FromVLInts = function (x, n)
+SubCube.FromVLInts = function (x, contour)
 {
-    // v' = 3xn^2 + 3xn + 1
+    // n = contour
+    // v = 3nx^2 + 3n^2x + n^3, equivalent to ax^2 + bx + c, where
+    // a = 3n, b = 3n^2, c = n^3
+    // v' = +3xn^2 + 3xn + 1
     // v'' = 6xn + 6
     
     var ret = new SubCube ();
-    
+    var n = VLInt.FromInt (contour);    
     var n2 = n.Multiply (n);
-    var n3 = n2.Multiply (n);
-    var x2 = x.Multiply (x);
+    
+    ret.a = n.MultiplyInt (3);
+    ret.b = n2.MultiplyInt (3);
+    ret.c = n2.Multiply(n);
+    ret.x = VLInt.FromVLInt (x);
+    ret.n = VLInt.FromVLInt (n);
 
-    var a = n.Multiply(x2).MultiplyInt (3);
-    var b = x.Multiply(n2).MultiplyInt (3);
-
-    ret.x = x;
-    ret.n = n;
-    ret.value = n3.Add(a).Add(b);
-    var t = x.MultiplyInt(2).AddInt(1);
-    t = t.Multiply(n);
-    t = t.MultiplyInt(3);
-    var t2 = n2.MultiplyInt(3);
-    ret.dv = t.AddInt(t2);
-    ret.ddv = n.MultiplyInt(6);
-    ret.n2 = n2;
-    ret.n3 = n3;
+    ret.value = ret.CalculateValue ();
+    ret.ax2 = ret.a.MultiplyInt(2);
+    ret.a_plus_b = ret.a.Add(ret.b);
+    
+    ret.dv = ret.ax2.Multiply(ret.x).Add(ret.a_plus_b);
+    ret.ddv = ret.ax2;
     
     return ret;
 }
 //-------------------------------------------------------------------------------------------------
+SubCube.prototype.CalculateValue = function ()
+{
+    var temp = this.a.Multiply (this.x).Add(this.b);
+    
+    return temp.Multiply(this.x).Add(this.c);
+}
+//-------------------------------------------------------------------------------------------------
 SubCube.Clone = function (other)
 {
-    return SubCube.FromVLInts (this.x, this.n);
+    return SubCube.FromVLInts (other.x, other.n);
 }
 //-------------------------------------------------------------------------------------------------
 SubCube.prototype.Hop = function (hop)
 {
     this.x = this.x.AddInt (hop);
-    
-    var next = SubCube.FromVLInts (this.x, this.n);
-    
-    this.value = next.value;
-    this.dv = next.dv;
-    this.ddv = next.ddv;
+    this.value = this.CalculateValue ();    
+    this.dv = this.ax2.Multiply(this.x).Add(this.a).Add(this.a_plus_b);
 }
 //----------------------------------------------------------------------------------------------------------------
 SubCube.prototype.DecrementX = function ()

@@ -87,66 +87,176 @@ TH.box { border: 1px solid maroon; padding: 3pt; }
     <div class="float in2 box w10" style="overflow: auto;">
 
         <h1> How the algorithm works </h1>
-        <p>
-        We start where the line <span class="expr">x^3+y^3-(x+n)^3=0</span> intersects <span class="expr">x=y</span> which gives
-        <span class="expr">2x^3=(x+n)^3</span>, or <span class="expr">x=n/(2^[1/3]-1) (approx n/0.26)</span>, which we round up to the next integer. 
-        </p><p>
-        Next we create a class the allows us to track y cubed. We start by calculating the difference between adjant cubes, then the differences between the 
-        differences and then the differences between those until we arrive at a constant. If we start at 1, this looks like:
-        </p><p>
-        <table>
-         <tr>
-          <th class="rt box">V</th><td class="rt box">1</td><td class="rt box">8</td><td class="rt box">27</td><td class="rt box">64</td><td class="rt box">125</td>
-         </tr><tr>
-          <th class="rt box">&Delta;V</th><td>&nbsp;</td><td class="rt box">7</td><td class="rt box">19</td><td class="rt box">37</td><td class="rt box">61</td>
-         </tr><tr>
-          <th class="rt box">&Delta;&Delta;V</th><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="rt box">12</td><td class="rt box">18</td><td class="rt box">24</td>
-         </tr><tr>
-          <th class="rt box">&Delta;&Delta;&Delta;V</th><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="rt box">6</td><td class="rt box">6</td>
-         <tr>
-        </table>
+        
+        <p class="expr">
+
+        We saw on the 2D exploration page that the smaller sums lie close to the contours where z-x is a constant. The contour page implements an algorithm
+        to follow these contours.
+        We start where the line
+        V(x,y)=x^3+y^3-(x+n)^3=0 intersects the line x=y, which gives us 2x^3=(x+n)^3, or x=n/(2^[1/3]-1) (approx n/0.26),
+        which we round up to the next integer. Once we have a point on the line we can look for the next point by checking the adjacent points for which has the smallest V.
+        Because we have chosen points in the domain x>y>0 we only have to check two adjacent points, (x+1,y) and (x+1,y+1).
+
+        </p><p class="expr">
+        
+        To do this we split the function V(x,y) into two components, V(x,y)=Vy(y)-Vx(x), where Vx(x)=3nx^2+3n^2x+n^3 and 
+        Vy(y)=y^3. From these we can derive a set deltas (similar to derivatives):
+        
+        <ul>
+         <li class="expr"> &Delta;F(x)=F(x+1)-F(x) </li>
+         <li class="expr"> &Delta;^2F(x)=&Delta;F(x+1)-&Delta;F(x) </li>
+         <li class="expr"> &Delta;^3F(x)=&Delta;^2F(x+1)-&Delta;^2F(x) </li>
+         <li class="expr"> &Delta;^4F(x)=&Delta;^3F(x+1)-&Delta;^3F(x) </li>
+         <li> Etc... </li>
+        </ul>
+        
+        </p><p class="expr">
+        
+        When we want to calculate the next member in the sequence we can work these equations backwards. As stated above there will be an infinite sequence of
+        these, but for polynomials we eventually get to &Delta;^nF(x)=constant. For cubic equations n will be 3. If we try an example, F(x)=x^3:
         
         </p><p>
-        To calculate the next cube we start at the bottom, and extend the row right by inserting a 6. We then move up the new column by adding 6
-        to the last value, 24, giving 30.
-        The second row becomes <span class="expr">61+30=91 and the top row 125+91=216 (6^3)</span>. More generically:
-        </p><p>
+
         <table>
          <tr>
-          <th class="rt box">V</th>
-          <th class="rt box"><span class="expr">y^3</span></th>
-          <th class="rt box"><span class="expr">(y+1)^3</span></th>
-          <th class="rt box"><span class="expr">(y+2)^3</span></th>
-          <th class="rt box"><span class="expr">(y+3)^3</span></th>
+          <th class="rt box">x</th><td class="rt box">1</td><td class="rt box">2</td><td class="rt box">3</td><td class="rt box">4</td><td class="rt box">5</td>
          </tr><tr>
-          <th class="rt box">&Delta;V</th>
+          <th class="rt box">F(x)</th><td class="rt box">1</td><td class="rt box">8</td><td class="rt box">27</td><td class="rt box">64</td><td class="rt box">125</td>
+         </tr><tr>
+          <th class="rt box expr">&Delta;F(x)</th><td>&nbsp;</td><td class="rt box">7</td><td class="rt box">19</td><td class="rt box">37</td><td class="rt box">61</td>
+         </tr><tr>
+          <th class="rt box expr">&Delta;^2F(x)</th><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="rt box">12</td><td class="rt box">18</td><td class="rt box">24</td>
+         </tr><tr>
+          <th class="rt box expr">&Delta;^3F(x)</th><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="box">&nbsp;</td><td class="rt box">6</td><td class="rt box">6</td>
+         <tr>
+        </table>        
+        
+        </p><p class="expr">
+        
+        So to calculate 6^3 we perform the following steps:
+
+        </p><p>
+        
+        <ol>
+         <li class="expr"> &Delta;^2F(x+1)=&Delta;^2F(x)+6 (24+6=30)</li>
+         <li class="expr"> &Delta;F(x+1)=&Delta;F(x)+&Delta;^2F(x+1) (61+30=91) </li>
+         <li class="expr"> F(x+1)=F(x)+&Delta;F(x+1) (125+91=216)</li>
+        </ol>
+        
+        </p><p>
+        
+        We can preform a similar option to move to smaller x but we need to update the deltas in the reverse order.
+        
+        <h3>Vy(y)</h3>
+        
+        <p class="expr">
+        
+        Vy(y) is essentially the same as F(x)=x^3, which we have already looked at. We can intialise the deltas more generically, starting at any y values as:
+        
+
+        </p><p>
+
+        <table>
+         <tr>
+          <th class="rt box">Vy</th>
+          <th class="rt box"><span class="expr">y^3</span></th>
+          <th class="rt box"><span class="expr">y^3+3y^2+3y+1</span></th>
+          <th class="rt box"><span class="expr">y^3+6y^2+12y+8</span></th>
+          <th class="rt box"><span class="expr">y^3+9y^2+27y+27</span></th>
+          <th class="rt box"><span class="expr">y^3+12y^2+48y+64</span></th>
+         </tr><tr>
+          <th class="rt box">&Delta;Vy</th>
           <td class="box">&nbsp;</td>
           <td class="rt box"><span class="expr">3y^2+3y+1</span></td>
           <td class="rt box"><span class="expr">3y^2+9y+7</span></td>
           <td class="rt box"><span class="expr">3y^2+15y+19</span></td>
+          <td class="rt box"><span class="expr">3y^2+21y+37</span></td>
          </tr><tr>
-          <th class="rt box">&Delta;&Delta;V</th>
+          <th class="rt box">&Delta;^2Vy</th>
           <td class="box">&nbsp;</td>
           <td class="box">&nbsp;</td>
           <td class="rt box"><span class="expr">6y+6</span></td>
           <td class="rt box"><span class="expr">6y+12</span></td>
+          <td class="rt box"><span class="expr">6y+18</span></td>
          </tr><tr>
-          <th class="rt box">&Delta;&Delta;&Delta;V</th>
+          <th class="rt box">&Delta;^3Vy</th>
           <td class="box">&nbsp;</td>
           <td class="box">&nbsp;</td>
           <td class="box">&nbsp;</td>
           <td class="rt box">6</td>
+          <td class="rt box">6</td>
          </tr>
         </table>
+
+        </p>
+        
+        <h3>Vx(x)</h3>
+        
+        <p class="expr">
+        Vx(x) is a little more interesting, V(x)=x^3-(x+n)^3=3nx^2+3n^2x+n^3.
+        To make this a little clearer, both here and in the implementation, we can define: a=3n, b=3n^2 and c=n^3, and construct a delta table for Vx.
+        This time we reach the constant term on row 3 (2a=6n).
         
         </p><p>
-        The graphs below show the positions of the points near the n=1 contour and the corresponding values of the sum of cubes.
-        
-        <img src="images/graph_c1.png">
-                
-                
+
+        <table>
+         <tr>
+          <th class="rt box">Vx</th>
+          <th class="rt box"><span class="expr">ax^2+bx+c</span></th>
+          <th class="rt box"><span class="expr">a(x+1)^2+b(x+1)+c</span></th>
+          <th class="rt box"><span class="expr">a(x+2)^2+b(x+2)+c</span></th>
+          <th class="rt box"><span class="expr">a(x+3)^2+b(x+3)+c</span></th>
+         </tr><tr>
+          <th class="rt box">&Delta;Vx</th>
+          <td class="box">&nbsp;</td>
+          <td class="rt box"><span class="expr">2ax+a+b</span></td>
+          <td class="rt box"><span class="expr">2ax+3a+b</span></td>
+          <td class="rt box"><span class="expr">2ax+5a+b</span></td>
+         </tr><tr>
+          <th class="rt box">&Delta;^2Vx</th>
+          <td class="box">&nbsp;</td>
+          <td class="box">&nbsp;</td>
+          <td class="rt box">2a</td>
+          <td class="rt box">2a</td>
+         </tr>
+        </table>
+
         </p>
-    </div>
+        
+        <h3>Contour following</h3>
+        
+        <p class="expr">
+        
+        We have chosen x>y>0 so that we are in an octant where, as we follow the contour, x and y are both increasing, with x increasing faster than y.
+        If we start on a point close to the line there are only two potential next points to consider, (x+1,y) and (x+1,y+1). As V=Vy(y)-Vx(x) the
+        values of these next points can be calculated using:
+        
+        </p><p class="expr">
+        V(x+1,y)=V(x,y)-&Delta;Vx and 
+        </p><p class="expr">
+        V(x+1,y+1)=V(x+1,y)+&Delta;Vy.
+        </p>
+        
+        </p><p class="expr">
+        The next point on the line is whichever of these has the smaller value of |V|. This graph shows
+        some points near the start of the n=2 contour.
+        
+        </p><p>
+
+        <img src="images/graph_c1_points.png">
+
+        </p><p class="expr">
+
+        You can see that because the gradient is less than one the line is formed of horizontal sequences of dots. Because these 
+        dots all have the same y value V is large and positive on the left and large and negative on the right. The smallest V
+        values will be somewhere near the middle.
+        
+        As the value of X increases the horizontal legs become longer and it becomes feasible to skip a lot of intermediate values and just look at the
+        two where V transits from positive to negative. This is the basis of the second and third scanning options.
+        The nice thing about this is that because the number of points that can be skipped increases as x increases the algorithm
+        can scan larger and larger x ranges in the same amount of time.
+
+        </div>. 
 	    
     
 <!-- Generic links -->
@@ -163,7 +273,7 @@ TH.box { border: 1px solid maroon; padding: 3pt; }
 
 <!-- Copyright -->
 
-    <p class="small"> (c) John Whitehouse 2021 </p>
+    <p class="small"> (c) John Whitehouse 2021, 2022 </p>
 
 			  
 
