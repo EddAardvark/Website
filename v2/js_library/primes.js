@@ -250,6 +250,8 @@ Primes.hcf = function (x, y)
 {
     x = Math.round (x);
     y = Math.round (y);
+    
+    if (x == 0 || y == 0) return 1;
 
     if (x < 0) x = -x;
     if (y < 0) y = -y;

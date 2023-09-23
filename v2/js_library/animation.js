@@ -61,3 +61,60 @@ Animator.prototype.toString = function ()
     else
         text += " [stopped]";
 }
+
+TimeoutAnimator = function (fun, interval)
+{
+    this.running = false;
+    TimeoutAnimator.fun = fun;
+    TimeoutAnimator.interval = interval;
+}
+TimeoutAnimator.fun = null;
+TimeoutAnimator.interval=0;
+TimeoutAnimator.id=-1;
+
+TimeoutAnimator.callback = async function ()
+{
+    await TimeoutAnimator.fun.call ();
+    TimeoutAnimator.id = window.setTimeout(TimeoutAnimator.callback, TimeoutAnimator.interval);
+}
+//=======================================================================================
+// Start - does nothing if already running
+//=======================================================================================
+TimeoutAnimator.prototype.Start = function ()
+{
+    if (! this.running)
+    {
+        this.running = true;
+        TimeoutAnimator.id = window.setTimeout(TimeoutAnimator.callback, TimeoutAnimator.interval);
+    }
+}
+//=======================================================================================
+// Stop - does nothing if already stopped
+//=======================================================================================
+TimeoutAnimator.prototype.Stop = function ()
+{
+    if (TimeoutAnimator.id >= 0)
+    {
+        window.clearTimeout(TimeoutAnimator.id);
+        TimeoutAnimator.id = -1;
+    }
+    this.running = false;
+}
+//=======================================================================================
+// Is the TimeoutAnimator running?
+//=======================================================================================
+TimeoutAnimator.prototype.IsRunning = function ()
+{
+    return this.running;
+}
+//=======================================================================================
+// Convert to a string
+//=======================================================================================
+TimeoutAnimator.prototype.toString = function ()
+{
+    var text = "TimeoutAnimator: interval = " + TimeoutAnimator.interval;
+    if (this.running)
+        text += " [running], id = " + TimeoutAnimator.id;
+    else
+        text += " [stopped]";
+}
