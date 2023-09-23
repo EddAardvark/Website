@@ -2,7 +2,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 <meta name="KeyWords" content="Python Collatz 3x+1">
 
@@ -11,10 +11,20 @@
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="t3a1.js"> </script>
+
+<style>
+.centre {  text-align: center;  }
+</style>
+
+
 <script>
-OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+OnStart = function ()
+{
+
+}
 </script>
 </head>
 
@@ -62,30 +72,31 @@ OnStart = function () { document.getElementById("links_go_here").innerHTML = Mak
 
 <!-- Main content -->
 
-    <div class="in2 box w7 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
-    <p>
-        <div alignment="center">
-            <img src="images/upto201.gif" width="753" height="3433">
-        </div>
-    </p><p>
+    <p class="centre">
+        <img src="images/upto201.gif">
+    </p><p class="centre">
         As rendered by GraphViz.
     </p>
 
     </div>
 
-
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+<div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
+    <h2> Other pages </h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
+
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

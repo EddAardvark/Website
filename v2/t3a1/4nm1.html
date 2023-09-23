@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 <meta name="KeyWords" content="Python Collatz 3x+1">
 <TITLE> 3x+1 (The 4n-1 Modification) </TITLE>
@@ -10,8 +10,9 @@
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="t3a1.js"> </script>
 
 <script>
 
@@ -31,8 +32,6 @@
     //-------------------------------------------------------------
     OnStart = function ()
     {
-        document.getElementById("links_go_here").innerHTML = MakeButtons ();
-
         number1_input = document.getElementById("number1");
         number2_input = document.getElementById("number2");
         number3_input = document.getElementById("number3");
@@ -61,7 +60,7 @@
         if (x != 0)
         {
             var seq = T3A1.Get4nPredecessors (x);
-            result1_paragraph.innerHTML = T3A1.SequenceToText (seq);
+            result1_paragraph.innerHTML = T3A1.SequenceToText (seq, 120);
         }
     }
 
@@ -72,7 +71,7 @@
         if (x != 0)
         {
             var seq = T3A1.MakeOdd4Sequence (x);
-            result3_paragraph.innerHTML = T3A1.SequenceToText (seq);
+            result3_paragraph.innerHTML = T3A1.SequenceToText (seq, 80);
         }
     }
 
@@ -83,7 +82,7 @@
         if (x != 0)
         {
             var seq = T3A1.Make4nGlideSequence (x);
-            result2_paragraph.innerHTML = T3A1.SequenceToText (seq);
+            result2_paragraph.innerHTML = T3A1.SequenceToText (seq, 120);
         }
     }
 
@@ -95,7 +94,7 @@
         {
             var binary = T3A1.ToBinary (x);
             var seq = T3A1.Binary4n (binary);
-            var text = "Binary: " + T3A1.SequenceToText (binary.reverse());
+            var text = "Binary: " + T3A1.SequenceToText (binary.reverse(), 120);
 
             text += ", Value = " + seq [0];
             text += ", Residue = " + seq [1];
@@ -109,7 +108,7 @@
         var text = "";
 
         text += "<tr><td>" + T3A1.FromBinary (binary);
-        text += "</td><td>" + T3A1.SequenceToText (binary.reverse());
+        text += "</td><td>" + T3A1.SequenceToText (binary.reverse(), 120);
         text += "</td><td>" + seq[0];
         text += "</td><td>" + seq[1];
         text += "</td></tr>";
@@ -186,7 +185,8 @@
 
 <!-- Main content -->
 
-    <div class="in2 box w7 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
         <h2> Contents </h2>
 
@@ -203,7 +203,8 @@
 
     </div>
 
-    <div class="in2 box w7 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
         <h2><a name="Introduction">Introduction</a></h2>
 
@@ -226,7 +227,8 @@
             </table>
     </div>
 
-    <div class="in2 box w7 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
         <h2><a name="reverse"> The Reverse Tree </a></h2>
 
@@ -248,9 +250,7 @@
                                 <button onclick="Get4nPredecessors();"> Show </button>
         </p><p>
 
-            <div class="code w5 in2">
-                <p class="code" id="result1"> &nbsp; <p>
-            </div>
+            <pre class="code" id="result1"> &nbsp; </pre>
 
         </p><p>
 
@@ -270,16 +270,15 @@
             <button onclick="Do4nTable();"> Create Table </button>
         </p><p>
 
-            <div class="code w5 in2">
-                <p class="code" id="result4"> &nbsp; <p>
-            </div>
+            <pre class="code" id="result4"> &nbsp; </pre>
 
         </p><p>
             If you use the table option you will see that most values map to 0.
         </p>
     </div>
 
-    <div class="in2 box w7 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
         <h2><a name="forward">Forward Tree</a></h2>
 
@@ -299,9 +298,9 @@
                 <input type="text" id="number3" size="12"> <button onclick="DrawOdd4Sequence();"> Show </button>
         </p><p>
 
-                <div class="code w4 in2">
-                    <p class="code" id="result3"> &nbsp; <p>
-                </div>
+
+            <pre class="code" id="result3"> &nbsp; </pre>
+
         </p><p>
 
             If you start with 27 you can generate the longest sequence shown in the image
@@ -320,7 +319,8 @@
 
     </div>
 
-    <div class="in2 box w7 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
     <h2><a name="glides"> Glide Structure </a></h2>
 
@@ -370,14 +370,13 @@
             <input type="text" id="number2" size="12"> <button onclick="Make4nGlideSequence();"> Show </button>
         </p><p>
 
-            <div class="code w5 in2">
-                <p class="code" id="result2"> &nbsp; <p>
-            </div>
+                <pre class="code" id="result2"> &nbsp; </pre>
         </p>
 
     </div>
 
-    <div class="in2 box w7 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
         <h2><a name="records"> Glide Records </a></h2>
 
@@ -388,62 +387,55 @@
             the <a href="observations.html#s4"> observations page</a>.
         </p><p>
 
+        
+<pre class="code"> Length      Start         End
 
-        <div class="code w5 in2">
-        <pre class="code">
- Length      Start         End
-
-      2          1 &#x2192;         1
-      3          3 &#x2192;         1
-      5          7 &#x2192;         3
-     42         27 &#x2192;        15
-     60        703 &#x2192;       209
-     74      10087 &#x2192;      9111
-     97      35655 &#x2192;     19603
-    120     270271 &#x2192;    107221
-    123     362343 &#x2192;    107811
-    131     667375 &#x2192;    282729
-    133    1027431 &#x2192;    413159
-    170    1126015 &#x2192;    523397
-    175    8088063 &#x2192;   4287153
-    213   13421671 &#x2192;  12335167
-    217   26716671 &#x2192;  17480277
-    228   56924955 &#x2192;  26515279
-    266   63728127 &#x2192;  33014059
-        </pre></div>
-
+  2             1  &#x2192;         1
+  3             3  &#x2192;         1
+  5             7  &#x2192;         3
+ 42            27  &#x2192;        15
+ 60           703  &#x2192;       209
+ 74         10087  &#x2192;      9111
+ 97         35655  &#x2192;     19603
+120        270271  &#x2192;    107221
+123        362343  &#x2192;    107811
+131        667375  &#x2192;    282729
+133       1027431  &#x2192;    413159
+170       1126015  &#x2192;    523397
+175       8088063  &#x2192;   4287153
+213      13421671  &#x2192;  12335167
+217      26716671  &#x2192;  17480277
+228      56924955  &#x2192;  26515279
+266      63728127  &#x2192;  33014059</pre>
+                   
         </p><p>
         This second tabls shows the glide records obtained using the condensed algorithm. At least for these first
         few rows the starting values are the same. The lengths are shorter and some of the end values are smaller
         because the 8n+5 values have been "condensed" out.
 
+<pre class="code">  Length      Start         End
 
-        <div class="code w5 in2">
-        <pre class="code">
- Length      Start         End
+  2             1  &#x2192;         1
+  4             7  &#x2192;         3
+ 37            27  &#x2192;        15
+ 51           703  &#x2192;       209
+ 64         10087  &#x2192;      9111
+ 85         35655  &#x2192;     19603
+103        270271  &#x2192;      1675
+104        362343  &#x2192;    107811
+105        401151  &#x2192;     44759
+110        667375  &#x2192;    282729
+115       1027431  &#x2192;    413159
+141       1126015  &#x2192;    130849
+155       8088063  &#x2192;   4287153
+182      13421671  &#x2192;  12335167
+188      26716671  &#x2192;    273129
+194      56924955  &#x2192;  26515279
+237      63728127  &#x2192;  33014059</pre>
+</p>
+</div>
 
-      2          1 &#x2192;         1
-      4          7 &#x2192;         3
-     37         27 &#x2192;        15
-     51        703 &#x2192;       209
-     64      10087 &#x2192;      9111
-     85      35655 &#x2192;     19603
-    103     270271 &#x2192;      1675
-    104     362343 &#x2192;    107811
-    105     401151 &#x2192;     44759
-    110     667375 &#x2192;    282729
-    115    1027431 &#x2192;    413159
-    141    1126015 &#x2192;    130849
-    155    8088063 &#x2192;   4287153
-    182   13421671 &#x2192;  12335167
-    188   26716671 &#x2192;    273129
-    194   56924955 &#x2192;  26515279
-    237   63728127 &#x2192;  33014059
-        </pre></div>
-        </p>
-    </div>
-
-    <div class="in2 box w7 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
         <h2> <a name="larger"> Larger view of the uncondensed tree </a> </h2>
 
@@ -464,7 +456,7 @@
 
     </div>
 
-    <div class="in2 box w7 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
         <h2> <a name="compo"> Comparison of the condensed and Uncondensed Trees </a> </h2>
 
@@ -496,15 +488,18 @@
 
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+<div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
+    <h2> Other pages </h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2016 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 

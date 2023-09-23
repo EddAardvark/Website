@@ -7,19 +7,15 @@
 // to clone when assigning.
 //-------------------------------------------------------------------------------------------------
 
-Complex = function ()
-{
-}
-
-//----------------------------------------------------------------------------------------------------------------
-Complex.Initialise = function ()
-{
-}
 //----------------------------------------------------------------------------------------------------------------
 Complex = function (x, y)
 {
     this.x = x;
     this.y = y;
+}
+//----------------------------------------------------------------------------------------------------------------
+Complex.Initialise = function ()
+{
 }
 //--------------------------------------------------------------------------------------------
 Complex.FromFloat = function (f)
@@ -152,6 +148,16 @@ Complex.prototype.Multiply = function (other)
     return new Complex (x, y);
 }
 //--------------------------------------------------------------------------------------------
+// Returns the square of the current number
+//--------------------------------------------------------------------------------------------
+Complex.prototype.Squared = function ()
+{
+    var x = this.x * this.x - this.y * this.y;
+    var y = 2 * this.x * this.y;
+    
+    return new Complex (x, y);
+}
+//--------------------------------------------------------------------------------------------
 // Add a complex number
 //--------------------------------------------------------------------------------------------
 Complex.prototype.Add = function (other)
@@ -186,6 +192,26 @@ Complex.prototype.SubtractFloat = function (f)
     return new Complex (this.x - f, this.y);
 }
 //--------------------------------------------------------------------------------------------
+// Subtracts this number from a float (f - this)
+//--------------------------------------------------------------------------------------------
+Complex.prototype.SubtractFromFloat = function (f)
+{    
+    return new Complex (f - this.x, -this.y);
+}
+//--------------------------------------------------------------------------------------------
+// v(a + ib) = ± (v{[v(a2 + b2) + a]/2} + ib/|b| v{[v(a2 + b2) - a]/2})
+//--------------------------------------------------------------------------------------------
+Complex.prototype.SquareRoot = function (f)
+{
+    var z = Math.sqrt (this.MagnitudeSquared());
+    var x = Math.sqrt ((z + this.x) / 2);
+    var y = Math.sqrt ((z - this.x) / 2);
+    
+    if (this.y < 0) y = -y;
+    
+    return new Complex (x, y);
+}
+//--------------------------------------------------------------------------------------------
 // Compare, returns -1, 0 or 1 for (first < second), (first == second) and (first > second)
 // Doesn't really make sense for complex numbers but we need this for sorting
 //--------------------------------------------------------------------------------------------
@@ -199,6 +225,15 @@ Complex.Compare = function (first, second)
     {
         return (second.x > first.x) ? 1 : -1;
     }
+}
+//--------------------------------------------------------------------------------------------
+// Distance Squared
+//--------------------------------------------------------------------------------------------
+Complex.DistanceSquared = function (first, second)
+{    
+    var dx = first.x - second.x;
+    var dy = first.y - second.y;
+    return dx * dx + dy * dy;
 }
 //--------------------------------------------------------------------------------------------
 // Invert
@@ -265,6 +300,11 @@ Complex.prototype.Copy = function (c)
 {
     this.x = c.x;
     this.y = c.y;
+}
+//--------------------------------------------------------------------------------------------
+Complex.prototype.IsEqual = function (other)
+{
+    return Complex.Compare (this, other) == 0;
 }
 
 

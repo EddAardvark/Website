@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 
 <meta name="KeyWords" content="Python Collatz 3x+1">
@@ -12,8 +12,9 @@
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="t3a1.js"> </script>
 
 <script>
 
@@ -27,8 +28,6 @@
     //-------------------------------------------------------------
     OnStart = function ()
     {
-        document.getElementById("links_go_here").innerHTML = MakeButtons ();
-
         number1_input = document.getElementById("number1");
         result1_paragraph = document.getElementById("result1");
 
@@ -91,7 +90,7 @@
 
 <!-- Main content -->
 
-    <div class="in2 box w8 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h1> Contents </h1>
 
@@ -105,7 +104,7 @@
 
 </div>
 
-    <div class="in2 box w8 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h1> <a name="s1"/>Introduction </h1>
 
@@ -124,9 +123,7 @@
     To find the precursors of 1 we have to find powers of two that fit the equation
 </p><p>
 
-    <div class="in2 w5 code">
-        2<span class="superscript">k</span> = 3x+1 &rArr; x = (2<span class="superscript">k</span>-1) / 3.
-    </div>
+    <pre class="code">2<span class="superscript">k</span> = 3x+1 &rArr; x = (2<span class="superscript">k</span>-1) / 3</pre>
 
 </p><p>
 
@@ -194,9 +191,7 @@
     For numbers other than 1, say 'A', we get the similar equation
 </p><p>
 
-    <div class="in2 w5 code">
-        A.2<span class="superscript">k</span> = 3x+1  &rArr; (A.2<span class="superscript">k</span>-1)&nbsp;/&nbsp;3.
-    </div>
+    <pre class="code">A.2<span class="superscript">k</span> = 3x+1  &rArr; (A.2<span class="superscript">k</span>-1)&nbsp;/&nbsp;3</pre>
 
 </p><p>
 
@@ -273,12 +268,11 @@
     even, and when it is one less than a multiple of 6, k will be odd. The smallest
     precursors are therefore:
 </p><p>
-    <div class="in2 w5 code">
-        6n+1 &rarr; 8n+1 <br> 6n+5 &rarr; 4n+3.
-    </div>
+    <pre class="code">6n+1 &rarr; 8n+1
+6n+5 &rarr; 4n+3.</pre>
 
 </p><p>
-    When reading down the columns the values increase linearly in steps of
+    When reading down the columns the values increase arithmetically in steps of
     x&nbsp;&rarr;&nbsp;x&nbsp;+&nbsp;2<span class="superscript">(k+1)</span>,
     whereas across the table they increase geometrically as x&nbsp;&rarr;&nbsp;4x+1.
 </p>
@@ -554,7 +548,7 @@
 
 <!-- Blue Chains -->
 
-    <div class="in2 box w8 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h1> <a name="s2"/> Blue Chains </h1>
 
@@ -664,7 +658,7 @@
 
 <!-- Applying Reverse Iteration -->
 
-    <div class="in2 box w8 float">
+<div class="float in2 box w10" style="overflow: auto;">
 
 <h1><a name="s3"/>Applying Reverse Iteration</h1>
 
@@ -677,51 +671,58 @@
     particular root. For instance if I want to find all the numbers than converge on
     85 that are less than 1024 I can reject sequences that pass through numbers
     greater than 1024 squared (1048576).
-<p>
+</p><p>
     Applying this algorithm gives us the following results;
-<p>
+</p><p>
     Start (1 value):
-<p class="code">
-    [85]
-<p>
+</p><p>
+    <pre class="code">[85]</pre>
+</p><p>
     First iteration (7 values):
-<p class="code">
-    [113, 453, 1813, 7253, 29013, 116053, 464213]
-<p>
+</p><p>
+    <pre class="code">[113, 453, 1813, 7253, 29013, 116053, 464213]</pre>
+</p><p>
     2nd iteration (19 values):
-<p class="code">
-    [75, 301, 1205, 4821, 19285, 77141, 308565, 2417, 9669, 38677, 154709, 618837, 4835, 19341, 77365, 309461, 154737, 618949, 309475]
-<p>
+</p><p>
+    <pre class="code">[75, 301, 1205, 4821, 19285, 77141, 308565, 2417, 9669, 38677, 154709,
+618837, 4835, 19341, 77365, 309461, 154737, 618949, 309475]</pre>
+    </p><p>
     3rd iteration (39 values):
+</p><p>
+    <pre class="code">[401, 1605, 6421, 25685, 102741, 410965, 803, 3213, 12853, 51413, 205653,
+822613, 25713, 102853, 411413, 51427, 205709, 822837, 1611, 6445, 25781, 103125, 412501,
+51569, 206277, 825109, 103139, 412557, 3223, 12893, 51573, 206293, 825173, 103153, 412613,
+206307, 825229, 825265, 412633]</pre>
+</p><p>
 
-<p class="code">
-    [401, 1605, 6421, 25685, 102741, 410965, 803, 3213, 12853, 51413, 205653, 822613, 25713, 102853, 411413, 51427, 205709, 822837, 1611, 6445, 25781, 103125, 412501, 51569, 206277, 825109, 103139, 412557, 3223, 12893, 51573, 206293, 825173, 103153, 412613, 206307, 825229, 825265, 412633]
-
-<p>
     The results are summarised in the <a href="#table"> table</a> below where you will see that the search reaches
     a maxmum width of 357 at iteration 18.
-
-<p>
+</p><p>
     This chart shows the location of the found values (numbers less than 1024) in each row of the table.
     All the target values were found in the first 8 rows (7 iteration, the first value is 85 itself).
     These are the green cells in the <a href="#table">table</a> below.
 
-<p>
+</p><p>
+
     <img class="noborder" src="images/tree_width_85_1024.gif" width="362" height="239">
 
-<p>
+</p><p>
+
     This second chart shows the width (vertical axis) and depth (horizontal) of the search tree, and includes all
     for odd numbers up to 1048576 that we examined. Although we found all the values we were looking
     for in the first 7 iterations, the algorithm itself didn't stop until 60 iterations, after it had examined
     7582 values.
+</p><p>
 
-<p> <img class="noborder" src="images/converge_on_85_chart.gif" width="452" height="255">
+    <img class="noborder" src="images/converge_on_85_chart.gif" width="452" height="255">
 
-<p>
+</p><p>
+
     Testing the 511 values smaller than 1024 would have been quicker.
     You can see the corresponding tree <a href="#s4">here</a>.
 
-<p>
+</p><p>
+
     To get numbers out to 4096 this algorithm requires that 118564 possibilities be
     explored, for 8192 this grows to 468857, just to find the first 99 values that
     converge on 85. This chart shows the distribution of those 99 values in terms of
@@ -737,7 +738,7 @@
 <p>So it's not looking that good an algorithm.
 
 <h2>Searching for values out to 1024</h2>
-
+<p>
 <table border="1" cellpadding="4">
    <tr>
 <th bgcolor="#FFFFFF"><a name="table">Iteration</a></th><th bgcolor="#FFFFFF">Tree Width</th>
@@ -1232,13 +1233,15 @@
 <td class="code"> &nbsp; </td>
    </tr>
 </table>
-
+</p>
+   
     </div>
 
 <!-- Tree routed on 85 -->
 
-    <div class="in2 box w8 float">
-        <h1> <a name="s4"/>Tree routed on 85 </h1>
+<div class="float in2 box w10" style="overflow: auto;">
+
+    <h1> <a name="s4"/>Tree routed on 85 </h1>
 
         <p>
             This picture shows the tree containing all the numbers less than
@@ -1256,13 +1259,17 @@
 
 <!-- Generic links -->
 
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+<div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
+    <h2> Other pages </h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
 
-   <p class="small"> (c) John Whitehouse 2011-2016 <p> </td>
+
+   <p class="small"> (c) John Whitehouse 2011-2022 <p> </td>
 
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

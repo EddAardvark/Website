@@ -84,14 +84,23 @@ T3A1.MakeNegativeSequence = function (fun, x)
     return ret;
 }
 // Convert a sequence to text
-T3A1.SequenceToText = function (seq)
+T3A1.SequenceToText = function (seq, maxlen)
 {
     var ret = "";
     var num = seq.length;
+    var last_cutoff = 0;
 
     for (var i = 0 ; i < num ; ++i)
     {
         ret += seq [i] + ", ";
+        if (maxlen)
+        {
+            if (ret.length - last_cutoff > maxlen)
+            {
+                ret += "\n";
+                last_cutoff = ret.length;
+            }
+        }
     }
     return ret.substr(0, ret.length-2);
 }
@@ -272,14 +281,14 @@ T3A1.BigAListToValue = function (list)
     var alist = [].concat (list);
     var len = alist.length;
 
-    if (len < 1) return new BigUnsignedInt(0);
-    if (len == 1) return new BigUnsignedInt(1);
-    if (len == 2) return new BigUnsignedInt(3).Add (new BigUnsignedInt(2).Pow (alist [0]));
+    if (len < 1) return VLUInt.FromInt(0);
+    if (len == 1) return VLUInt.FromInt(1);
+    if (len == 2) return VLUInt.FromInt(3).Add (VLUInt.FromInt(2).Pow (alist [0]));
 
-    var p2 = new BigUnsignedInt(1);
-    var p3 = new BigUnsignedInt(1);
-    var two = new BigUnsignedInt(2);
-    var three = new BigUnsignedInt(3);
+    var p2 = VLUInt.FromInt(1);
+    var p3 = VLUInt.FromInt(1);
+    var two = VLUInt.FromInt(2);
+    var three = VLUInt.FromInt(3);
     var twos = [];
     var threes = [];
 
@@ -291,7 +300,7 @@ T3A1.BigAListToValue = function (list)
         p3 = p3.Multiply (three);
     }
 
-    var sum = new BigUnsignedInt(0);
+    var sum = new VLUInt();
 
     for (var i = 0 ; i < len ; ++i)
     {
@@ -300,146 +309,99 @@ T3A1.BigAListToValue = function (list)
     return sum;
 }
 
-T3A1.RotateList = function (list)
+MakeRemainderTable=function (input, output1, output2)
 {
-    return list.slice(1).concat (list[0]);
-}
-
-T3A1.CreateALists = function (m, n, limit)
-{
-    // Create all the lists of n integers, >= 1, that add up to m (limit stops the size
-    // getting out of hand
-
-    if (n == 1) return [[m]];
-
-    var spare = m - n;
-    var ret = []
-
-    // The first integer can take values in the range 1 to 1 + spare
-
-    for (var i = 0 ; i <= spare ; ++i)
+    f = parseInt(input.value);
+    
+    if (f <= 0)
     {
-        var a0 = i + 1;
-        var list_set = T3A1.CreateALists (m - a0, n - 1, limit);
+        Misc.Alert ("input must be a positive integer, {0} is invalid", input.value);
+        return;
+    }
+    
+    var list2 = RemainderSequence (2,f);
+    var list3 = RemainderSequence (3,f);
+    var text = Misc.expand_expression("2^i mod ") + f + " = [" + list2[0] + "] + [" + list2 [1] + "]\n";
+    text += Misc.expand_expression("3^i mod ") + f + " = [" + list3[0] + "] + [" + list3 [1] + "]";
+    
+    output1.innerHTML = text;
+    var n2 = list2[0].length + list2[1].length;
+    var n3 = list3[0].length + list3[1].length;
+    
+    if (n2 > 20 || n3 > 20)
+    {
+        output2.innerHTML = Misc.Format ("*** Table {0} x {1} is too large!", n2, n3);
+        return;
+    }
+    var table = new JWTable ();
+    
+    table.style = "t1";
 
-        for (var j = 0 ; j < list_set.length ; ++j)
+    for (var i = 0 ; i < list2[0].length ; ++i)
+    {
+        table.headings.push ([list2[0][i], "h1"]);
+    }
+    for (var i = 0 ; i < list2[1].length ; ++i)
+    {
+        table.headings.push ([list2[1][i], "h2"]);
+    }
+    
+    for (var j = 0 ; j < list3[0].length ; ++j)
+    {
+        table.rows.push ([list3[0][j], "h1"]);
+            
+        for (var i = 0 ; i < list2[0].length ; ++i)
         {
-            var new_list = [a0].concat (list_set [j]);
-
-            ret.push (new_list);
-            if (ret.length >= limit) return ret;
+            var v = (f + list3[0][j] - list2[0][i]) % f
+            table.cells.push ([v, (v == 0) ? "vzero" : "v11"]);
+        }
+        for (var i = 0 ; i < list2[1].length ; ++i)
+        {
+            var v = (f + list3[0][j] - list2[1][i]) % f;
+            table.cells.push ([v, (v == 0) ? "vzero" : "v12"]);
         }
     }
-    return ret
-}
-// Creates a balanced A-list which will generate the largest loop seed for (m,n)
-T3A1.MakeBalancedList = function (m,n)
-{
-    var ret = []
-    var inc = m / n;
-    var val = inc;
-
-    for (var i = 0 ; i < n ; ++i)
+    
+    for (var j = 0 ; j < list3[1].length ; ++j)
     {
-        var ival = Math.floor (val);
-        ret.push (ival);
-        val = val - ival + inc;
-    }
-
-    return ret
-}
-
-// Returns a map, alist_key -> [loop, list, value]
-
-T3A1.FindLoops = function (m, n, limit)
-{
-    var alists = T3A1.CreateALists (m, n, limit);
-    var list_map = {};
-    var idx = 0;
-    var num = alists.length;
-
-    for (var i = 0 ; i < num ; ++i)
-    {
-        var key = T3A1.MakeAListKey (alists [i]);
-
-        if (! list_map.hasOwnProperty (key))
+        table.rows.push ([list3[1][j], "h2"]);
+            
+        for (var i = 0 ; i < list2[0].length ; ++i)
         {
-            var list = alists[i].slice();
-            list_map [key] = [idx, list, T3A1.AListToValue (list)];
-            for (var j = 0 ; j < n-1 ; ++j)
-            {
-                list = T3A1.RotateList (list);
-                list_map [T3A1.MakeAListKey(list)] = [idx, list, T3A1.AListToValue (list)];
-            }
-            ++idx;
+            var v = (f + list3[1][j] - list2[0][i]) % f;
+            table.cells.push ([v, (v == 0) ? "vzero" : "v21"]);
+        }
+        for (var i = 0 ; i < list2[1].length ; ++i)
+        {
+            var v = (f + list3[1][j] - list2[1][i]) % f;
+            table.cells.push ([v, (v == 0) ? "vzero" : "v22"]);
         }
     }
-    return list_map;
+    
+    output2.innerHTML = table.Render ();
 }
 
-
-NodeInAlistDAG = function (x, level, alist)
+// Remainders of m^i % f
+RemainderSequence = function(m,f)
 {
-    this.x = x;
-    this.level = level;
-    this.s_value = T3A1.AListToValue (alist);
-    this.alist = alist;
-    this.key = T3A1.MakeAListKey(alist);
-    this.next = [];
-}
-NodeInAlistDAG.prototype.toString = function ()
-{
-    return "DAG-Node: (" + [this.level, this.x] + ") " + T3A1.MakeAListKey(alist) + " = " + this.s_value;
-}
-NodeInAlistDAG.prototype.BuildGraph = function (visited, row_lengths)
-{
-    for (var j = 1 ; j < this.alist.length ; ++j)
+    var ret = [];
+    var val = 1;
+    var idx = -1;
+    
+    for (var i = 0 ; i < f ; ++i)
     {
-        if (this.alist[j] > 1)
+        var rem = val % f;
+        idx = ret.indexOf (rem);
+        if (idx >= 0)
         {
-            var next = [].concat(this.alist);
-            ++ next[j-1];
-            -- next[j];
-
-            var dag = new NodeInAlistDAG (row_lengths [this.level+1], this.level+1, next);
-            this.next.push (dag);
-
-            if (! visited.hasOwnProperty (dag.key))
-            {
-                visited [dag.key] = dag;
-                ++row_lengths [dag.level];
-                dag.BuildGraph (visited, row_lengths);
-            }
+            break;
         }
+        ret[i] = rem;
+        val = val * m;
     }
+    var part1 = ret.slice (0,idx);
+    var part2 = ret.slice (idx);
+    return [part1,part2];
 }
-NodeInAlistDAG.CreateAListDAG = function (m, n)
-{
-    // We start with the list [1,1,1,...m-n-1] and iterate down to [m-n-1,...,1,1,1]
-    var start_list = [];
-    var num_rows = (n-1)*(m - n) + 1;
-    var row_lengths = new Array(num_rows);
-
-    for (var i = 0 ; i < num_rows ; ++i)
-    {
-        row_lengths [i] = 0;
-    }
-
-    for (var i = 0 ; i < n ; ++i)
-    {
-        start_list.push(1);
-    }
-    start_list [n-1] = m - n + 1;
-
-    var visited = {};
-    var start = new NodeInAlistDAG (0, 0, start_list);
-
-    visited [start.key] = start;
-    ++row_lengths [start.level];
-    start.BuildGraph (visited, row_lengths);
-
-    return [visited, row_lengths];
-}
-
 
 

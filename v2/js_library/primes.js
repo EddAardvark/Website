@@ -16,36 +16,22 @@ Primes.list = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,
                857,859,863,877,881,883,887,907,911,919,929,937,941,947,953,967,971,977,983,991,
                997];
 
+
+// TODO: Review this...
 //-------------------------------------------------------------
-Primes.CacheUpTo = function (maxp)
+Primes.GetNextPrime = function ()
 {
-    var current_max = Primes.list [Primes.list.length-1];
-    
-    if (maxp < current_max) return;
-    
-    if (current_max % 6 == 1)
+    var next = Primes.list [Primes.list.length-1];
+
+    while (true)
     {
-        Primes.TryAdd (current_max + 4);
-        next = current_max + 6;
-    }
-    else
-    {
-        next = current_max + 2;
-    }
-    
-    while (Primes.list [Primes.list.length-1] <= maxp)
-    {
-        Primes.TryAdd (next);
-        Primes.TryAdd (next+4);
-        next += 6;
-    }
-}
-//-------------------------------------------------------------
-Primes.TryAdd = function (p)
-{
-    if (Primes.IsPrime (p))
-    {
-        Primes.list.push (p);
+        next = (next % 6 == 1) ? next + 4 : next + 2;
+
+        if (Primes.IsPrime (next))
+        {
+            Primes.list.push (next);
+            return next;
+        }
     }
 }
 //-------------------------------------------------------------
@@ -54,8 +40,6 @@ Primes.IsPrime = function (n)
     if (Primes.list.indexOf (n) >= 0) return true;
     
     var limit = Math.floor (Math.sqrt (n));
-
-    Primes.CacheUpTo (limit);
 
     for (var i in Primes.list)
     {
@@ -78,8 +62,7 @@ Primes.GetPrimeFactors = function (n)
     if (Primes.list.indexOf (n) >= 0) return [n];
     
     var limit = Math.floor (Math.sqrt (n));
-
-    Primes.CacheUpTo (limit);
+    var ret = [];
 
     for (var i in Primes.list)
     {
@@ -87,14 +70,22 @@ Primes.GetPrimeFactors = function (n)
         
         if (p > limit)
         {
-            return [n];
+            ret.push (n);
+            return ret;
         }
-        if (n % p == 0)
+        while (n % p == 0)
         {
-            return [p].concat (Primes.GetPrimeFactors (n/p));
+            ret.push (p);
+            n = n / p;
+
+            if (n == 1) return;
+            limit = Math.floor (Math.sqrt (n));
         }
     }
-    throw "too large";
+    while (true)
+        {
+            p = Primes.GetNextPrime ();
+        }
 }
 //-------------------------------------------------------------
 Primes.GetUniquePrimeFactors = function (n)
@@ -125,46 +116,86 @@ Primes.GetUniquePrimeFactors = function (n)
 //-------------------------------------------------------------
 Primes.GetAllFactors = function (n)
 {
-    var ret = Primes.GAF2(n);
+    var primes = Primes.GetPrimeFactors (n);
+    var ret =  Primes.UniqueProducts (primes);
+    
     ret.sort(function(a, b) {return a - b;});
     return ret;
 }
 //-------------------------------------------------------------
-Primes.GAF2 = function (n)
+Primes.UP0 = function (list)
 {
-    if (Primes.list.indexOf (n) >= 0) return [1,n];
+    if (list.length == 0) return [];
+
+    var ret = [];
     
-    var limit = Math.floor (Math.sqrt (n));
-
-    Primes.CacheUpTo (limit);
-
-    for (var i in Primes.list)
+    for (var idx in list)
     {
-        var p = Primes.list [i];
-        
-        if (p > limit)
+        if (ret.indexOf (list[idx]) < 0)
         {
-            return [n];
-        }
-        if (n % p == 0)
-        {
-            var list = Primes.GAF2 (n/p);
-            var more = [];
-            
-            for (var j in list)
-            {
-                var q = p * list[j];
-                if (list.indexOf(q) < 0)
-                {
-                    more.push(q);
-                }
-            }
-            
-            return list.concat (more);
+            ret.push(list[idx]);
         }
     }
-    throw "too large";
+    
+    var first = list [0];
+
+    if (list.length > 1)
+    {
+        var sub_list = list.slice(1);
+        
+        for (var idx in sub_list)
+        {
+            var n = first * sub_list[idx];
+            
+            if (ret.indexOf (n) < 0)
+            {
+                ret.push(n);
+            }
+        }
+        
+        var unique = Primes.UniqueProducts (sub_list);
+        
+        for (var idx in unique)
+        {
+            var n = first * unique [idx];
+            if (ret.indexOf (n) < 0)
+            {
+                ret.push(n);
+            }
+        }
+    }
+    return ret;
 }
+
+//-------------------------------------------------------------
+Primes.UniqueProducts = function (list)
+{
+    if (list.length == 0) return [];
+
+    var first = list [0];
+    var sub_list = list.slice(1);
+    var ret = [1, first];
+    var unique = Primes.UniqueProducts (sub_list);
+        
+    for (var idx in unique)
+    {
+        var n = unique[idx];
+        var n2 = first * n;
+
+        if (ret.indexOf (n) < 0)
+        {
+            ret.push(n);
+        }
+        if (ret.indexOf (n2) < 0)
+        {
+            ret.push(n2);
+        }
+    }
+    return ret;
+}
+
+    
+    
 //-------------------------------------------------------------
 Primes.GetFactorsLessThan = function (n, less_than)
 {
@@ -210,6 +241,67 @@ Primes.GFLT2 = function (n, less_than)
         }
     }
     throw "too large";
+}
+
+//-------------------------------------------------------------------------------------------------
+// Get the highest common factor
+//-------------------------------------------------------------------------------------------------
+Primes.hcf = function (x, y)
+{
+    x = Math.round (x);
+    y = Math.round (y);
+    
+    if (x == 0 || y == 0) return 1;
+
+    if (x < 0) x = -x;
+    if (y < 0) y = -y;
+
+    return Primes.hcf2 (x, y)
+}
+Primes.hcf2 = function (x, y)
+{
+    if (x == 0) return y;
+    if (y == 0) return x;
+    if (x == 1 || y == 1) return 1;
+    if (x == y) return x;
+
+    return (x > y) ? Primes.hcf2 (x%y,y) : Primes.hcf2 (x,y%x);
+}
+//---------------------------------------------------------------------------------------------------
+Primes.Test = function ()
+{
+    if (Primes.hcf (3,4) != 1) throw "hcf (3,4) != 1";
+    if (Primes.hcf (3,6) != 3) throw "hcf (3,4) != 3";
+    if (Primes.hcf (10000000,3) != 1) throw "hcf (10000000,3) != 1";
+    if (Primes.hcf (80000100,9) != 9) throw "hcf (hcf (80000100,9) != 9";
+    if (Primes.hcf (80000100,9*11*13) != 9) throw "hcf (80000100,9*11*13) != 9";
+    
+    var n = 2 * 2 * 3 * 5 * 5 * 97 * 101 * 101 * 101 * 103;
+    var factors = Primes.GetPrimeFactors (n);
+    var fs = factors.toString ();    
+    if (fs != "2,2,3,5,5,97,101,101,101,103") throw "prime factors (" + n + ") != 2,2,3,5,5,97,101,101,101,103";
+
+    factors = Primes.GetAllFactors (28);
+    fs = factors.toString ();    
+    if (fs != "1,2,4,7,14,28") throw "factors (28) != 1,2,4,7,14,28";
+
+    var expected = [
+        1,
+        2,3,5,7,11,
+        2*3,2*5,2*7,2*11,3*5,3*7,3*11,5*7,5*11,7*11,
+        2*3*5,2*3*7,2*3*11,2*5*7,2*5*11,2*7*11,3*5*7,3*5*11,3*7*11,5*7*11,
+        2*3*5*7,2*3*5*11,2*3*7*11,2*5*7*11,3*5*7*11,
+        2*3*5*7*11
+    ];
+    
+    
+    expected.sort(function(a, b) {return a - b;});
+
+    factors = Primes.GetAllFactors (2*3*5*7*11);
+    if (factors.toString () != expected.toString ())
+    {
+        throw factors.toString () + " != " + expected.toString ();
+    }
 }
 
 

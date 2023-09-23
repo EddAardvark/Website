@@ -1,19 +1,100 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
-<meta name="KeyWords" content="Python Collatz 3x+1">
+<meta name="KeyWords" content="Collatz 3x+1">
+
 <TITLE> 3x+1 (Finding Loops Algorithmically) </TITLE>
 
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/tables.js"> </script>
+<script src="t3a1.js"> </script>
+
+<style>
+
+TABLE.t1  { border-collapse: collapse; }
+TABLE     { border-collapse: collapse; }
+
+TD
+    {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
+    }
+
+
+TD.v11    { font-family:        Courier;
+            font-size:          small;
+            text-align:         right;
+            background:         DarkGray;
+            border:             solid 1px red;
+            margin:             0;
+          }
+TD.v12    { font-family:        Courier;
+            font-size:          small;
+            text-align:         right;
+            background:         DarkGray;
+            border:             solid 1px red;
+            margin:             0;
+          }
+TD.v21    { font-family:        Courier;
+            font-size:          small;
+            text-align:         right;
+            background:         DarkGray;
+            border:             solid 1px red;
+            margin:             0;
+          }
+TD.v22    { font-family:        Courier;
+            font-size:          small;
+            text-align:         right;
+            background:         LightGray;
+            border:             solid 1px red;
+            margin:             0;
+          }
+
+TD.vzero  { font-family:        Courier;
+            font-size:          small;
+            text-align:         right;
+            background:         White;
+            border:             solid 1px red;
+            margin:             0;
+          }
+
+TH.h1     { font-family:      Courier;
+            font-weight:      bold;
+            text-align:       center;
+            background:       SteelBlue;
+            border:           solid 1px red;
+            margin:           0;
+          }
+
+TH.h2     { font-family:      Courier;
+            font-weight:      bold;
+            text-align:       center;
+            background:       LightSteelBlue;
+            border:           solid 1px red;
+            margin:           0;
+          }
+</style>
 
 <script>
-    OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+
+OnStart = function ()
+{
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+
+    MakeRemainderTable(mod_table, result1, result2);  
+}
+
 </script>
 </head>
 
@@ -22,7 +103,7 @@
 <!-- Banner -->
 
   <div style="margin: auto; width: 1024px;">
-     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">•
         <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
         <br><strong>Home page</strong>
      </button>
@@ -57,7 +138,7 @@
 
 <!-- Main content -->
 
-    <div class="in2 box w8 float">
+    <div class="float w10 box in2" style="overflow: auto;">
 
 <h2>Contents</h2>
 
@@ -75,44 +156,47 @@
 
 <!-- Introduction -->
 
-    <div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="Introduction">Introduction</a></h2>
 
 
 <p>We can search for loops by deriving a single equation that combines a number of
-iterations, f(x), and then solve it for being equal to the original number: f(x)&nbsp;=&nbsp;x. For the
+iterations, f(x), and then solve it for being equal to the original number: <span class="expr">f(x)=x</span>. For the
 unmodified sequence this is tricky as the equation has an 'if' condition in it, but if we
-just focus on the odd sequence it becomes easier.</p>
+just focus on the odd sequence it becomes clearer.</p>
 
 
 <h3>1&minus;cycles</h3>
 
-<p>The next-odd iterator maps x&#x2192;(3x+1)/2<sup>a1</sup>, where 'a1' is a integer (&gt;0).</p>
-
-<p>If we can find an odd integer solution to (3x+1)/2<sup>a1</sup>&nbsp;=&nbsp;x we will have
-a loop that contains a single odd number and 'a1' even ones. This expression rearranges to
-(2<sup>a1</sup>&minus;3)x&nbsp;=&nbsp;1.
-The only positive integer factorisation of 1 is 1&nbsp;x&nbsp;1, so both
-x and (2<sup>a1</sup>&nbsp;&minus;&nbsp;3) must be 1. The second condition leads
-to a1&nbsp;=&nbsp;2. The corresponding loop is [1,4,2,1]. This is the only possible loop with one odd member.
-</p>
 <p>
-If we relax the positive integer requirement we get a second solution where a1&nbsp;=&nbsp;1 and x&nbsp;=&nbsp;&minus;1.
-This is a loop with one odd and one even member [-1,-2,-1].</p>
+    The next-odd iterator maps <span class="expr">x&rarr;(3x+1)/2^[a1], where 'a¬1' is an integer (>0)</span>.
+</p><p>
+    If we can find an odd integer solution to <span class="expr">(3x+1)/2^[a1]=x</span> we will have
+    a loop that contains a single odd number and <span class="expr">'a¬1'</span> even ones. This expression rearranges to
+    <span class="expr">(2^[a1]-3)*x=1</span>.
+    The only positive integer factorisation of 1 is <span class="expr">1*1</span>, so both
+    x and <span class="expr">(2^[a1]-3)</span> must be 1. The second condition leads
+    to <span class="expr">a¬1=2</span>. The corresponding loop is [1,4,2,1], with 2 even and one odd members. This is the only possible loop with one odd member.
+</p><p>
+    If we relax the positive integer requirement we get a second solution where <span class="expr">a¬1=1 and x=&minus;1</span>.
+    This is a loop with one odd and one even member [-1,-2,-1].
+</p>
+    
+    
 <h3>2&minus;cycles</h3>
 
-<p>For 2&minus;cycles the equation to solve is f(x) = (9x&nbsp;+&nbsp;2<sup>a1</sup>&nbsp;+&nbsp;3)&nbsp;/&nbsp;2<sup>(a1+a2)</sup>
-= x (where 'a<sub>1</sub>' and 'a<sub>2</sub>' are integers greater than 0).</p>
-
-
 <p>
-This can be rearranged to (2<sup>(a1+a2)</sup>&minus;9)x&nbsp;=&nbsp;(2<sup>a1</sup>+3),
-so we need to find integral values of (2<sup>a1</sup>+3) which are multiples of (2<sup>(a1+a2)</sup>&minus;9).
-The following table contains the calculations for some small values of a1 and a2 and shows that there are 4 solutions.
-</p>
-<div class="in2">
- <table id="indent" border="1">
+    For 2&minus;cycles the equation to solve is <span class="expr">f(x)=(9x+2^[a1]+3)/2^[(a1+a2)]=x (where 'a¬1 and 'a¬2'</span> are integers greater than 0).
+    
+</p><p>
+
+    This can be rearranged to <span class="expr">x=(2^[a1]+3)/(2^[(a1+a2)]-9)</span>. To solve this we
+    need to find integral values of <span class="expr">a¬1 and a¬2 so that (2^[a1]+3) is an integer multiple of (2^[(a1+a2)]-9)</span>.
+    The following table contains the calculations for some small values of a1 and a2 and shows that there are 4 solutions.
+</p><p>
+
+ <table>
   <tr>
    <td class="heading"> a1 </td> <td class="heading"> a2 </td> <td class="heading"> 2<sup>a1</sup>+3 </td> <td class="heading"> 2<sup>(a1+a2)</sup>&minus;9 </td> <td class="heading"> x </td>
   </tr>
@@ -144,308 +228,207 @@ The following table contains the calculations for some small values of a1 and a2
    <td class="number"> 4 </td> <td class="number"> 1 </td> <td class="number"> 19 </td> <td class="number"> 23 </td> <td class="number"> 19/23 </td>
   </tr>
  </table>
-</div>
 
 
+</p><p>
 
-<p> Two of these solutions (&minus;1 and 1) are repeats of the solutions for 1&minus;cycles,
-leaving only &minus;5 and &minus;7, which are two halves
-of the same solution,
-[&minus;5, &minus;14, &minus;7, &minus;20, &minus;10, &minus;5].
-This cycle contains 3 even numbers as a1+a2&nbsp;=&nbsp;3.&nbsp;
+    Two of these solutions (&minus;1 and 1) are repeats of the solutions we already found among the for 1&minus;cycles,
+    leaving only &minus;5 and &minus;7, which turn out to be  two halves of the same solution,
+    [&minus;5, &minus;14, &minus;7, &minus;20, &minus;10, &minus;5].
+    This cycle contains <span class="expr">a¬1+a¬2=3</span> even numbers.
+
+</p><p>
+    There are no solutions for larger 'a' values as the potential values of x are already less then one, and become
+    even smaller as the 'a' values increase.
+</p><p>
+    As we move to larger cycles we will always see that setting all the 'a' values to 1 will lead to x&nbsp;=&nbsp;&minus;1
+    and setting them all to 2 will produce x&nbsp;=&nbsp;1.
 </p>
-
-<p>
-There are no solutions for larger 'a' values as the potential values of x are already less then one, and become
-even smaller as the 'a' values increase.
-</p>
-
-<p>
-As we move to larger cycles we will always see that setting all the 'a' values to 1 will lead to x&nbsp;=&nbsp;&minus;1
-and setting them all to 2 will produce x&nbsp;=&nbsp;1.
-</p>
-
 
     </div>
 
 <!-- ################## N-Cycles ###################### -->
 
 
-    <div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="ncycles">n&minus;Cycles</a></h2>
 
 <p>
-For larger cycles we can calculate a series of equtions of the form K&sdot;x&nbsp;=&nbsp;S, where:
-</p>
+    For larger cycles we can calculate a series of equations of the form <span class="expr">K*x=S</span>, where:
+</p><p>
 
-    <div class="code in2 w6">
-        <p class="code">
-            K = 2<sup>a1+a2+...+an</sup> - 3<sup>n</sup> <br/>
-            S = 3<sup>n-1</sup> + 3<sup>n-2</sup>*2<sup>a1</sup> + 3<sup>n-3</sup>*2<sup>a1+a2</sup> +
-                    ... + 2<sup>a1+a2+...+a(n-1)</sup>
-        </p>
-    </div>
+    <pre class="code expr">K=2^[(a1+a2+&hellip;+an)]-3^n
+S=3^[n-1]+3^[(n-2)]*2^[a1]+3^[(n-3)]*2^[(a1+a2)]+&hellip;+3^0*2^[(a1+a2+&hellip;+a(n-1))]</pre>
 
-<p>
-The 'a' values are the number of even numbers between successive odd values in the loop.
-We can define 'm' as the number of even values in the loop, giving
-</p>
+</p><p>
+    The 'a' values are the number of even numbers between successive odd values in the loop.
+    We can define 'm' as the number of even values in the loop, giving
+</p><p>
 
-    <div class="code in2 w6">
-        <p class="code">
-            m = a1 + a2 + ... + an  <br/>
-            K = 2<sup>m</sup> - 3<sup>n</sup>
-        </p>
-    </div>
+    <pre class="code expr">m=a¬1+a¬2+&hellip;+a¬n
+K=2^m-3^n</pre>
 
-<p>
-We can do a quick search for solutions when n is 3 by constructing a table similar to the one we wrote
-for n&nbsp;=&nbsp;2 in the previous section. This table, even for small a values is quite long, so I've
-reproduced it on a <a href="three_cycle_table.html"> separate page</a> for 'a' values up to m&nbsp;=&nbsp;8. The only
-integer solutions are the ones we've found already, &minus;1 and 1.
-</p>
-
-<p>
-For positive solutions we can reject values where K is negative, which shows that any loops will always have more
-even values than odd ones, in fact m&nbsp;&gt;&nbsp;(log(3)&nbsp;&#x2215;&nbsp;log(2))n.
-Log(3)&nbsp;&#x2215;&nbsp;log(2) is just under 1.585, so there
-will be at least 58% more even values than odd one.
+</p><p>
+    We can do a quick search for solutions when n is 3 by constructing a table similar to the one we wrote
+    for n&nbsp;=&nbsp;2 in the previous section. This table, even for small a values is quite long, so I've
+    reproduced it on a <a href="three_cycle_table.html"> separate page</a> for 'a' values up to m&nbsp;=&nbsp;8. The only
+    integer solutions are the ones we've found already, &minus;1 and 1.
+</p><p>
+    For positive solutions we can reject values where K is negative, which shows that any loops will always have more
+    even values than odd ones, in fact <span class="expr">m>n*log(3)/log(2).
+    log(3)/log(2)</span> is just under 1.585, so there will be at least 58% more even values than odd ones.
 </p>
 
 </div>
 
 <!-- ################## Loops in 3x+k ###################### -->
 
-    <div class="in2 box w8 float">
-
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="3xk"> Loops in 3x+k </a></h2>
 
 <p>
-First, let us define A<sub>1</sub> as the set [a<sub>1</sub>,a<sub>2</sub>,...,a<sub>n</sub>], A<sub>2</sub>
-as [a<sub>2</sub>,...,a<sub>n</sub>,a<sub>1</sub>],
-A<sub>3</sub> as [a<sub>3</sub>,...,a<sub>n</sub>,a<sub>1</sub>,a<sub>2</sub>], etc. (A<sub>i+1</sub>
-is obtained by rotating the values in A<sub>i</sub> one place to the left). The set
-[A<sub>1</sub>,&nbsp;A<sub>2</sub>,&nbsp;...]
-has n members, as A<sub>n+1</sub> is the same as A<sub>1</sub>.
-</p>
+    First, let us define the sets:
+    
+</p><p>
+
+    <pre class=" code expr">A¬1=[a¬1,a¬2,&hellip;,a¬n],
+A¬2=[a¬2,&hellip;,a¬n,a¬1],
+A¬3=[a¬3,&hellip;,a¬n,a¬1,a¬2],
+etc.</pre>
+
+</p><p>
+
+    Where <span class="expr">A¬[(i+1)]</span> is obtained by rotating the values in <span class="expr">A¬i</span> one place to the left. The resulting set of sets
+    <span class="expr">[A¬1,&nbsp;A¬2,&nbsp;&hellip;]</span> has n members, as <span class="expr">A¬[(n+1)] is the same as A¬1</span>.
+
+</p><p>
+
+    We can then define the set of S-values <span class="expr">[s¬1, s¬2, &hellip;]=[S(A¬1), S(A¬2), &hellip;], where S(A¬i)</span> is the 
+    value obtained by inserting the A-values in <span class="expr">A¬i</span> into the equation for S we introduced above.
+    
 <p>
-
-We can then define the set [s<sub>1</sub>, s<sub>2</sub>, ...] =
-[S(A<sub>1</sub>), S(A<sub>2</sub>), ...]
-as the values obtained
-by inserting the sets [A<sub>1</sub>,...,A<sub>n</sub>] into the numerator of the equation for 'x'.
-
-    <div class="code in2 w6">
-        <p class="code">
-            S(A) = 3<sup>n-1</sup> + 3<sup>n-2</sup>&sdot;2<sup>a1</sup> + 3<sup>n-3</sup>&sdot;2<sup>a1+a2</sup>
-            + ... + 2<sup>a1+a2+...+a(n-1)</sup>
-        </p>
-    </div>
-
-<p>
-We can now see that s<sub>2</sub> = (3&sdot;s<sub>1</sub> + K)&nbsp;&#x2215;&nbsp;2<sup>a1</sup>,
+We can now show that <span class="expr">s¬2=(3*s¬1+K)/2^a1</span>,
 </p>
 
-    <div class="code in2 w6">
-        <p class="code">
-            &nbsp;&nbsp;&nbsp;s<sub>1</sub> =
-            3<sup>n-1</sup> + 3<sup>n-2</sup>&sdot;2<sup>a1</sup> + 3<sup>n-3</sup>&sdot;2<sup>a1+a2</sup> +
-                ... + 2<sup>a1+a2+...+a(n-1)</sup>
+<pre class="code expr">     s¬1=3^[(n-1)]+3^[(n-2)]*2^[a1]+3^[(n-3)]*2^[(a1+a2)]+&hellip;+2^[(a1+a2+&hellip;+a(n-1))]
+    3s¬1=3^n+3^[(n-1)]*2^[a1]+3^[(n-2)]*2^[(a1+a2)]+&hellip;+3*2^[(a1+a2+&hellip;+a(n-1))]
+3s¬1+K=3^[(n-1)]*2^[a1]+3^[(n-2)]*2^[(a1+a2)]+&hellip;+3*2^[(a1+a2+&hellip;+a(n-1))]+2^[(a1+a2+&hellip;+an)]
+       =2^[a1]*(3^[(n-1)]+3^[(n-2)]*2^[a2]+&hellip;+3*2^[(a2+&hellip;+a(n-1))]+2^[(a2+&hellip;+an)]
+       =2^[a1]*s¬2
 
-        <br>
-
-            &nbsp;&nbsp;3s<sub>1</sub> =
-            3<sup>n</sup> + 3<sup>n-1</sup>&sdot;2<sup>a1</sup> + 3<sup>n-2</sup>&sdot;2<sup>a1+a2</sup> +
-                ... + 3&sdot;2<sup>a1+a2+...+a(n-1)</sup>
-
-        <br>
-
-            3s<sub>1</sub>+K =
-            3<sup>n-1</sup>&sdot;2<sup>a1</sup> + 3<sup>n-2</sup>&sdot;2<sup>a1+a2</sup> +
-                ... + 3&sdot;2<sup>a1+a2+...+a(n-1)</sup> + 2<sup>a1+a2+...+an</sup>
-
-        <br>
-
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            = 2<sup>a1</sup>&sdot;(3<sup>n-1</sup> + 3<sup>n-2</sup>&sdot;2<sup>a2</sup> +
-                ... + 3&sdot;2<sup>a2+...+a(n-1)</sup> + 2<sup>a2+...+an</sup>)
-
-        <br>
-
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            = 2<sup>a1</sup>&sdot;s<sub>2</sub>
-
-        </p>
-    </div>
+&Implies; (3s¬1+K)/2^[a1]=s¬2</pre>
 
 
 
 <p>
-so the set [s<sub>1</sub>,&nbsp;s<sub>2</sub>,&nbsp;...]
-represents an n&minus;cycle in x&#x2192;3x+K.
-</p>
-<p>
-Clearly all systems of the form
-x&#x2192;3x&nbsp;+&nbsp;(2<sup>m</sup>&nbsp;&minus;&nbsp;3<sup>n</sup>)
-will have cycles, with 'n' odd and 'm' even values.
-For all cases other than n&nbsp;=&nbsp;1, m&nbsp;=&nbsp;2 there will be
-multiple loops. For m=2, n=1 the only viable set A is [[2]] and there is only one loop.
-</p>
-<p>
-The set of 'K' values seems rather sparse, but all systems 3x+k must have at least one loop
+so the set <span class="expr">[s¬1,&nbsp;s¬2,&nbsp;&hellip;]</span> represents an n&minus;cycle in <span class="expr">x&rarr;3x+K</span>.
+</p><p>
+  Clearly all systems of the form <span class="expr">x&rarr;3x+(2^m-3^n)</span> 
+  will have cycles, with 'n' odd and 'm' even values.
+</p><p>
+  
+  For all cases other than n&nbsp;=&nbsp;1, m&nbsp;=&nbsp;2 there will be
+  multiple loops as we can construct multiple A-lists for every (m,n) pair. For m=2, n=1 the only viable set A is [[2]] and there is only one loop.
+</p><p>
+The set of 'K' values seems rather sparse, but all systems 3x+k (k is odd) must have at least one loop
 (unless every seed diverges to infinity), so where do these come from?
 </p>
 <h3> Other values of k </h3>
 <p>
-If we start with the assumption that there is an s value, say s<sub>1</sub>, that has a common
-factor f with K, then we can define t<sub>1</sub>&nbsp;=&nbsp;s<sub>1</sub>&nbsp;&#x2215;&nbsp;f and
-k&nbsp;=&nbsp;K&nbsp;&#x2215;&nbsp;f.
+If we start with the assumption that there is an s value, say <span class="expr">s¬1</span>, that has a common
+factor with K, say 'f', then we can define
+</p><p>  
+  <pre class="code expr">t¬1=s¬1/f, k=K/f</pre>.
+</p><p>  
+    Then,
+</p><p>  
+    <pre class="code expr">s¬2=3*s¬1+K=3(f*t¬1)+(f*k)</pre>
+</p><p>  
+    Dividing through by 'f' gives
+</p><p>  
+    <pre class="code expr">t¬2=3*t¬1+k</pre>
+</p><p>  
+    So the set <span class="expr">[t¬1, t¬2, &hellip;] forms a cycle in 3x+k</span>.
+</p><p>  
+    How can we use this to identify the loops in k = 11? 
 
-Then, s<sub>2</sub>&nbsp;=&nbsp;3&sdot;s<sub>1</sub>&nbsp;+&nbsp;K = 3(f&sdot;t<sub>1</sub>)&nbsp;+&nbsp;(f&sdot;k),
-which is also a multiple of f, so, if s<sub>2</sub>&nbsp;=&nbsp;f&sdot;t<sub>2</sub> then
-t<sub>2</sub>&nbsp;=&nbsp;3&sdot;t<sub>1</sub>+k and the set [t<sub>1</sub>, t<sub>2</sub>, ...] forms
-a cycle in 3x+k.
+    I don't know of any solutions to <span class="expr">2^m-3^n=11</span>, so we need to search for a solution 
+    where <span class="expr">2^m-3^n=11*x</span> and then see if any of the s-values generated are also multiples
+    of x. Or we could take the more direct approach of calculating the orbits of values in <span class="expr">3x+11</span>
+    and see where the loops are, and then work backwards to find the s-values.
+    This second approach sounds easier.
+</p><p>  
+    Starting with 1, we immediately find the 2&minus;cycle [1,7],
+</p><p>  
+    <pre class="code expr">3*1+11=14,
+14/2=7,
+3*7+11=32,
+32/2^5=1</pre>
+</p><p>  
+    The corresponding A-list is A = [1,5], so m=6 and n=2, this gives
+</p><p>  
+    <pre class="code expr">K=2^6-3^2=55 (5*11)
+s¬1=3^1+2^1=5
+s¬2=3^1+2^5=35</pre>
+
+</p><p>
+    So the loop [1,7] in 3x+11 corresponds to [5,35] in 3x+55.
 </p>
 
-<p>
-How can we use this to identify the loops in k = 11? We could look for K values that have 11 as a factor, then search the corresponding
-s values looking for one that has K&nbsp;&#x2215;&nbsp;11 as a factor, or we could construct the tree
-for 3x+11 and see where the loops are.
-</p>
-<p>
-The second approach sounds easier. Starting with 1, we immediately find the 2&minus;cycle [1,7],
-as 3&sdot;1&nbsp;+&nbsp;11 = 14 = 7&sdot;2 and
-3&sdot;7&nbsp;+&nbsp;11 = 32 = 1&sdot;32. Here A = [1,5], so m=6 and n=2, giving
-K = 2<sup>6</sup>&minus;3<sup>2</sup> = 55 = 5&sdot;11.
-</p>
-<p>
-    <div class="code in2 w6">
-        <p class="code">
-            s<sub>1</sub> = 3<sup>1</sup> + 2<sup>1</sup> = 5 <br/>
-            s<sub>2</sub> = 3<sup>1</sup> + 2<sup>5</sup> = 35
-        </p>
-    </div>
-<p>
-So the loop [1,7] in 3x+11 corresponds to [5,35] in 3x+55.
-</p>
 <p> There is also a 1&minus;cycle, [11] in 3x+11, which in hindsight is rather obvious,
-as (3k+k)&nbsp;&#x2215;&nbsp;2<sup>2</sup> always equals k.
-This loop can be derived using multiplication from the 1&minus;cycle in 3x+1. If
-[s<sub>1</sub>,&nbsp;s<sub>2</sub>,&nbsp;...,&nbsp;s<sub>n</sub>] forms a n&minus;cycle in
-x&#x2192;3x+K, then
-[s<sub>1</sub>&sdot;f,&nbsp;s<sub>2</sub>&sdot;f,&nbsp;...,&nbsp;s<sub>n</sub>&sdot;f] forms a n&minus;cycle in
-x&#x2192;3x+K&sdot;f.
+as <span class="expr">(3k+k)/2^2</span> always equals k.
+This loop can be derived using multiplication from the [1, 4, 2, 1] cycle in 3x+1. Generally, if
+<span class="expr">[s¬1,&nbsp;s¬2,&nbsp;&hellip;,&nbsp;s¬n]</span> defines a cycle in
+<span class="expr">x&rarr;3x+K</span>, then
+<span class="expr">[s¬1*f,&nbsp;s¬2*f,&nbsp;&hellip;,&nbsp;s¬n*f]</span> will form a cycle in
+<span class="expr">x&#x2192;3x+K*f</span>.
+</p><p>
+  Interestingly, in 3x+11 there is a third loop [13, 25, 43, 35, 29, 49, 79, 31].
+  Here A = [1, 1, 2, 2, 1, 1, 3, 3], so <span class="expr">m=14, n=8, giving
+  K=2^[14]-3^8=9823=893*11</span>. If there are any other cycles
+  in 3x+11 they will involve very big numbers, I've searched up to 10 million.
 </p>
+<h3> Multiples of k </h3>
 <p>
-Interestingly, in 3x+11 there is a third loop [13, 25, 43, 35, 29, 49, 79, 31].
-Here A = [1, 1, 2, 2, 1, 1, 3, 3], so m=14, n=8 and
-K = 2<sup>14</sup>&minus;3<sup>8</sup> = 9823 = 893&sdot;11. If there are any other cycles
-in 3x+11 they will involve very big numbers, I've searched up to 10 million.
+
+    Generally to find cycles in 3x+k, when we can't express k in the form <span class="expr">k=2^m-3^n</span>, we need to find a value of
+    <span class="expr">2^m-3^n</span> that is a multiple of k. To do this we separate out <span class="expr">2^m and 2^n</span> and look at
+    the remainders when we divide them by k. Below we show the results for <span class="expr">k=11</span>:
+    
+</p><p>
+    <pre class="code" id="result1"> &nbsp; </pre>
+</p><p>
+    You can see the results for other k values by entering the value into the box and clicking the "Show Remainders" button.
+</p><p>
+    <input id="mod_table" value="11"> <button onClick="MakeRemainderTable(mod_table, result1, result2);">Show Remainders</button>
+</p><p>
+
+    If <span class="expr">2^m mod k=3^n mod k then 2^m-3^n</span> will be a multiple of k. The following table shows the
+    results for the number you chose above.
+    
+</p><p id="result2">
+</p><p>
+    
+    The squares coloured in white are the pairs where this is true. If you chose a prime number
+    then the pattern in the table will repeat indefinitely, so for 11, as well as the 5 (m,n) pairs (0,0), (2,4), (4,3), (6,2) and (8,1)
+    there are an infinite number of other combinations achieved by adding (10j,&nbsp;5k), j and k are positive integers, to each of these.
+    For instance adding (0,5), (10,0), (10,5), (20,0), (20,5) and (20,10) to (2,4) gives us these examples.        
+         
+</p><p>
+<pre class="code expr">2^2-3^4=&minus;77=11*&minus;7
+2^2-3^[4+5]=&minus;19679=11*&minus;1789
+2^[2+10]-3^4=4015=11*365
+2^[2+10]-3^[4+5]=&minus;15587=11*&minus;1417
+2^[2+20]-3^4=4194223=11*381293
+2^[2+20]-3^[4+5]=4174621=11*379511
+2^[2+20]-3^[4+10]=&minus;588665=11*&minus;53515</pre>
+</p><p>
+
+If you chose a non-prime k, say 15, then the sequence of remainders may start with a few non repeating terms
+before settling down into the cycle. In the table these numbers will be shown with a darker background.
 </p>
-<h3> Factors of k </h3>
-<p>
-Generally to find cycles in 3x+11 we need to find m and n values where
-2<sup>m</sup>&minus;3<sup>n</sup> is a multiple of 11. If we look at 2<sup>m</sup>
-modulo 11 we get the sequence [2, 4, 8, 5, 10, 9, 7, 3, 6, 1] and for 3<sup>n</sup>
-[3, 9, 5, 4, 1]. To find a solution we need to match pairs of numbers, one from each
-set, m being the position in the first set and n that in the second. The 3 in position
-8 in the first set matches the three in position 1 in the second, giving (m,n) = (8,1).
-The full list is
-</p>
-    <div class="code in2 w6">
-        <p class="code">
-            2<sup>8</sup>-3<sup>1</sup> = 256-3 = 253 = 11&sdot;23
-        <br>
-            2<sup>6</sup>-3<sup>2</sup> = 64-9 = 55 = 11&sdot;5
-        <br>
-            2<sup>4</sup>-3<sup>3</sup> = 16-27 = -11 = 11&sdot;(-1)
-        <br>
-            2<sup>2</sup>-3<sup>4</sup> = 4-81 = -77 = 11&sdot;(-7)
-        <br>
-            2<sup>10</sup>-3<sup>5</sup> = 1024-243 = 781 = 11&sdot;71
-        </p>
-    </div>
-<p>
-Two of these, 2<sup>4</sup>-3<sup>3</sup> and 2<sup>2</sup>-3<sup>4</sup> are negative, but as the
-remainders modulo 11 cycle for every 10 'm' we can just add 10 to the 'm' values giving
-</p>
-    <div class="code in2 w6">
-        <p class="code">
-            2<sup>10+4</sup>-3<sup>3</sup> = 16384&minus;27 = 16357 = 11&sdot;1487
-            <br/>2<sup>10+2</sup>-3<sup>4</sup> = 4096&minus;81 = 4015 = 11&sdot;365
-        </p>
-    </div>
-<p>
-
-    The remainders for powers of 3 also form a 5 cycle, so the 5 examples we have found;
-    (m,n)&nbsp;&#x2208;&nbsp;[(8,1), (6,2), (14,3), (12,4), (10,5)]. We can generate the
-    full set by adding the increments (10i,5j) to any of the values in this basic set (i and j are integers &ge;0).
-
-</p><p>
-
-    Generally, for all primes, p, if K(m,n) is a multiple of p then so is
-    K(m+i(p&minus;1),n+j(p&minus;1)), where i and j can be any positive integer. This is because
-    2<sup>i(p&minus;1)</sup>&nbsp;mod&nbsp;p = 3<sup>j(p&minus;1)</sup>&nbsp;mod&nbsp;p = 1.
-    As
-    K(0,0) = 0, K(i(p&minus;1),j(p&minus;1)) is also a solution, so for every prime 'p' there is
-    an infinite set of K values with p as a factor.
-
-</p><p>
-    In the example for k=11, the generic equation for p misses out half the solutions
-    as 3<sup>5j</sup>%11 = 1 giving the set of solutions
-    K = 2<sup>m+10i</sup>&minus;3<sup>n+5j</sup>,
-    where (m,n)&nbsp;&#x2208;&nbsp;[(8,1), (6,2), (14,3), (12,4), (10,5)] and i,j are integers.</p>
-
-
-<h3> Factors of k when k isn't prime</h3>
-
-<p>
-This factor analysis only applies to primes and our equations only work when k = 6i+1 or 6i+5.
-The first non-prime of this form is 25, the second 35. The remainder sets are
-
-    <div class="code in2 w6">
-        <p class="code">
-            2<sup>i</sup> mod 25 = [1, 2, 4, 8, 16, 7, 14, 3, 6, 12, 24, 23, 21, 17, 9, 18, 11, 22, 19, 13]
-        <br>
-            3<sup>i</sup> mod 25 = [1, 3, 9, 2, 6, 18, 4, 12, 11, 8, 24, 22, 16, 23, 19, 7, 21, 13, 14, 17]
-        <br>
-            2<sup>i</sup> mod 35 = [1, 2, 4, 8, 16, 32, 29, 23, 11, 22, 9, 18]
-        <br>
-            3<sup>i</sup> mod 35 = [1, 3, 9, 27, 11, 33, 29, 17, 16, 13, 4, 12]
-        </p>
-    </div>
-
-<p>
-    The important thing to note here is that although it is not so easy to predict how big the
-    remainder sets are they still form a loop that includes 1, so there will always be an infinite
-    set of answers.
-</p><p>
-    There are at least 8 cycles in 3x+25, with seeds of [5,7,17,25,95,115,935,1735].
-    Six of these are multiples of cycles in 3x+5.
-
-    The loop based on 7 has 8 members, [7, 23, 47, 83, 137, 109, 11, 29],
-    A&nbsp;=&nbsp;[1, 1, 1, 1, 2, 5, 1, 4], m&nbsp;=&nbsp;16, n&nbsp;=&nbsp;8, K&nbsp;=&nbsp;58975 = 25&sdot;2359.
-</p><p>
-    There are at least 9 cycles in 3x+35, based on [7, 13, 17, 25, 35, 133, 161, 1309, 2429].
-    Of these, [7, 35, 133, 161, 1309] are multiples of cycles in 3x+5 and [25, 35] are multiples
-    of cycles in 3x+7. Therefore, 17 is the only novel loop. This is a 4&minus;cycle where A = [1,2,1,4],
-    so K = 2<sup>8</sup>&minus;3<sup>4</sup> = 175 (5&sdot;35).
-</p><p>
-    121 is the first composite k value where non of the factors are multiples of a K value.
-    This has 5 loops based on [5, 11, 19, 121, 143]. The loop sizes are [18, 2, 46, 1, 8] so they
-    all come from different K's.
-</p><p>
-    For the 19-cycle:
-    <div class="code in2 w7">
-        <p class="code">
-            A = [1,2,2,1,1,1,1,3,1,5,2,1,1,2,3,1,1,1,2,1,2,1,2,3,1,1,2,3,2,2,1,2,2,2,3,3,3,1,2,1,2,5,1,1,1,6]
-         <br>
-            K = 2<sup>88</sup> - 3<sup>46</sup> = 309476146883225416223685127 = 121 &times; 2557654106472937324162687
-        </p>
-    </div>
-
 
 <h3> Systematic Search </h3>
 
@@ -456,32 +439,32 @@ seed values up to 100 million. You can see the results
 <a href="diverge.html">here</a>.
 
 In this search all the loop seeds were relatively small compared to k, the largest ratio
-being 243.4 for s&nbsp;=&nbsp;7055 and k&nbsp;=&nbsp;29. The sequence of record holders is...
+being 243.4 for s&nbsp;=&nbsp;7055 and k&nbsp;=&nbsp;29. The sequence of record holders is&hellip;
 
 </p><p>
 
-    <table id="indent" border="1">
-    <tr>
-      <td class="heading"> System </td>
-      <td class="heading"> Seed </td>
-      <td class="heading"> Size </td>
-      <td class="heading"> Seed/K </td>
-    </tr>
+    <table>
+        <tr>
+          <td class="heading"> System </td>
+          <td class="heading"> Seed </td>
+          <td class="heading"> Size </td>
+          <td class="heading"> Seed/K </td>
+        </tr>
 
-    <tr>
-      <td class="code"> 3x+1 </td> <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 1.0 </td>
-    </tr>
+        <tr>
+          <td class="code"> 3x+1 </td> <td class="number"> 1 </td> <td class="number"> 1 </td> <td class="number"> 1.0 </td>
+        </tr>
 
-    <tr>
-      <td class="code"> 3x+5 </td> <td class="number"> 347 </td> <td class="number"> 17 </td> <td class="number"> 69.4 </td>
-    </tr>
+        <tr>
+          <td class="code"> 3x+5 </td> <td class="number"> 347 </td> <td class="number"> 17 </td> <td class="number"> 69.4 </td>
+        </tr>
 
-    <tr>
-      <td class="code"> 3x+29 </td> <td class="number"> 7055 </td> <td class="number">41</td> <td class="number">243.3</td>
-    </tr>
+        <tr>
+          <td class="code"> 3x+29 </td> <td class="number"> 7055 </td> <td class="number">41</td> <td class="number">243.3</td>
+        </tr>
 
+    </table>
 </p>
-</table>
 
 <p>
 This would be an interesting search to continue, but it is rather expensive in computer time.
@@ -491,46 +474,55 @@ loops become scarcer as the range of numbers searched gets higher.
 
 </div>
 
+
 <!-- Other pages -->
 
-    <div class="in2 box w8 float">
-
-<h2><a name="others">Other Pages </a></h2>
-
-<p>
-    <a href="a_lists.html"> A-Lists</a>: Explores the lists of A-Values described above, the
-    loops they generate and the constraints they place on the locations of additional loops in 3x+1.
-
-</p><p>
-
-    <a href="t3a47.html">3x+47</a>: 47 is 128&minus;81, so it should have some
-    4&minus;cycles. It also has a 7 and 16 cycle. Click the link for an illustration.
-
-</p><p>
-
-    <a href="int_log32.html">
-    Integer approximations to log(3)&nbsp;&#x2215;&nbsp;log(2)</a>:
-    The best candidates for finding loops are when m&nbsp;&#x2215;&nbsp;n is close to log(3)&nbsp;&#x2215;&nbsp;log(2).
-
-</p><p>
-
-    <a href="constraints.html">Constraints on loop size</a>: More ramblings on loop size.
-
-</p>
-
-</div>
-
+<div class="float w10 box in2" style="overflow: auto;">
+    
+<h2><a name="others">Other 3x+1 Pages</a></h2>
+    <p>
+    
+    <table cellpadding="4" cellspacing="0" width="500">
+      <tr>
+        <td><a href="a_lists.html"><img border="0" src="images/icon.gif" width="97" height="97"></a></td>
+        <td class="linkP"><strong>A-Lists</strong>: Explores the lists of A-Values described above, the
+                loops they generate and the constraints they place on the locations of additional loops in 3x+1.</td>
+      </tr>
+      
+      
+      <tr>
+        <td><a href="t3a47.html"><img border="0" src="images/icon.gif" width="97" height="97"></a></td>
+        <td class="linkP"><strong>3x+47</strong>: 47 is <span class="expr">128-81 (2^7-3^4)</span>, so it should have some
+                4&minus;cycles. It also has a 7 cycle and 16 cycle. Click the image for an illustration.</td>
+      </tr>
+      
+      
+      <tr>
+        <td><a href="int_log32.html"><img border="0" src="images/icon.gif" width="97" height="97"></a></td>
+        <td class="linkP"><strong class="expr">log(3)/log(2)</strong>: Looking for integer approximations to this expression. 
+                The best candidates for finding loops are when <span class="expr">m/n is close to log(3)/log(2)</span>.</td>
+      </tr>
+      
+      <tr>
+        <td><a href="constraints.html"><img border="0" src="images/icon.gif" width="97" height="97"></a></td>
+        <td class="linkP"><strong>Constraints on loop size</strong>: More ramblings on loop size.</td>
+      </tr>
+      
+    </table>
+    <p>
+    
 <!-- Generic links -->
-
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
-
-      </div>
+    
+    <h2>Elsewhere on this site</h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 <script type="text/javascript">

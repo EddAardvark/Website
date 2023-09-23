@@ -1,0 +1,986 @@
+<head>
+<meta charset="UTF-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Collatz 3x+1">
+
+<TITLE> 3x+1 (Generic Values) </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/svg_helpers.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/vluint.js"> </script>
+<script src="../js_library/primes.js"> </script>
+<script src="../js_library/graphics.js"> </script>
+<script src="../js_library/tables.js"> </script>
+<script src="../js_library/big_powers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+
+<script src="alists.js"> </script>
+<script src="alists_graph.js"> </script>
+<script src="alist_values.js"> </script>
+<script src="vli_generic_value.js"> </script>
+<script src="gv_searcher.js"> </script>
+<script src="list_maker.js"> </script>
+
+
+<style>stab
+
+<style>
+
+TEXT.svgtext { font-family: Courier;
+               font-size: small;
+               color: green;
+             }
+
+TABLE     { border-collapse: collapse; }
+
+TD  {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
+    }
+TH  {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
+        background-color: SandyBrown;
+    }
+    
+
+P.tab { 
+           text-align:  left;
+           margin:      3pt;
+           padding:     0pt;
+       }
+         
+P.list
+{
+    background-color: #ffffff;
+    font-family:      Courier;
+    font-size:        small;
+    padding:          6pt;
+    border:           solid 1px black;
+    display:          inline-block;
+    line-height:      1.6;
+}
+
+TD.hi { background-color: yellow; }
+TD.good { background-color: palegreen; }
+TD.bad { background-color: hotpink; }
+TD.sm { font-size: 75%; text-align: right; }
+TH.lft { text-align: left; }
+
+</style>
+
+<script>
+
+var counter = 0;
+var animator;
+var animated_searcher;
+var anim_mode = 0;
+
+Test=function ()
+{
+}
+
+//-------------------------------------------------------------
+OnStart = function ()
+{
+    AList.Initialise ();
+    Test ();
+    
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+    
+    all = document.getElementsByClassName("tabl");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        JWSimpleTable.ExpandElement (all[i]);
+    }
+    
+    all = document.getElementsByClassName("stab");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        JWStyledTable.ExpandElement (all[i]);
+    }
+    
+    insert_val.value = 1;
+    append_val.value = 1;
+    one_member.value = 5;
+    MakeOneMemberList ();
+    alist_vals.value = "1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 3, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 4, 2, 2, 4";
+    list_depth.value = 12;
+    list_display.value = 0;
+    list_mode.value = 1;
+    
+    ResetValue ();
+    StartNew();
+    AppendList();
+    ShowLists ();
+    
+    animator = new Animator (AnimateSearch, 50);
+    animated_searcher = new GVSearcher ();
+    animated_searcher.show_all = false;
+    animated_searcher.StartWide (120, false);
+    animated_searcher.counter = 0;
+}
+RunSearch = function ()
+{
+    anim_mode = 0;
+    animator.Start ();
+}
+StopSearch = function ()
+{
+    animator.Stop ();
+}
+UnwindSearch = function ()
+{
+    anim_mode = 1;
+    animator.Start ();
+}
+AnimateSearch = function ()
+{ 
+    ++ animated_searcher.counter;
+    
+    var mode_text =(anim_mode == 0) ? "searching" : "unwinding";
+    
+    if (anim_mode == 0)
+    {
+        animated_searcher.ContinueWide ();
+    }
+    else if (anim_mode == 1)
+    {
+        animated_searcher.UnwindWide ();
+        if (animated_searcher.todo.length == 0)
+        {
+            StopSearch ();
+            mode_text = "Stopped";
+        }
+    }
+    
+    var tabl = animated_searcher.MakeRecordsTable ();
+
+    search_results.innerHTML = tabl.ToHTML ();
+    
+    var stats = "Count = " + animated_searcher.counter;
+
+    stats += ", Mode = " + mode_text;
+    stats += ", Todo: " + animated_searcher.todo.length;
+    stats += ", Current = " + animated_searcher.todo[0];
+    stats += ", Longest = " + animated_searcher.longest.toString ();
+    stats += ", Biggest = " + animated_searcher.biggest.toString ();
+    stats += ", Links = " + animated_searcher.links.length;    
+
+    search_stats.innerHTML = stats;    
+}
+DrawValuesTable = function ()
+{
+    var offset = parseInt (k_offset.value);
+    AListValues.CreateOffsetTable (offset, k_table);
+}
+
+//-------------------------------------------------------------
+ExponentialFormat = function (x)
+{
+    // 'x' must be a big unsigned integer
+
+    var exp = x.MantissaExponent ();
+
+    return exp[0].toFixed(6) + "&times;10<span class=\"superscript\">" + exp[1] + "</span>";
+}   
+MakeOneMemberList = function ()
+{
+    var n = parseInt (one_member.value);
+    
+    if (isNaN (n)) n = 1;
+    if (n < 1) n = 1;
+    if (n > 48) n = 48;
+    
+    one_member.value = n;
+    
+    var gv = VLGenericValue.MakeAtom(n);
+   
+    one_member_result.innerHTML = gv.toString ();    
+}
+
+var INSERT = 0;
+var APPEND = 1;
+var APLIST = 2;
+
+var build_text = [];
+var insert_gv = null;
+var append_gv = null;
+
+ResetValue = function ()
+{
+    var v = Misc.ParseIntegers ([insert_val.value]);
+
+    build_text[INSERT] = "{h}A&hyphen;List |{h}Generic value |{h}Sub|{h}Expression |{h}B&hyphen;List |{h} Limit\n";
+    insert_gv = VLGenericValue.MakeAtom (v[0])
+    
+    AddRow (INSERT, insert_gv, prefix_text);
+}
+InsertValue = function ()
+{
+    var v = Misc.ParseIntegers ([insert_val.value]);
+    
+    insert_gv = insert_gv.Prefix (v[0]);
+    
+    AddRow (INSERT, insert_gv, prefix_text);
+}
+
+AddRow = function (tidx, gv, element)
+{
+    if (gv == null)
+    {
+        build_text[tidx] += "{h}failed | | | | |\n";     
+    }
+    else
+    {
+        var last = gv.GetLimit ();
+        var alist = gv.GetAList ();
+        var blist = gv.GetBList();
+        
+        var astr = alist.toString ().replaceAll (",",", ");
+        var bstr = blist.toString ().replaceAll (",",", ");
+        var sub = (typeof (gv.k) == "number") ? gv.k.toString() : "";
+        
+        build_text[tidx] += Misc.Format ("{h}{lft}{0} | ({1}) | {2} | {3} | {4} | ({5})\n", astr, gv.toArray (), sub, gv, bstr, last.toArray());     
+    }
+    var tabl = JWStyledTable.FromText (build_text[tidx]);
+    
+    element.innerHTML = tabl.ToHTML (); 
+}
+
+StartNew = function ()
+{
+    var v = Misc.ParseIntegers ([append_val.value]);
+    
+    build_text[APPEND] = "{h}A&hyphen;List |{h}Generic value |{h}Sub|{h}Expression |{h}B&hyphen;List |{h} Limit\n";
+
+    append_gv = VLGenericValue.MakeAtom (v[0]);
+    
+    AddRow (APPEND, append_gv, postfix_text);  
+}
+
+AppendValue = function ()
+{
+    var v = Misc.ParseIntegers ([append_val.value]);
+    
+    append_gv = append_gv.Postfix (v[0]);
+
+    AddRow (APPEND, append_gv, postfix_text);  
+}
+
+AppendList = function ()
+{
+    var list_txt = alist_vals.value.split(',');
+    var alist = Misc.ParseIntegers (list_txt);    
+    
+    build_text[APLIST] = "{h}A&hyphen;List |{h}Generic value |{h}Sub|{h}Expression |{h}B&hyphen;List |{h} Limit\n";"{h}A&hyphen;List |{h}Generic value |{h}Expression |{h}B&hyphen;List |{h} Limit\n";
+
+    if (alist.length > 0)
+    {
+        var gv = VLGenericValue.MakeAtom (alist[0]);
+        
+        AddRow (APLIST, gv, buildlist_text);
+        
+        for (var idx = 1 ; idx < alist.length && gv != null ; ++idx)
+        {
+            gv = gv.Postfix (alist[idx]);
+            AddRow (APLIST, gv, buildlist_text);
+        }
+    }
+}
+
+RepeatAList = function ()
+{
+    var rep = Misc.ParseIntegers (repeat_val.value);
+    var list_txt = alist_vals.value.split(',');
+    var alist = Misc.ParseIntegers (list_txt);   
+    
+    build_text[APLIST] = "{h}A&hyphen;List |{h}Generic value |{h}Sub|{h}Expression |{h}B&hyphen;List |{h} Limit\n";"{h}A&hyphen;List |{h}Generic value |{h}Expression |{h}B&hyphen;List |{h} Limit\n";
+    
+    if (rep.length > 0 && rep [0] > 1 && alist.length > 0)
+    {
+        var gv = null;
+        
+        for (var r = 0 ; r < rep[0] ; ++r)
+        {
+            var k = [];
+            
+            for (var a in alist)
+            {
+                if (! gv)
+                {
+                    gv = VLGenericValue.MakeAtom (alist[a]);
+                    k[a] = "*";
+                }
+                else
+                {
+                    gv = gv.Postfix (alist[a]);
+                    if (gv == null) break;
+                    k[a] = (typeof (gv.k) == "number") ? gv.k.toString() : "!";
+                }
+            }
+            var astr = "[" + alist.toString() + "]^" + (r+1);
+            AddRepeatRow (APLIST, astr, gv, buildlist_text, k);
+        }
+    }
+}
+AddRepeatRow = function (tidx, astr, gv, element, k)
+{
+    if (gv == null)
+    {
+        build_text[tidx] += "{h}failed | | | | |\n";  
+    }
+    else
+    {
+        var last = gv.GetLimit ();
+        var alist = gv.GetAList ();
+        var blist = gv.GetBList();
+        
+        var bstr = blist.toString ().replaceAll (",",", ");
+        
+        build_text[tidx] += Misc.Format ("{h}{lft}{0} | ({1}) | {2} | {3} | {4} | ({5})\n", astr, gv.toArray (), k, gv, bstr, last.toArray());     
+    }
+    var tabl = JWStyledTable.FromText (build_text[tidx]);
+    
+    element.innerHTML = tabl.ToHTML (); 
+}
+
+ShowLists = function ()
+{
+    var depth = parseInt (list_depth.value);
+    var mode = parseInt (list_mode.value);
+    var display = parseInt (list_display.value);
+    var searcher = new GVSearcher ();
+    
+    if (mode == 1)
+    {
+        searcher.StartSystematic (depth, display==0);    
+        searcher.ContinueSystematic ();
+        
+        var tabl = searcher.MakeTable ();
+    
+        show_lists.innerHTML = tabl.ToHTML ();
+    }
+    else if (mode == 2)
+    {
+        searcher.StartWide (depth, display==0);    
+        searcher.ContinueWide ();
+        
+        var tabl = searcher.MakeTable ();
+    
+        show_lists.innerHTML = tabl.ToHTML ();
+    }
+ }   
+ 
+ 
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3n.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+             Generic Values
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+<h2> Contents </h2>
+
+    <ul>
+      <li><a href="#intro"> Introduction</a></li>
+      <li><a href="#atoms"> Atoms</a></li>
+      <li><a href="#rep"> Representation</a></li>
+      <li><a href="#prefix"> Prefix an atom</a></li>
+      <li><a href="#append"> Append an atom</a></li>
+      <li><a href="#pairs"> Pairs</a></li>
+      <li><a href="#divergence"> Divergence</a></li>
+      
+    </ul>
+</div>
+
+
+<!-- Introduction -->
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+    <h2><a name="intro">Introduction</a></h2>
+<p>    
+    
+    We have seen elsewhere on this site that if we replace the standard 3x+1 iteration with one where 
+    <span class="expr">x{RA}(3*x+1)/2^a</span> we can generate sequences of odd numbers separated by 'a' even numbers. This exactly matches
+    the original sequence, it just collapses the sequence of even numbers into the single value 'a'. For instance if 
+    <span class="expr">a=4</span> we might get the mapping <span class="expr">325{RA}61</span>, which expands to the sequence
+    <span class="expr">325{RA}976{RA}488{RA}244{RA}122{RA}61</span>.
+    </p><p>   
+    Elsewhere on this site I have defined A&hyphen;Lists as the set of 'a' values that arise when a starting value 'b' is iterated using the 3x+1
+    algorithm. Each 'b' value generates a unique A&hyphen;List, which if the conjecture is 2, ends with an infinite sequence of '2's. Usually I chop these
+    off, assuming that the iteration ends when the first '1' is encountered.
+    </p><p>   
+    If though, if we start with a finite A&hyphen;List, we can derive an infinite set of 'b' values that will generate this list. These 'b' values can be 
+    encapsulated in a simple formula which I will call a "generic value". On the rest of this page we will start with the generic values for single member
+     A&hyphen;Lists, which I shall call "atoms" and build up from there to provide an algorithm for the generic value corresponding to any  A&hyphen;List.
+    </p>
+
+    <!-- ------------------------------------------------------ Atoms ---------------------------------------------------- -->
+    
+    <h2><a name="atoms"/>Atoms</h2>
+    
+    <p>
+    In the introduction we saw that the number 325 is an example of a 'b' value that generates the A&hyphen;List [4]. This is not the smallest such value,
+    if you experiment you will see that this is '5'; <span class="expr">5{RA}16{RA}8{RA}4{RA}2{RA}1</span>.  
+    
+    Considering the 1 member A&hyphen;Lists, [1], [2], [3], etc. Ignoring the even steps [1] maps x to         
+        <span class="expr">(3x+1)/2</span>. We have the additional constraint that the result must be odd (otherwise we could continue dividing
+        by 2). If we try some candidate expressions (2k+1), (4k+1), (4k+3), where 'k' is an integer, we see
+
+    </p><p>
+    
+        <pre class="expr code">2k+1: (3*(2k+1)+1)/2=(6k+4)/2=3k+2 (can be odd or even)
+4k+1: (3*(4k+1)+1)/2=(12k+4)/2=6k+2 (always even)
+4k+3: (3*(4k+3)+1)/2=(12k+10)/2=6k+5 (always odd)</pre>
+
+    </p><p>
+    
+        We see that 4k+3 meets the requirements. This covers half of the odd numbers, the
+        remainder are of the form 4k+1, which we have seen can generate odd or even results. We can partition 4k+1 into two more sets by replacing
+        the original 'k' with either 2k or 2k+1, and when we expand we get two possibilities:
+        
+    </p><p>
+    
+        <pre class="expr code">k{RA}2k, 4k+1{RA}8k+1: (3*(8k+1)+1)/4=(24+4)/4=6k+1 (always odd)
+k{RA}2k+1, 4k+1{RA}8k+5: (3*(4k+5)+1)/4=(24+16)/4=6k+4 (can be odd or even)</pre>
+
+    </p><p>
+    
+        Where 8k+1 corresponds to [2], which covers half of the remaining numbers. This leaves one quarter, still unassigned, in the 8k+5 bucket. 
+        Substituting 2k and 2k+1 into 8K+5 gives us two possibilities for [3]. Continuing this process we can generate the table:
+
+    </p><p>
+
+        <span class="stab expr">
+          {H}A&hyphen;List  |{h}Start |{h}End |{h}GV¬[start] |{h}GV¬[end] |{h}B&hyphen;List
+          {H}{lft}[1] | 4k+3     | 6k+5 | (0,2,3)   | (1,1,5) | [3, 5] 
+          {H}{lft}[2] | 8k+1     | 6k+1 | (0,3,1)   | (1,1,1) | [2, 1] 
+          {H}{lft}[3] | 16k+13   | 6k+5 | (0,4,13)  | (1,1,5) | [13, 5]
+          {H}{lft}[4] | 32k+5    | 6k+1 | (0,5,5)   | (1,1,1) | [5, 1] 
+          {H}{lft}[5] | 64k+53   | 6k+5 | (0,6,53)  | (1,1,5) | [53, 5]
+          {H}{lft}[6] | 128k+21  | 6k+1 | (0,7,21)  | (1,1,1) | [21, 1]
+          {H}{lft}[7] | 256k+213 | 6k+5 | (0,8,213) | (1,1,5) | [213, 5]
+          {H}{lft}&hellip;|{5}
+          {H}{lft}[Even] | 2^[(A+1)]*k+(2^A-1)/3   | 6k+1 | (0,A+1,3) | (1,1,1) | [(2^A-1)/3, 1]
+          {H}{lft}[Odd]  | 2^[(A+1)]*k+(5*2^A-1)/3 | 6k+5 | (0,A+1,3) | (1,1,5) | [(5*2^A-1)/3, 5]
+        </span>
+   </p><p>
+
+      The coefficient of 'k' is <span class="expr">2^[(a+1)]</span> and for the 'b' values, 
+      <span class="expr">b(a+2)=4*b(a)+1, b(1)=3, b(2)=1</span>. You can see the values for larger 'a' using this widget: Enter a value and click "go".
+   </p><p>
+    Value: <input type="text" id="one_member" size="6">
+       <button onclick="MakeOneMemberList();"> Go </button>
+       Result = <span id="one_member_result"> ___ </span>
+    
+    </p><p>
+
+    <!-- ------------------------------------------------------ Representation ---------------------------------------------------- -->
+    
+    <h2><a name="rep"/>Representation </h2>
+    
+    <p>
+    If we iterate one of the expressions above, say [3], we get the sequence
+    
+    </p><p>
+        <pre class="expr code">2^4*k+13{RA}3*2^4+40{RA}3*2^3+20{RA}3*2^2+10{RA}3*2^1+5}</pre>    
+    
+    </p><p>
+    
+    All these numbers are of the form <span class="expr">3^n*2^m+b</span>, which I shall represent by the ordered triple (n,m,b).
+    Now the above sequence becomes 
+    
+    </p><p>
+        <pre class="expr code">(0,4,13){RA}(1,4,40){RA}(1,3,20){RA}(1,2,10){RA}(1,1,5)</pre>   
+    </p><p>
+       The rules for iterating a particular generic value (GV) are:
+       
+    </p><p>
+        <pre class="expr code">'b' is odd:  (n, m, b){RA}(n+1, m, 3b+1)
+'b' is even: (n,m,b){RA}(n, m-1, b/2)</pre>   
+    </p>
+
+</p><p>
+    We stop the iteration when the 'm' value becomes 1, so <span class="expr">(0,4,13){RA}(1,4,40){RA}(1,3,20){RA}(1,2,10){RA}(1,1,5)</span>,
+    effectively mapping 16k+13 to 6k+5.
+    In this example, when k ranges from 0 to 5 we get:
+</p><p>
+    <pre class="code">k = 0: S(13)    = [13,  40, 20,  10,  5] &equiv; [13, 5]
+k = 1: S(13+16) = [29,  88, 44,  22, 11] &equiv; [29, 11]
+k = 2: S(13+32) = [45, 136, 68,  34, 17] &equiv; [45, 17]
+k = 3: S(13+48) = [61, 184, 92,  46, 23] &equiv; [61, 23]
+k = 4: S(13+64) = [77, 232, 116, 58, 29] &equiv; [77, 29]
+k = 5: S(13+80) = [93, 280, 140, 70, 35] &equiv; [93, 35]
+&vellip;</pre>
+    
+</p><p>
+    (0,4,13) generates all the A&hyphen;Lists that start with [3], but after that they all go their separate ways:
+    
+</p><p>
+    <pre class="code">k = 0: S(13)  = [3, 4]
+k = 1: S(39)  = [3, 1, 2, 3, 4]
+k = 2: S(45)  = [3, 2, 3, 4]
+k = 3: S(61)  = [3, 1, 1, 5, 4]
+k = 4: S(77)  = [3, 3, 1, 2, 3, 4]
+k = 5: S(93)  = [3, 1, 5, 4]
+k = 6: S(109) = [3, 2, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 3, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 4, 2, 2, 4, 3, 1, 1, 5, 4]
+k = 7: S(125) = [3, 1, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 1, 1, 2, 3, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 4, 2, 2, 4, 3, 1, 1, 5, 4]
+k = 8: S(141) = [3, 5, 4]
+&vellip;</pre>
+</p><p>
+
+<!-- ------------------------------------------------------ Prefix ---------------------------------------------------- -->
+
+<h2><a name="prefix"/>Prefix an atom</h2>
+<p>
+    If we can find a way of prefixing atoms to an existing list we can build up lists of arbitrary length.
+    For instance <span class="expr">[a¬1]+[a¬2,a¬3]{RA}[a¬1,a¬2,a¬3]</span>. We want to do this using the generic values.
+    The iteration maps the b value in an atom like [n] to <span class="expr">(3b+1)/2^n</span>. To join this to an existing list 
+    <span class="expr">(0,a¬2, b¬2)</span> we need to find 'x' values such that
+</p><p>
+    <pre class="code expr">(3b¬1+1)/2^[n] &isin; { 2^[a2]*x+b¬2 }, x &isin; { 0-&infin; }
+{IMP}(3b¬1+1) &isin; { 2^[(n+a2)]*x+b¬2*2^[n] }
+{IMP}3b¬1 &isin; { 2^[(n+a2)]*x+b¬2*2^[n]+1 }
+{IMP}b¬1 &isin; { (2^[(n+a2)]*x+b¬2*2^[n]+1)/3 }
+{IMP}b¬1 = f(x¬0)/3 + 2^[(n+a2)]*k</pre>
+</p><p>    
+    
+    For <span class="expr">b¬1</span> to be an integer we need to find x such that <span class="expr">2^[(n+a2)]*x+b¬2*2^[n]+1</span>
+    is divisible by 3. The resulting GV is <span class="expr">(0, n+a¬2, f(x¬0)/3)</span>.
+    
+    For example, if we want to create the generic value for [2,3] we first need the GV for [3], which is (0,4,13). The above becomes
+    
+    
+    <pre class="code expr">n=2, a¬2=4, b¬2=13 and b¬1 is our unknown
+(3b¬1+1)/2^[n] &isin; { 2^[a2]*x+b¬2 }
+{EQV}(3b¬1+1)/4 &isin; { 16*x+13 }
+{IMP}(3b¬1+1) &isin; { 64*x+b¬2*4 }
+{IMP}3b¬1 &isin; { 64*x+b¬2*4-1 }
+{IMP}b¬1 &isin; { (64*x+b¬2*4-1)/3 }
+{IMP}b¬1 &isin; { (64*x+b¬2*4-1)/3 } {EQV} { 51/3, 115/3, 179/3, 243/3, 307/3, 371/3, ... }
+{IMP}b¬1=17+64*k.
+</pre>
+</p><p> 
+
+    And the resultant GV is (0, 6, 17).    
+    
+    We can see this in action in the widget below. "Reset" will start a new sequence with the ingeger in the text box,
+   "Insert" will then add the value in the text box to the beginning of the list. To see [2,3] enter 3 in the box and press reset,
+   then 2 in the box and press insert.
+</p><p>   
+    
+    Value: <input type="text" id="insert_val" size="6" maxlength="2">
+
+    <button onclick="InsertValue();"> Insert </button>
+    <button onclick="ResetValue();"> Reset </button>
+
+</p><p>
+    
+    <span id="prefix_text">Result</span>    
+    
+    
+</p><p>
+    
+    Can we combine two short lists and derive the generator of a longer one, for instance [2] + [11] = [2,11]. We would expect the generator to be of the
+    form (0,14,B), where B is the value we are trying to derive. If we apply the [2] operation we arrive at (1,12,(3*B)/4). We need to match this with
+    the generator of [11]: (0,12,3413). We can ignore the power of three and just solve:
+
+</p><p>
+    
+<pre class="code expr">(3b+1)/4 = 2^[12]*k¬[11]+3413
+{IMP}(3b+1)/4 &isin; [3413, 7509, 11605, 15701, 19797, ...]
+{IMP}3b &isin; 13651, 30035, 46419, 62803, 79187, ...]
+{IMP}b &isin; [x, x, 15473, x, x, 31857, ...]</pre>
+
+</p><p>
+
+    Where 'x' indicates that the solution isn't an integer. Generally there will always be a solution among the first three potential values.
+    So the generator for [2,11] is (0,14,15473). The first 2 sequences are:
+    
+
+</p><p>
+<pre class="code">S(15473) = 15473, [46420, 23210], 11605, [34816, 17408, 8704, 4352, 2176, 1088, 544, 272, 136, 68, 34], 17, ...
+S(31857) = 31857, [95572, 47786], 23893, [71680, 35840, 17920, 8960, 4480, 2240, 1120, 560, 280, 140, 70], 35,...</pre>
+    </p><p>
+    
+    I've bracketed the even runs corresponding to [2] and [11].
+    
+<!-- ------------------------------------------------------ Append ---------------------------------------------------- -->
+
+
+<h2><a name="append"/>Append an atom</h2>
+<p>
+When searching for interesting A&hyphen;Lists it would proabably be more useful to be able to append additional 'a' values to the end of the list.
+To do this we need to match the end of the sequence with the GV of the atom. For instances if we want to calculate [1,1,1,1] + [3] we first need to 
+iterate the GV defining [1,1,1,1}, which is (0, 5, 31), giving
+<span class="expr">(0,5,31){RA}(1,5,94){RA}(1,4,47){RA}(2,4,142){RA}(2,3,71){RA}(3,3,214){RA}(3,2,107){RA}(4,2,322){RA}(4,1,161)</span>. The
+n and m terms are easy to calculate, <span class="expr">(0,m,b¬0){RA}(n,1,b¬e)</span>,
+but I suspect the only way to calculate <span class="expr">b¬e</span> is to iterate the sequence, though it will be coprime to 2 and 3 and
+less that  <span class="expr">2*3^n</span>. Series can start on a multiple of three, but only when 'k' is 0, but can't end on one.
+
+</p><p>
+
+
+To identify the GV for [1,1,1,1,3] we need to find the smallest (4,1,161) that is consistent with (0,4,13).
+
+</p><p>
+<pre class="code expr">   2*3^4*k+161=2^4*x+13
+{IMP}2*3^4*k+161%2^4=13
+   2*3^4*k+161%2^4=[1,3,5,7,9,11,13,15,1,3,&hellip;]
+{IMP}k=6+8n</pre>
+
+</p><p>
+
+Replacing k in (0,5,31) with 8k+6 we get <span class="expr">2^5*(2^3*k+6)+31=2^8*k+6*2^5+31=2^8*k+223{EQV}(0,8,223)</span>,
+which generates the A&hyphen;List [1,1,1,1,3] as required:
+
+</p><p>
+
+<pre class="code expr">(0,8,223){RA}(1,8,670}{RA}(1,7,335){RA}(2,7,1006){RA}(2,6,503}{RA}(3,6,1510){RA}(3,5,755){RA}
+(4,5,2286){RA}(4,4,1133){RA}(5,4,3400){RA}(5,3,1700){RA}(5,2,850){RA}(5,1,425)</pre>
+    
+    
+</p><p>
+The first few examples are:
+
+<pre class="code expr">k=0: S(223) = [223, 670, 335, 1006, 503, 1510, 755, 2266, 1133, 3400, 1700, 850, 425]
+k=1: S(479) = [479, 1438, 719, 2158, 1079, 3238, 1619, 4858, 2429, 7288, 3644, 1822, 911] 
+k=2: S(735) = [735, 2206, 1103, 3310, 1655, 4966, 2483, 7450, 3725, 11176, 5588, 2794, 1397]
+&vellip;</pre>
+</p><p>
+
+    The following controls will allow you to use the above algorithm to append additional terms to the end of an A&hyphen;List.
+    "Reset" will start a new sequence with the value in the box, "Append" will add the value in the text box to the end of the current list:
+</p><p>   
+    
+    Value: <input type="text" id="append_val" size="6" maxlength="2">
+
+    <button onclick="AppendValue();"> Append </button>
+    <button onclick="StartNew();"> Reset </button>
+
+</p><p>
+    
+    <span id="postfix_text">Result</span>
+    
+</p><p>    
+
+Or go directly from the A&hyphen;List to the generic value:
+
+</p><p>   
+    
+    A&hyphen;List: <input type="text" id="alist_vals" size="66" maxlength="500">
+
+    <button onclick="AppendList();"> Go </button>. 
+    
+    Repeat the list
+    
+    <select id="repeat_val" onchange="RepeatAList();">
+    
+            <option selected disabled>Set repeat count</option>
+    
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
+            <option value=5>5</option>
+            <option value=6>6</option>
+            <option value=7>7</option>
+            <option value=8>8</option>
+            <option value=9>9</option>
+            <option value=10>10</option>
+        </select>
+
+    times.
+
+</p><p>
+    
+    <span id="buildlist_text">Result</span>
+    
+</p><p>    
+
+
+
+
+</div>
+
+    
+<!-- ------------------------------------------------------ Divergence ---------------------------------------------------- -->
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+<h2><a name="divergence"> Looking for divergence </a></h2>
+
+
+
+<p>
+    If we start with the assumption that there is a smallest integer that diverges to infinity then that must be a generic value that
+    generates an infinite B&hyphen;List where all the 'b' values are greater than the first one (<span class="expr">b¬0</span>).
+    If the list contains a smaller 'b' value then <span class="expr">b¬0</span> can't be the smallest divergent b.
+    
+</p><p>
+    
+    If the list contains a second 'b' value equal to <span class="expr">b¬0</span> we have found a loop.
+
+</p><p>
+    
+    From the nature of generic values, if we find one divergent series we have found an infinite number, as every 'k' value will
+    generate a sequence with the same A&hyphen;List structure. Unfortunately this doesn't  apply to loops, the A&hyphen;List [2] generates the B&hyphen;List [1,1], which is the loop [1,4,2,1], but when 'k' is greater than 0 the values are
+    [8k+1, 24k+4, 12k+2, 6k+1].
+
+</p><p>
+
+    So we need to search for A&hyphen;Lists where all the terms are greater than (or equal to) the first one. If we look at the
+    <a href=#atoms">Atoms</a> above, we can see that [1] is the only 1 member A&hyphen;List that satisfies this requirement. So any number that
+    diverges to infinity will be of the form 4k+3. There is one exception here, [2], when k=0, generates the B-List [1,4,2,1] loop. All other k
+    values generate a sequence that gets smaller, <span class="expr">b¬1/b¬0</span> converges on 3/4 as k approaches infinity.
+
+    
+<!-- ------------------------------------------------------ Two member lists ---------------------------------------------------- -->
+
+
+<h3>Two member lists</h3>
+<p>
+Starting with [1] we can try appending the various atoms:
+
+</p><p>
+    <span class="stab expr">
+      {H}A&hyphen;List  |{h}Start |{h}End  | {h}B&hyphen;List |{h}b¬1/b¬0 (k=0)|{h}b¬1/b¬0 (k=&infin;)|{h}OK
+      {H}[1,1] | 8k+7   | 18k+17 |  7, 11, 17 | 17/7  | 9/4   |  Yes {good}
+      {H}[1,2] | 16k+11 | 18k+13 | 11, 17, 13 | 13/11 | 9/8   |  Yes {good}
+      {H}[1,3] | 32k+19 | 18k+11 | 19, 29, 11 | 11/19 | 9/16  |  No {bad}
+    </span>
+        
+</p><p>
+
+We can't start a divergent sequence with [1,3], [1,4] or any larger value.
+Let's examine a few three member lists:
+
+    
+<!-- ------------------------------------------------------ Three member lists ---------------------------------------------------- -->
+
+
+    
+<h3>Three member lists</h3>
+<p>
+We have a choice of [1,1] and [1,2] to extend.
+
+</p><p>
+    <span class="stab expr">
+      {H}A&hyphen;List  |{h}Start |{h}End  | {h}B&hyphen;List |{h}b¬2/b¬0 (k=0)|{h}b¬2/b¬0 (k=&infin;)|{h}OK
+      {H}[1,1,1] | 16k+15 | 54k+53  | 15, 23, 35, 53  | 53/15 | 27/8  | Yes {good}
+      {H}[1,1,2] | 32k+7  | 54k+13  | 7, 11, 17, 13   | 13/7  | 27/16 | Yes {good}
+      {H}[1,2,1] | 32k+27 | 54k+47  | 27, 41, 31, 47  | 47/27 | 27/16 | Yes {good}
+      {H}[1,2,2] | 64k+43 | 54k+37  | 43, 65, 49, 37  | 37/43 | 27/32 | No {bad}
+      {H}[1,1,3] | 64k+55 | 54k+47  | 55, 83, 125, 47 | 47/55 | 27/32 | No {bad}
+      
+    </span>
+        
+</p><p>
+
+    The viable lists are those where <span class="expr">3^n>2^m</span>, though it's possible that in some cases
+     a list might be viable for small k even though it isn't in the limit.
+
+</p>
+
+
+<h3>Cyclic Lists</h3>
+<p>
+    By extending the sequence [1,1,1,...] we can get arbitrary large ratios between the end and start values.
+    
+        
+</p><p>
+    <span class="stab expr">
+    {h}A&hyphen;List|{h}start|{h}end|{h}end/start
+    {h}{lft}[1] | 7  | 17  | 17/7=2.42857
+    {h}{lft}[1]^2 | 15 | 53  | 53/15=3.53333
+    {h}{lft}[1]^3 | 31 | 161 | 161/31=5.19355
+    {h}{lft}[1]^4 | 63 | 485 | 485/63=7.69841
+</p><p>
+    We are using <span class="expr">[list]^n to represent n repetitions of [list], so [1,2]^4{EQV}[1,2,1,2,1,2,1,2]</span>.
+    How do powers of [1,2] behave?
+
+</p><p>
+
+    <span class="stab expr">
+    {H}A&hyphen;List |{h}Start |{h}End  | {h}B&hyphen;List |{h}b¬n/b¬0 (k=0)|{h}b¬n/b¬0 (k=&infin;)
+    {H}{lft}[1,2] | (0,4,11) | (2,1,13) | 11, 17, 13 | 13/11 | 9/8
+    {H}{lft}[1,2]^2 | (0,7,123) | (4,1,157) | 123, 185, 139, 209, 157 | 157/123 | 81/64
+    {H}{lft}[1,2]^3 | (0,10,1019) | (6,1,1453) | 1019, 1529, 1147, 1721, 1291, 1937, 1453 | 1453/1019 | 729/512
+    {H}{lft}[1,2]^4 | (0,13,8187) | (8,1,13117) | 8187, 12281, 9211, 13817, 10363, 15545, 11659, 17489, 13117 | 13117/8187 | 6561/4096
+
+</p><p>
+
+So far it looks like repeated motifs generate predictable <span class="expr">b¬0</span> values, for
+<span class="expr"> [1]^n, b¬0(n)=2*b¬0(n-1)-1</span>, and for [1,2], <span class="expr">b¬0(n)=8*b¬0(n-1)+35 (n>0)</span>.
+But no such simple pattern appears for <span class="expr">[1,2,1]^n</span>.
+
+</p><p>
+
+    <span class="stab expr">
+
+    {h}A&hyphen;List |{h}Generic value |{h}Expression |{h}B&hyphen;List |{h} Limit
+    {h}{lft}[1,2,1] | (0,5,27) | 2^5*k+27 | 27, 41, 31, 47 | (3,1,47)
+    {h}{lft}[1,2,1]^2 | (0,9,91) | 2^9*k+91 | 91, 137, 103, 155, 233, 175, 263  | (6,1,263)
+    {h}{lft}[1,2,1]^3 | (0,13,5211) | 2^[13]*k+5211 | 5211, 7817, 5863, 8795, 13193, 9895, 14843, 22265, 16699, 25049 | (9,1,25049)
+    {h}{lft}[1,2,1]^4 | (0,17,95323) | 2^[17]*k+95323 | 95323, 142985, 107239, 160859, 241289, 180967, 271451, 407177, 305383, 458075, 687113, 515335, 773003 | (12,1,773003)
+
+</span>
+
+</p><p>
+
+    Here the start values are <span class="expr">2^[3n+4]-5, and the ends 2*3^[2n+2]-5</span>, where n is the repeat count, starting at 0.
+    It looks like repeating lists always follow a pattern,
+    To find a repeating pattern that diverges we need to find one where the solution to the join is k=0.
+          
+</p><p>
+
+<!-- ------------------------------------------------------ Two member lists ---------------------------------------------------- -->
+
+
+<h3>Explore lists</h3>
+
+<p>
+
+    "Systematic" tests all the potential candidates of a particular length before moving onto the longer lists, "Smallest B" builds on lists that have already been 
+    ound with small 'B' values.
+</p><p>
+
+    Search depth: <input type="text" id="list_depth" size="6">
+    Search Mode: 
+    
+    <select id="list_mode" onchange="ShowLists();">    
+            <option value=1>Systematic</option>
+            <option value=2>Smallest B</option>
+        </select>
+        
+    Display Mode: 
+    
+    <select id="list_display" onchange="ShowLists();">    
+            <option value=0>All</option>
+            <option value=1>Record Holders</option>
+        </select>
+        
+            
+       <button onclick="ShowLists();"> Go </button>
+       
+</p><p>
+
+
+       <span id="show_lists"> ___ </span>
+                 
+
+</p><p>
+
+<h3> Run a search </h3>
+
+<p>
+
+
+This will search for b-values that generate long lists of growing values (all b >= b0) or have the largest growth (max/start)
+
+</p><p>
+
+       <button onclick="RunSearch();"> Run Search </button>
+       <button onclick="StopSearch();"> Stop </button>
+       <button onclick="UnwindSearch();"> Unwind </button>
+       
+       
+</p><p>
+
+       <span id="search_results"> ___ </span>
+</p><p>
+
+       <span id="search_stats"> ___ </span>
+
+</p>       
+
+</div>
+
+
+
+
+<!-- Generic links -->
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+  <h2> Other pages </h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+</div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("Ua-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

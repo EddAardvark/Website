@@ -1,4 +1,8 @@
-// Creates the namespace
+//-------------------------------------------------------------------------------------------------
+// Miscellaneous common functions
+// (c) John Whitehouse 2019-2022
+// www.eddaardvark.co.uk
+//-------------------------------------------------------------------------------------------------
 function Misc ()
 {
 }
@@ -115,6 +119,18 @@ Misc.Format = function ()
     return (Misc.FormatString (Array.from(arguments)));
 }
 //-------------------------------------------------------------------------------------------------
+// Uses C# printf notation wit expression related escape sequences
+//-------------------------------------------------------------------------------------------------
+Misc.FormatExpression = function ()
+{
+    if (arguments.length == 0)
+    {
+        return ("Misc.Format called with no arguments");
+    }
+
+    return Misc.expand_expression(Misc.FormatString (Array.from(arguments)));
+}
+//-------------------------------------------------------------------------------------------------
 // Common part of formatting functions
 //-------------------------------------------------------------------------------------------------
 Misc.FormatString = function(args)
@@ -166,6 +182,20 @@ Misc.FormatString = function(args)
     return result;
 }
 
+Misc.ParseIntegers = function (text_array)
+{
+    var ret = [];
+    
+    for (var idx in text_array)
+    {
+        ret [idx] = parseInt (text_array [idx]);
+        
+        if (isNaN (ret [idx])) throw Misc.Format ("{0} is not an integer", text_array [idx]);
+    }
+    
+    return ret;
+}
+
 //==============================================================================================================
 // Functions for rendering equations more readable in html
 // Replaces operator characters with mathematical symbols and formats exponents
@@ -174,19 +204,20 @@ Misc.FormatString = function(args)
 
 Misc.opsmap = {};
 
-Misc.opsmap['>'] = "&gt;";
-Misc.opsmap['<'] = "&lt;";
-Misc.opsmap['=&gt;'] = "&nbsp;&#x21D2;&nbsp;";
-Misc.opsmap['&gt;='] = "&nbsp;&#x2265;&nbsp;";
-Misc.opsmap['&lt;='] = "&nbsp;&#x2264;&nbsp;";
+Misc.opsmap['{GT}'] = "&nbsp;&gt;&nbsp;";
+Misc.opsmap['{LT}'] = "&nbsp;&lt;&nbsp;";
+Misc.opsmap['{IMP}'] = "&nbsp;&rArr;&nbsp;";
+Misc.opsmap['{GE}'] = "&nbsp;&#x2265;&nbsp;";
+Misc.opsmap['{LE}'] = "&nbsp;&#x2264;&nbsp;";
+Misc.opsmap['{RA}'] = "&nbsp;&rarr;&nbsp;";
+Misc.opsmap['{EQV}'] = "&nbsp;&equiv;&nbsp;";
 Misc.opsmap['~='] = "&nbsp;&#x2248;&nbsp;";
 Misc.opsmap['+'] = "&nbsp;&plus;&nbsp;";
 Misc.opsmap['-'] = "&nbsp;&minus;&nbsp;";
 Misc.opsmap['*'] = "&nbsp;&times;&nbsp;";
 Misc.opsmap['/'] = "&nbsp;&#8725;&nbsp;";
 Misc.opsmap['='] = "&nbsp;&equals;&nbsp;";
-Misc.opsmap['&gt;'] = "&nbsp;&#x003E;&nbsp;";   // Using &gt; creates a recursive substitution. 3E is the same symbol.
-Misc.opsmap['&lt;'] = "&nbsp;&#x003C;&nbsp;";
+Misc.opsmap['%'] = "&nbsp;<i>mod</i>&nbsp;";
 
 // Expands the text in an element, operates on innerHTML so should only be called for elements that contains
 // literal text 
@@ -196,7 +227,10 @@ Misc.expand_element = function (element)
 }
 // Expands some text
 Misc.expand_expression = function (text)
-{    
+{
+    if (text.indexOf('>') >= 0) throw "'>' detected in \"" + text + "\"";
+    if (text.indexOf('<') >= 0) throw "'<' detected in \"" + text + "\"";
+
     // Simple substitutions
     
     for (var prop in Misc.opsmap)
@@ -210,7 +244,7 @@ Misc.expand_expression = function (text)
         }
     }
 
-    // Expand the '^' characters (for now just ^X, will enhance to include ^[string])
+    // Expand the '¬' characters (Single char, eg ^X, or a string: ^[string]) to superscripts
     
     while (true)
     {
@@ -239,6 +273,39 @@ Misc.expand_expression = function (text)
             text = text.slice(0, pos) + insert + text.slice (pos+2);
         }
     }
+    
+    
+    // Expand the '¬' characters (Single char, eg ^X, or a string: ^[string]) to subscripts
+    
+    while (true)
+    {
+        var pos = text.indexOf ("¬");        
+        
+        if (pos < 0 || pos >= text.length - 1)
+            break;
+        
+        // look for the X¬[string]" case.
+        
+        if (text[pos+1] == '[')
+        {
+            var pos2 = Misc.find_matching_brace (text, pos+1);
+            if (pos2 < 0)
+            {
+                text += "*ERROR*";
+                break;
+            }
+            var insert = '<span class="subscript">' + text.substr(pos+2, pos2 - pos - 2) + '</span>';
+            text = text.slice(0, pos) + insert + text.slice (pos2+1);
+            pos = pos2 + 1;
+        }
+        else
+        {
+            var insert = '<span class="subscript">' + text[pos+1] + '</span>';
+            text = text.slice(0, pos) + insert + text.slice (pos+2);
+        }
+    }
+    
+    
     
     return text;
 }
@@ -274,8 +341,6 @@ Misc.find_matching_brace = function (text, pos)
     }
     return -1;
 }
-    
-    
 
 // Should be in coordinate maths
 
@@ -306,7 +371,22 @@ Misc.RotateBackToFront = function (list)
     list.unshift (x);    
 }
 
-
+Misc.CompareList = function (list1, list2)
+{   
+    var len = Math.min (list1.length, list2.length);
+    
+    for (var i = 0 ; i < len ; ++i)
+    {
+        if (list1 [i] != list2 [i])
+        {
+            return (list1 [i] > list2 [i]) ? 1 : -1;
+        }
+    }
+    
+    if (list1length != list2.length) return (list1.length > list2.length) ? 1 : -1;
+    
+    return 0;    
+}
 
 
 

@@ -1,0 +1,703 @@
+<head>
+<meta charset="UTF-8">
+<meta name="Author" content="John Whitehouse">
+<meta name="KeyWords" content="Python Collatz 3x+1">
+
+<TITLE> 3x+1 (Generic Values) </TITLE>
+
+<link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
+<link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+<link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
+
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/svg_helpers.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/canvas_helpers.js"> </script>
+<script src="../js_library/vluint.js"> </script>
+<script src="../js_library/primes.js"> </script>
+<script src="../js_library/graphics.js"> </script>
+<script src="../js_library/tables.js"> </script>
+<script src="../js_library/big_powers.js"> </script>
+<script src="../js_library/animation.js"> </script>
+
+<script src="alists.js"> </script>
+<script src="alists_graph.js"> </script>
+<script src="alist_values.js"> </script>
+<script src="vli_generic_value.js"> </script>
+<script src="gv_searcher.js"> </script>
+<script src="list_maker.js"> </script>
+
+
+<style>stab
+
+<style>
+
+TEXT.svgtext { font-family: Courier;
+               font-size: small;
+               color: green;
+             }
+
+TABLE     { border-collapse: collapse; }
+
+TD  {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
+    }
+TH  {    
+        padding: 3pt 6pt;
+        border: solid 1px coral;
+        background-color: SandyBrown;
+    }
+    
+
+P.tab { 
+           text-align:  left;
+           margin:      3pt;
+           padding:     0pt;
+       }
+         
+P.list
+{
+    background-color: #ffffff;
+    font-family:      Courier;
+    font-size:        small;
+    padding:          6pt;
+    border:           solid 1px black;
+    display:          inline-block;
+    line-height:      1.6;
+}
+
+TD.hi { background-color: yellow; }
+TD.x { background-color: orange; }
+TD.good { background-color: palegreen; }
+TD.bad { background-color: hotpink; }
+TD.sm { font-size: 75%; text-align: right; }
+TH.lft { text-align: left; }
+
+</style>
+
+<script>
+
+Test=function ()
+{
+}
+
+//-------------------------------------------------------------
+OnStart = function ()
+{
+    AList.Initialise ();
+    Test ();
+    
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+    
+    all = document.getElementsByClassName("tabl");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        JWSimpleTable.ExpandElement (all[i]);
+    }
+    
+    all = document.getElementsByClassName("stab");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        JWStyledTable.ExpandElement (all[i]);
+    }
+    
+    test_value.value = 411;
+    num_series.value = 30;
+    fgv_power.value=6;
+    expand_power.value=6;
+    normalise.checked = false;
+    use_log.checked = true;
+    full_sequence.checked=false;
+    align_start.checked = true;
+    show_repeats.checked = true;
+
+    RunTest ();
+    FundamentalGVSearch();
+}
+    
+RunTest = function ()
+{
+    var b = VLUInt.FromText (test_value.value);
+    var lm = new ListMaker (b);
+    
+    table_standard.innerHTML = lm.full_sequence.toString ().replaceAll (",", ", ");
+    table_odd.innerHTML = lm.odd_sequence.toString ().replaceAll (",", ", ");
+    table_full_alist.innerHTML = lm.alist.toString ().replaceAll (",", ", ");
+    table_odd_growth.innerHTML = lm.odd_growth.toString ().replaceAll (",", ", ");
+    table_growth_alist.innerHTML = lm.growth_alist.toString ().replaceAll (",", ", ");
+    table_growth_gv.innerHTML = lm.GetGVListText ();
+    minimal_gvs.innerHTML = lm.MinimalGVListText ();
+    
+    
+    var styles = new Graphics.GraphDef ();
+
+    styles.width = 360;
+    styles.height = 160;
+    styles.line_colours = ["black"];
+    styles.fill_colours = ["cyan","pink"];
+    styles.background = "aliceblue";
+    styles.chart_type = Graphics.GraphDef.BAR;
+    
+    // Growing charts
+    
+    var values = [];
+    var log_values = [];
+    var base = lm.odd_growth [0];
+    var log_max = 1;
+    
+    for (var i = 0 ; i < lm.odd_growth.length ; ++i)
+    {
+        var v = VLUInt.Ratio (lm.odd_growth[i], base);
+        
+        values [i] = v;
+        if (v > styles.ymax) styles.ymax = v;
+        
+        log_values [i] = Math.log10 (values[i]);
+    }
+    Graphics.DrawGraph (values, growing_odd_chart, styles);   
+
+    styles.ymax = Math.log10 (styles.ymax);
+    
+    Graphics.DrawGraph (log_values, growing_odd_chart_log, styles);    
+    
+    // Full charts
+    
+    values = [];
+    log_values = [];
+    base = lm.odd_sequence [0];
+    log_max = 1;
+    
+    var ymin = 0;
+    
+    for (var i = 0 ; i < lm.odd_sequence.length ; ++i)
+    {
+        var v = VLUInt.Ratio (lm.odd_sequence[i], base);
+        
+        values [i] = v;
+        if (v > styles.ymax) styles.ymax = v;
+        
+        log_values [i] = Math.log10 (values[i]);
+        if (log_values [i] < ymin) ymin = log_values [i];
+    }
+    Graphics.DrawGraph (values, odd_chart, styles);   
+
+    styles.ymax = Math.log10 (styles.ymax);
+    styles.ymin = ymin;
+    
+    Graphics.DrawGraph (log_values, odd_chart_log, styles);    
+
+    // Select a GV option
+    
+    while (gv_choice.length > 0)
+    {
+        gv_choice.remove (0)
+    }
+    
+    var idx = 0;
+    var gv = lm.GetBaseGV (idx);
+    while (gv != null)
+    {
+        var option = document.createElement("option");
+        option.text = Misc.Format ("2^{0}.k+{1}", gv.p2, gv.b);
+        option.value = idx;
+        gv_choice.add(option);
+        gv = lm.GetBaseGV (++idx);
+    }
+    
+    if (gv_choice.length == 0)
+    {
+        var option = document.createElement("option");
+        option.selected = true;
+        option.disabled = true;
+        option.text = Misc.Format ("No GV for {0}", b);
+        option.value = "-1";
+        gv_choice.add(option);
+    }
+    
+    // Draw the GV charts
+
+    ShowGvGraphs (lm, styles);
+}
+ShowGvGraphs = function (lm, styles)
+{
+    var n = parseInt (num_series.value);
+    var series = [];
+    var bvals = [];
+    
+    styles.width = 720;
+    styles.height = 320;
+    
+    var idx = parseInt (gv_choice.value);
+    var gv = (idx < 0) ? null : lm.GetBaseGV (idx);
+
+    if (gv != null && n > 0)
+    {    
+        for (var i = 0 ; i < n-1 ; ++i)
+        {
+            var s2 = (full_sequence.checked) ? gv.SequenceForK (i) : gv.GrowthForK (i);
+            series.push (s2);
+            bvals.push (s2[0]);
+        }
+
+        styles.log = use_log.checked;
+        styles.calc_ranges = true;        
+        styles.normalise = normalise.checked;  
+        styles.chart_type = align_start.checked ? Graphics.GraphDef.MULTI_SERIES : Graphics.GraphDef.SERIES_TREE;
+        
+        Graphics.DrawGraph (series, multi_series_chart, styles);    
+    }
+    else
+    {
+        styles.chart_type = Graphics.GraphDef.BLANK;
+        
+        Graphics.DrawGraph (null, multi_series_chart, styles);
+    }
+    // Per series graphs
+    
+    if (series.length > 0)
+    {
+        var bars = [];
+        var mode = set_choice.value;
+        
+        styles.ymax = 0;
+
+        if (mode == 0)
+        {
+            for (var idx in series)
+            {
+                bars [idx] = series[idx].length;
+            }
+        }        
+        else if (mode == 1)
+        {
+            for (var idx in series)
+            {
+                var s = series [idx];
+                var ymax = 0;
+                for (var sidx in s)
+                {
+                    var v = s [sidx];
+                    var y = (styles.log) ? v.Log10 () : v.ToFloat ();
+                    ymax = Math.max (y, ymax);
+                }
+                bars [idx] = ymax; 
+            }
+        }        
+        else if (mode == 2)
+        {
+            for (var idx in series)
+            {
+                var s = series [idx];
+                var b0 = s[0];
+                var ymax = 0;
+                for (var sidx in s)
+                {
+                    var y = VLUInt.Ratio (s [sidx], b0);
+                    if (styles.log) y = Math.log10 (y);
+                    ymax = Math.max (y, ymax);
+                }
+                bars [idx] = ymax; 
+            }
+        }
+            
+        styles.xmin = 0;
+        styles.xmax = bars.length;
+        styles.ymin = 0;
+        styles.ymax = 1;
+        styles.ymin = bars.reduce((x,y) => x > y ? y : x, styles.ymin);
+        
+        var text = "{h}b0|{h}Value\n"
+
+        for (var i = 0 ; i < bars.length ; ++i)
+        {
+            if (bars[i] > styles.ymax)
+            {
+                styles.ymax = bars [i];
+                text += bvals [i] + "|" + bars[i] + "\n";                
+            }
+        }
+        
+        styles.chart_type = Graphics.GraphDef.BAR;
+        Graphics.DrawGraph (bars, test_chart, styles);   
+        
+        var tabl = JWStyledTable.FromText (text);
+    
+        record_table.innerHTML = tabl.ToHTML ();     
+    }    
+}
+    
+UpdateGvGraphs = function ()
+{
+    var b = VLUInt.FromText (test_value.value);
+    var lm = new ListMaker (b);
+    var styles = new Graphics.GraphDef ();
+
+    styles.width = 360;
+    styles.height = 160;
+    styles.line_colours = ["black"];
+    styles.fill_colours = ["cyan","pink"];
+    styles.background = "aliceblue"; 
+
+    ShowGvGraphs (lm, styles);
+}
+FundamentalGVSearch = function ()
+{
+    var p = parseInt (fgv_power.value);
+    
+    if (p < 3 || p > 12)
+    {
+        fgv_text.innerHTML = "";
+        return;
+    }
+    
+    ListMaker.BuildGVTable (p);
+    
+    var tabl = JWStyledTable.FromText (ListMaker.gv_table);
+    
+    fgv_text.innerHTML = tabl.ToHTML (); 
+    
+    ShowPowerTable (p);
+    
+    ListMaker.DrawGVChart (gv_chart, ListMaker.sorted_gv_list, p, 200);
+}
+ExpandPowerTable = function ()
+{
+    var p = parseInt (expand_power.value);
+    ListMaker.BuildGVList (p);
+    ShowPowerTable (p);
+    ListMaker.DrawGVChart (gv_chart, ListMaker.sorted_gv_list, p, 200);
+}
+
+ShowPowerTable = function (p)
+{
+    var text = ListMaker.MakeSortedGVTable (p);
+    
+    tabl = JWStyledTable.FromText (text);
+    
+    power_table.innerHTML = tabl.ToHTML (); 
+}
+
+ 
+</script>
+
+</head>
+
+<!-- Title -->
+
+<body onload="OnStart();">
+
+<!-- Banner -->
+
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 200px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <img border="0" src="http://www.eddaardvark.co.uk/images/home.png" title="Home Page" alt="Home Page">
+        <br><strong>Home page</strong>
+     </button>
+
+     <button class="banner clickable" onclick="Show(T3n.INDEX)">
+
+        <p style="max-width: 420px;" >
+            <img src="http://www.eddaardvark.co.uk/images/3x1_icon.png" alt="Banner Picture" title="3x+1 Pages"></h1>
+        </p><p style="max-width: 420px;" >
+             Generic Values
+        </p>
+
+     </button>
+
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <br><strong>Advertisement</strong>
+     </button>
+    </div>
+
+<!-- Main content -->
+
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+<h2> Contents </h2>
+
+    <ul>
+      <li><a href="#intro"> Introduction</a></li>
+      <li><a href="#listex"> List Examples</a></li>
+      
+    </ul>
+</div>
+
+
+<!-- Introduction -->
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+    <h2><a name="intro">Introduction</a></h2>
+    
+    <p>    
+        A collection of charts based on A-lists and Generic Values.
+    </p>
+
+    <!-- ------------------------------------------------------ List examples ---------------------------------------------------- -->
+    
+    <h2><a name="listex"/>List Examples</h2>
+
+    <p>
+    
+    This widget will allow you to create examples of the various types of list and explore how they relate to each other.    
+    
+    Enter a value: <input type="text" id="test_value" size="6">
+       <button onclick="RunTest();"> Go </button>
+       
+    </p><p>   
+        <table>
+        
+            <tr> <td>
+                    <p class="tab"> <strong> Full Sequence </strong> </p>
+                    <p class="tab"> The usual sequence generated by the iteration. </p>
+                </td>
+                <td>
+                    <p class="tab list"><span id="table_standard">_</span><p></p></td>
+            </tr>
+            
+            
+            <tr> <td>
+                    <p class="tab"> <strong> Odd Sequence </strong> </p>
+                    <p class="tab"> The odd elements of the sequence generated by the iteration, which I refer to as B&hyphen;Lists. </p>
+                </td>
+                <td>
+                    <p class="tab list"><span id="table_odd">_</span><p></p></td>
+            </tr>
+            
+            <tr> <td>
+                    <p class="tab"> <strong> A&hyphen;List </strong> </p>
+                    <p class="tab"> The number of even values between the odd values in the sequence. </p>
+                </td>
+                <td>
+                    <p class="tab list"><span id="table_full_alist">_</span><p></p></td>
+            </tr>
+            
+            <tr> <td>
+                    <p class="tab"> <strong> Odd Growth </strong> </p>
+                    <p class="tab"> Chops off the odd sequence when the next value will be less that the starting value. Any 
+                        loops or infinite sequences will have all mebmers larger than the first.
+                    </p>
+                </td>
+                <td>
+                    <p class="tab list"><span id="table_odd_growth">_</span><p></p></td>
+            </tr>
+           
+            <tr> <td>
+                    <p class="tab"> <strong> Growth A&hyphen;List</strong> </p>
+                    <p class="tab"> Shows the A&hyphen;List values that correspond to the odd growth; Note that when there is a list
+                        displayed it always starts with a '1'.
+                    </p>
+                </td>
+                <td>
+                    <p class="tab list"><span id="table_growth_alist">_</span><p></p></td>
+            </tr>
+            
+            <tr> <td>
+                    <p class="tab"> <strong> Growing Generic Values</strong> </p>
+                    <p class="tab"> Generic values can be used in the search for longer growing lists.
+                    </p>
+                </td>
+                <td>
+                    <p class="tab">
+                        <table><tr>
+                        <td><p class="tab list"><span id="table_growth_gv">_</span></td>
+                        <td><p><span id="minimal_gvs">_</span></td>
+                        </tr></table>
+                    </p>
+                </td>
+            </tr>
+            
+            <tr> <td>
+                    <p class="tab"> <strong> Odd Chart</strong> </p>
+                    <p class="tab"> How the B values compare with the starting value. Stops when the iteration gets to 1. Linear and Log plots. </p>
+                </td>
+                <td>
+                    <p class="tab">
+                        <table><tr><td><img id="odd_chart"></td><td><img id="odd_chart_log"></td></tr></table>
+                    </p>
+                </td>
+            </tr>
+            
+            <tr> <td>
+                    <p class="tab"> <strong> Growing Odd Chart</strong> </p>
+                    <p class="tab"> How the growing B values compare with the starting value. 
+                    This stops just before the first value that is lower than the starting value. This can appear inconsistant for values like
+                    411 which have a much higher maximum term, but dip below the starting value in the middle.
+
+                    Linear and Log plots. </p>
+                </td>
+                <td>
+                    <p class="tab">
+                        <table><tr><td><img id="growing_odd_chart"></td><td><img id="growing_odd_chart_log"></td></tr></table>
+                    </p>
+                </td>
+            </tr>
+            
+            
+            <tr> <td>
+                    <p class="tab"> <strong> Combining Series</strong> </p>
+                    <p>
+                    Each growing A-List has a generating value. Each such GV is the basis of an infinite series of 'b' values, these charts show how these series
+                    relate to each other.
+                    </p><p>
+                    Polynomial: <select id="gv_choice" onchange="UpdateGvGraphs()"> </select> <br>
+                    <input type="checkbox" id="full_sequence" onclick="UpdateGvGraphs()"> Full Sequence <br>
+                    <input type="checkbox" id="use_log" onclick="UpdateGvGraphs()"> Log <br>
+                    <input type="checkbox" id="align_start" onclick="UpdateGvGraphs()"> Align Start <br>
+                    <input type="checkbox" id="normalise" onclick="UpdateGvGraphs()"> Divide B0 <br>
+                    
+                    Num Series: <input type="text" id="num_series" size="3">
+                    <button onclick="UpdateGvGraphs();"> Go </button>
+                    </p>
+                </td>
+                <td>
+                    <p class="tab">
+                        <img id="multi_series_chart">
+                    </p>
+                </td>
+            </tr>
+            
+            
+            <tr> <td>
+                    <p class="tab"> <strong> Testing</strong> </p>
+                    <p>
+                    Plot: <select id="set_choice" onchange="UpdateGvGraphs()"> 
+                        <option value="0">Length</option>
+                        <option value="1">Max Value</option>
+                        <option value="2">Max Ratio</option>
+                    </select> 
+                    
+                    </p><p>
+                     <span id="record_table"> ... </span>
+                    </p>
+                </td>
+                <td>
+                    <p class="tab">
+                        <img id="test_chart">
+                    </p>
+                </td>
+            </tr>
+            
+            
+            
+            
+       </table>        
+       
+       </p>
+       </div>
+
+
+<!-- Fundamental GVs -->
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+  <h2> Fundamental GVs </h2>
+    <p>
+          We want to focus on finding 'b' values that form loops or diverge. Any loop or divergent series will have a smallest member, so any sequence that passes
+          through a value smaller than the start can be ruled out. The generic value approach allows us to partition numbers according to their A&hyphen;Lists.
+          Numbers that diverge will have an A-List where 3^n is always greater than 2^m (with a bit or wriggle room because of the plus one terms). I've a feeling
+          that if there are any loops they will fall into this very narrow gap.
+    </p><p>
+        We will focus on the subset of GV2 where p3 are 0. These generate the starting value of a sequence.
+        We can partition the odd numbers depending on where they
+        fall in a systematic search for A-Lists.
+    </p><p class="stab">
+        {h}Value | {h} GV | {h} A&hyphen;List | {h} B&hyphen;List | {h} Comments
+        1 | {x} (2,1) | [2] | | Special case, k=0 gives the [1,1,1,1...] list, the only known loop
+        3 | {x} (2,3) | [1] | [3,5] |
+        5 | | [2] | | The (2,1), k=1 case, all numbers of the form 2^2*k+1 terminate immediately
+        7 | {x} (3,7) (5,7) | [1,1,2] | [7,11,17,13] | 
+        11 | {x} (4,11) | [1,2] | [11,17,13] |
+        15 | {x} (4,15) | [1,1,1] | [15, 23, 35, 53] |
+                
+     </p><p>
+        We can immediately see that numbers of the form 4k+1 (except 1 itself) are always followed by a smaller number so these
+        can be ruled out immediately, so any loop (other than 1) will start with a number of the form 4k+3.
+    </p><p>
+        The pairs in the "GV" column allow you to construct the smallest number that generates a new A&hyphen;List. For instance,
+        7 generates two GVs, (3,7) and (5,7), corresponding to [1,2] and [1,1,2]. Numbers like 27 generate a much larger numer.
+    </p><p>
+    
+        You can use the controls below to extend the table above to larger powers of 2.
+     </p><p>
+      
+      Power of 2: <input type="text" id="fgv_power" size="2">
+      <input type="checkbox" id="show_repeats" onclick="FundamentalGVSearch()"> Show Repeats </input>
+
+      <button onclick="FundamentalGVSearch ();"> Go </button>
+
+    </p><p>
+    
+     <span id="fgv_text"> ... </span>
+    
+    </p><p>
+      
+     GVs sorted by power of 2. We tested numbers up to 63, so rows 2-6 are complete.
+     Expand this table to 2^  <input type="text" id="expand_power" size="2">
+     <button onclick="ExpandPowerTable();"> Go </button>
+     
+    </p><p>
+          
+      <img id="gv_chart"></td><td><img id="odd_chart_log">
+      
+     
+      </p><p>            
+      
+      <span id="power_table"> _ </span>
+      </p><p>     
+     </p>
+</div>
+
+
+
+<!-- Generic links -->
+
+<div class="float w10 box in2" style="overflow: auto;">
+
+  <h2> Other pages </h2>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+</div>
+
+<!-- Copyright -->
+
+   <p class="small"> (c) John Whitehouse 2011 - 2017 <p>
+
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("Ua-8112879-1"); pageTracker._trackPageview();
+</script>
+
+</body>
+</html>
+

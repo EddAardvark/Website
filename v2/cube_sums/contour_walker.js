@@ -22,11 +22,6 @@ ContourWalker.background = "Bisque";
 ContourWalker.zero_line = "Black";
 ContourWalker.major_grid_line = "Chocolate";
 ContourWalker.minor_grid_line = "SandyBrown";
-ContourWalker.LIMIT = 1025;
-
-ContourWalker.max_target = new VLInt.FromInt (ContourWalker.LIMIT);
-ContourWalker.min_target = new VLInt.FromInt (-ContourWalker.LIMIT);
-ContourWalker.factor = Math.pow (2, 1/3) - 1;
 
 ContourWalker.CM_RED_BLUE = 0
 ContourWalker.CM_RAINBOW = 1;
@@ -40,62 +35,9 @@ ContourWalker.TM_FASTONLINE = 1;
 ContourWalker.TM_NO_DRAW = 2;
 
 ContourWalker.TimeOut = 100;
+ContourWalker.WIDTH = 1001;
 
 ContourWalker.RAINBOW_COLOURS = ["red","orange","yellow","green","black","black","blue","indigo","violet"]; // no 4 or 5
-//-------------------------------------------------------------------------------------------------
-ContourWalker.FromInts = function (x, y)
-{
-    return ContourWalker.FromVLInts (VLInt.FromInt (x), VLInt.FromInt (y));
-}
-//-------------------------------------------------------------------------------------------------
-ContourWalker.FromVLInts = function (x, y)
-{       
-    var ret = new ContourWalker ();
-    var z = CubeSurfer.GetZ (x, y)
-
-    ret.swap = VLInt.Compare (x, y) < 0;
-    
-    // use x > y;
-    
-    if (ret.swap)
-    {
-        var t = x;
-        x = y;
-        y = t;
-    }
-    var n = z.Subtract (x);
-
-    ret.cube = new BigCube.FromVLInt (y);
-    ret.subcube = new SubCube.FromVLInts (x, n);
-    ret.value = ret.cube.cube.Subtract (ret.subcube.value);
-
-    return ret;
-}
-//-------------------------------------------------------------------------------------------------
-ContourWalker.FromContour = function (contour)
-{       
-    var ret = new ContourWalker ();
-    var x = VLInt.FromInt (Math.ceil (contour / ContourWalker.factor));
-    var y = VLInt.FromVLInt (x);
-    var n = VLInt.FromInt (contour);
-
-    ret.cube = new BigCube.FromVLInt (y);
-    ret.subcube = new SubCube.FromVLInts (x, n);
-    ret.value = ret.cube.cube.Subtract (ret.subcube.value);
-
-    return ret;
-}
-//-------------------------------------------------------------------------------------------------
-ContourWalker.Clone = function (other)
-{  
-    var ret = new ContourWalker ();
-    
-    ret.cube = other.cube.clone ();
-    ret.subcube = other.subcube.clone ();
-    ret.value = VLInt.FromVLInt (other.value);
-    
-    return ret;
-}
 
 //-------------------------------------------------------------------------------------------------
 ContourWalker.Initialise = function (img_element, text_element, latest_element)
@@ -108,50 +50,12 @@ ContourWalker.Initialise = function (img_element, text_element, latest_element)
 //-------------------------------------------------------------------------------------------------
 ContourWalker.ClearResults = function ()
 {
-    ContourWalker.Results = new WalkingResults (1001);
-}   
-//----------------------------------------------------------------------------------------------------------------
-ContourWalker.prototype.Next = function ()
-{
-    if (this.value.positive)
-    {
-        this.IncrementSub ();
-    }
-    else
-    {
-        this.IncrementCube ();
-    }
+    ContourWalker.Results = new WalkingResults (ContourWalker.WIDTH);
 }
-//----------------------------------------------------------------------------------------------------------------
-ContourWalker.prototype.DecrementSub = function ()
+//-------------------------------------------------------------------------------------------------
+ContourWalker.prototype.SetCurrent = function (current)
 {
-    this.subcube.DecrementX ();
-    this.value = this.value.Add (this.subcube.dv); // Value = cube - sub, so add
-}
-//----------------------------------------------------------------------------------------------------------------
-ContourWalker.prototype.IncrementSub = function ()
-{
-    this.value = this.value.Subtract (this.subcube.dv); // Value = cube - sub, so subtract
-    this.subcube.IncrementX ();
-}
-//----------------------------------------------------------------------------------------------------------------
-ContourWalker.prototype.DecrementCube = function ()
-{
-    this.cube.Decrement ();
-    this.value = this.value.Subtract (this.cube.dy);
-}
-//----------------------------------------------------------------------------------------------------------------
-ContourWalker.prototype.IncrementCube = function ()
-{
-    this.value = this.value.Add (this.cube.dy);
-    this.cube.Increment ();
-}
-//----------------------------------------------------------------------------------------------------------------
-ContourWalker.prototype.HopSub = function (hop)
-{
-    this.subcube.Hop (hop);
-    
-    this.value = this.cube.cube.Subtract (this.subcube.value);
+    this.current = current;
 }
 //----------------------------------------------------------------------------------------------------------------
 ContourWalker.prototype.Animate = function (n, interval)
@@ -230,15 +134,19 @@ ContourWalker.DoAnimate = function ()
     }
 }
 //----------------------------------------------------------------------------------------------------------------
-ContourWalker.prototype.CreateTrack = function (limit)
+ContourWalker.prototype.CreateTrack = function ()
 {
-    this.contour = new Array (limit);
+    if (! this.current)
+    {
+        throw "Can't track contour without a current point";
+    }
+    this.contour = new Array (ContourWalker.WIDTH);
     this.hop_max = 0;
     this.hop = 0;
     this.cross = null;
     this.min_v = VLInt.MakeZero ();
     this.max_v = VLInt.MakeZero ();
-    this.Tracker (0, limit);
+    this.Tracker (0, ContourWalker.WIDTH);
 
     if (this.tmode != ContourWalker.TM_NO_DRAW)
     {
@@ -258,148 +166,158 @@ ContourWalker.prototype.ScrollTrack = function (num)
         }
         while (t1 - t0 < ContourWalker.TimeOut);
         
-        ContourWalker.AmimationText.innerHTML = this.GetCurrentText ();
+        ContourWalker.AmimationText.innerHTML = this.current.toString ();
     }
     else
     {
-        var width = this.contour.length;
-    
-        if (num > width/2) num = Math.floor (width/2);
+        var target = ContourWalker.WIDTH - num;
+        
+        if (target < 10) target = 10;
     
     // Remove the old stuff
     
-        this.contour = this.contour.slice (num);
+        this.contour = this.contour.slice (-target);
     
     // Refill
     
         var x = this.contour.length;        
-        this.Tracker (x, width);
+        this.Tracker (x, ContourWalker.WIDTH);
         this.Draw ();
+    }
+}
+//--------------------------------------------------------------------------------------------
+ContourWalker.prototype.TestValue = function (v)
+{           
+    if (v.TestValue ())
+    {
+        ContourWalker.SaveResult (v.MakeResult ());
     }
 }
 //--------------------------------------------------------------------------------------------
 ContourWalker.prototype.FillOnLine = function (x, width)
 {
     var n = 0;
-    
+
     while (x < width)
     {
-        if (! this.contour [x])
-        {
-            this.contour [x] = {x:VLInt.FromVLInt (this.subcube.x), y:VLInt.FromVLInt (this.cube.root), value:null};
-            this.contour [x].value = VLInt.FromVLInt (this.value);
-        }
-            
-        if (this.value.positive)
-        {
-            if (VLInt.Compare (this.value, ContourWalker.max_target) <= 0)
-            {
-                var zval = this.subcube.x.Add (this.subcube.n);
-                ContourWalker.SaveResult (this.subcube.x, this.cube.root, zval, this.value);
-            }
-        }          
-        else if (VLInt.Compare (this.value, ContourWalker.min_target) >= 0)
-        {
-            var zval = this.subcube.x.Add (this.subcube.n);
-            ContourWalker.SaveResult (this.subcube.x, this.cube.root, zval, this.value);
-        }
+        this.TestValue (this.current);
         
-        var v1 = this.value.Subtract (this.subcube.dv);
-        var v2 = this.value.Add (this.cube.dy);
-
-        var c = VLInt.CompareVector (v1.value, v2.value);
+        var v1 = this.current.GetNextX ();
+        var v2 = v1.GetNextY ();
+        
+        var c = VLInt.CompareVector (v1.value.value, v2.value.value);
         
         if (c > 0)
         {
-            this.IncrementCube ();
-            if (VLInt.Compare (this.value, this.max_v) > 0) this.max_v = this.value;
+            if (VLInt.Compare (v2.value, this.max_v) > 0) this.max_v = v2.value;
+            this.current = v2;
         }
         else
         {
-            this.IncrementSub ();
-            if (VLInt.Compare (this.value, this.min_v) < 0) this.min_v = this.value;
+            if (VLInt.Compare (v1.value, this.min_v) < 0) this.min_v = v1.value;
+            this.current = v1;
         }
-        this.contour [x] = {x:VLInt.FromVLInt (this.subcube.x), y:VLInt.FromVLInt (this.cube.root), value:VLInt.FromVLInt (this.value)};
+        
+        this.contour [x] = this.current;
+
         ++x;
-        ++n;
     }
 }
 //--------------------------------------------------------------------------------------------
 ContourWalker.prototype.FillFastOnLine = function (x, width)
 {
-    if (! this.contour [x])
-    {
-        this.contour [x] = {x:VLInt.FromVLInt (this.subcube.x), y:VLInt.FromVLInt (this.cube.root), value:null};
-        this.contour [x].value = VLInt.FromVLInt (this.value);
-    }
+    var dec = 0;
     
     while (x < width)
     {
-        if (this.value.positive)
+        if (this.hop >= 2)
         {
-            if (VLInt.Compare (this.value, ContourWalker.max_target) <= 0)
-            {
-                var zval = this.subcube.x.Add (this.subcube.n);
-                ContourWalker.SaveResult (this.subcube.x, this.cube.root, zval, this.value);
-            }
-        }          
-        else if (VLInt.Compare (this.value, ContourWalker.min_target) >= 0)
-        {
-            var zval = this.subcube.x.Add (this.subcube.n);
-            ContourWalker.SaveResult (this.subcube.x, this.cube.root, zval, this.value);
-        }
-
-        if (this.hop > 1)
-        {
-            this.HopSub (this.hop);
-            this.IncrementCube ();
+            this.current.HopSub (this.hop);
+            this.current.IncrementCube ();
             this.hop = 0;
 
-            if (!this.value.positive)
-                throw "ooops!"; 
-        }
-
-        var v1 = this.value.Subtract (this.subcube.dv);
-        var v2 = this.value.Add (this.cube.dy);
-
-        if (VLInt.CompareVector (v1.value, v2.value) > 0)
-        {
-            this.IncrementCube ();
-        }
-        else
-        {
-            if (! v1.positive && this.value.positive)
+            while (!this.current.value.positive)
             {
-                var delta = (this.cross != null) ? (this.subcube.x.Subtract(this.cross)) : null;
-                this.cross = VLInt.FromVLInt (this.subcube.x);
-                this.hop = (delta == null) ? 0 : (delta.ToInt ());
-                if (this.hop > this.hop_max) this.hop_max = this.hop;
-                this.hop = this.hop - 2;
+                this.current.DecrementSub ();
+                Misc.Log ("Overshot, Dec = {0}", ++dec);
             }
-
-            var prev = this.value;
-            this.IncrementSub ();
-        }
-
-        var v = VLInt.FromVLInt (this.value);
-
-        if (! v.positive && VLInt.Compare (v, this.min_v) < 0)
-        {
-            this.min_v = v;
-        }
-
-        if (v.positive && VLInt.Compare (v, this.max_v) > 0)
-        {
-            this.max_v = v;
         }
         
-        this.contour [x] = {x:VLInt.FromVLInt (this.subcube.x), y:VLInt.FromVLInt (this.cube.root), value:v};
+        var v1 = this.current.GetNextX ();
+        var v2 = v1.GetNextY ();
+        var prev = this.current;
         
-        ++x;
+        var c = VLInt.CompareVector (v1.value.value, v2.value.value);
+            
+        this.current = (c > 0) ? v2 : v1;
+        
+        // Check for crossing, positive to negative
+        
+        if (prev.value.positive && ! this.current.value.positive)
+        {
+            this.contour [x++] = prev;            
+            this.contour [x++] = ContourPoint.Clone (this.current);
+
+            if (VLInt.Compare (prev.value, this.max_v) > 0) this.max_v = prev.value;
+            if (VLInt.Compare (this.current.value, this.min_v) < 0) this.min_v = this.current.value;
+            
+            this.TestValue (prev);
+            this.TestValue (this.current);
+            
+            var delta = (this.cross != null) ? (prev.subcube.x.Subtract(this.cross)) : null;
+            this.cross = VLInt.FromVLInt (prev.subcube.x);
+            delta = (delta == null) ? 0 : (delta.ToInt ());
+            if (delta > this.hop_max) this.hop_max = delta;
+            this.hop = this.hop_max - 2;
+        }
     }
 }
 //--------------------------------------------------------------------------------------------
 ContourWalker.prototype.FillNoDraw = function (x, width)
+{
+    var dec = 0;
+    
+    while (x < width)
+    {
+        if (this.hop >= 2)
+        {
+            this.current.HopSub (this.hop);
+            this.current.IncrementCube ();
+            this.hop = 0;
+
+            while (!this.current.value.positive)
+            {
+                this.current.DecrementSub ();
+                Misc.Log ("Overshot, Dec = {0}", ++dec);
+            }
+        }
+        
+        var v1 = this.current.GetNextX ();
+        var v2 = v1.GetNextY ();
+        var prev = this.current;
+        
+        var c = VLInt.CompareVector (v1.value.value, v2.value.value);
+            
+        this.current = (c > 0) ? v2 : v1;
+        
+        // Check for crossing, positive to negative
+        
+        if (prev.value.positive && ! this.current.value.positive)
+        {            
+            this.TestValue (prev);
+            this.TestValue (this.current);
+            
+            var delta = (this.cross != null) ? (prev.subcube.x.Subtract(this.cross)) : null;
+            this.cross = VLInt.FromVLInt (prev.subcube.x);
+            delta = (delta == null) ? 0 : (delta.ToInt ());
+            if (delta > this.hop_max) this.hop_max = delta;
+            this.hop = this.hop_max - 2;
+        }
+        ++x;
+    }
+}
+//--------------------------------------------------------------------------------------------
+ContourWalker.prototype.FillNoDrawX = function (x, width)
 {
     // this version doesn't record any intermediate values.
         
@@ -467,10 +385,8 @@ ContourWalker.prototype.FillNoDraw = function (x, width)
     }
 }
 //----------------------------------------------------------------------------------------------------------------
-ContourWalker.SaveResult = function (x, y, z, value)
+ContourWalker.SaveResult = function (result)
 {
-    var result = new WalkingResults.Result (x, y, z, value);
-
     ContourWalker.Results.Add (result);
     ContourWalker.LastFound.innerHTML = Misc.Format ("{0}, {1}", ContourWalker.Results.count, result);
 }
@@ -489,20 +405,20 @@ ContourWalker.prototype.DrawTrackValues = function ()
     for (var x = 0 ; x < width ; ++x)
     {
         if (this.contour [x].value != null)
-        {
-            Misc.Log ("{0},{1},{2}", this.contour [x].x, this.contour [x].y, this.contour [x].value);
+        {            
+            Misc.Log ("X {0} Y {1} V {2}", this.contour [x].subcube.x, this.contour [x].cube.root, this.contour [x].value);
             var y = HEIGHT * (1 - VLInt.Ratio (this.contour [x].value.Subtract (this.min_v), range));
             var c = ContourWalker.VCOLOUR [this.cmode] (this.contour [x]);
         
             chelp.SetForeground (c);
-            chelp.DrawLine ([x,y0],[x,y]);
+            chelp.DrawLine ([x,y0],[x,y]);     
         }
     }
     
     chelp.SetForeground (ContourWalker.zero_line);
     chelp.DrawLine ([0,y0],[width,y0]);
     ContourWalker.AmimationView.src = chelp.canvas.toDataURL('image/png');
-    ContourWalker.AmimationText.innerHTML = this.GetCurrentText ();
+    ContourWalker.AmimationText.innerHTML = this.current.toString ();
 }
 //----------------------------------------------------------------------------------------------------------------
 ContourWalker.prototype.DrawTrackLog = function ()
@@ -542,7 +458,7 @@ ContourWalker.prototype.DrawTrackLog = function ()
     }
     
     ContourWalker.AmimationView.src = chelp.canvas.toDataURL('image/png');
-    ContourWalker.AmimationText.innerHTML = this.GetCurrentText ();
+    ContourWalker.AmimationText.innerHTML = this.current.toString ();
 }
 //--------------------------------------------------------------------------------------------
 ContourWalker.prototype.HoverText = function (event)
@@ -551,20 +467,9 @@ ContourWalker.prototype.HoverText = function (event)
 
     if (x >= this.contour.length) x = this.contour.length - 1;
     if (x < 0) x = 0;
-
-    var ret = Misc.Format ("N = {0}, X = {1}, Y = {2}", this.subcube.n, this.contour [x].x, this.contour [x].y);
-
-    if (this.contour [x].value != null)
-    {
-        ret += Misc.Format (", V = {0}", this.contour [x].value);
-    }
-    return ret;
-} 
-//--------------------------------------------------------------------------------------------
-ContourWalker.prototype.GetCurrentText = function ()
-{
-    return Misc.Format ("N = {0}, X = {1}, Y = {2}, V = {2}", this.subcube.n, this.subcube.x, this.cube.root, this.value);
-} 
+    
+    return this.contour [x].HoverText ();
+}
 //--------------------------------------------------------------------------------------------
 
 ContourWalker.VCOLOUR = [];

@@ -39,7 +39,7 @@ BigCube.FromVLInt = function (n)
     var n2 = n.Multiply (n);
     var n3 = n2.Multiply (n);
 
-    ret.cube = n3;
+    ret.value = n3;
 
     ret.dy = n2.Add (n);
     ret.dy = ret.dy.MultiplyInt (3);
@@ -58,7 +58,7 @@ BigCube.prototype.Clone = function ()
     ret.root = VLInt.FromVLInt(this.root);
     ret.dy = VLInt.FromVLInt(this.dy);
     ret.ddy = VLInt.FromVLInt(this.ddy);
-    ret.cube = VLInt.FromVLInt(this.cube);
+    ret.value = VLInt.FromVLInt(this.value);
     
     return ret;
 }
@@ -77,7 +77,7 @@ BigCube.prototype.GetDecrement = function ()
 BigCube.prototype.Increment = function ()
 {    
     this.root.Increment ();
-    this.cube = this.cube.Add (this.dy);
+    this.value = this.value.Add (this.dy);
     this.dy = this.dy.Add (this.ddy);
     this.ddy = this.ddy.AddInt (BigCube.dddy);
 }
@@ -86,7 +86,7 @@ BigCube.prototype.Decrement = function ()
 {
     this.ddy = this.ddy.SubtractInt (BigCube.dddy);
     this.dy = this.dy.Subtract (this.ddy);
-    this.cube = this.cube.Subtract (this.dy);
+    this.value = this.value.Subtract (this.dy);
     this.root.Decrement ();
 }
 //-------------------------------------------------------------------------------------------------
@@ -95,6 +95,29 @@ BigCube.prototype.DeltaPlus = function ()
     return this.dy;
 }
 //-------------------------------------------------------------------------------------------------
+BigCube.prototype.GetNext = function ()
+{    
+    var ret = new BigCube ();
+    
+    ret.root = this.root.AddInt(1);
+    ret.value = this.value.Add (this.dy);
+    ret.dy = this.dy.Add (this.ddy);value
+    ret.ddy = this.ddy.AddInt (BigCube.dddy);
+    
+    return ret;
+}
+//-------------------------------------------------------------------------------------------------
+BigCube.prototype.GetPrevious = function ()
+{    
+    var ret = new BigCube ();
+    
+    ret.root = this.root.SubtractInt(1);
+    ret.ddy = this.ddy.SubtractInt (BigCube.dddy);
+    ret.dy = this.dy.Subtract (this.ddy);
+    ret.value = this.value.Subtract (this.dy);
+    
+    return ret;
+}//-------------------------------------------------------------------------------------------------
 BigCube.prototype.DeltaMinus = function ()
 {
     var ret = this.ddy.SubtractInt (BigCube.dddy);
@@ -148,11 +171,11 @@ BigCube.prototype.IsZero = function ()
 //--------------------------------------------------------------------------------------------
 BigCube.prototype.toString = function ()
 {
-    return "BigCube(" + this.root + ") = " + this.cube;
+    return "BigCube(" + this.root + ") = " + this.value;
 }
 BigCube.prototype.FullText = function ()
 {
-    return Misc.Format ("BC: n = {0}, n^3 = {1}, dx = {2}, ddx = {3}, dddx = 6", this.root, this.cube, this.dy, this.ddy);
+    return Misc.Format ("BC: n = {0}, n^3 = {1}, dx = {2}, ddx = {3}, dddx = 6", this.root, this.value, this.dy, this.ddy);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -170,7 +193,7 @@ BigCube.prototype.Verify = function (where)
 
     var cube = n3;
     
-    if (VLInt.Compare (cube, this.cube) != 0)
+    if (VLInt.Compare (cube, this.value) != 0)
     {
         throw where + " " + this.FullText ();
     }

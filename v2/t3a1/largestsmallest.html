@@ -2,7 +2,7 @@
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <meta name="Author" content="John Whitehouse">
 
 <meta name="KeyWords" content="Python Collatz 3x+1">
@@ -11,10 +11,22 @@
 <link rel="apple-touch-icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="t3a1.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="t3a1.js"> </script>
+<script src="../js_library/misc.js"> </script>
 <script>
-    OnStart = function () { document.getElementById("links_go_here").innerHTML = MakeButtons (); }
+
+
+OnStart = function ()
+{
+    var all = document.getElementsByClassName("expr");
+
+    for (var i = 0; i < all.length; i++)
+    {
+        Misc.expand_element (all[i]);
+    }
+}
+
 </script>
 </head>
 
@@ -58,7 +70,8 @@
 
 <!-- Main content -->
 
-<div class="in2 box w8 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2>In this section</h2>
 
@@ -72,7 +85,8 @@
 
 <!-- Introduction -->
 
-<div class="in2 box w8 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="Introduction">Introduction</a></h2>
 
@@ -451,48 +465,47 @@ in the following tables (LS is the largest loop seed).
 
 <div class="in2">
 <ul>
-  <li>When m&nbsp;=&nbsp;2n the largest value is always equal to K.</li>
-  <li>The value for m = 2n+1 is the same as for m = 2n.</li>
-  <li>The value for m&nbsp;=&nbsp;3n is always K/5.</li>
-  <li>The value for m = 3n+1 is the same as for m = 3n.</li>
+  <li>When <span class="expr">m=2*n</span> the largest value is always equal to K, which generates the [1,4,2,1] cycle.</li>
+  <li>The largest seed for <span class="expr">m=2n+1 is the same as for m = 2n.</li>
+  <li>The value for <span class="expr">m=3*n is always K/5</span>.</li>
+  <li>The value for <span class="expr">m=3n+1 is the same as for m=3n</span>.</li>
   <li>The LS values grow more slowly than the K values with increasing n.</li>
 </ul>
 </div>
 
 <p>
-    The values LS/K = 1 when m=2n is obtained by setting all the 'a' values to 2.
+    The values <span class="expr">LS/K=1</span> when m=2n is obtained by setting all the 'a' values to 2.
     The 1/5 is when all the 'a' values are 3. The sequence continues [1, 1/5, 1/13,
     1/29, 1/61, 1/125.0, 1/253, 1/509, ...], the rule being double it and add 3.
 </p><p>
-    Here we have proved that there are no cycles in 3x+1 that contain twice as
-    many or more even number as odd numbers, so there is no point looking at systems
-    where m is greater than or equal to 2n.
+    Here we have proved that there are no cycles (other than [1,4,2,1]) in 3x+1 that contain twice as
+    many or more even numbers as odd numbers, so there is no point looking at systems
+    where <span class="expr">m>=2n</span>. When a list consists of a repeated sequence it
+    can be factorised, so [2,2,2] is <span class="expr">[2]^3</span>, which generates three
+    repeats of the basic cycle [1,4,2,1]. This is the cycle with the largest possible ratio
+    <span class="expr">m/n</span>.
+    
 </p>
 
 </div>
 
 <!-- Which 'a' Values? -->
 
-<div class="in2 box w8 float">
+
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="Which A Values?">Which 'a' Values?</a></h2>
 
 <p>
     For a given n value the loop values are determined by the equation.
-</p>
+</p><p>
 
-<div class="code w5 in2">
-    <p class="code">
-        s = (3<span class="superscript">n-1</span> + 3<span class="superscript">n-2</span>*2<span class="superscript">a1</span> +
-        3<span class="superscript">n-3</span>*2<span class="superscript">a1+a2</span> + ...)
-    </p>
-</div>
-
-
-<p>
+    <pre class="code">s = (3<span class="superscript">n-1</span> + 3<span class="superscript">n-2</span>*2<span class="superscript">a1</span> + 3<span class="superscript">n-3</span>*2<span class="superscript">a1+a2</span> + ...)</pre>
+    
+</p><p>
     What combinations of 'a' values lead to the loop seeds encountered above?
     Here are a few lists found by searching through the sets of all a values that
-    meet the constraint sum(a)=m. The set of lists gets very large so I've stopped
+    meet the constraint <span class="expr">sum(a)=m</span>. The set of lists gets very large so I've stopped
     at m&nbsp;=&nbsp;10.
 
 </p><p>
@@ -544,12 +557,17 @@ in the following tables (LS is the largest loop seed).
 
 </p><p>
 
-    It seems likely that for a given n and m the highest loop seed will
-    be found by starting with a set of n ones and adding in the remaining m&minus;n values
-    as uniformly as possible across the list. Applying this algorithm is a lot
-    quicker than searching all the lists so we can easily try it for larger numbers.
-    Here are some results (LS<span class="subscript">obs</span> is the value obtained by testing all the loops,
-    LS<span class="subscript">post</span> is calculated from the postulated minimal loop)
+    It appears likely that for a given n and m the highest loop seed will
+    be found by mixing the '1' and '2' values
+    as uniformly as possible across the list.
+    This can be achieved by using Bresenham's line algorith to connect the points
+    (0,0) to (m,n).
+    
+    Applying this algorithm is a lot
+    quicker than searching all the possible lists so we can easily try it for larger numbers.
+    Here are some results
+    (<span class="expr">LS¬[obs]</span> is the value obtained by testing all the loops,
+    <span class="expr">LS¬[post]</span> is calculated from the postulated minimal loop)
 </p><p>
     <table border="4" cellpadding="4" cellspacing="0" class="whitebox">
       <tr>
@@ -667,7 +685,7 @@ in the following tables (LS is the largest loop seed).
 
 <!-- Where to look for loops -->
 
-<div class="in2 box w8 float">
+<div class="float w10 box in2" style="overflow: auto;">
 
 <h2><a name="Where to look for loops"></a>Where to look for loops</h2>
 
@@ -751,7 +769,7 @@ in the following tables (LS is the largest loop seed).
 
     So by the time we get to 30 we are already 4 orders of magnitude down on the
     limit calculated using the largest value. The chart shows that this ratio
-    increases by about an order of magnitude for every 7 n values.
+    increases by about an order of magnitude for every seven n values.
 </p><p>
     <img src="images/minmax.gif" width="408" height="268">
 </p><p>
@@ -861,15 +879,12 @@ in the following tables (LS is the largest loop seed).
 
     </p><p>
         The &quot;predicted&quot; values are calculated using the equation
-    </p>
+    </p><p>
 
-    <div class="code in2 w5">
-        <p class="code">
-            LS/K&nbsp;= n * &#x221A;8 / (m&nbsp;-&nbsp;n&nbsp;*&nbsp;log(3)/log(2))
-        </p>
-    </div>
 
-    <p>
+        <pre class="code">LS/K&nbsp;= n * &#x221A;8 / (m&nbsp;-&nbsp;n&nbsp;*&nbsp;log(3)/log(2))</pre>
+
+    </p><p>
         which is derived empirically from the next chart. The product of LS/K and
         (m&minus;n * log(3)/log(2)) is nearly linear:
     </p><p>
@@ -993,19 +1008,19 @@ in the following tables (LS is the largest loop seed).
 </div>
 
 
+<div class="float w10 box in2" style="overflow: auto;">
 
+    <h2>Other Pages</h2>
 
-<!-- Generic links -->
-
-    <div class="in2 box endfloat">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
-
-      </div>
+    <p>
+          <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+    </p>
+      
+</div>
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2011 - 2017 <p> </td>
+   <p class="small"> (c) John Whitehouse 2011 - 2022 <p> </td>
 
 
 

@@ -7,13 +7,20 @@
 <link rel="shortcut icon" href="http://www.eddaardvark.co.uk/favicon.png" />
 <link rel="StyleSheet" href="http://www.eddaardvark.co.uk/jw.css" type="text/css" media="screen">
 
-<script type="text/javascript" src="http://www.eddaardvark.co.uk/john.js"> </script>
-<script type="text/javascript" src="spirograph_object.js"> </script>
-<script type="text/javascript" src="spirograph_controller.js"> </script>
-<script type="text/javascript" src="../js_library/animation.js"> </script>
-<script type="text/javascript" src="../js_library/tab_bar.js"> </script>
-<script type="text/javascript" src="../js_library/svg_helpers.js"> </script>
-<script type="text/javascript" src="../js_library/colours.js"> </script>
+<script src="http://www.eddaardvark.co.uk/john.js"> </script>
+<script src="../js_library/animation.js"> </script>
+<script src="../js_library/tab_bar.js"> </script>
+<script src="../js_library/svg_helpers.js"> </script>
+<script src="../js_library/colours.js"> </script>
+<script src="../js_library/misc.js"> </script>
+<script src="../js_library/primes.js"> </script>
+<script src="spirograph_data.js"> </script>
+<script src="spirograph_sequence.js"> </script>
+<script src="spirograph_split.js"> </script>
+<script src="spirograph_evolution.js"> </script>
+<script src="spirograph_object.js"> </script>
+<script src="spirograph_controller.js"> </script>
+<script src="tooltip_text.js"> </script>
 
 <style>
 
@@ -43,7 +50,42 @@ P.instructions
 {
     margin-left: 0pt;
 }
-.popup { position: absolute; visibility: hidden; display: inline-block; top:350px; left:100px; overflow: auto; background-color: sandybrown; border-style: solid; border-color: blue;}
+DIV.tabview
+{
+    margin: 0 0 12pt 0;
+    padding: 3pt 3pt;
+    border: solid 1px coral;
+    background-color: SandyBrown;
+    width: 540px;
+}
+
+.popup
+{
+    position: absolute;
+    visibility: hidden;
+    display: inline-block;
+    top:350px;
+    left:100px;
+    overflow: auto;
+    background-color: sandybrown;
+    border-style: solid;
+    border-color: blue;
+}
+
+DIV.ttpop
+{
+    float: left;
+    position: fixed;
+    visibility: hidden;
+    display: inline-block;
+    top: 350px;
+    left: 100px;
+    width: 640;
+    overflow: auto;
+    background-color: white;
+    border-style: solid;
+    border-color: blue;
+}
 
  </style>
 
@@ -58,8 +100,32 @@ P.instructions
         controller = new SpirographController ();
         controller.Initialise ();
         
-        links_go_here.innerHTML = MakeButtons ();
+        grid.addEventListener("click", ClickGrid);
+        
+        var tt_buttons = [
+            btn_single, btn_overlay, btn_split,btn_big, btn_grid, btn_evolve,   // display options
+            Setup, Size, Rate, Phse, DP, Fill, Overlay, Split, Extras, Print,   // tab bar
+            example, randomise, an_start, an_auto, an_stop, new_pat,            // additional actions
+            // help images
+            setup_help, rates_help, sizes_help, phases_help, deltas_help, fill_help, split_help, overlay_help, extras_help,
+            help_example,
+            // Overlay attributes
+            overlay_points, overlay_shrink, overlay_rotate, overlay_vary1, overlay_vary2, overlay_vary3,
+            overlay_fill, overlay_line, overlay_num            
+        ];             
+        
+        for (var idx in tt_buttons)
+        {
+            tt_buttons[idx].addEventListener ("mouseenter", SpirographController.OnMouseEnter);
+            tt_buttons[idx].addEventListener ("mouseleave", SpirographController.OnMouseExit);
+        }        
     }
+    
+    ClickGrid = function (event)
+    {
+        controller.OnClickGrid (event.offsetX, event.offsetY);
+    }
+    
 
 </script>
 
@@ -70,39 +136,41 @@ P.instructions
 
 <body onload="OnStart();">
 
-<table>
+<!-- Banner -->
 
- <tr>
-  <td width="200" class="top">
-   <p> Home page
-   </p><p>
-   <a href="http://www.eddaardvark.co.uk"><img border="0" src="http://www.eddaardvark.co.uk/images/home.png"></a>
-   </p>
-  </td>
+  <div style="margin: auto; width: 1024px;">
+     <button style="width: 180px;" class="banner clickable" onclick="Show('http://www.eddaardvark.co.uk')">
+        <p> <img border="0" src="http://www.eddaardvark.co.uk/images/home.png">
+        <p> <strong>Home page</strong>
+     </button>
 
-  <td class="top" width="100%">
-      <h1> <br> SVG Spirograph Page </h1>
-  </td>
+     <button class="banner">
+       <h1> SVG Spirograph Page </h1>
+     </button>
 
-  <td>
-    <script type="text/javascript"><!--
-      google_ad_client = "ca-pub-3534237235440125";
-      /* Small Square */
-      google_ad_slot = "0024655068";
-      google_ad_width = 200;
-      google_ad_height = 200;
-      //-->
-    </script>
-    <script type="text/javascript"
-      src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-    </script>
-  </td>
- </tr>
-</table>
+     <!-- Ads -->
+
+      <button style="width: 260px;" class="banner">
+        <script type="text/javascript"><!--
+          google_ad_client = "ca-pub-3534237235440125";
+          /* Small Square */
+          google_ad_slot = "0024655068";
+          google_ad_width = 200;
+          google_ad_height = 200;
+          //-->
+        </script>
+        <script type="text/javascript"
+          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+        <p> <strong>Advertisement</strong> <p>
+      </button>
+    </div>
 
 <!-- Main Content -->
+    
+    <div class="float in2 box w10" style="overflow: auto;">
 
-<div class="float box in2 w10" style="overflow: auto;">
+
     <h2> Spirographs </h2>
 
     <!-- Buttons -->
@@ -112,14 +180,17 @@ P.instructions
         that uses toothed wheels to generate patterns, you can see some examples
         <a href="http://en.wikipedia.org/wiki/Spirograph">here</a>.
     </p><p>
-        This page draws spirograph patterns, both the traditional 2 wheel versions and patterns generated using 3 or more
+        This page draws spirograph patterns, both the traditional 2 wheel versions and the more generic "epicycles" using 3 or more
         wheels. You can use the <a href="#help">various controls</a> to manipulate the patterns and to create animations.
     </p><p>
-        Older versions of this page can be found here <a href="http://www.eddaardvark.co.uk/python_patterns/spirograph.html">here</a>.
-    </p><p>
-        And some YouTube videos generated using this page  <a href="http://www.eddaardvark.co.uk/ytvideos.html">here</a>.
+        Older versions of this page can be found here <a href="http://www.eddaardvark.co.uk/python_patterns/spirograph.html">here</a>,
+        and some YouTube videos generated using this page  <a href="http://www.eddaardvark.co.uk/ytvideos.html">here</a>.
     </p>
+    </div>
 
+    <div class="float in2 box w10" style="overflow: auto;">
+
+    <h2> Play Area </h2>
 
     <!-- Create three columns, picture, controls, details -->
 
@@ -127,437 +198,636 @@ P.instructions
     <div id="normal_mode">
         <!-- Picture -->
 
-        <div class="float w5">
-            <a name="pic"/> <p id="picture" />
-        </div>
-
+        <table>
+            <tr>
+                <td colspan="2">
+                    Configure:
+                    <span id="buttons"> [toolbar will appear here] </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                Display:
+                    <button type="button" id="btn_single" class="clickable" onclick="controller.SetMode(SpirographController.Single)"> Single </button>
+                    <button type="button" id="btn_overlay" class="clickable" onclick="controller.SetMode(SpirographController.Overlay)"> Overlay </button>
+                    <button type="button" id="btn_split" class="clickable" onclick="controller.SetMode(SpirographController.Split)"> Split </button>
+                    <button type="button" id="btn_big" class="clickable" onclick="controller.GoBig()"> Big </button>
+                    <button type="button" id="btn_grid" class="clickable" onclick="controller.SetMode(SpirographController.Grid)"> Grid </button>
+                    <button type="button" id="btn_evolve" class="clickable" onclick="controller.StartEvolution()"> Evolve </button>
+                    
+                    <span id="mode"> mode </span>
+                                            
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a name="pic"/> <p id="picture" />
+                </td>
+            
         <!-- Controls -->
 
-        <div class="float w4">
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="setup" class="tabview">
 
-            <p> <span id="buttons"> [toolbar will appear here] </span>
-            <a href="#help"><button type="button" class="clickable">?</button></a>
-            </p>
+                                <!-- Number of points -->
+                                    <table width="100%">
+                                        <tr> <td> Points: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.IncrementPoints (-100)"> &#x25c0;&#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.IncrementPoints (-10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.IncrementPoints (-1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.IncrementPoints(1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.IncrementPoints(10)"> &#x25b6; </button>
+                                            <button type="button" class="clickable" onclick="controller.IncrementPoints(100)"> &#x25b6;&#x25b6; </button>
 
-            <div id="setup">
+                                            <span id="num_points"> num points </span>
+                                        </td>
+                                        <td rowspan="2" width="64"> <img src="images/info.jpg" width="64" id="setup_help"> </td>
+                                        </tr>
 
-            <!-- Number of points -->
-                <table>
-                    <tr> <td> Points: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.IncrementPoints (-100)"> &#x25c0;&#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.IncrementPoints (-10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.IncrementPoints (-1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.IncrementPoints(1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.IncrementPoints(10)"> &#x25b6; </button>
-                        <button type="button" class="clickable" onclick="controller.IncrementPoints(100)"> &#x25b6;&#x25b6; </button>
+                                    <!-- Number of Wheels -->
 
-                        <span id="num_points"> num points </span>
-                    </td></tr>
+                                        <tr> <td> Wheels: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.IncrementWheels(-1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.IncrementWheels(1)"> &#x25b7; </button>
 
-                <!-- Number of Wheels -->
+                                            <span id="num_wheels"> num wheels </span>
+                                        </td></tr>
 
-                    <tr> <td> Wheels: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.IncrementWheels(-1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.IncrementWheels(1)"> &#x25b7; </button>
+                                    </table>
+                                </div>
 
-                        <span id="num_wheels"> num wheels </span>
-                    </td></tr>
+                            <!-- Wheel Rates -->
 
+                                <div id="wheelrates" class="tabview">
+                                    <table width="100%">
+                                        <tr> <td> Rate 1:</td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(0, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(0, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(0, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(0, 10)"> &#x25b6; </button>
+
+                                            <span id="wrate1"> rate </span>
+                                        </td>
+                                        
+                                        <td rowspan="5" width="64"> <img src="images/info.jpg" width="64" id="rates_help"> </td>
+
+                                        <tr> <td> Rate 2:</td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(1, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(1, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(1, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(1, 10)"> &#x25b6; </button>
+
+                                            <span id="wrate2"> rate </span>
+                                        </td></tr>
+
+                                        <tr> <td> Rate 3:</td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(2, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(2, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(2, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(2, 10)"> &#x25b6; </button>
+
+                                            <span id="wrate3"> rate </span>
+                                        </td></tr>
+
+                                        <tr> <td> Rate 4:</td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(3, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(3, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(3, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(3, 10)"> &#x25b6; </button>
+
+                                            <span id="wrate4"> rate </span>
+                                        </td></tr>
+
+                                        <tr> <td> Rate 5:</td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(4, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(4, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(4, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelRate(4, 10)"> &#x25b6; </button>
+
+                                            <span id="wrate5"> rate </span>
+                                        </td></tr>
+
+                                    </table>
+                                </div>
+
+                            <!-- Wheel Sizes -->
+
+                                <div id="wheelsizes" class="tabview">
+                                    <table width="100%">
+
+                                        <tr> <td> Size 1: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(0, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(0, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(0, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(0, 10)"> &#x25b6; </button>
+
+                                            <span id="wsize1"> size </span>
+                                        </td>
+                                        
+                                        <td rowspan="5" width="64"> <img src="images/info.jpg" width="64" id="sizes_help"> </td>
+                                        </tr>
+
+                                        <tr> <td> Size 2: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(1, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(1, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(1, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(1, 10)"> &#x25b6; </button>
+
+                                            <span id="wsize2"> size </span>
+                                        </td></tr>
+
+                                        <tr> <td> Size 3: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(2, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(2, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(2, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(2, 10)"> &#x25b6; </button>
+
+                                            <span id="wsize3"> size </span>
+                                        </td></tr>
+
+                                        <tr> <td> Size 4: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(3, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(3, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(3, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(3, 10)"> &#x25b6; </button>
+
+                                            <span id="wsize4"> size </span>
+                                        </td></tr>
+
+                                        <tr> <td> Size 5: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(4, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(4, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(4, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelSize(4, 10)"> &#x25b6; </button>
+
+                                            <span id="wsize5"> size </span>
+                                        </td></tr>
+                                    </table>
+                                </div>
+
+                            <!-- Wheel Phases -->
+
+                                <div id="wheelphases" class="tabview">
+                                    <table width="100%">
+
+                                        <tr> <td> Phase 1: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, 10)"> &#x25b6; </button>
+
+                                            <span id="wphase1"> phase </span>
+                                        </td>
+                                        <td rowspan="5" width="64"> <img src="images/info.jpg" width="64" id="phases_help"> </td>
+                                        </tr>
+
+                                        <tr> <td> Phase 2: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, 10)"> &#x25b6; </button>
+
+                                            <span id="wphase2"> phase </span>
+                                        </td></tr>
+
+                                        <tr> <td> Phase 3: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, 10)"> &#x25b6; </button>
+
+                                            <span id="wphase3"> phase </span>
+                                        </td></tr>
+
+                                        <tr> <td> Phase 4: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, 10)"> &#x25b6; </button>
+
+                                            <span id="wphase4"> phase </span>
+                                        </td></tr>
+
+                                        <tr> <td> Phase 5: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, -10)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, -1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, 1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, 10)"> &#x25b6; </button>
+
+                                            <span id="wphase5"> phase </span>
+                                        </td></tr>
+
+                                    </table>
+                                </div>
+                                
+                            <!-- Wheel Phase Deltas -->
+
+                                <div id="phasedeltas" class="tabview">
+                                    <table width="100%">
+
+                                        <tr> <td> &Delta; Phase 1: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(0, -1)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(0, -0.1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(0, 0.1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(0, 1)"> &#x25b6; </button>
+
+                                            <span id="dwphase1"> delta </span>
+                                        </td>
+                                        <td rowspan="5" width="64"> <img src="images/info.jpg" width="64" id="deltas_help"> </td>
+                                        </tr>
+
+                                        <tr> <td> &Delta; Phase 2: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(1, -1)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(1, -0.1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(1, 0.1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(1, 1)"> &#x25b6; </button>
+
+                                            <span id="dwphase2"> delta </span>
+                                        </td></tr>
+
+                                        <tr> <td> &Delta; Phase 3: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(2, -1)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(2, -0.1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(2, 0.1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(2, 1)"> &#x25b6; </button>
+
+                                            <span id="dwphase3"> delta </span>
+                                        </td></tr>
+
+                                        <tr> <td> &Delta; Phase 4: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(3, -1)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(3, -0.1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(3, 0.1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(3, 1)"> &#x25b6; </button>
+
+                                            <span id="dwphase4"> delta </span>
+                                        </td></tr>
+
+                                        <tr> <td> &Delta; Phase 5: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(4, -1)"> &#x25c0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(4, -0.1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(4, 0.1)"> &#x25b7; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetWheelPhaseDelta(4, 1)"> &#x25b6; </button>
+
+                                            <span id="dwphase5"> delta </span>
+                                        </td></tr>
+
+                                    </table>
+                                </div>
+
+
+                            <!-- Fill -->
+
+                                <div id="fill" class="tabview">
+
+                                    <table width="100%">
+                                    <!-- Line colour -->
+
+                                        <tr><td> Line: </td>
+                                        <td>
+                                            <select id="line_colour" onchange="controller.SetLineColour (line_colour)"> & nbs </select>
+                                        </td>
+                                        <td rowspan="3" width="64"> <img src="images/info.jpg" width="64" id="fill_help"> </td>
+                                        </tr>
+
+                                    <!-- Fill colour -->
+
+                                        <tr> <td> Colour: </td>
+                                        <td>
+                                            <select id="fill_colour" onchange="controller.SetFillColour (fill_colour)"> </select>
+
+                                        </td></tr>
+                                        
+                                    <!-- Back colour -->
+
+                                        <tr> <td> Background: </td>
+                                        <td>
+                                            <select id="back_colour" onchange="controller.SetBackColour (back_colour)"> </select>
+
+                                        </td></tr>
+
+                                    <!-- Fill style -->
+
+                                        <tr> <td> Style: </td>
+                                        <td>
+
+                                            <button type="button" class="clickable" onclick="controller.SetFillRule('none')"> &#x25ef; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetFillRule('nonzero')"> &#x2b24; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetFillRule('evenodd')"> &#x25d0; </button>
+                                            <button type="button" class="clickable" onclick="controller.SetFillRule('dashed')"> &equiv; </button>
+
+                                            <span id="fillrule"> fill </span>
+
+                                        </td></tr>
+                                    </table>
+                                </div>
+                                
+                            <!-- Split -->
+                            
+                                <div id="split" class="tabview">
+
+                                    <table width="100%">
+
+                                        <tr><td>
+                                            Inner wheels:
+                                        </td><td>
+                                            <select id="inner_wheels">
+                                                <option value=1> 1 </option>
+                                                <option value=2> 2 </option>
+                                                <option value=3> 3 </option>
+                                                <option value=4> 4 </option>
+                                            </select>
+                                        </td>
+                                        <td rowspan="6" width="64"> <img src="images/info.jpg" width="64" id="split_help"> </td>
+                                        </tr>
+                                        
+                                        <tr><td>
+                                            Outer wheels:
+                                        </td><td>
+                                            <select id="outer_wheels">
+                                                <option value=1> 1 </option>
+                                                <option value=2> 2 </option>
+                                                <option value=3> 3 </option>
+                                                <option value=4> 4 </option>
+                                            </select>
+                                        </td></tr>
+
+                                        <tr> <td>
+                                            Outer points:
+                                        </td><td>
+                                            <input type="text" id="outer_points" size="2" maxlength="4" value="5"/>
+                                        </td></tr>
+                                        
+                                        <tr> <td>
+                                            Inner size: 
+                                        </td><td>
+                                            <input type="text" id="inner_size" size="2" maxlength="4" value="3"/>
+                                        </td></tr>
+                                        
+                                        <tr> <td>
+                                            Outer size: 
+                                        </td><td>
+                                            <input type="text" id="outer_size" size="2" maxlength="4" value="3"/>
+                                        </td></tr>
+                                        
+                                        <tr> <td>
+                                            Outer rotate: 
+                                        </td><td colspan="2">
+                                            <select id="outer_rotate">                                             
+                                                <option value=-5> -5 </option>
+                                                <option value=-4> -4 </option>
+                                                <option value=-3> -3 </option>
+                                                <option value=-2> -2 </option>
+                                                <option value=-1> -1 </option>
+                                                <option value=0> 0 </option>
+                                                <option value=1> 1 </option>
+                                                <option value=2> 2 </option>
+                                                <option value=3> 3 </option>
+                                                <option value=4> 4 </option>
+                                                <option value=5> 5 </option>
+                                            </select>
+                                        </td></tr>
+                                        
+                                        <tr> <td>
+                                            Fill Colours: 
+                                        </td><td colspan="2">
+                                            <input type="text" id="split_fillcols" size="20" maxlength="300" value="red orange"/>
+                                            <select id="split_addfill"> </select>
+                                            <button title="add to fill colours" onclick="SpirographController.AddColour(split_fillcols,split_addfill)"> &plus; </button>
+                                        </td></tr>
+
+                                        <tr> <td>
+                                            Line Colours: 
+                                        </td><td colspan="2">
+                                            <input type="text" id="split_linecols" size="20" maxlength="300" value="blue black"/>
+                                            <select id="split_addline"> </select>
+                                            <button title="add to line colours" onclick="SpirographController.AddColour(split_linecols,split_addline)"> &plus; </button>
+                                        </td></tr>
+                                        
+                                        <tr> <td>
+                                            &nbsp;
+                                        </td><td colspan="2">
+                                            <button title="apply these settings" class="clickable" onclick="controller.SetMode(SpirographController.Split);">Apply</button>
+                                        </td></tr>
+                                    </table>
+                                </div>
+                                
+
+
+                            <!-- Overlay -->
+                                <div id="overlay" class="tabview">
+
+                                    <table width="100%">
+
+                                        <tr><td id="overlay_points">
+                                            &Delta; Num Points:
+                                        </td><td>
+                                            <input type="text" id="seq_dpts" size="2" maxlength="4" value="0"/>
+                                        </td>
+                                        <td rowspan="6" width="64"> <img src="images/info.jpg" width="64" id="overlay_help"> </td>
+                                        </tr>
+
+                                        <tr> <td id="overlay_shrink">
+                                            Shrink:
+                                        </td><td>
+                                            <input type="text" id="seq_dsize" size="2" maxlength="4" value="0.95"/>
+                                        </td></tr>
+                                        
+                                        <tr> <td id="overlay_rotate">
+                                            Rotate: 
+                                        </td><td>
+                                            <input type="text" id="seq_dtheta" size="2" maxlength="4" value="3"/>
+                                        </td></tr>
+                                        
+                                        <tr> <td id="overlay_vary1">
+                                            Vary Mode: 
+                                        </td><td>
+                                            <select id="seq_vmode">
+                                                <option value=0> None </option>
+                                                <option value=1> Phase (delta in degrees) </option>
+                                                <option value=2> Size (scale factor)</option>
+                                                <option value=3> Rate (delta)</option>
+                                            </select>
+                                        </td></tr>     
+
+                                        <tr> <td id="overlay_vary2">
+                                            Vary Wheel: 
+                                        </td><td>
+                                            <select id="seq_wheel">
+                                                <option value=-1> None </option>
+                                                <option value=0> 1 </option>
+                                                <option value=1> 2 </option>
+                                                <option value=2> 3 </option>
+                                                <option value=3> 4 </option>
+                                                <option value=4> 5 </option>
+                                            </select>
+                                        </td></tr>     
+                                        
+                                        <tr> <td id="overlay_vary3">
+                                            Vary Amount:
+                                        </td><td>
+                                            <input type="text" id="seq_vparam" size="2" maxlength="7" value="1"/>
+                                        </td></tr>
+                                        
+                                        <tr> <td id="overlay_fill">
+                                            Fill Colours: 
+                                        </td><td colspan="2">
+                                            <input type="text" id="seq_fillcols" size="20" maxlength="300" value="red orange"/>
+                                            <select id="seq_addfill"> & nbs </select>
+                                            <button title="add to fill colours" onclick="SpirographController.AddColour(seq_fillcols,seq_addfill)"> &plus; </button>
+                                        </td></tr>
+
+                                        <tr> <td id="overlay_line">
+                                            Line Colours: 
+                                        </td><td colspan="2">
+                                            <input type="text" id="seq_linecols" size="20" maxlength="300" value="yellow black"/>
+                                            <select id="seq_addline"> & nbs </select>
+                                            <button title="add to line colours" onclick="SpirographController.AddColour(seq_linecols,seq_addline)"> &plus; </button>
+                                        </td></tr>
+
+                                        <tr> <td id="overlay_num">
+                                            Num Images:
+                                        </td><td colspan="2">
+                                            <input type="text" id="seq_num" size="10" maxlength="4" value="20"/>
+                                        </td></tr>
+                                        
+                                        <tr> <td>
+                                            &nbsp;
+                                        </td><td colspan="2">
+                                            <button title="apply these settings" class="clickable" onclick="controller.SetMode(SpirographController.Overlay);">Apply</button>
+                                        </td></tr>
+                                    </table>
+                                </div>
+                                
+
+                            <!-- Some additional options -->
+
+                                <div id="extras" class="tabview">
+
+                                    <table width="100%">
+                                        <tr> <td> Actions: </td>
+                                        <td>
+                                            <button type="button" class="clickable" onclick="controller.MakeSymmetrical()">Make symmetrical</button>
+                                            <button type="button" class="clickable" onclick="controller.ShowSVG()">Show SVG</button>
+                                            <button type="button" class="clickable" onclick="SpirographController.ShowSource()">Show Source Code</button>
+                                        </td>
+                                        <td rowspan="2" width="64"> <img src="images/info.jpg" width="64" id="extras_help"> </td>
+                                        </tr>
+
+                                    <!-- Symmetry -->
+
+                                        <tr> <td> Symmetry: </td>
+                                        <td>
+
+                                            <button type="button" class="clickable" onclick="controller.IncrementSymmetry(-1)"> &#x25c1; </button>
+                                            <button type="button" class="clickable" onclick="controller.IncrementSymmetry(1)"> &#x25b7; </button>
+                                            <span id="symmetry"> symmetry </span>
+                                        </td></tr>
+                                    </table>
+                                </div>
+
+                            <!-- Print -->
+
+                                <div id="print">
+                                    <p>
+                                        This option will create a new page that can be printed without all the clutter of this page. Enter the
+                                        size of the image required and then press "Go". You can then use your browser's options to save
+                                        or print this image.
+                                    </p><p>
+                                        Image size: <input type="text" id="print_size" maxlength="5" size="6">
+                                        <button type="button" class="clickable" onclick="controller.MakePrintable()">Go</button>
+                                    </p>
+                                </div>
+
+                            <!-- Modes and flags-->
+
+                                <div id="modes">
+                                    <table>
+                                        <tr>
+                                        <td>
+                                            <button type="button" id="example" class="clickable" onclick="controller.Example()">Example</button>
+                                            <button type="button" id="randomise" class="clickable" onclick="controller.Randomise()">Randomise</button>
+                                            <button type="button" id="an_start" class="clickable" onclick="controller.StartAnimation()">Animate</button>
+                                            <button type="button" id="an_auto" class="clickable" onclick="controller.AutoAnimation()">Auto</button>
+                                            <button type="button" id="an_stop" class="clickable" onclick="controller.StopAnimation()">Stop</button>
+                                            <button type="button" id="new_pat" class="clickable" onclick="controller.StartNew()">Reset</button>
+                                            
+                                            <a href="#help"><button type="button" class="clickable">?</button></a>
+                                            
+                                        </td></tr>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- Status -->
+
+                            <div class="float w4">
+                                <h2> Current Status </h2>
+                                <div  id="details"/>
+                            </div>
+                        </td>
+                    </tr>
                 </table>
-            </div>
+            </td>
+        </tr>
+    </table>
 
-        <!-- Wheel Rates -->
-
-            <div id="wheelrates">
-                <table>
-                    <tr> <td> Wheel 1:</td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(0, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(0, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(0, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(0, 10)"> &#x25b6; </button>
-
-                        <span id="wrate1"> num points </span>
-
-                    <tr> <td> Wheel2:</td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(1, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(1, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(1, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(1, 10)"> &#x25b6; </button>
-
-                        <span id="wrate2"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 3:</td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(2, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(2, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(2, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(2, 10)"> &#x25b6; </button>
-
-                        <span id="wrate3"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 4:</td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(3, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(3, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(3, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(3, 10)"> &#x25b6; </button>
-
-                        <span id="wrate4"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 5:</td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(4, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(4, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(4, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelRate(4, 10)"> &#x25b6; </button>
-
-                        <span id="wrate5"> num points </span>
-                    </td></tr>
-
-                </table>
-            </div>
-
-        <!-- Wheel Sizes -->
-
-            <div id="wheelsizes">
-                <table>
-
-                    <tr> <td> Wheel 1: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(0, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(0, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(0, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(0, 10)"> &#x25b6; </button>
-
-                        <span id="wsize1"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 2: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(1, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(1, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(1, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(1, 10)"> &#x25b6; </button>
-
-                        <span id="wsize2"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 3: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(2, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(2, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(2, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(2, 10)"> &#x25b6; </button>
-
-                        <span id="wsize3"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 4: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(3, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(3, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(3, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(3, 10)"> &#x25b6; </button>
-
-                        <span id="wsize4"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 5: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(4, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(4, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(4, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelSize(4, 10)"> &#x25b6; </button>
-
-                        <span id="wsize5"> num points </span>
-                    </td></tr>
-                </table>
-            </div>
-
-        <!-- Wheel Phases -->
-
-            <div id="wheelphases">
-                <table>
-
-                    <tr> <td> Wheel 1: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(1, 10)"> &#x25b6; </button>
-
-                        <span id="wphase2"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 2: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(0, 10)"> &#x25b6; </button>
-
-                        <span id="wphase1"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 3: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(2, 10)"> &#x25b6; </button>
-
-                        <span id="wphase3"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 4: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(3, 10)"> &#x25b6; </button>
-
-                        <span id="wphase4"> num points </span>
-                    </td></tr>
-
-                    <tr> <td> Wheel 5: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, -10)"> &#x25c0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, -1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, 1)"> &#x25b7; </button>
-                        <button type="button" class="clickable" onclick="controller.SetWheelPhase(4, 10)"> &#x25b6; </button>
-
-                        <span id="wphase5"> num points </span>
-                    </td></tr>
-
-                </table>
-            </div>
-
-        <!-- Fill -->
-
-            <div id="fill">
-
-                <table>
-                <!-- Line colour -->
-
-                    <tr> <td> Line: </td>
-                    <td>
-
-                        <button type="button" class="clickable" onclick="controller.SetLineColour('red')" style="color:red"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetLineColour('yellow')" style="color:yellow"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetLineColour('green')" style="color:green"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetLineColour('blue')" style="color:blue"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetLineColour('cyan')" style="color:cyan"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetLineColour('white')" style="color:white"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetLineColour('black')" style="color:black"> &#x2b24; </button>
-
-                        <span id="linecol"> fill </span>
-
-                    </td></tr>
-
-                <!-- Fill colour -->
-
-                    <tr> <td> Colour: </td>
-                    <td>
-
-                        <button type="button" class="clickable" onclick="controller.SetFillColour('red')" style="color:red"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillColour('yellow')" style="color:yellow"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillColour('green')" style="color:green"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillColour('blue')" style="color:blue"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillColour('cyan')" style="color:cyan"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillColour('white')" style="color:white"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillColour('black')" style="color:black"> &#x2b24; </button>
-
-                        <span id="fillcol"> fill </span>
-
-                    </td></tr>
-
-                <!-- Fill style -->
-
-                    <tr> <td> Style: </td>
-                    <td>
-
-                        <button type="button" class="clickable" onclick="controller.SetFillRule('none')"> &#x25ef; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillRule('nonzero')"> &#x2b24; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillRule('evenodd')"> &#x25d0; </button>
-                        <button type="button" class="clickable" onclick="controller.SetFillRule('dashed')"> &equiv; </button>
-
-                        <span id="fillrule"> fill </span>
-
-                    </td></tr>
-                </table>
-            </div>
-
-        <!-- Animation -->
-
-            <div id="animate">
-
-                <table>
-                    <tr> <td> Animate: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.StartAnimation()">Animate</button>
-                        <button type="button" class="clickable" onclick="controller.AutoAnimation()">Auto</button>
-                        <button type="button" class="clickable" onclick="controller.StopAnimation()">Stop</button>
-                    </td></tr>
-                </table>
-            </div>
-
-        <!-- Overlay -->
-            <div id="overlay">
-
-                <table>
-
-                    <tr> <td> &Delta;<span class="subscript">size</span>: </td>
-                    <td>
-                        <input type="text" id="dwsize0" size="2" maxlength="5" value="0.2"/> &nbsp;
-                        <input type="text" id="dwsize1" size="2" maxlength="5" value="0"/> &nbsp;
-                        <input type="text" id="dwsize2" size="2" maxlength="5" value="0"/> &nbsp;
-                        <input type="text" id="dwsize3" size="2" maxlength="5" value="0"/> &nbsp;
-                        <input type="text" id="dwsize4" size="2" maxlength="5" value="0"/> &nbsp;
-                    </td></tr>
-
-                    <tr> <td> &Delta;<span class="subscript">rate</span>: </td>
-                    <td>
-                        <input type="text" id="dwrate0" size="2" maxlength="3" value="0"/> &nbsp;
-                        <input type="text" id="dwrate1" size="2" maxlength="3" value="0"/> &nbsp;
-                        <input type="text" id="dwrate2" size="2" maxlength="3" value="0"/> &nbsp;
-                        <input type="text" id="dwrate3" size="2" maxlength="3" value="0"/> &nbsp;
-                        <input type="text" id="dwrate4" size="2" maxlength="3" value="0"/> &nbsp;
-                    </td></tr>
-
-                    <tr> <td> &Delta;<span class="subscript">phase</span>: </td>
-                    <td>
-                        <input type="text" id="dwphase0" size="2" maxlength="3" value="2"/> &nbsp;
-                        <input type="text" id="dwphase1" size="2" maxlength="3" value="0"/> &nbsp;
-                        <input type="text" id="dwphase2" size="2" maxlength="3" value="0"/> &nbsp;
-                        <input type="text" id="dwphase3" size="2" maxlength="3" value="0"/> &nbsp;
-                        <input type="text" id="dwphase4" size="2" maxlength="3" value="0"/> &nbsp;
-                    </td></tr>
-
-
-                    <tr> <td> &Delta;<span class="subscript">points</span>: </td>
-                    <td>
-                        <input type="text" id="dpoints" size="2" maxlength="4" value="0"/>
-                    </td></tr>
-
-                    <tr> <td> Shrink: </td>
-                    <td>
-                        <input type="text" id="dsize" size="2" maxlength="4" value="0.95"/>
-                    </td></tr>
-
-                    <tr> <td> Colour 1: </td>
-                    <td>
-                        <input type="text" id="seqcol1" size="20" maxlength="20" value="red"/>
-                    </td></tr>
-
-                    <tr> <td> Colour 2: </td>
-                    <td>
-                        <input type="text" id="seqcol2" size="20" maxlength="20" value="blue"/>
-                    </td></tr>
-
-                    <tr> <td> Images: </td>
-                    <td>
-                        <input type="text" id="num_images" size="10" maxlength="4" value="20"/>
-                        &nbsp;<button type="button" class="clickable" onclick="controller.UpdateOverlay();">Apply</button>
-                    </td></tr>
-                </table>
-            </div>
-
-        <!-- Some additional options -->
-
-            <div id="extras">
-
-                <table>
-                    <tr> <td> Actions: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.Example()">Example</button>
-                        <button type="button" class="clickable" onclick="controller.Randomise()">Randomise</button>
-                        <button type="button" class="clickable" onclick="controller.MakeSymmetrical()">Make symmetrical</button>
-                        <button type="button" class="clickable" onclick="controller.StartNew()">Reset</button>
-                    </td></tr>
-
-                <!-- Symmetry -->
-
-                    <tr> <td> Symmetry: </td>
-                    <td>
-
-                        <button type="button" class="clickable" onclick="controller.IncrementSymmetry(-1)"> &#x25c1; </button>
-                        <button type="button" class="clickable" onclick="controller.IncrementSymmetry(1)"> &#x25b7; </button>
-
-                        <span id="symmetry"> symmetry </span>
-                    </td></tr>
-                </table>
-            </div>
-
-        <!-- Print -->
-
-            <div id="print">
-                <p>
-                    This option will create a new page that can be printed without all the clutter of this page. Enter the
-                    size of the image required and then press "Go". You can then use your browser's options to save
-                    or print this image.
-                </p><p>
-                    Image size: <input type="text" id="print_size" maxlength="5" size="6">
-                    <button type="button" class="clickable" onclick="controller.MakePrintable()">Go</button>
-                </p>
-            </div>
-
-        <!-- Modes and flags-->
-
-            <div id="modes">
-                <table>
-                    <tr> <td> Mode: </td>
-                    <td>
-                        <button type="button" class="clickable" onclick="controller.SetMode(Spirograph.Single)"> Single </button>
-                        <button type="button" class="clickable" onclick="controller.SetMode(Spirograph.Overlay)"> Overlay </button>
-                        <button type="button" class="clickable" onclick="controller.SetMode(Spirograph.Grid)"> Grid </button>
-                        <button type="button" class="clickable" onclick="controller.SetMode(Spirograph.Evolve)"> Evolve </button>
-
-                        <span id="mode"> mode </span>
-                    </td></tr>
-                </table>
-            </div>
-
-        </div>
-
-    <!-- Settings -->
-
-        <div class="float w4">
-            <h2> Current Status </h2>
-            <div  id="details"/>
-        </div>
-        
-     </div>
-     
-    <!-- Additional options -->
-
-        <div class="float w8">
-            <p>
-                <button type="button" class="clickable" onclick="controller.ShowSVG()">Show SVG</button>
-                <button type="button" class="clickable" onclick="controller.ShowSource()">Show Source Code</button>
-            </p>
-        </div>
         
     </div> <!-- End of normal mode -->
     
     
     <div id="evolve_mode">
-        <h2> Evolution </h2>
-        <p id="evolve_options" />
+        <h2> <span id="grid_title"></span> </h2>
+            <div id="grid"> &nbsp; </div>
         <p>
-            <Button onclick="controller.ToNormalMode();"> Exit </button>
+            <Button onclick="controller.ExitGridMode ();"> Exit </button>
         </p>
     </div> <!-- End of evolve mode -->
 
 
     </div>
     
+    
+	<!-- 
+    ==============================================================================================================
+    Popup to show SVG
+    ==============================================================================================================
+   -->			  
+		<div id="tool_tip" class="float ttpop">
+		
+			<p> <span id="tool_tip_text"> </span> </p>
+            
+		</div>
+        
 	<!-- 
     ==============================================================================================================
     Popup to show SVG
@@ -573,7 +843,7 @@ P.instructions
             </p>
 
             <p style="text-align:right;">
-                <button type="button" class="clickable" onclick="controller.HidePopup();" title="hide this section"> Cancel </button>
+                <button type="button" class="clickable" onclick="SpirographController.HidePopup();" title="hide this section"> Cancel </button>
             </p>
 		</div>
         
@@ -617,275 +887,79 @@ P.instructions
                 </table>
             </p>
             <p style="text-align:right;">
-                <button type="button" class="clickable" onclick="controller.HidePopup();" title="hide this section"> Cancel </button>
+                <button type="button" class="clickable" onclick="SpirographController.HidePopup();" title="hide this section"> Cancel </button>
             </p>
 		</div>
                 
+                <!-- Instructions -->
 
-    <div class="endfloat"></div>
-
-</div></div>
-
-    <div class="in2 box w10">
+    
+    <div class="float in2 box w10" style="overflow: auto;">
+    
         <h2> <a name="help"/> Instructions </a></h2>
         <p>
-            The display consists of three areas, the pattern, the controls and the current status. How these are arranged will depend on
-            the size and shape of your dispay. The pattern should be obvious, the controls are accessed by a tool bar that contains
-            tabs like "Setup&nbsp;&#x25bc" and "Wheel&nbsp;1&nbsp;&#x25bc" and the current status is identified by a heading.
+            All the action takes place in the area labelled "Play Area". The sub-sections within this areas are described below.
         </p><p>
-            The tabs introduce additional controls:
-            <table class="instructions">
+           
+        <table class="instructions">
 
-                <!-- Setup -->
+        <!-- Configure -->
 
-                <tr>
-                    <th class="instructions">Setup</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            This allows you control the number of wheels used to define the pattern, the number
-                            of points used to draw it and the drawing mode.
-                        </p><p class="instructions">
-                            For the wheels and points the arrow buttons will change these values (within limits),
-                            the open triangles by '1', the solid triangles by '10' and the double triangles by '100'.
-                        </p><p class="instructions">
-                            The active values are displayed alongside the buttons and in the "Current Status" display.
-                        </p><p class="instructions">
-                            A larger number of points will draw smoother images, a small number can produce other interesting effects.
-                        </p>
-                    </td>
-                </tr>
+            <tr>
+                <th class="instructions">Configure</td>
+                <td class="instructions">
+                    <p class="instructions">
+                        This area contains an array of buttons that act like a tab bar. Each buttone will display one of the
+                        confiuration dialogs, which will appear to the right of the patter.
+                    </p><p class="instructions">
+                        You can get more information about what each tab bar dialog does by hovering your pointer over the 
+                        corresponding button, where a popup window will appear.
+                    </p><p class="instructions">
+                        (Sorry, no touch-screen equivalent yet).
+                    </p>
+                </td>
+            </tr>
 
-                <!-- Mode -->
+        <!-- Display -->
 
-                <tr>
-                    <th class="instructions">Mode</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            The mode menu is always visible. Mode determines how the paterns are displayed.
-                            There are currently three:
-                        </p><p class="instructions">
-                            <table>
-                                <tr><td>Single</td><td>Draws a single pattern</td></tr>
-                                <tr><td>Overlay</td><td>Superimposes a number of patterns.
-                                    The sequence of patterns is generated using the values in the "Overlay" menu.</td></tr>
-                                <tr><td>Grid</td><td>Draw a sequence of patterns in a grid.
-                                    The sequence is generated using the values in the "Overlay" menu.</td></tr>
-                                <tr><td>Evolve</td><td>
-                                    Switches to Evolve mode. Most of the standard controls are hidden and a
-                                    set of images is displayed.<br>
-                                    <a href="images/evolving.png" target="_blank" style="text-decoration:none;">
-                                        <img border="0" src="images/evolving.png" width="360">
-                                    </a><br>
-                                    <a href="images/evolving2.png" target="_blank" style="text-decoration:none;">
-                                        <img border="0" src="images/evolving2.png" width="360">
-                                    </a><br>
-                                    These are all children of the original image, with one attribute changed. If you click on one of
-                                    these the choices will be replaced by a new set based on the image you clicked on. By clicking on
-                                    the most interesting image you can navigate around the pattern space. The number of images is
-                                    controlled by the 'images' parameter in the overlay section.<br><br>
-                                    To return to normal more click the "Exit" button. The last pattern you clicked on will become the
-                                    main one.
-                                </td></tr>
-                            </table>
-                        </p>
-                    </td>
-                </tr>
+            <tr>
+                <th class="instructions">Display</td>
+                <td class="instructions">
+                    <p class="instructions">
+                        Here there are 6 buttons that select the type of pattern that is drawn in the "Pattern Area", immediately 
+                        below these buttons. You can get more information about what each mode looks ilke by hovering the mouse
+                        over the button.
+                </td>
+            </tr>
 
-                <!-- Wheel Size -->
+        <!-- Pattern -->
 
-                <tr>
-                    <th class="instructions">Wheel Size</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            This section allows you to control the relative sizes of the wheels. The pattern is
-                            normalised so that the total of the sizes is the radius of the whole. Only the active wheels
-                            are considered, but you can change the values of the others for later.
-                        </p><p class="instructions">
-                            The open triangles change values by '1', and solid ones by '10'.
-                            The active values are displayed alongside the buttons and in the "Current Status" display.
-                    </td>
-                </tr>
+            <tr>
+                <th class="instructions">Pattern Area</td>
+                <td class="instructions">
+                    <p class="instructions">
+                        This appears on the left, directly below the display buttons. This is where the result of your configuration
+                        choices appears.
+                    </p>
+                </td>
+            </tr>
+            
+        <!-- Dialog Area -->
 
-                <!-- Wheel Rate -->
-
-                <tr>
-                    <th class="instructions">Wheel Rate</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                        </p><p class="instructions">
-                            "Rate" is the number of rotations the wheel makes while drawing the pattern. To avoid tracing over the
-                            pattern multiple times you should set up the wheel rates so that they don't have a common factor.
-                            A negative rate turns the wheel in the opposite direction.
-                        </p><p class="instructions">
-                            The symmetry of a two wheel pattern is the difference between the two rates (after removing common factors)
-                            so, for instance, [3,5] has a symmetry of 2 and [3,-5] a symmetry of 8 as shown in these images.
-
-                        </p><p class="instructions">
-
-                            <a href="images/rates3x5.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/rates3x5.png" width="120"><br>
-                                    <strong>Rates 3 &amp; 5</strong>
-                                </div>
-                            </a>
-
-                            <a href="images/rates3xm5.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/rates3xm5.png" width="120"><br>
-                                    <strong>Rates 3 &amp; &minus;5</strong>
-                                </div>
-                            </a>
-
-                            <div class="endfloat"></div>
-
-                        </p><p class="instructions">
-                            For more wheels the symmetry is the highest common factor of the differences of all the pairs (after removing
-                            common factors). For random rates this usually turns out to be 1, ie no symmetry.
-                        </p><p class="instructions">
-                            The open triangles change values by '1', and solid ones by '10'.
-                            The active values are displayed alongside the buttons and in the "Current Status" display.
-                        </p>
-                    </td>
-                </tr>
-
-                <!-- Wheel Phase -->
-
-                <tr>
-                    <th class="instructions">Wheel Phase</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                        </p><p class="instructions">
-                            "Phase" determines the starting angle of the wheel. Useful when creating animations, especially with
-                            more than 2 wheels.
-                        </p>
-                            For two wheels changing the phase has the effect of rotating the whole pattern. The values are
-                            in degrees.
-                        </p>
-                    </td>
-                </tr>
-
-                <!-- Fill -->
-
-                <tr>
-                    <th class="instructions">Fill</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            Fill allows you to change the line colour fill colours and how the fill is applied.
-                            Click on one of the coloured circles to select the matching colour.
-                            The fill syle can be "none" (the open circle), "nonezero" (the solid circle) or "evenodd"
-                            (the half filled circle). These values are taken from the SVG specification on how polygons
-                            are shaded. "nonzero" fills the whole pattern, and "evenodd" fills alternate sectors.
-                        </p><p class="instructions">
-                            The active values are displayed to the right of the buttons and in the "Current Settings" area.
-                            Examples of each type can be seen below.
-                        </p><p class="instructions">
-                            <a href="images/none.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/none.png" width="120"><br>
-                                    <strong>None</strong>
-                                </div>
-                            </a>
-
-                            <a href="images/nonzero.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/nonzero.png" width="120"><br>
-                                    <strong>NonZero</strong>
-                                </div>
-                            </a>
-
-                            <a href="images/evenodd.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/evenodd.png" width="120"><br>
-                                    <strong>EvenOdd</strong>
-                                </div>
-                            </a>
-
-                            <a href="images/dashed.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/dashed.png" width="120"><br>
-                                    <strong>Dashed</strong>
-                                </div>
-                            </a>
-
-                            <div class="endfloat"></div>
-
-                        </p><p class="instructions">
-
-                            The dashed mode isn't very exciting when used on simple patterns but can produce more dramatic
-                            images when combined with wheel rates that are a significant fraction of the number of points,
-                            say around one quarter. This example has rates of 3, -4, 397, combines with 1600 points.
-
-                        </p><p class="instructions">
-
-                            <a href="images/dashed2.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/dashed2.png" width="120"><br>
-                                    <strong>Dashed</strong>
-                                </div>
-                            </a>
-                        </p>
-                    </td>
-
-                <!-- Animate -->
-
-                <tr>
-                    <th class="instructions">Animate</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            This section has three buttons, "Animate", "Auto" and "Stop". Clicking animate will start animating the
-                            pattern by repeatedly changing the phases of the wheels. The phase change rates are selected at
-                            random so repeatedly clicking this button will produce different animations. The "Auto" button will have
-                            the same effect, changing th phase deltas every 5 seconds. The phase values
-                            can be seen in the "Current Settings" area.
-                        </p><p class="instructions">
-                            For two wheels the animations just rotate the whole pattern, this feature is a lot more interesting
-                            with three or more wheels.
-                        </p><p class="instructions">
-                            The "Stop" button stops the animation and clears the "auto" state.
-                        </p>
-
-                    </td>
-                </tr>
-
-                <!-- Overlay -->
-
-                <tr>
-                    <th class="instructions">Overlay</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            This section allows you to configure a set of delta values for the wheel rates, phases and sizes.
-
-                        </p><p class="instructions">
-                            The "Apply" button updates the overlay parameters.
-
-                        </p><p class="instructions">
-
-                            <a href="images/overlay.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/overlay.png" width="120"><br>
-                                    <strong>Overlay Example</strong>
-                                </div>
-                            </a>
-
-                            <a href="images/overlay2.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/overlay2.png" width="120"><br>
-                                    <strong>Overlay Example</strong>
-                                </div>
-                            </a>
-
-                            <a href="images/overlay3.png" target="_blank" style="text-decoration:none;">
-                                <div class="float" style="width:160px;">
-                                    <img border="0" src="images/overlay3.png" width="120"><br>
-                                    <strong>Overlay Example</strong>
-                                </div>
-                            </a>
-
-                            <div class="endfloat"></div>
-                        </p>
-
-                    </td>
-                </tr>
+            <tr>
+                <th class="instructions">Dialog Area</td>
+                <td class="instructions">
+                    <p class="instructions">
+                        The contents of this area change depending on the selected tab in the tab bar area. Each instance contains
+                        a set of controls that manage some aspect of the pattern that is drawn. You can get more
+                        information on these controls by hovering over the information icon that appears towards the top right
+                        of this area. Try it with the example icon below:
+                    </p><p>
+                        <img src="images/info.jpg" width="64" id="help_example">
+                    </p>
+                </td>
+            </tr>
+            
 
                 <!-- Extras -->
 
@@ -957,25 +1031,25 @@ P.instructions
                 </tr>
             </table>
 
-
-
         </p>
     </div>
 
+
 <!-- Generic links -->
 
-    <div class="in2 box">
-      <h2> Other pages </h2>
-      <p><span id="links_go_here">&nbsp;</span></p>
+    <div class="float w10 box in2" style="overflow: auto;">
 
-      </div>
-      
-       
+        <h2> Other pages </h2>
+        <p>
+              <iframe class="links" src="http://www.eddaardvark.co.uk/links.html" title="Other pages on this site"></iframe>
+        </p>
+          
+    </div>
 
 
 <!-- Copyright -->
 
-   <p class="small"> (c) John Whitehouse 2010 - 2017 <p>
+   <p class="small"> (c) John Whitehouse 2010 - 2022 <p>
 
 
 <script type="text/javascript">

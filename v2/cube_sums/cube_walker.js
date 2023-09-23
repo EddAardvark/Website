@@ -20,7 +20,7 @@ CubeWalker.FromCubes = function (xc, yc, zc)
     ret.big_cy = yc;
     ret.big_cz = zc;
     
-    ret.value = ret.big_cx.cube.Add (ret.big_cy.cube).Subtract(ret.big_cz.cube);
+    ret.value = ret.big_cx.value.Add (ret.big_cy.value).Subtract(ret.big_cz.value);
 
     return ret;
 }
@@ -321,7 +321,7 @@ CubeWalker.prototype.FixZ = function ()
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.SetValue = function ()
 {
-    this.value = this.big_cx.cube.Add (this.big_cy.cube).Subtract(this.big_cz.cube);
+    this.value = this.big_cx.value.Add (this.big_cy.value).Subtract(this.big_cz.value);
 }
 //--------------------------------------------------------------------------------------------
 CubeWalker.prototype.Scale = function (n)

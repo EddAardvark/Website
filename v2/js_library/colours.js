@@ -82,6 +82,35 @@ SVGColours.Blend = function (start_colour, end_colour, fraction1)
 
     return SVGColours.ToHTMLValue (r, g, b);
 }
+
+//------------------------------------------------------------------------------
+// Blend from a list of colours, fraction is in the range 0-1
+//------------------------------------------------------------------------------
+SVGColours.MultiBlend = function (colours, fraction)
+{
+    if (colours.length < 1)
+    {
+        return black;
+    }
+    if (colours.length < 2)
+    {
+        return colours [0];
+    }
+    if (colours.length < 3)
+    {
+        return SVGColours.Blend (colours [1], colours[0], fraction);
+    }
+    
+    var f = fraction * (colours.length -1);
+    var idx1 = Math.floor (f);
+    
+    if (idx1 >= colours.length - 1) return colours [colours.length - 1];
+    
+    var factor = f - idx1;
+    var idx2 = idx1+1;
+    
+    return SVGColours.Blend (colours [idx2], colours[idx1], factor);
+}    
 //------------------------------------------------------------------------------
 // Blend two colours (as RGB triplets: [R,G,B])
 //------------------------------------------------------------------------------
@@ -296,20 +325,29 @@ SVGColours.colour_set ["white"] = ["White", "Snow", "Honeydew", "MintCream", "Az
 SVGColours.colour_set ["grey"] = ["Gainsboro", "LightGray", "Silver", "DarkGray", "Gray", "DimGray", "LightSlateGray", "SlateGray",
                                         "DarkSlateGray", "Black"];
 
-
 SVGColours.colour_sets = ["pink", "red", "orange", "pink", "yellow", "brown", "green", "cyan", "blue", "purple", "white", "grey"];
 
 //-----------------------------------------------------------------------------------------------------------------
 // Add the full set of colours into a select control
 //-----------------------------------------------------------------------------------------------------------------
-SVGColours.AddColours = function (select)
+SVGColours.AddColours = function (select, inc_transparent)
 {
+    if (inc_transparent)
+    {
+        var option = document.createElement("option");
+    
+        option.text = "transparent";
+        option.value = "transparent";
+        select.add(option);
+    }
+
     var keys = Object.getOwnPropertyNames (SVGColours.hex_code);
     keys.sort ();
     
     for (var key in keys)
     {
         var option = document.createElement("option");
+        
         option.text = keys[key];
         option.value = keys[key];
         select.add(option);
