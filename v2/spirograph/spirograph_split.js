@@ -23,7 +23,7 @@ SpirographSplit.GetDefault = function ()
     ret.outer_size   = 1;
     ret.outer_rotate = 0;
     ret.line_colours = ["black"];
-    ret.fill_colours = ["blue","cyan"];
+    ret.fill_colours = ["blue","cyan", "blue"];
     
     return ret;
 }
@@ -252,7 +252,7 @@ SpirographSplit.prototype.GetSVG = function (xpos, ypos, radius)
     if (this.spirograph.back_colour != "transparent")
     {
         var r2 = radius * 1.05;
-        ret += SVGHelp.Rect (-r2, -r2, 2 * r2, 2 * r2, this.back_colour, "transparent");
+        ret += SVGHelp.Rect (-r2, -r2, 2 * r2, 2 * r2, this.spirograph.back_colour, "transparent");
     }
         
     var points = this.inner.GetPoints (xpos, ypos, radius);

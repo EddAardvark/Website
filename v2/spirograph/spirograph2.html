@@ -87,6 +87,9 @@ DIV.ttpop
     border-color: blue;
 }
 
+.middle { vertical-align: middle; }
+}
+
  </style>
 
  <script>
@@ -103,22 +106,26 @@ DIV.ttpop
         grid.addEventListener("click", ClickGrid);
         
         var tt_buttons = [
-            btn_single, btn_overlay, btn_split,btn_big, btn_grid, btn_evolve,   // display options
-            Setup, Size, Rate, Phse, DP, Fill, Overlay, Split, Extras, Print,   // tab bar
-            example, randomise, an_start, an_auto, an_stop, new_pat,            // additional actions
+            btn_single, btn_overlay, btn_split,btn_big, btn_grid, btn_evolve,           // display options
+            Setup, Size, Rate, Phse, DP, Fill, Overlay, Split, Print,                   // tab bar
+            example, randomise, an_start, an_auto, an_stop, new_pat, svg_btn, ins_link, // additional actions
             // help images
-            setup_help, rates_help, sizes_help, phases_help, deltas_help, fill_help, split_help, overlay_help, extras_help,
+            setup_help, rates_help, sizes_help, phases_help, deltas_help, fill_help, split_help, overlay_help,
             help_example,
             // Overlay attributes
             overlay_points, overlay_shrink, overlay_rotate, overlay_vary1, overlay_vary2, overlay_vary3,
-            overlay_fill, overlay_line, overlay_num            
+            overlay_fill, overlay_line, overlay_num, overlay_apply,
+            // Split attributes
+            in_wheels, out_wheels, out_points, in_size, out_size, out_rotate, split_line, split_fill, split_apply
         ];             
         
         for (var idx in tt_buttons)
         {
             tt_buttons[idx].addEventListener ("mouseenter", SpirographController.OnMouseEnter);
             tt_buttons[idx].addEventListener ("mouseleave", SpirographController.OnMouseExit);
-        }        
+        }    
+
+        controller.ShowHelpImage ();
     }
     
     ClickGrid = function (event)
@@ -215,7 +222,15 @@ DIV.ttpop
                     <button type="button" id="btn_grid" class="clickable" onclick="controller.SetMode(SpirographController.Grid)"> Grid </button>
                     <button type="button" id="btn_evolve" class="clickable" onclick="controller.StartEvolution()"> Evolve </button>
                     
-                    <span id="mode"> mode </span>
+                Action:
+                    <button type="button" id="example" class="clickable" onclick="controller.Example()">Example</button>
+                    <button type="button" id="randomise" class="clickable" onclick="controller.Randomise()">Randomise</button>
+                    <button type="button" id="an_start" class="clickable" onclick="controller.StartAnimation()">Animate</button>
+                    <button type="button" id="an_auto" class="clickable" onclick="controller.AutoAnimation()">Auto</button>
+                    <button type="button" id="an_stop" class="clickable" onclick="controller.StopAnimation()">Stop</button>
+                    <button type="button" id="new_pat" class="clickable" onclick="controller.StartNew()">Reset</button>
+                    <button type="button" id="svg_btn" class="clickable" onclick="controller.ShowSVG()">SVG</button>
+                    <a href="#help"><button id="ins_link" type="button" class="clickable">?</button></a>
                                             
                 </td>
             </tr>
@@ -553,7 +568,7 @@ DIV.ttpop
 
                                     <table width="100%">
 
-                                        <tr><td>
+                                        <tr><td id="in_wheels">
                                             Inner wheels:
                                         </td><td>
                                             <select id="inner_wheels">
@@ -566,7 +581,7 @@ DIV.ttpop
                                         <td rowspan="6" width="64"> <img src="images/info.jpg" width="64" id="split_help"> </td>
                                         </tr>
                                         
-                                        <tr><td>
+                                        <tr><td id="out_wheels">
                                             Outer wheels:
                                         </td><td>
                                             <select id="outer_wheels">
@@ -577,25 +592,25 @@ DIV.ttpop
                                             </select>
                                         </td></tr>
 
-                                        <tr> <td>
+                                        <tr> <td id="out_points">
                                             Outer points:
                                         </td><td>
                                             <input type="text" id="outer_points" size="2" maxlength="4" value="5"/>
                                         </td></tr>
                                         
-                                        <tr> <td>
+                                        <tr> <td id="in_size">
                                             Inner size: 
                                         </td><td>
                                             <input type="text" id="inner_size" size="2" maxlength="4" value="3"/>
                                         </td></tr>
                                         
-                                        <tr> <td>
+                                        <tr> <td id="out_size">
                                             Outer size: 
                                         </td><td>
                                             <input type="text" id="outer_size" size="2" maxlength="4" value="3"/>
                                         </td></tr>
                                         
-                                        <tr> <td>
+                                        <tr> <td id="out_rotate">
                                             Outer rotate: 
                                         </td><td colspan="2">
                                             <select id="outer_rotate">                                             
@@ -613,7 +628,7 @@ DIV.ttpop
                                             </select>
                                         </td></tr>
                                         
-                                        <tr> <td>
+                                        <tr> <td id="split_fill">
                                             Fill Colours: 
                                         </td><td colspan="2">
                                             <input type="text" id="split_fillcols" size="20" maxlength="300" value="red orange"/>
@@ -621,7 +636,7 @@ DIV.ttpop
                                             <button title="add to fill colours" onclick="SpirographController.AddColour(split_fillcols,split_addfill)"> &plus; </button>
                                         </td></tr>
 
-                                        <tr> <td>
+                                        <tr> <td id="split_line">
                                             Line Colours: 
                                         </td><td colspan="2">
                                             <input type="text" id="split_linecols" size="20" maxlength="300" value="blue black"/>
@@ -632,7 +647,7 @@ DIV.ttpop
                                         <tr> <td>
                                             &nbsp;
                                         </td><td colspan="2">
-                                            <button title="apply these settings" class="clickable" onclick="controller.SetMode(SpirographController.Split);">Apply</button>
+                                            <button class="clickable" id="split_apply" onclick="controller.SetMode(SpirographController.Split);">Apply</button>
                                         </td></tr>
                                     </table>
                                 </div>
@@ -719,34 +734,7 @@ DIV.ttpop
                                         <tr> <td>
                                             &nbsp;
                                         </td><td colspan="2">
-                                            <button title="apply these settings" class="clickable" onclick="controller.SetMode(SpirographController.Overlay);">Apply</button>
-                                        </td></tr>
-                                    </table>
-                                </div>
-                                
-
-                            <!-- Some additional options -->
-
-                                <div id="extras" class="tabview">
-
-                                    <table width="100%">
-                                        <tr> <td> Actions: </td>
-                                        <td>
-                                            <button type="button" class="clickable" onclick="controller.MakeSymmetrical()">Make symmetrical</button>
-                                            <button type="button" class="clickable" onclick="controller.ShowSVG()">Show SVG</button>
-                                            <button type="button" class="clickable" onclick="SpirographController.ShowSource()">Show Source Code</button>
-                                        </td>
-                                        <td rowspan="2" width="64"> <img src="images/info.jpg" width="64" id="extras_help"> </td>
-                                        </tr>
-
-                                    <!-- Symmetry -->
-
-                                        <tr> <td> Symmetry: </td>
-                                        <td>
-
-                                            <button type="button" class="clickable" onclick="controller.IncrementSymmetry(-1)"> &#x25c1; </button>
-                                            <button type="button" class="clickable" onclick="controller.IncrementSymmetry(1)"> &#x25b7; </button>
-                                            <span id="symmetry"> symmetry </span>
+                                            <button class="clickable" id="overlay_apply" onclick="controller.SetMode(SpirographController.Overlay);">Apply</button>
                                         </td></tr>
                                     </table>
                                 </div>
@@ -763,26 +751,6 @@ DIV.ttpop
                                         <button type="button" class="clickable" onclick="controller.MakePrintable()">Go</button>
                                     </p>
                                 </div>
-
-                            <!-- Modes and flags-->
-
-                                <div id="modes">
-                                    <table>
-                                        <tr>
-                                        <td>
-                                            <button type="button" id="example" class="clickable" onclick="controller.Example()">Example</button>
-                                            <button type="button" id="randomise" class="clickable" onclick="controller.Randomise()">Randomise</button>
-                                            <button type="button" id="an_start" class="clickable" onclick="controller.StartAnimation()">Animate</button>
-                                            <button type="button" id="an_auto" class="clickable" onclick="controller.AutoAnimation()">Auto</button>
-                                            <button type="button" id="an_stop" class="clickable" onclick="controller.StopAnimation()">Stop</button>
-                                            <button type="button" id="new_pat" class="clickable" onclick="controller.StartNew()">Reset</button>
-                                            
-                                            <a href="#help"><button type="button" class="clickable">?</button></a>
-                                            
-                                        </td></tr>
-                                    </table>
-                                </div>
-
                             </div>
                         </td>
                     </tr>
@@ -817,81 +785,37 @@ DIV.ttpop
     </div>
     
     
-	<!-- 
+<!-- 
     ==============================================================================================================
     Popup to show SVG
     ==============================================================================================================
-   -->			  
-		<div id="tool_tip" class="float ttpop">
-		
-			<p> <span id="tool_tip_text"> </span> </p>
+   -->     
+    <div id="tool_tip" class="float ttpop">
+  
+        <p> <span id="tool_tip_text"> </span> </p>
             
-		</div>
+    </div>
         
-	<!-- 
+ <!-- 
     ==============================================================================================================
     Popup to show SVG
     ==============================================================================================================
-   -->			  
-		<div id="show_svg" class="float w6 popup">
-		
-			<h2> Save SVG </h2>
-			<p>
-			    To save the svg description of the current pattern cut and paste this text..
-			</p><p>
-                <textarea style="width:100%; height:400px;" id="save_text" name="text" cols="60" rows="4000" readonly></textarea>
-            </p>
+   -->     
+    <div id="show_svg" class="float w6 popup">
+      
+        <h2> Save SVG </h2>
+        <p>
+            To save the svg description of the current pattern cut and paste this text..
+        </p><p>
+            <textarea style="width:100%; height:400px;" id="save_text" name="text" cols="60" rows="4000" readonly></textarea>
+        </p>
 
-            <p style="text-align:right;">
-                <button type="button" class="clickable" onclick="SpirographController.HidePopup();" title="hide this section"> Cancel </button>
-            </p>
-		</div>
-        
-	<!-- 
-    ==============================================================================================================
-    Popup to show source code
-    ==============================================================================================================
-   -->			  
-		<div id="show_source" class="float w6 popup">
-		
-			<h2> Source Code </h2>
-            <p>
-                The source code is in javascript files attached to this page.
-           
-                <table>
-                    <tr>
-                        <td> <a href="spirograph_object.js" target="_blank">spirograph_object</a> </td>
-                        <td> Implements the mathematical aspects of the spirograph patterns </td>
-                    </tr>
-                    <tr>
-                        <td> <a href="spirograph_controller.js" target="_blank">spirograph_controller</a> </td>
-                        <td> Implements the UI elements of the page </td>
-                    </tr>
-                    <tr>
-                        <td> <a href="../js_library/animation.js" target="_blank">animation</a> </td>
-                        <td> Implements the generic parts of animation </td>
-                    </tr>
-                    <tr>
-                        <td> <a href="../js_library/tab_bar.js" target="_blank"> tab_bar</a> </td>
-                        <td> Implements the array of buttons that controls segregates the contols into different areas </td>
-                    </tr>
-                    <tr>
-                        <td> <a href="../js_library/svg_helpers.js" target="_blank"> svg_helpers</a> </td>
-                        <td> Constructs SVG elements </td>
-                    </tr>
-                    <tr>
-                        <td> <a href="../js_library/colours.js" target="_blank"> colours</a> </td>
-                        <td> HTML and SVG colours </td>
-                    </tr>
-                    
-                </table>
-            </p>
-            <p style="text-align:right;">
-                <button type="button" class="clickable" onclick="SpirographController.HidePopup();" title="hide this section"> Cancel </button>
-            </p>
-		</div>
+        <p style="text-align:right;">
+            <button type="button" class="clickable" onclick="controller.HideSVG();" title="hide this popup"> Close </button>
+        </p>
+    </div>
                 
-                <!-- Instructions -->
+    <!-- Instructions -->
 
     
     <div class="float in2 box w10" style="overflow: auto;">
@@ -909,13 +833,11 @@ DIV.ttpop
                 <th class="instructions">Configure</td>
                 <td class="instructions">
                     <p class="instructions">
-                        This area contains an array of buttons that act like a tab bar. Each buttone will display one of the
+                        This area contains an array of buttons that act like a tab bar. Each button will display one of the
                         confiuration dialogs, which will appear to the right of the patter.
                     </p><p class="instructions">
                         You can get more information about what each tab bar dialog does by hovering your pointer over the 
                         corresponding button, where a popup window will appear.
-                    </p><p class="instructions">
-                        (Sorry, no touch-screen equivalent yet).
                     </p>
                 </td>
             </tr>
@@ -926,11 +848,23 @@ DIV.ttpop
                 <th class="instructions">Display</td>
                 <td class="instructions">
                     <p class="instructions">
-                        Here there are 6 buttons that select the type of pattern that is drawn in the "Pattern Area", immediately 
+                        Below the toolbar are 6 buttons that select the type of pattern that is drawn in the "Pattern Area", immediately 
                         below these buttons. You can get more information about what each mode looks ilke by hovering the mouse
                         over the button.
                 </td>
             </tr>
+            
+        <!-- actions -->
+
+            <tr>
+                <th class="instructions">Actions</td>
+                <td class="instructions">
+                    <p class="instructions">
+                        Alongside the display buttons there are some additional buttons for various functions. Hover
+                        over the individual buttons for descriptions.
+                </td>
+            </tr>
+            
 
         <!-- Pattern -->
 
@@ -958,82 +892,43 @@ DIV.ttpop
                         <img src="images/info.jpg" width="64" id="help_example">
                     </p>
                 </td>
-            </tr>
+            </tr>     
             
+        <!-- Status Area -->
 
-                <!-- Extras -->
+            <tr>
+                <th class="instructions">Status Area</td>
+                <td class="instructions">
+                    <p class="instructions">
+                        Currently this shows the values of the parameters that describe the basic pattern. I may expand it to 
+                        include the split and overlay attributes in the future. When the pattern is animated these values 
+                        will update.
+                </td>
+            </tr>            
 
-                <tr>
-                    <th class="instructions">Extras</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            Two sections, "Actions" and "Symmetry". Actions has four buttons:
-                        </p><p class="instructions">
-                            <table class="instructions">
-                                <tr>
-                                    <th class="instructions">Example</td>
-                                    <td class="instructions">
-                                        <p class="instructions">
-                                            Creates an example pattern. This one shows how combining high wheel rates with a small
-                                            number of points can produce interesting effects. Try turning on animation
-                                            after selecting this.
-                                        <p class="instructions">
-                                            You can also try varying the number of points to see how this affects the pattern. The
-                                            changes are quite spectacular.
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="instructions">Randomise</td>
-                                    <td class="instructions">
-                                        <p class="instructions">
-                                            Changes one of the pattern attributes at random. Repeated clicking will allow you
-                                            to explore many patterns.
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="instructions">Make Symmetrical</td>
-                                    <td class="instructions">
-                                        <p class="instructions">
-                                            Changes the wheel rates and the number of points to make the whole pattern symmetrical.
-                                            The symmetry is taken from the first two wheels.
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="instructions">Reset</td>
-                                    <td class="instructions">
-                                        <p class="instructions">
-                                            Changes the wheel rates and the number of points to make the whole pattern symmetrical.
-                                            The symmetry is taken from the first two wheels.
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </p><p class="instructions">
-                            The Symmetry section has two buttons which will increase or decrease the symmetry of the pattern by
-                            adjusting the wheel rates and the number of points.
-                        </p>
-                    </td>
-                </tr>
-
-                <!-- Print -->
-
-                <tr>
-                    <th class="instructions">Print</td>
-                    <td class="instructions">
-                        <p class="instructions">
-                            Creates a printable copy of the current pattern on a separate page. The size parameter can be
-                            used to adjust the pattern size to your printer. The "Go" button will create the image.
-                        </p>
-                    </td>
-                </tr>
-            </table>
+        </table>
 
         </p>
     </div>
 
+
+<!-- Example Images -->
+
+    <div class="float w10 box in2" style="overflow: auto;">
+
+        <h2> Example Images </h2>
+        <p>
+            These are full size versions of the images appear in the help pages displayed when you hover over
+            the controls.
+        </p><p>
+            <button type="button" class="clickable middle" onclick="controller.ShowPreviousHelpImage ()"> &#x25c0; </button>
+            <img id="help_image" class="middle" width="720">
+            <button type="button" class="clickable middle" onclick="controller.ShowNextHelpImage ()"> &#x25b6; </button>
+        </p><p>
+            <span id="image_help_text"> text </span>
+        </p>
+          
+    </div>
 
 <!-- Generic links -->
 

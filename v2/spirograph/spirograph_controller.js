@@ -31,8 +31,7 @@ SpirographController.Types = ["None", "Single", "Grid", "Overlay", "Evolve"];
 
 SpirographController.WATCH_NUM_WHEELS    = 0;
 SpirographController.WATCH_NUM_POINTS    = SpirographController.WATCH_NUM_WHEELS    + 1; 
-SpirographController.WATCH_SYMMETRY      = SpirographController.WATCH_NUM_POINTS    + 1;
-SpirographController.WATCH_WHEEL_RATE_1  = SpirographController.WATCH_SYMMETRY      + 1;
+SpirographController.WATCH_WHEEL_RATE_1  = SpirographController.WATCH_NUM_POINTS    + 1;
 SpirographController.WATCH_WHEEL_RATE_2  = SpirographController.WATCH_WHEEL_RATE_1  + 1;
 SpirographController.WATCH_WHEEL_RATE_3  = SpirographController.WATCH_WHEEL_RATE_2  + 1;
 SpirographController.WATCH_WHEEL_RATE_4  = SpirographController.WATCH_WHEEL_RATE_3  + 1;
@@ -53,9 +52,8 @@ SpirographController.WATCH_PHASE_DELTA_2 = SpirographController.WATCH_PHASE_DELT
 SpirographController.WATCH_PHASE_DELTA_3 = SpirographController.WATCH_PHASE_DELTA_2 + 1;
 SpirographController.WATCH_PHASE_DELTA_4 = SpirographController.WATCH_PHASE_DELTA_3 + 1;
 SpirographController.WATCH_PHASE_DELTA_5 = SpirographController.WATCH_PHASE_DELTA_4 + 1;
-SpirographController.WATCH_MODE          = SpirographController.WATCH_PHASE_DELTA_5 + 1;
 
-SpirographController.NUM_WATCHERS        = SpirographController.WATCH_MODE + 1;  // Counter
+SpirographController.NUM_WATCHERS        = SpirographController.WATCH_PHASE_DELTA_5 + 1;  // Counter
 
 SpirographController.watchers = [];
 
@@ -74,7 +72,6 @@ SpirographController.prototype.Initialise = function ()
     tb.AddButton ("Fill", "fill", "Fill &#x25bc", "Fill");
     tb.AddButton ("Overlay", "overlay", "Overlay &#x25bc", "Overlay");
     tb.AddButton ("Split", "split", "Split &#x25bc", "Split");
-    tb.AddButton ("Extras", "extras", "Extras &#x25bc", "Extras");
     tb.AddButton ("Print", "print", "Print &#x25bc", "Print");
 
     TabBar.OPEN_STYLE = "background-color:blue; color:white;"
@@ -94,7 +91,8 @@ SpirographController.prototype.Initialise = function ()
     this.mode = SpirographController.Single;
     this.gridx = 1;
     this.gridy = 1;
-
+    this.current_help_image = 0;
+    
     print_size.value = this.print_size;
     
     SVGColours.AddColours (fill_colour);
@@ -142,7 +140,6 @@ SpirographController.prototype.DisplaySpirographStatus = function (data)
 {
     SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_NUM_WHEELS], data.num_wheels);
     SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_NUM_POINTS], data.num_points);
-    SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_SYMMETRY], data.GetSymmetry());
 
     SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_WHEEL_RATE_1], data.wheel_rates[0]);
     SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_WHEEL_RATE_2], data.wheel_rates[1]);
@@ -169,7 +166,6 @@ SpirographController.prototype.DisplaySpirographStatus = function (data)
     SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_PHASE_DELTA_5], Misc.FloatToText (data.phase_deltas[4],2));
 
     SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_FILL_RULE], data.fill_rule);
-    SpirographController.SetWatcherText (SpirographController.watchers [SpirographController.WATCH_MODE], SpirographController.Types[data.mode]);
     
     fill_colour.value = this.spirograph.fill_colour;
     line_colour.value = this.spirograph.line_colour;
@@ -483,7 +479,6 @@ SpirographController.prototype.AttachWatchers = function ()
     
     this.AddWatcher (SpirographController.WATCH_NUM_WHEELS, num_wheels);
     this.AddWatcher (SpirographController.WATCH_NUM_POINTS, num_points);
-    this.AddWatcher (SpirographController.WATCH_SYMMETRY, symmetry);
     this.AddWatcher (SpirographController.WATCH_WHEEL_RATE_1, wrate1);
     this.AddWatcher (SpirographController.WATCH_WHEEL_RATE_2, wrate2);
     this.AddWatcher (SpirographController.WATCH_WHEEL_RATE_3, wrate3);
@@ -505,7 +500,6 @@ SpirographController.prototype.AttachWatchers = function ()
     this.AddWatcher (SpirographController.WATCH_PHASE_DELTA_4, dwphase4);
     this.AddWatcher (SpirographController.WATCH_PHASE_DELTA_5, dwphase5);
     this.AddWatcher (SpirographController.WATCH_FILL_RULE, fillrule);
-    this.AddWatcher (SpirographController.WATCH_MODE, mode);
 }
 //-------------------------------------------------------------------------------------------------
 SpirographController.prototype.AddWatcher = function (idx, element)
@@ -640,11 +634,6 @@ SpirographController.prototype.IncrementPoints = function (delta)
 SpirographController.prototype.IncrementWheels = function (delta)
 {
     this.spirograph.IncrementWheels (delta);
-    this.OnSpirographChanged ();
-}
-SpirographController.prototype.IncrementSymmetry = function (delta)
-{
-    this.spirograph.IncrementSymmetry (delta);
     this.OnSpirographChanged ();
 }
 SpirographController.prototype.IncrementSize = function (delta)
@@ -885,14 +874,15 @@ SpirographController.ShowTT = function (x, y, id)
 }
 SpirographController.prototype.ShowSVG = function ()
 {
-    SpirographController.active_popup = show_svg;
+    SpirographController.HidePopup();
+    
     save_text.value = this.GetSVG(this.print_size);
     show_svg.style.visibility="visible";
 }
-SpirographController.ShowSource = function ()
+SpirographController.prototype.HideSVG = function ()
 {
-    SpirographController.active_popup = show_source;
-    show_source.style.visibility="visible";
+    save_text.value = "";
+    show_svg.style.visibility="hidden";
 }
 SpirographController.HidePopup = function ()
 {
@@ -907,6 +897,42 @@ SpirographController.AddColour = function (edit, select)
 {
     edit.value += " " + select.value;
 }
+
+SpirographController.prototype.ShowHelpImage = function ()
+{
+    var detail = ToolTips.help_images [controller.current_help_image];
+    
+    help_image.src = detail.img;
+    image_help_text.innerHTML = detail.text;
+    
+}
+SpirographController.prototype.ShowNextHelpImage = function ()
+{
+    if (controller.current_help_image < ToolTips.help_images.length - 1)
+    {
+        ++ controller.current_help_image;
+    }
+    else
+    {
+        controller.current_help_image = 0;
+    }
+    this.ShowHelpImage();
+}
+SpirographController.prototype.ShowPreviousHelpImage = function ()
+{
+    if (controller.current_help_image > 0)
+    {
+        -- controller.current_help_image;
+    }
+    else
+    {
+        controller.current_help_image = ToolTips.help_images.length - 1;
+    }
+    this.ShowHelpImage();
+}
+
+
+        
 
                                         
                                         
